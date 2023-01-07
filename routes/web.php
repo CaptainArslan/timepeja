@@ -13,18 +13,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
-Route::get('/registration', function () {
-    return view('auth.registration');
-})->name('registration');
-
-Route::get('/login', function () {
-    return view('auth.login');
-})->name('login');
-
-Route::get('/home', function () {
-    return view('dashboard.dashboard');
-});
+Route::get('/', function () { return view('auth.login'); })->name('login');
+Route::get('/register', function () { return view('auth.register'); })->name('register');
+Route::get('/home', function () { return view('dashboard.dashboard'); })->name('home');
+Route::get('/manager', function () { return view('dashboard.dashboard'); })->name('manager');
+Route::get('/vehicle', function () { return view('dashboard.dashboard'); })->name('vehicle');
+Route::get('/driver', function () { return view('dashboard.dashboard'); })->name('driver');
+Route::get('/passenger ', function () { return view('dashboard.dashboard'); })->name('passenger');
+Route::get('/route ', function () { return view('dashboard.dashboard'); })->name('route');

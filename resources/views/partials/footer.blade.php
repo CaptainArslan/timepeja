@@ -5,7 +5,7 @@
             <div class="col-md-12">
                 <script>
                     document.write(new Date().getFullYear())
-                </script> &copy; UBold theme by <a href="">Coderthemes</a>
+                </script> &copy; Copy Write <a href="">Timepejao</a>
             </div>
             <!-- <div class="col-md-6">
                 <div class="text-md-end footer-links d-none d-sm-block">
