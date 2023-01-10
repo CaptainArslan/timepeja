@@ -47,38 +47,38 @@
                 <!-- <li class="menu-title">Navigation</li> -->
 
                 <li>
-                    <a href="#sidebarDashboards" data-bs-toggle="collapse">
+                    <a href="{{ route('home') }}" data-bs-toggle="collapse">
                         <i class="mdi mdi-view-dashboard-outline"></i>
                         <!-- <span class="badge bg-info rounded-pill float-end">4</span> -->
                         <span> Dashboards </span>
                     </a>
                 </li>
                 <li>
-                    <a href="apps-calendar.html">
+                    <a href="{{ route('manager') }}">
                         <i class="fas fa-user-alt"></i>
                         <span> Manager </span>
                     </a>
                 </li>
                 <li>
-                    <a href="apps-calendar.html">
+                    <a href="{{ route('vehicle') }}">
                         <i class=" fas fa-car-alt"></i>
                         <span> Vehicles </span>
                     </a>
                 </li>
                 <li>
-                    <a href="apps-calendar.html">
+                    <a href="{{ route('driver') }}">
                         <i class="fas fa-user"></i>
                         <span> Driver </span>
                     </a>
                 </li>
                 <li>
-                    <a href="apps-calendar.html">
+                    <a href="{{ route('passenger') }}">
                         <i class="fas fa-users"></i>
                         <span> Passenger </span>
                     </a>
                 </li>
                 <li>
-                    <a href="apps-calendar.html">
+                    <a href="{{ route('route') }}">
                         <i class="fas fa-route"></i>
                         <span> Route </span>
                     </a>
