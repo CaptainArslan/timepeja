@@ -43,13 +43,10 @@
         <div id="sidebar-menu">
 
             <ul id="side-menu">
-
                 <!-- <li class="menu-title">Navigation</li> -->
-
                 <li>
-                    <a href="{{ route('home') }}" data-bs-toggle="collapse">
+                    <a href="{{ route('home') }}">
                         <i class="mdi mdi-view-dashboard-outline"></i>
-                        <!-- <span class="badge bg-info rounded-pill float-end">4</span> -->
                         <span> Dashboards </span>
                     </a>
                 </li>
