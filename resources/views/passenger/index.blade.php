@@ -19,7 +19,7 @@
             <div class="card-header">
                 <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> Add </button>
             </div>
-            <div class="card-body">
+            <div class="card-body bg-light">
                 <h4 class="header-title">Passengers</h4>
                 <table id="datatable-buttons" class="table table-striped dt-responsive nowrap w-100">
                     <thead>
@@ -68,55 +68,62 @@
 <!-- end row-->
 <!-- Modal -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">Add Passengers</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-header bg-light">
+                <h4 class="modal-title" id="myCenterModalLabel">Add Passenger</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
             </div>
-            <div class="modal-body">
-                <div class="col-xl-12">
-                    <div class="card shadow-none">
-                        <div class="card-body">
-                            <form>
-                                <div class="row">
-                                    <div class="col-lg-6">
-                                        <div class="mb-3">
-                                            <label for="simpleinput" class="form-label">Route Name</label>
-                                            <input type="text" id="simpleinput" class="form-control">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="simpleinput" class="form-label">To</label>
-                                            <input type="text" id="simpleinput" class="form-control">
-                                        </div>
-                                    </div>
+            <div class="modal-body p-4">
+                <form>
+                    <div class="mb-3">
+                        <label for="example-select" class="form-label">Passenger Type</label>
+                        <select class="form-select" id="example-select">
+                            <option>Student</option>
+                            <option>Guardian</option>
+                            <option>Employee</option>
+                            <!-- <option>Org</option> -->
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="example-select" class="form-label">For Manager Only</label>
+                        <select class="form-select" id="example-select">
+                            <option>John</option>
+                            <option>Charles</option>
+                            <option>Chips</option>
+                            <!-- <option>Org</option> -->
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="simpleinput" class="form-label">Name</label>
+                        <input type="text" id="simpleinput" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label for="simpleinput" class="form-label">School Name</label>
+                        <input type="text" id="simpleinput" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label for="simpleinput" class="form-label">Roll No</label>
+                        <input type="number" id="simpleinput" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label for="example-select" class="form-label">Gender</label>
+                        <select class="form-select" id="example-select">
+                            <option>Male</option>
+                            <option>Female</option>
+                            <!-- <option>Org</option> -->
+                        </select>
+                    </div>
 
-                                    <div class="col-lg-6">
-                                        <div class="mb-3">
-                                            <label for="simpleinput" class="form-label">From</label>
-                                            <input type="text" id="simpleinput" class="form-control">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="simpleinput" class="form-label">Route No</label>
-                                            <input type="number" id="simpleinput" class="form-control">
-                                        </div>
-                                    </div> <!-- end col -->
-                                </div> <!-- end #basicwizard-->
-                                <div class="list-inline wizard mb-0" id="btns">
-                                    <button type="button" class="btn btn-primary">Submit</button>
-                                </div>
-                            </form>
-                        </div> <!-- end card-body -->
-                    </div> <!-- end card-->
-                </div>
+
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-success waves-effect waves-light">Save</button>
+                    </div>
+                </form>
             </div>
-            <!-- <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Submit</button>
-            </div> -->
-        </div>
-    </div>
-</div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 @endsection
 
 @section('page_js')

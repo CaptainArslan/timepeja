@@ -23,3 +23,5 @@ Route::get('/passenger', function () { return view('passenger.index');})->name('
 Route::get('/driver', function () { return view('driver.index');})->name('driver');
 Route::get('/vehicle', function () { return view('vehicle.index');})->name('vehicle');
 Route::get('/route', function () { return view('route.index');})->name('route');
+Route::get('/revenue', function () { return view('report.revenue');})->name('revenue');
+Route::get('/expense', function () { return view('report.expense');})->name('expense');

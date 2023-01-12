@@ -65,7 +65,7 @@
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg-light">
                 <h5 class="modal-title" id="staticBackdropLabel">Add Vehicle</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -75,7 +75,7 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-lg-6">
-                                    
+
                                     <div class="mb-3">
                                         <label for="example-select" class="form-label">Vehicle Type</label>
                                         <select class="form-select" id="example-select">
@@ -90,26 +90,26 @@
                                             <p class="text-muted text-center mt-2 mb-0">Vehicle Picture from front</p>
                                         </div>
                                     </div>
-                                    
+
                                 </div>
 
                                 <div class="col-lg-6">
-                                    
 
-                                        <div class="mb-3">
-                                            <label for="simpleinput" class="form-label">Vehicle's Number</label>
-                                            <input type="text" id="simpleinput" class="form-control">
+
+                                    <div class="mb-3">
+                                        <label for="simpleinput" class="form-label">Vehicle's Number</label>
+                                        <input type="text" id="simpleinput" class="form-control">
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="mt-1">
+                                            <input type="file" data-plugins="dropify" data-default-file="/images/small/img-2.jpg" />
+                                            <p class="text-muted text-center mt-2 mb-0">Vehicle license plate picture</p>
                                         </div>
-                                        <div class="col-12">
-                                            <div class="mt-1">
-                                                <input type="file" data-plugins="dropify" data-default-file="/images/small/img-2.jpg" />
-                                                <p class="text-muted text-center mt-2 mb-0">Vehicle license plate picture</p>
-                                            </div>
-                                        </div>
-                                    
+                                    </div>
+
                                 </div>
-                                <div class="list-inline wizard mb-0" id="btns">
-                                    <button type="button" class="btn btn-primary">Submit</button>
+                                <div class="text-end">
+                                    <button type="submit" class="btn btn-success waves-effect waves-light">Save</button>
                                 </div>
 
                             </div>
