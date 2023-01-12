@@ -57,7 +57,7 @@
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg-light">
                 <h5 class="modal-title" id="staticBackdropLabel">Add Driver</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -117,9 +117,9 @@
                                         </div>
                                     </div> <!-- end col -->
                                 </div> <!-- end #basicwizard-->
-                                <ul class="list-inline wizard mb-0" id="btns">
-                                                <button type="button" class="btn btn-primary">Submit</button>
-                                            </ul>
+                                <div class="text-end mt-2">
+                                    <button type="submit" class="btn btn-success waves-effect waves-light">Save</button>
+                                </div>
                             </form>
                         </div> <!-- end card-body -->
                     </div> <!-- end card-->

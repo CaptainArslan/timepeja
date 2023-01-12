@@ -19,7 +19,7 @@
             <div class="card-header">
                 <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> Add </button>
             </div>
-            <div class="card-body">
+            <div class="card-body bg-light">
                 <h4 class="header-title">Managers</h4>
                 <table id="datatable-buttons" class="table table-striped dt-responsive nowrap w-100">
                     <thead>
@@ -68,7 +68,7 @@
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg-light">
                 <h5 class="modal-title" id="staticBackdropLabel">Add Manager</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -213,37 +213,60 @@
 
                                         <!-- Company financials -->
                                         <div class="tab-pane" id="financials">
-                                            <div class="row">
-                                                <div class="col-12">
-
-                                                    <div class="mb-3">
-                                                        <label for="fullname" class="form-label">Full Name * :</label>
-                                                        <input type="text" class="form-control" name="fullname" id="fullname" required="">
-                                                    </div>
-
-                                                    <div class="mb-3">
-                                                        <label for="email" class="form-label">Email * :</label>
-                                                        <input type="email" id="email" class="form-control" name="email" data-parsley-trigger="change" required="">
-                                                    </div>
-
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Gender * :</label>
-
-                                                        <div class="form-check mb-1">
-                                                            <input type="radio" name="gender" id="genderM" value="Male" required="" class="form-check-input">
-                                                            <label for="genderM">Male</label>
+                                            <div class="row mt-2 mb-2">
+                                                <div class="row">
+                                                    <div class="col-md-12 mt-2">
+                                                        <h4 class="header-title">Who will charge the fee form:</h4>
+                                                        <div class="form-check mb-2 form-check-primary">
+                                                            <input class="form-check-input" type="checkbox" value="" id="customckeck1" checked="">
+                                                            <label class="form-check-label" for="customckeck1">Manager</label>
                                                         </div>
-                                                        <div class="form-check">
-                                                            <input type="radio" name="gender" id="genderF" value="Female" class="form-check-input">
-                                                            <label for="genderF">Female</label>
+
+                                                        <div class="form-check mb-2 form-check-success">
+                                                            <input class="form-check-input" type="checkbox" value="" id="customckeck2">
+                                                            <label class="form-check-label" for="customckeck2">Driver</label>
+                                                        </div>
+
+                                                        <div class="form-check mb-2 form-check-danger">
+                                                            <input class="form-check-input" type="checkbox" value="" id="customckeck3" checked="">
+                                                            <label class="form-check-label" for="customckeck3">Passengers</label>
                                                         </div>
                                                     </div>
-                                                </div> <!-- end col -->
+                                                    <div class="col-md-12 mt-3 mb-2">
+                                                        <h4 class="header-title">Basis of payment first:</h4>
+                                                        <div class="d-flex mt-1" style="justify-content: center; align-items: center;">
+                                                            <div class="form-check form-check-primary col-lg-4">
+                                                                <input class="form-check-input" type="checkbox" value="" id="customckeck1" checked="">
+                                                                <label class="form-check-label" for="customckeck1">Manager</label>
+                                                            </div>
+                                                            <div class="col-lg-8">
+                                                                <input class="form-control" type="number" placeholder="Amount">
+                                                            </div>
+                                                        </div>
+                                                        <div class="d-flex mt-1" style="justify-content: center; align-items: center;">
+                                                            <div class="form-check form-check-success col-lg-4">
+                                                                <input class="form-check-input" type="checkbox" value="" id="customckeck1" checked="">
+                                                                <label class="form-check-label" for="customckeck1">Driver</label>
+                                                            </div>
+                                                            <div class="col-lg-8">
+                                                                <input class="form-control" type="number" placeholder="Amount">
+                                                            </div>
+                                                        </div>
+                                                        <div class="d-flex mt-1" style="justify-content: center; align-items: center;">
+                                                            <div class="form-check form-check-danger col-lg-4">
+                                                                <input class="form-check-input" type="checkbox" value="" id="customckeck1" checked="">
+                                                                <label class="form-check-label" for="customckeck1">Passenger</label>
+                                                            </div>
+                                                            <div class="col-lg-8">
+                                                                <input class="form-control" type="number" placeholder="Amount">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div> <!-- end row -->
-
-                                            <ul class="list-inline wizard mb-0" id="btns">
-                                                <button type="button" class="btn btn-primary">Submit</button>
-                                            </ul>
+                                            <div class="text-end">
+                                                <button type="submit" class="btn btn-success waves-effect waves-light">Save</button>
+                                            </div>
                                         </div>
                                     </div> <!-- tab-content -->
                                 </div> <!-- end #basicwizard-->
