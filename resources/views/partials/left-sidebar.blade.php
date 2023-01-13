@@ -43,13 +43,10 @@
         <div id="sidebar-menu">
 
             <ul id="side-menu">
-
                 <!-- <li class="menu-title">Navigation</li> -->
-
                 <li>
-                    <a href="{{ route('home') }}" data-bs-toggle="collapse">
+                    <a href="{{ route('home') }}">
                         <i class="mdi mdi-view-dashboard-outline"></i>
-                        <!-- <span class="badge bg-info rounded-pill float-end">4</span> -->
                         <span> Dashboards </span>
                     </a>
                 </li>
@@ -82,6 +79,23 @@
                         <i class="fas fa-route"></i>
                         <span> Route </span>
                     </a>
+                </li>
+                <li>
+                    <a href="#sidebarTickets" data-bs-toggle="collapse">
+                        <i class="fas fa-dollar-sign"></i>
+                        <span> Reports </span>
+                        <span class="menu-arrow"></span>
+                    </a>
+                    <div class="collapse" id="sidebarTickets">
+                        <ul class="nav-second-level">
+                            <li>
+                                <a  href="{{ route('revenue') }}">Revenue</a>
+                            </li>
+                            <li>
+                                <a  href="{{ route('expense') }}">Expense</a>
+                            </li>
+                        </ul>
+                    </div>
                 </li>
                 <!-- <li class="menu-title mt-2">Manager</li> -->
 <!-- 
@@ -265,32 +279,9 @@
                             </li>
                         </ul>
                     </div>
-                </li>
-
-                <li>
-                    <a href="#sidebarTickets" data-bs-toggle="collapse">
-                        <i class="mdi mdi-lifebuoy"></i>
-                        <span> Tickets </span>
-                        <span class="menu-arrow"></span>
-                    </a>
-                    <div class="collapse" id="sidebarTickets">
-                        <ul class="nav-second-level">
-                            <li>
-                                <a href="tickets-list.html">List</a>
-                            </li>
-                            <li>
-                                <a href="tickets-detail.html">Detail</a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-
-                <li>
-                    <a href="apps-file-manager.html">
-                        <i class="mdi mdi-folder-star-outline"></i>
-                        <span> File Manager </span>
-                    </a>
                 </li> -->
+
+                 
             </ul>
 
         </div>

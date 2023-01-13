@@ -166,6 +166,21 @@
     </div> <!-- end col-->
 </div>
 <!-- end row -->
+<div class="col-lg-12">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="header-title mb-3">Map</h4>
+            <div class="mb-3">
+                <label class="form-label">Search</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Search on map" aria-label="Username" aria-describedby="basic-addon1">
+                    <span class="input-group-text" id="basic-addon1" role="button"><i class="fas fa-search"></i></span>
+                </div>
+            </div>
+            <div id="gmaps-basic" class="gmaps"></div>
+        </div>
+    </div> <!-- end card-->
+</div>
 
 <div class="row">
     <div class="col-xl-6">
@@ -514,6 +529,19 @@
             </div>
         </div> <!-- end card-->
     </div> <!-- end col -->
+
 </div>
 <!-- end row -->
+@endsection
+
+@section('page_js')
+
+<!-- google maps api -->
+<script src="https://maps.google.com/maps/api/js?key=AIzaSyDsucrEdmswqYrw0f6ej3bf4M4suDeRgNA"></script>
+
+<!-- gmap js-->
+<script src="{{asset('libs/gmaps/gmaps.min.js')}}"></script>
+
+<!-- Init js-->
+<script src="{{asset('js/pages/google-maps.init.js')}}"></script>
 @endsection
