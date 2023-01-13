@@ -12,19 +12,19 @@
 <!-- end page title -->
 
 <div class="row">
-    <div class="col-md-6 col-xl-3">
+    <div class="col-md-6 col-xl-4">
         <div class="widget-rounded-circle card">
             <div class="card-body">
                 <div class="row">
                     <div class="col-6">
                         <div class="avatar-lg rounded-circle bg-soft-info border-info border">
-                            <i class="fe-heart font-22 avatar-title text-info"></i>
+                            <i class="fe-map font-22 avatar-title text-info"></i>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="text-end">
-                            <h3 class="text-dark mt-1">$<span data-plugin="counterup">58,947</span></h3>
-                            <p class="text-muted mb-1 text-truncate">Total Revenue</p>
+                            <h3 class="text-dark mt-1"><span data-plugin="counterup">58,947</span></h3>
+                            <p class="text-muted mb-1 text-truncate">Total Trips Completed</p>
                         </div>
                     </div>
                 </div> <!-- end row-->
@@ -32,19 +32,19 @@
         </div> <!-- end widget-rounded-circle-->
     </div> <!-- end col-->
 
-    <div class="col-md-6 col-xl-3">
+    <div class="col-md-6 col-xl-4">
         <div class="widget-rounded-circle card">
             <div class="card-body">
                 <div class="row">
                     <div class="col-6">
                         <div class="avatar-lg rounded-circle bg-soft-primary border-primary border">
-                            <i class="fe-shopping-cart font-22 avatar-title text-primary"></i>
+                            <i class="fe-truck font-22 avatar-title text-primary"></i>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="text-end">
                             <h3 class="text-dark mt-1"><span data-plugin="counterup">127</span></h3>
-                            <p class="text-muted mb-1 text-truncate">Today's Sales</p>
+                            <p class="text-muted mb-1 text-truncate">Total Active Vehicles</p>
                         </div>
                     </div>
                 </div> <!-- end row-->
@@ -52,19 +52,19 @@
         </div> <!-- end widget-rounded-circle-->
     </div> <!-- end col-->
 
-    <div class="col-md-6 col-xl-3">
+    <div class="col-md-6 col-xl-4">
         <div class="widget-rounded-circle card">
             <div class="card-body">
                 <div class="row">
                     <div class="col-6">
                         <div class="avatar-lg rounded-circle bg-soft-info border-info border">
-                            <i class="fe-bar-chart-line- font-22 avatar-title text-info"></i>
+                            <i class="fe-users font-22 avatar-title text-info"></i>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="text-end">
-                            <h3 class="text-dark mt-1"><span data-plugin="counterup">0.58</span>%</h3>
-                            <p class="text-muted mb-1 text-truncate">Conversion</p>
+                            <h3 class="text-dark mt-1"><span data-plugin="counterup">58</span></h3>
+                            <p class="text-muted mb-1 text-truncate">Total Passengers</p>
                         </div>
                     </div>
                 </div> <!-- end row-->
@@ -72,7 +72,7 @@
         </div> <!-- end widget-rounded-circle-->
     </div> <!-- end col-->
 
-    <div class="col-md-6 col-xl-3">
+    <!-- <div class="col-md-6 col-xl-3">
         <div class="widget-rounded-circle card">
             <div class="card-body">
                 <div class="row">
@@ -87,10 +87,11 @@
                             <p class="text-muted mb-1 text-truncate">Today's Visits</p>
                         </div>
                     </div>
-                </div> <!-- end row-->
+                </div> end row
             </div>
-        </div> <!-- end widget-rounded-circle-->
-    </div> <!-- end col-->
+        </div> end widget-rounded-circle
+    </div> -->
+    <!-- end col-->
 </div>
 <!-- end row-->
 
@@ -145,24 +146,22 @@
         </div> <!-- end card -->
     </div> <!-- end col-->
 
-    <div class="col-lg-8">
+    <div class="col-xl-8">
+        <!-- Portlet card -->
         <div class="card">
-            <div class="card-body pb-1">
-                <div class="float-end d-none d-md-inline-block">
-                    <div class="btn-group mb-2">
-                        <button type="button" class="btn btn-xs btn-light">Today</button>
-                        <button type="button" class="btn btn-xs btn-light">Weekly</button>
-                        <button type="button" class="btn btn-xs btn-secondary">Monthly</button>
-                    </div>
+            <div class="card-body">
+                <div class="card-widgets">
+                    <a href="javascript: void(0);" data-toggle="reload"><i class="mdi mdi-refresh"></i></a>
+                    <a data-bs-toggle="collapse" href="#cardCollpase4" role="button" aria-expanded="false" aria-controls="cardCollpase4"><i class="mdi mdi-minus"></i></a>
+                    <a href="javascript: void(0);" data-toggle="remove"><i class="mdi mdi-close"></i></a>
                 </div>
+                <h4 class="header-title mb-0">Invoices</h4>
 
-                <h4 class="header-title mb-3">Sales Analytics</h4>
-
-                <div dir="ltr">
-                    <div id="sales-analytics" class="mt-4" data-colors="#7e57c2,#4fc6e1"></div>
-                </div>
-            </div>
-        </div> <!-- end card -->
+                <div id="cardCollpase4" class="collapse show" dir="ltr">
+                    <div id="apex-area" class="apex-charts pt-3" data-colors="#7e57c2,#f7b84b,#CED4DC"></div>
+                </div> <!-- collapsed end -->
+            </div> <!-- end card-body -->
+        </div> <!-- end card-->
     </div> <!-- end col-->
 </div>
 <!-- end row -->
@@ -544,4 +543,12 @@
 
 <!-- Init js-->
 <script src="{{asset('js/pages/google-maps.init.js')}}"></script>
+
+<!-- Third Party js-->
+<script src="{{asset('libs/apexcharts/apexcharts.min.js')}}"></script>
+<script src="https://apexcharts.com/samples/assets/irregular-data-series.js"></script>
+<script src="https://apexcharts.com/samples/assets/ohlc.js"></script>
+
+<!-- init js -->
+<script src="{{asset('js/pages/apexcharts.init.js')}}"></script>
 @endsection
