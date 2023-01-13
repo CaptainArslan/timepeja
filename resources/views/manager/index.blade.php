@@ -218,26 +218,26 @@
                                                     <div class="col-md-12 mt-2">
                                                         <h4 class="header-title">Who will charge the fee form:</h4>
                                                         <div class="form-check mb-2 form-check-primary">
-                                                            <input class="form-check-input" type="checkbox" value="" id="customckeck1" checked="">
-                                                            <label class="form-check-label" for="customckeck1">Manager</label>
+                                                            <input class="form-check-input" type="checkbox" value="" id="manager" checked="">
+                                                            <label class="form-check-label" for="manager">Manager</label>
                                                         </div>
 
                                                         <div class="form-check mb-2 form-check-success">
-                                                            <input class="form-check-input" type="checkbox" value="" id="customckeck2">
-                                                            <label class="form-check-label" for="customckeck2">Driver</label>
+                                                            <input class="form-check-input" type="checkbox" value="" id="driver">
+                                                            <label class="form-check-label" for="driver">Driver</label>
                                                         </div>
 
                                                         <div class="form-check mb-2 form-check-danger">
-                                                            <input class="form-check-input" type="checkbox" value="" id="customckeck3" checked="">
-                                                            <label class="form-check-label" for="customckeck3">Passengers</label>
+                                                            <input class="form-check-input" type="checkbox" value="" id="passenger" checked="">
+                                                            <label class="form-check-label" for="passenger">Passengers</label>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-12 mt-3 mb-2">
                                                         <h4 class="header-title">Basis of payment first:</h4>
                                                         <div class="d-flex mt-1" style="justify-content: center; align-items: center;">
                                                             <div class="form-check form-check-primary col-lg-4">
-                                                                <input class="form-check-input" type="checkbox" value="" id="customckeck1" checked="">
-                                                                <label class="form-check-label" for="customckeck1">Manager</label>
+                                                                <input class="form-check-input" type="checkbox" value="" id="manager1" checked="">
+                                                                <label class="form-check-label" for="manager1">Manager</label>
                                                             </div>
                                                             <div class="col-lg-8">
                                                                 <input class="form-control" type="number" placeholder="Amount">
@@ -245,8 +245,8 @@
                                                         </div>
                                                         <div class="d-flex mt-1" style="justify-content: center; align-items: center;">
                                                             <div class="form-check form-check-success col-lg-4">
-                                                                <input class="form-check-input" type="checkbox" value="" id="customckeck1" checked="">
-                                                                <label class="form-check-label" for="customckeck1">Driver</label>
+                                                                <input class="form-check-input" type="checkbox" value="" id="driver1" checked="">
+                                                                <label class="form-check-label" for="driver1">Driver</label>
                                                             </div>
                                                             <div class="col-lg-8">
                                                                 <input class="form-control" type="number" placeholder="Amount">
@@ -254,8 +254,8 @@
                                                         </div>
                                                         <div class="d-flex mt-1" style="justify-content: center; align-items: center;">
                                                             <div class="form-check form-check-danger col-lg-4">
-                                                                <input class="form-check-input" type="checkbox" value="" id="customckeck1" checked="">
-                                                                <label class="form-check-label" for="customckeck1">Passenger</label>
+                                                                <input class="form-check-input" type="checkbox" value="" id="passenger1" checked="">
+                                                                <label class="form-check-label" for="passenger1">Passenger</label>
                                                             </div>
                                                             <div class="col-lg-8">
                                                                 <input class="form-control" type="number" placeholder="Amount">
