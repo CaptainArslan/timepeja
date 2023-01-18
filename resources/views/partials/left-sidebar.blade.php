@@ -90,16 +90,16 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="{{ route('schedule.creation') }}">Creation Schedule</a>
+                                <a href="{{ route('schedule.creation') }}">Create Schedule</a>
                             </li>
                             <li>
                                 <a href="{{ route('schedule.publishes') }}">Published Schedule</a>
                             </li>
                             <li>
-                                <a href="{{ route('transpot.schedule') }}">Transport Scheduled</a>
+                                <a href="{{ route('transpot.users') }}">Transport Users</a>
                             </li>
                             <li>
-                                <a href="{{ route('transpot.users') }}">Transport Users</a>
+                                <a href="{{ route('transpot.schedule') }}">Scheduled Transport</a>
                             </li>
                             <li>
                                 <a href="{{ route('log.reports') }}">LOG Report</a>
@@ -107,9 +107,9 @@
                             <li>
                                 <a href="{{ route('awaiting.approvals') }}">Awaiting Approvals</a>
                             </li>
-                            <li>
+                            <!-- <li>
                                 <a href="{{ route('history') }}">History</a>
-                            </li>
+                            </li> -->
                         </ul>
                     </div>
 
@@ -118,6 +118,12 @@
                     <a href="{{ route('vehicle') }}">
                         <i class=" fas fa-car-alt"></i>
                         <span> Vehicles </span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('route') }}">
+                        <i class="fas fa-route"></i>
+                        <span> Route </span>
                     </a>
                 </li>
                 <li>
@@ -172,24 +178,6 @@
 
                 </li>
                 <li>
-                    <a href="{{ route('route') }}">
-                        <i class="fas fa-route"></i>
-                        <span> Route </span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('route') }}">
-                        <i class="fas fa-bell"></i>
-                        <span> Notifications </span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('route') }}">
-                        <i class="fas fa-wallet"></i>
-                        <span> Wallets </span>
-                    </a>
-                </li>
-                <li>
                     <a href="#sidebarTickets" data-bs-toggle="collapse">
                         <i class="fas fa-dollar-sign"></i>
                         <span> Reports </span>
@@ -215,13 +203,13 @@
                     <div class="collapse" id="sidebarhistory">
                         <ul class="nav-second-level">
                             <li>
-                                <a href="#">Customer Trip History</a>
+                                <a href="{{ route('customer.trip') }}">Customer Trip</a>
                             </li>
                             <li>
-                                <a href="#">Bus Passenger History</a>
+                                <a href="{{ route('bus.passenger') }}">Bus Passenger</a>
                             </li>
                             <li>
-                                <a href="#">Passenger to Passenger History</a>
+                                <a href="{{ route('passenger.to.passenger') }}">Passenger to Passenger</a>
                             </li>
                         </ul>
                     </div>
@@ -246,16 +234,17 @@
                         </ul>
                     </div>
                 </li>
-
+                <li>
+                    <a href="#">
+                        <i class="fas fa-wallet"></i>
+                        <span> Wallets </span>
+                    </a>
+                </li>
             </ul>
-
         </div>
         <!-- End Sidebar -->
-
         <div class="clearfix"></div>
-
     </div>
     <!-- Sidebar -left -->
-
 </div>
 <!-- Left Sidebar End -->
