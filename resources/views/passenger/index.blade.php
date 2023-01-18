@@ -18,15 +18,7 @@
         <div class="card">
             <div class="card-header d-flex">
                 <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> Add </button>
-                <div class="mb-3" style="position: absolute; left: 100px; top: -3px;">
-                        <label for="example-select" class="form-label"></label>
-                        <select class="form-select" id="example-select">
-                            <option>Student</option>
-                            <option>Guardian</option>
-                            <option>Employee</option>
-                            <!-- <option>Org</option> -->
-                        </select>
-                    </div>
+                
             </div>
             <div class="card-body">
                 <h4 class="header-title">Passengers</h4>

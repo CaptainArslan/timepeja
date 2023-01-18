@@ -17,7 +17,6 @@ use Illuminate\Support\Facades\Route;
     // Route::resource('roles', 'RoleController');
 
     Route::get('/', function () { return view('auth.login'); })->name('login');
-    Route::get('/login', function () { return view('auth.login');})->name('login');
     Route::get('/register', function () { return view('auth.register'); })->name('register');
     Route::get('/profile', function () { return view('auth.profile'); })->name('profile');
     Route::get('/home', function () { return view('dashboard.dashboard'); })->name('home');
@@ -48,8 +47,10 @@ use Illuminate\Support\Facades\Route;
     Route::get('/route', function () { return view('route.index');})->name('route');
     Route::get('/revenue', function () { return view('report.revenue');})->name('revenue');
     Route::get('/expense', function () { return view('report.expense');})->name('expense');
-    Route::get('/history', function () { return view('history.index');})->name('history');
-    Route::get('/history', function () { return view('history.index');})->name('history');
+    
+    Route::get('/history/Passenger-to-Passenger', function () { return view('history.passenger_to_passenger');})->name('bus.passenger');
+    Route::get('/history/Bus-Passenger', function () { return view('history.bus_passenger');})->name('passenger.to.passenger');
+    Route::get('/history/Customer-Trip', function () { return view('history.customer_trip');})->name('customer.trip');
     
     Route::get('/modules', function () { return view('admin.modules.index');})->name('modules.index');
     Route::get('/module-groups', function () { return view('admin.module-groups.index');})->name('module-groups.index');
