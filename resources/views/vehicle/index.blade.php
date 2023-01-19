@@ -17,7 +17,7 @@
 </div>
 <!-- end page title -->
 <div class="row">
-    <div class="col-12">
+    <div class="col-lg-8 table-responsive">
         <div class="card">
             <div class="card-header">
                 <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> Add </button>
@@ -27,38 +27,70 @@
                 <table id="datatable-buttons" class="table table-striped dt-responsive nowrap w-100">
                     <thead>
                         <tr>
+                            <th>Organization Name</th>
                             <th>Vehicle Type</th>
                             <th>Vehicle's Number</th>
-                            <th>Vehicle Picture from front</th>
+                            <th>Vehicle picture from front</th>
                             <th>Vehicle license plate picture</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
 
 
                     <tbody>
                         <tr>
-                            <td>Tiger Nixon</td>
-                            <td>System Architect</td>
+                            <td><b><a href="#">Tiger Nixon</a></b></td>
                             <td></td>
                             <td></td>
-                        </tr>
-                        <tr>
-                            <td>Garrett Winters</td>
-                            <td>Accountant</td>
                             <td></td>
                             <td></td>
-                        </tr>
-                        <tr>
-                            <td>Ashton Cox</td>
-                            <td>Junior Technical Author</td>
-                            <td></td>
-                            <td></td>
+                            <td><a href="#" class="action-icon"> <i class="mdi mdi-delete"></i></a></td>
                         </tr>
                     </tbody>
                 </table>
             </div> <!-- end card body-->
         </div> <!-- end card -->
     </div><!-- end col-->
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-start mb-3">
+                    <img class="d-flex me-3 rounded-circle avatar-lg" src="/images/users/user-8.jpg" alt="Generic placeholder image">
+                    <div class="w-100">
+                        <h4 class="mt-0 mb-1">Jade M. Walker</h4>
+                        <p class="text-muted">Branch manager</p>
+                        <p class="text-muted"><i class="mdi mdi-office-building"></i> Vine Corporation</p>
+
+                        <a href="javascript: void(0);" class="btn- btn-xs btn-info">Send Email</a>
+                        <a href="javascript: void(0);" class="btn- btn-xs btn-secondary">Call</a>
+                        <a href="javascript: void(0);" class="btn- btn-xs btn-secondary">Edit</a>
+                    </div>
+                </div>
+
+                <h5 class="mb-3 mt-4 text-uppercase bg-light p-2"><i class="mdi mdi-account-circle me-1"></i> Personal Information</h5>
+                <div class="">
+                    <h4 class="font-13 text-muted text-uppercase">About Me :</h4>
+                    <p class="mb-3">
+                        Hi I'm Johnathn Deo,has been the industry's standard dummy text ever since the
+                        1500s, when an unknown printer took a galley of type.
+                    </p>
+
+                    <h4 class="font-13 text-muted text-uppercase mb-1">Date of Birth :</h4>
+                    <p class="mb-3"> March 23, 1984 (34 Years)</p>
+
+                    <h4 class="font-13 text-muted text-uppercase mb-1">Company :</h4>
+                    <p class="mb-3">Vine Corporation</p>
+
+                    <h4 class="font-13 text-muted text-uppercase mb-1">Added :</h4>
+                    <p class="mb-3"> April 22, 2016</p>
+
+                    <h4 class="font-13 text-muted text-uppercase mb-1">Updated :</h4>
+                    <p class="mb-0"> Dec 13, 2017</p>
+
+                </div>
+            </div>
+        </div> <!-- end card-->
+    </div> <!-- end col-->
 </div>
 <!-- end row-->
 <!-- Modal -->
@@ -74,6 +106,15 @@
                     <div class="card shadow-none">
                         <div class="card-body">
                             <div class="row">
+                                <div class="mb-3">
+                                    <label for="example-select" class="form-label">Organization Name</label>
+                                    <select class="form-select" id="example-select">
+                                        <option>School</option>
+                                        <option>college</option>
+                                        <option>University</option>
+                                        <!-- <option>Org</option> -->
+                                    </select>
+                                </div>
                                 <div class="col-lg-6">
 
                                     <div class="mb-3">

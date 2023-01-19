@@ -17,45 +17,50 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> Add </button>
+                <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> Add Organization </button>
             </div>
-            <div class="card-body bg-light">
+            <div class="card-body">
                 <h4 class="header-title">Managers</h4>
                 <table id="datatable-buttons" class="table table-striped dt-responsive nowrap w-100">
                     <thead>
                         <tr>
+                            <th>Organization Name</th>
+                            <th>Branch Name</th>
+                            <th>Branch Code</th>
+                            <th>Types</th>
+                            <th>Email</th>
+                            <th>Phone No</th>
+                            <th>Address</th>
+                            <th>Action</th>
+                            <th>Head Name</th>
+                            <th>Email</th>
+                            <th>Phone No</th>
+                            <th>Address</th>
                             <th>Name</th>
-                            <th>Position</th>
-                            <th>Office</th>
-                            <th>Age</th>
-                            <th>Start date</th>
-                            <th>Salary</th>
+                            <th>Email</th>
+                            <th>Phone No</th>
+                            <th>Manager Picture</th>
                         </tr>
+
                     </thead>
                     <tbody>
                         <tr>
-                            <td>Tiger Nixon</td>
+                            <td><b><a href="#">Tiger Nixon</a></b></td>
                             <td>System Architect</td>
                             <td>Edinburgh</td>
                             <td>61</td>
                             <td>2011/04/25</td>
                             <td>$320,800</td>
-                        </tr>
-                        <tr>
-                            <td>Garrett Winters</td>
-                            <td>Accountant</td>
-                            <td>Tokyo</td>
-                            <td>63</td>
-                            <td>2011/07/25</td>
-                            <td>$170,750</td>
-                        </tr>
-                        <tr>
-                            <td>Ashton Cox</td>
-                            <td>Junior Technical Author</td>
-                            <td>San Francisco</td>
-                            <td>66</td>
-                            <td>2009/01/12</td>
-                            <td>$86,000</td>
+                            <td>$320,800</td>
+                            <td>435</td>
+                            <td>435</td>
+                            <td>435</td>
+                            <td>435</td>
+                            <td>John</td>
+                            <td>John</td>
+                            <td>John</td>
+                            <td>John</td>
+                            <td><a href="#" class="action-icon"> <i class="mdi mdi-delete"></i></a></td>
                         </tr>
                     </tbody>
                 </table>
@@ -69,7 +74,7 @@
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-light">
-                <h5 class="modal-title" id="staticBackdropLabel">Add Manager</h5>
+                <h5 class="modal-title" id="staticBackdropLabel">Add Organization</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -214,51 +219,81 @@
                                         <!-- Company financials -->
                                         <div class="tab-pane" id="financials">
                                             <div class="row mt-2 mb-2">
+                                                <div class="row ">
+                                                    <h4 class="header-title">Free Trial:</h4>
+                                                    <div class="col-lg-4 mb-2">
+                                                        <label for="simpleinput" class="form-label">Day's</label>
+                                                        <input type="number" id="simpleinput" class="form-control">
+                                                    </div>
+                                                    <div class="col-lg-4 mb-2">
+                                                        <label for="example-date" class="form-label">Starting Date</label>
+                                                        <input class="form-control" id="example-date" type="date" name="date">
+                                                    </div>
+                                                    <div class="col-lg-4  mb-2">
+                                                        <label for="example-date" class="form-label">Ending Date</label>
+                                                        <input class="form-control" id="example-date" type="date" name="date">
+                                                    </div>
+                                                </div>
                                                 <div class="row">
                                                     <div class="col-md-12 mt-2">
                                                         <h4 class="header-title">Who will charge the fee form:</h4>
                                                         <div class="form-check mb-2 form-check-primary">
-                                                            <input class="form-check-input" type="checkbox" value="" id="customckeck1" checked="">
-                                                            <label class="form-check-label" for="customckeck1">Manager</label>
+                                                            <input class="form-check-input" type="checkbox" value="" id="manager" checked="">
+                                                            <label class="form-check-label" for="manager">Manager</label>
                                                         </div>
 
                                                         <div class="form-check mb-2 form-check-success">
-                                                            <input class="form-check-input" type="checkbox" value="" id="customckeck2">
-                                                            <label class="form-check-label" for="customckeck2">Driver</label>
+                                                            <input class="form-check-input" type="checkbox" value="" id="driver">
+                                                            <label class="form-check-label" for="driver">Driver</label>
                                                         </div>
 
                                                         <div class="form-check mb-2 form-check-danger">
-                                                            <input class="form-check-input" type="checkbox" value="" id="customckeck3" checked="">
-                                                            <label class="form-check-label" for="customckeck3">Passengers</label>
+                                                            <input class="form-check-input" type="checkbox" value="" id="passenger" checked="">
+                                                            <label class="form-check-label" for="passenger">Passengers</label>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-12 mt-3 mb-2">
                                                         <h4 class="header-title">Basis of payment first:</h4>
                                                         <div class="d-flex mt-1" style="justify-content: center; align-items: center;">
                                                             <div class="form-check form-check-primary col-lg-4">
-                                                                <input class="form-check-input" type="checkbox" value="" id="customckeck1" checked="">
-                                                                <label class="form-check-label" for="customckeck1">Manager</label>
+                                                                <input class="form-check-input" type="checkbox" value="" id="manager1" checked="">
+                                                                <label class="form-check-label" for="manager1">Manager</label>
                                                             </div>
-                                                            <div class="col-lg-8">
-                                                                <input class="form-control" type="number" placeholder="Amount">
+                                                            <div class="col-lg-8 d-flex">
+                                                                <div class="col-lg-6">
+                                                                    <input class="form-control" type="number" placeholder="Amount">
+                                                                </div>
+                                                                <div class="col-lg-6 px-1">
+                                                                    <input class="form-control" type="date" id="example-date" placeholder="Select date">
+                                                                </div>
                                                             </div>
                                                         </div>
                                                         <div class="d-flex mt-1" style="justify-content: center; align-items: center;">
                                                             <div class="form-check form-check-success col-lg-4">
-                                                                <input class="form-check-input" type="checkbox" value="" id="customckeck1" checked="">
-                                                                <label class="form-check-label" for="customckeck1">Driver</label>
+                                                                <input class="form-check-input" type="checkbox" value="" id="driver1" checked="">
+                                                                <label class="form-check-label" for="driver1">Driver</label>
                                                             </div>
-                                                            <div class="col-lg-8">
-                                                                <input class="form-control" type="number" placeholder="Amount">
+                                                            <div class="col-lg-8 d-flex">
+                                                                <div class="col-lg-6">
+                                                                    <input class="form-control" type="number" placeholder="Amount">
+                                                                </div>
+                                                                <div class="col-lg-6 px-1">
+                                                                    <input class="form-control" type="date" id="example-date" placeholder="Select date">
+                                                                </div>
                                                             </div>
                                                         </div>
                                                         <div class="d-flex mt-1" style="justify-content: center; align-items: center;">
                                                             <div class="form-check form-check-danger col-lg-4">
-                                                                <input class="form-check-input" type="checkbox" value="" id="customckeck1" checked="">
-                                                                <label class="form-check-label" for="customckeck1">Passenger</label>
+                                                                <input class="form-check-input" type="checkbox" value="" id="passenger1" checked="">
+                                                                <label class="form-check-label" for="passenger1">Passenger</label>
                                                             </div>
-                                                            <div class="col-lg-8">
-                                                                <input class="form-control" type="number" placeholder="Amount">
+                                                            <div class="col-lg-8 d-flex">
+                                                                <div class="col-lg-6">
+                                                                    <input class="form-control" type="number" placeholder="Amount">
+                                                                </div>
+                                                                <div class="col-lg-6 px-1">
+                                                                    <input class="form-control" type="date" id="example-date" placeholder="Select date">
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>

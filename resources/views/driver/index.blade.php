@@ -17,7 +17,7 @@
 </div>
 <!-- end page title -->
 <div class="row">
-    <div class="col-12">
+    <div class="col-12 table-responsive">
         <div class="card">
             <div class="card-header">
                 <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> Add </button>
@@ -27,24 +27,32 @@
                 <table id="datatable-buttons" class="table table-striped dt-responsive nowrap w-100">
                     <thead>
                         <tr>
+                            <th>Organization Name</th>
                             <th>Name</th>
-                            <th>Position</th>
-                            <th>Office</th>
-                            <th>Age</th>
-                            <th>Start date</th>
-                            <th>Salary</th>
+                            <th>Phone No</th>
+                            <th>CNIC Number</th>
+                            <th>License Number</th>
+                            <th>CNIC Front</th>
+                            <th>CNIC Back</th>
+                            <th>License Front</th>
+                            <th>License Back</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
 
 
                     <tbody>
                         <tr>
-                            <td>Tiger Nixon</td>
+                            <td><b><a href="#">Tiger Nixon</a></b></td>
                             <td>System Architect</td>
                             <td>Edinburgh</td>
                             <td>61</td>
                             <td>2011/04/25</td>
                             <td>$320,800</td>
+                            <td>61</td>
+                            <td>61</td>
+                            <td>61</td>
+                            <td><a href="#" class="action-icon"> <i class="mdi mdi-delete"></i></a></td>
                         </tr>
                     </tbody>
                 </table>
@@ -67,6 +75,15 @@
                         <div class="card-body">
                             <form>
                                 <div class="row">
+                                    <div class="mb-3">
+                                        <label for="example-select" class="form-label">Organization Name</label>
+                                        <select class="form-select" id="example-select">
+                                            <option>School</option>
+                                            <option>college</option>
+                                            <option>University</option>
+                                            <!-- <option>Org</option> -->
+                                        </select>
+                                    </div>
                                     <div class="col-lg-6">
                                         <div class="mb-3">
                                             <label for="simpleinput" class="form-label">Name</label>
@@ -78,13 +95,13 @@
                                         </div>
                                         <div class="d-flex">
                                             <div class="col-6">
-                                                <div class="mt-1">
+                                                <div class="mt-1 px-1">
                                                     <input type="file" data-plugins="dropify" data-default-file="/images/small/img-2.jpg" />
                                                     <p class="text-muted text-center mt-2 mb-0">Cnic Front</p>
                                                 </div>
                                             </div>
                                             <div class="col-6">
-                                                <div class="mt-1">
+                                                <div class="mt-1 px-1">
                                                     <input type="file" data-plugins="dropify" data-default-file="/images/small/img-2.jpg" />
                                                     <p class="text-muted text-center mt-2 mb-0">Cnic Back</p>
                                                 </div>
@@ -103,13 +120,13 @@
                                         </div>
                                         <div class="d-flex">
                                             <div class="col-6">
-                                                <div class="mt-1">
+                                                <div class="mt-1 px-1">
                                                     <input type="file" data-plugins="dropify" data-default-file="/images/small/img-2.jpg" />
                                                     <p class="text-muted text-center mt-2 mb-0">License Front</p>
                                                 </div>
                                             </div>
                                             <div class="col-6">
-                                                <div class="mt-1">
+                                                <div class="mt-1 px-1">
                                                     <input type="file" data-plugins="dropify" data-default-file="/images/small/img-2.jpg" />
                                                     <p class="text-muted text-center mt-2 mb-0">License Back</p>
                                                 </div>
