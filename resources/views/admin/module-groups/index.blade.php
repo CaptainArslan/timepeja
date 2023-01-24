@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('layouts.app')
 @section('title', 'Modules Groups')
 <!-- start page title -->
 @section('page_css')

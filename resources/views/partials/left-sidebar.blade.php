@@ -58,12 +58,12 @@
                     </a>
                     <div class="collapse" id="usermanagement">
                         <ul class="nav-second-level">
-                            <li>
+                            <!-- <li>
                                 <a href="{{ route('modules.index') }}">Modules</a>
                             </li>
                             <li>
                                 <a href="{{ route('module-groups.index') }}">Module Groups</a>
-                            </li>
+                            </li> -->
                             <li>
                                 <a href="{{ route('users.index') }}">All system Users</a>
                             </li>
@@ -142,12 +142,9 @@
                             <li>
                                 <a href="{{ route('driver.trips') }}">Upcoming Trips</a>
                             </li>
-                            <li>
+                            <!-- <li>
                                 <a href="{{ route('driver.notification') }}">Notification</a>
-                            </li>
-                            <li>
-                                <a href="{{ route('driver.tripstatus') }}">Trip Status</a>
-                            </li>
+                            </li> -->
                             <li>
                                 <a href="{{ route('driver.triphistory') }}">Trip History</a>
                             </li>
@@ -169,10 +166,10 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="trans_schdule">Transport Schedule</a>
+                                <a href="{{ route('trans_schdule') }}">Transport Schedule</a>
                             </li>
                             <li>
-                                <a href="trans_routes">Transport Routes</a>
+                                <a href="{{route('trans_routes')}}">Transport Routes</a>
                         </ul>
                     </div>
 
@@ -215,24 +212,10 @@
                     </div>
                 </li>
                 <li>
-                    <a href="#sidebarSupport" data-bs-toggle="collapse">
+                    <a href="{{ route('support') }}">
                         <i class="fas fa-headset"></i>
                         <span> Support </span>
-                        <span class="menu-arrow"></span>
                     </a>
-                    <div class="collapse" id="sidebarSupport">
-                        <ul class="nav-second-level">
-                            <li>
-                                <a href="{{ route('active') }}">Active</a>
-                            </li>
-                            <li>
-                                <a href="{{ route('pending') }}">Pending</a>
-                            </li>
-                            <li>
-                                <a href="{{ route('closed') }}">Closed</a>
-                            </li>
-                        </ul>
-                    </div>
                 </li>
                 <li>
                     <a href="#">
