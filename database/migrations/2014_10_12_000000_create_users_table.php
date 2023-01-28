@@ -16,12 +16,16 @@ class CreateUsersTable extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('email')->unique();
+            $table->string('email')->unique()->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('phone')->unique()->nullable();
             $table->rememberToken();
-            $table->enum('user_type', ['admin', 'manager', 'user'])->default('admin');
+            $table->enum('user_type', ['admin', 'manager', 'driver', 'passenger'])->default('admin');
+            $table->bigInteger('otp')->unique()->nullable();
+            $table->string('token')->unique()->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

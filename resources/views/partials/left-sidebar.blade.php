@@ -79,14 +79,14 @@
                 <li>
                     <a href="#sidebarOrganization" data-bs-toggle="collapse">
                         <i class="fas fa-users"></i>
-                        <span> Organization </span>
+                        <span> Manager </span>
                         <span class="menu-arrow"></span>
                     </a>
                     <div class="collapse" id="sidebarOrganization">
                         <ul class="nav-second-level">
                             <li>
-                                <a href="{{ route('manager') }}">
-                                    <span> All Organizations </span>
+                                <a href="{{ route('managers.index') }}">
+                                    <span> All Manager </span>
                                 </a>
                             </li>
                             <li>
@@ -96,16 +96,22 @@
                                 <a href="{{ route('schedule.publishes') }}">Published Schedule</a>
                             </li>
                             <li>
-                                <a href="{{ route('transpot.users') }}">Transport Users</a>
-                            </li>
-                            <li>
                                 <a href="{{ route('transpot.schedule') }}">Scheduled Transport</a>
                             </li>
                             <li>
                                 <a href="{{ route('log.reports') }}">LOG Report</a>
                             </li>
                             <li>
+                                <a href="{{ route('transpot.users') }}">Transport Users</a>
+                            </li>
+                            <li>
                                 <a href="{{ route('awaiting.approvals') }}">Awaiting Approvals</a>
+                            </li>
+                            <li>
+                                <a href="{{ route('user.approved') }}">Approved User</a>
+                            </li>
+                            <li>
+                                <a href="{{ route('user.disapproved') }}">Disapproved User</a>
                             </li>
                             <!-- <li>
                                 <a href="{{ route('history') }}">History</a>
@@ -115,13 +121,13 @@
 
                 </li>
                 <li>
-                    <a href="{{ route('vehicle') }}">
+                    <a href="{{ route('vehicles.index') }}">
                         <i class=" fas fa-car-alt"></i>
                         <span> Vehicles </span>
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('route') }}">
+                    <a href="{{ route('routes.index') }}">
                         <i class="fas fa-route"></i>
                         <span> Route </span>
                     </a>
@@ -166,10 +172,10 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="{{ route('trans_schdule') }}">Transport Schedule</a>
+                                <a href="{{ route('trans_schdule')}}">Transport Schedule</a>
                             </li>
                             <li>
-                                <a href="{{route('trans_routes')}}">Transport Routes</a>
+                                <a href="{{ route('trans_routes')}}">Transport Routes</a>
                         </ul>
                     </div>
 

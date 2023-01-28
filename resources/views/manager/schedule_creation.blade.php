@@ -15,7 +15,7 @@
 <div class="row">
     <div class="col-12">
         <div class="page-title-box">
-            <h4 class="page-title">All Schedule Creation</h4>
+            <h4 class="page-title">Schedule Creation</h4>
         </div>
     </div>
 </div>
@@ -77,7 +77,7 @@
                         </div> <!-- end col -->
                         <div class="col-md-1">
                             <label for="add_schedule"></label>
-                            <button class="btn btn-success form-control" id="add_schedule"> Add </button>
+                            <button type="button" class="btn btn-success form-control" id="add_schedule"> Add </button>
                         </div> <!-- end col -->
                     </div> <!-- end row -->
                 </form>
@@ -86,49 +86,68 @@
     </div> <!-- end col-->
 </div>
 
-<div class="row">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <h4 class="header-title">Created Schedule</h4>
-            </div>
-            <div class="card-body">
-                <table id="datatable-buttons" class="table table-striped dt-responsive nowrap w-100">
-                    <thead>
-                        <tr>
-                            <th>
-                                <input type="checkbox">
-                            </th>
-                            <th>Organization Name</th>
-                            <th>Branch Name</th>
-                            <th>Branch Code</th>
-                            <th>Route No</th>
-                            <th>Vehicle</th>
-                            <th>Driver</th>
-                            <th>Time</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <input type="checkbox">
-                            </td>
-                            <td><b><a href="#" data-bs-toggle="modal" data-bs-target="#modal_organization">Punjab University</a></b></td>
-                            <td>GT Road Branch</td>
-                            <td>123</td>
-                            <td><b><a href="#">1</a></b></td>
-                            <td>LHR-123</td>
-                            <td>Ali</td>
-                            <td>09:45 PM</td>
-                            <td><a href="#" class="action-icon"> <i class="mdi mdi-delete"></i></a></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div> <!-- end card body-->
-        </div> <!-- end card -->
-    </div><!-- end col-->
-</div>
+<form action="">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex" style="justify-content: space-between;">
+                    <div class="col-6">
+                        <h4 class="header-title">Created Schedule</h4>
+                    </div>
+                    <div class="col-6 d-flex flex-row-reverse">
+                        <button type="button" class="btn btn-danger">Publish</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <table id="datatable-buttons" class="table table-striped dt-responsive nowrap w-100">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <input type="checkbox">
+                                </th>
+                                <th>Date</th>
+                                <th>Organization Name</th>
+                                <th>Driver</th>
+                                <th>Route No</th>
+                                <th>Vehicle</th>
+                                <th>Time</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <input type="checkbox">
+                                </td>
+                                <td>20/10/2023</td>
+                                <td><b><a href="#" data-bs-toggle="modal" data-bs-target="#modal_organization">Punjab University</a></b></td>
+                                <td>Ali</td>
+                                <td><b>Grw <a href="#" class="text-success">10</a> LHR</b></td>
+                                <td>GAO-123</td>
+                                <td>09:00 AM</td>
+                                <td><a href="#" class="action-icon"> <i class="mdi mdi-delete"></i></a></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="checkbox">
+                                </td>
+                                <td>20/10/2023</td>
+                                <td><b><a href="#" data-bs-toggle="modal" data-bs-target="#modal_organization">Punjab University</a></b></td>
+                                <td>AZam</td>
+                                <td><b>LHR <a href="#" class="text-success"> 15 </a> MLT </b></td>
+                                <td>LHR-123</td>
+                                <td>09:15 AM</td>
+                                <td><a href="#" class="action-icon"> <i class="mdi mdi-delete"></i></a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div> <!-- end card body-->
+            </div> <!-- end card -->
+        </div><!-- end col-->
+    </div>
+</form>
+
+
 
 <!-- Modal -->
 <div class="modal fade" id="modal_organization" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="organizationLabel" aria-hidden="true">
@@ -158,13 +177,13 @@
                                 </p>
 
                                 <h4 class="font-13 text-muted text-uppercase mb-1">Company :</h4>
-                                <p class="mb-3">Vine Corporation</p>
+                                <p class="mb-3">Punjab University</p>
 
-                                <h4 class="font-13 text-muted text-uppercase mb-1">Added :</h4>
+                                <!-- <h4 class="font-13 text-muted text-uppercase mb-1">Added :</h4>
                                 <p class="mb-3"> April 22, 2016</p>
 
                                 <h4 class="font-13 text-muted text-uppercase mb-1">Updated :</h4>
-                                <p class="mb-0"> Dec 13, 2017</p>
+                                <p class="mb-0"> Dec 13, 2017</p> -->
 
                             </div>
                         </div>
