@@ -1,8 +1,12 @@
 <?php
 
+use App\Models\TransportManager;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\RouteController;
+use App\Http\Controllers\TransportManagerController;
+use App\Http\Controllers\VehicleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,15 +21,27 @@ use App\Http\Controllers\HomeController;
 
 //User Roles
 // Route::resource('roles', 'RoleController');
-Route::get('/', function () { return view('auth.login'); })->name('login');
+Route::get('/', function () {
+    return redirect()->route('login');
+})->name('login');
 Route::get('/register', function () { return view('auth.register'); })->name('register');
 Auth::routes();
 
 Route::group(['middleware' => 'auth'], function(){
     Route::get('/home', [HomeController::class, 'index'])->name('home');
+    Route::resource('/managers', TransportManagerController::class);
+    Route::resource('/routes', RouteController::class);
+    Route::resource('/vehicles', VehicleController::class);
+    
+
+
+    // Route::get('/vehicle', function () { return view('vehicle.index');})->name('vehicle');
+
     Route::get('/profile', function () { return view('auth.profile'); })->name('profile');
-    Route::get('/manager', function () { return view('manager.index');})->name('manager');
+    // Route::get('/manager', function () { return view('manager.index');})->name('manager');
     Route::get('/awaiting/approvals', function () { return view('manager.awaiting_approvals');})->name('awaiting.approvals');
+    Route::get('/user/appreved', function () { return view('manager.approved_user');})->name('user.approved');
+    Route::get('/user/disapproved', function () { return view('manager.disapproved_user');})->name('user.disapproved');
     Route::get('/history', function () { return view('manager.history');})->name('history');
     Route::get('/log/reports', function () { return view('manager.log_report');})->name('log.reports');
     Route::get('/schedule/creation', function () { return view('manager.schedule_creation');})->name('schedule.creation');
@@ -42,8 +58,8 @@ Route::group(['middleware' => 'auth'], function(){
         Route::get('/trips', function () { return view('driver.trips');})->name('driver.trips');
         Route::get('/tripstatus', function () { return view('driver.tripstatus');})->name('driver.tripstatus');
     });
-    Route::get('/vehicle', function () { return view('vehicle.index');})->name('vehicle');
-    Route::get('/route', function () { return view('route.index');})->name('route');
+    
+    // Route::get('/route', function () { return view('route.index');})->name('route');
     Route::get('/revenue', function () { return view('report.revenue');})->name('revenue');
     Route::get('/expense', function () { return view('report.expense');})->name('expense');
     Route::get('/history/Passenger-to-Passenger', function () { return view('history.passenger_to_passenger');})->name('bus.passenger');

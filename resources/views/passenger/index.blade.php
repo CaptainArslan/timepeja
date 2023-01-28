@@ -18,7 +18,7 @@
         <div class="card">
             <div class="card-header d-flex">
                 <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> Add </button>
-                
+
             </div>
             <div class="card-body">
                 <h4 class="header-title">Passengers</h4>
@@ -55,62 +55,70 @@
 <!-- end row-->
 <!-- Modal -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-light">
                 <h4 class="modal-title" id="myCenterModalLabel">Add Passenger</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
             </div>
-            <div class="modal-body p-4">
+            <div class=" modal-body p-4">
                 <form>
-                    <div class="mb-3">
-                        <label for="example-select" class="form-label">Organization Name</label>
-                        <select class="form-select" id="example-select">
-                            <option>School</option>
-                            <option>college</option>
-                            <option>University</option>
-                            <!-- <option>Org</option> -->
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="example-select" class="form-label">Passenger Type</label>
-                        <select class="form-select" id="example-select">
-                            <option>Student</option>
-                            <option>Guardian</option>
-                            <option>Employee</option>
-                            <!-- <option>Org</option> -->
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="example-select" class="form-label">For Manager Only</label>
-                        <select class="form-select" id="example-select">
-                            <option>John</option>
-                            <option>Charles</option>
-                            <option>Chips</option>
-                            <!-- <option>Org</option> -->
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="simpleinput" class="form-label">Name</label>
-                        <input type="text" id="simpleinput" class="form-control">
-                    </div>
-                    <div class="mb-3">
-                        <label for="simpleinput" class="form-label">School Name</label>
-                        <input type="text" id="simpleinput" class="form-control">
-                    </div>
-                    <div class="mb-3">
-                        <label for="simpleinput" class="form-label">Roll No</label>
-                        <input type="number" id="simpleinput" class="form-control">
-                    </div>
-                    <div class="mb-3">
-                        <label for="example-select" class="form-label">Gender</label>
-                        <select class="form-select" id="example-select">
-                            <option>Male</option>
-                            <option>Female</option>
-                            <!-- <option>Org</option> -->
-                        </select>
-                    </div>
+                    <div class="row">
 
+                        <div class="col-lg-12">
+                            <div class="mb-3">
+                                <label for="example-select" class="form-label">Organization Name</label>
+                                <select class="form-select" id="example-select">
+                                    <option>School</option>
+                                    <option>college</option>
+                                    <option>University</option>
+                                    <!-- <option>Org</option> -->
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label for="example-select" class="form-label">Passenger Type</label>
+                                <select class="form-select" id="example-select">
+                                    <option>Student</option>
+                                    <option>Guardian</option>
+                                    <option>Employee</option>
+                                    <!-- <option>Org</option> -->
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="example-select" class="form-label">For Manager Only</label>
+                                <select class="form-select" id="example-select">
+                                    <option>John</option>
+                                    <option>Charles</option>
+                                    <option>Chips</option>
+                                    <!-- <option>Org</option> -->
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="simpleinput" class="form-label">Name</label>
+                                <input type="text" id="simpleinput" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label for="simpleinput" class="form-label">School Name</label>
+                                <input type="text" id="simpleinput" class="form-control">
+                            </div>
+                            <div class="mb-3">
+                                <label for="simpleinput" class="form-label">Roll No</label>
+                                <input type="number" id="simpleinput" class="form-control">
+                            </div>
+                            <div class="mb-3">
+                                <label for="example-select" class="form-label">Gender</label>
+                                <select class="form-select" id="example-select">
+                                    <option>Male</option>
+                                    <option>Female</option>
+                                    <!-- <option>Org</option> -->
+                                </select>
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="text-end">
                         <button type="submit" class="btn btn-success waves-effect waves-light">Save</button>

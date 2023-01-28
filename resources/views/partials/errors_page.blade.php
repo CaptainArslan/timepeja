@@ -1,4 +1,5 @@
 @if ($errors->any())
+Error Page
     <div class="alert alert-danger">
         <ul>
             @foreach ($errors->all() as $error)

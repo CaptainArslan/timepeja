@@ -48,7 +48,7 @@
                         </div> <!-- end col -->
                         <div class="col-md-1">
                             <label for="publish_schedule">.</label>
-                            <button class="btn btn-success" id="publish_schedule"> Submit </button>
+                            <button type="button" class="btn btn-success" id="publish_schedule"> Submit </button>
                         </div> <!-- end col -->
                     </div> <!-- end row -->
                 </form>
@@ -57,11 +57,18 @@
     </div> <!-- end col-->
 </div>
 
+<!--  Schedule Table -->
 <div class="row">
     <div class="col-12">
         <div class="card">
-            <div class="card-header">
-                <h4 class="header-title">Schedule</h4>
+            <div class="card-header d-flex">
+                <div class="col-4">
+                    <h4 class="header-title">Created Schedule</h4>
+                </div>
+                <div class="col-6 d-flex justify-content-between">
+                    <button type="button" class="btn btn-success">Modify schedule</button>
+                    <button type="button" class="btn btn-danger">Replicate schedule</button>
+                </div>
             </div>
             <div class="card-body">
                 <table id="datatable-buttons" class="table table-striped dt-responsive nowrap w-100">
@@ -70,10 +77,9 @@
                             <th>
                                 <input type="checkbox">
                             </th>
+                            <th>Date</th>
                             <th>Organization Name</th>
-                            <th>Branch Name</th>
-                            <th>Branch Code</th>
-                            <th>Route No</th>
+                            <th>Route Name</th>
                             <th>Vehicle</th>
                             <th>Driver</th>
                             <th>Time</th>
@@ -85,13 +91,24 @@
                             <td>
                                 <input type="checkbox">
                             </td>
+                            <td>20/12/2022</td>
                             <td><b><a href="#" data-bs-toggle="modal" data-bs-target="#modal_organization">Punjab University</a></b></td>
-                            <td>GT Road Branch</td>
-                            <td>123</td>
-                            <td><b><a href="#">1</a></b></td>
+                            <td><b>GRW <a href="#" class="text-success">TO </a> LHR</b></td>
                             <td>LHR-123</td>
                             <td>Ali</td>
-                            <td>09:45 PM</td>
+                            <td>09:00 AM</td>
+                            <td><a href="#" class="action-icon"> <i class="mdi mdi-delete"></i></a></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="checkbox">
+                            </td>
+                            <td>20/12/2022</td>
+                            <td><b><a href="#" data-bs-toggle="modal" data-bs-target="#modal_organization">Punjab University</a></b></td>
+                            <td><b>LHR <a href="#" class="text-success">TO </a> GRW</b></td>
+                            <td>GAO-123</td>
+                            <td>Azam</td>
+                            <td>09:15 AM</td>
                             <td><a href="#" class="action-icon"> <i class="mdi mdi-delete"></i></a></td>
                         </tr>
                     </tbody>

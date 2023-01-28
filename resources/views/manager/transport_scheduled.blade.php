@@ -70,12 +70,11 @@
                             <th>
                                 <input type="checkbox">
                             </th>
+                            <th>Date</th>
                             <th>Organization Name</th>
-                            <th>Branch Name</th>
-                            <th>Branch Code</th>
-                            <th>Route No</th>
-                            <th>Vehicle</th>
                             <th>Driver</th>
+                            <th>Route No</th>
+                            <th>Vehicle No</th>
                             <th>Time</th>
                             <th>Action</th>
                         </tr>
@@ -85,12 +84,35 @@
                             <td>
                                 <input type="checkbox">
                             </td>
+                            <td>20/12/2022</td>
                             <td><b><a href="#" data-bs-toggle="modal" data-bs-target="#modal_organization">Punjab University</a></b></td>
-                            <td>GT Road Branch</td>
-                            <td>123</td>
-                            <td><b><a href="#">1</a></b></td>
-                            <td>LHR-123</td>
                             <td>Ali</td>
+                            <td><b>Grw <a href="#" class="text-success"> 15 </a> MLT</b></td>
+                            <td>LHR-123</td>
+                            <td>09:45 PM</td>
+                            <td><a href="#" class="action-icon"> <i class="mdi mdi-delete"></i></a></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="checkbox">
+                            </td>
+                            <td>20/12/2022</td>
+                            <td><b><a href="#" data-bs-toggle="modal" data-bs-target="#modal_organization">Punjab University</a></b></td>
+                            <td>Azam</td>
+                            <td><b>Grw <a href="#" class="text-success"> 10 </a> LHR</b></td>
+                            <td>LHR-123</td>
+                            <td>09:45 PM</td>
+                            <td><a href="#" class="action-icon"> <i class="mdi mdi-delete"></i></a></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="checkbox">
+                            </td>
+                            <td>20/12/2022</td>
+                            <td><b><a href="#" data-bs-toggle="modal" data-bs-target="#modal_organization">Punjab University</a></b></td>
+                            <td>Afzal</td>
+                            <td><b>Grw <a href="#" class="text-success"> 06 </a> KCH</b></td>
+                            <td>LHR-123</td>
                             <td>09:45 PM</td>
                             <td><a href="#" class="action-icon"> <i class="mdi mdi-delete"></i></a></td>
                         </tr>
@@ -131,11 +153,11 @@
                                 <h4 class="font-13 text-muted text-uppercase mb-1">Company :</h4>
                                 <p class="mb-3">Vine Corporation</p>
 
-                                <h4 class="font-13 text-muted text-uppercase mb-1">Added :</h4>
+                                <!-- <h4 class="font-13 text-muted text-uppercase mb-1">Added :</h4>
                                 <p class="mb-3"> April 22, 2016</p>
 
                                 <h4 class="font-13 text-muted text-uppercase mb-1">Updated :</h4>
-                                <p class="mb-0"> Dec 13, 2017</p>
+                                <p class="mb-0"> Dec 13, 2017</p> -->
 
                             </div>
                         </div>
