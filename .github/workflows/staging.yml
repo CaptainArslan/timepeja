@@ -8,7 +8,7 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     steps:
-      - name: Get the latest code
+      - name: Get the latest staging code
         uses: actions/checkout@v2.3.2
       - uses: actions/setup-node@master
       - name: Copy .env
@@ -23,10 +23,8 @@ jobs:
         run: chmod -R 777 storage bootstrap/cache
       - name: 📂 Sync files
         uses: SamKirkland/FTP-Deploy-Action@4.0.0
-      - name: optimize code
-        uses: php artisan optimize:clear
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: /public_html/staging
+          server-dir: /public_html/staging/
