@@ -17,7 +17,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header d-flex">
-                <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> Add </button>
+                <button type="button" type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> Add </button>
 
             </div>
             <div class="card-body">
@@ -59,7 +59,7 @@
         <div class="modal-content">
             <div class="modal-header bg-light">
                 <h4 class="modal-title" id="myCenterModalLabel">Add Passenger</h4>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+                <button type="button" type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
             </div>
             <div class=" modal-body p-4">
                 <form>
@@ -121,7 +121,7 @@
                     </div>
 
                     <div class="text-end">
-                        <button type="submit" class="btn btn-success waves-effect waves-light">Save</button>
+                        <button type="button" type="submit" class="btn btn-success waves-effect waves-light">Save</button>
                     </div>
                 </form>
             </div>

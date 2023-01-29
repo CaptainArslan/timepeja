@@ -58,10 +58,9 @@
     <script src="{{asset('js/vendor.min.js')}}"></script>
     <!-- Plugins js-->
     <script src="{{asset('libs/flatpickr/flatpickr.min.js')}}"></script>
-    <script src="{{asset('libs/apexcharts/apexcharts.min.js')}}"></script>
+    <!-- <script src="{{asset('libs/apexcharts/apexcharts.min.js')}}"></script> -->
     <script src="{{asset('libs/selectize/js/standalone/selectize.min.js')}}"></script>
-    <!-- Dashboar 1 init js-->
-    <script src="{{asset('js/pages/dashboard-1.init.js')}}"></script>
+    
     <!-- App js-->
     <script src="{{asset('js/app.min.js')}}"></script>
     @yield('page_js')

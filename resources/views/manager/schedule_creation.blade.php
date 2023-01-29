@@ -77,7 +77,7 @@
                         </div> <!-- end col -->
                         <div class="col-md-1">
                             <label for="add_schedule"></label>
-                            <button type="button" class="btn btn-success form-control" id="add_schedule"> Add </button>
+                            <button type="button" type="button" class="btn btn-success form-control" id="add_schedule"> Add </button>
                         </div> <!-- end col -->
                     </div> <!-- end row -->
                 </form>
@@ -95,7 +95,7 @@
                         <h4 class="header-title">Created Schedule</h4>
                     </div>
                     <div class="col-6 d-flex flex-row-reverse">
-                        <button type="button" class="btn btn-danger">Publish</button>
+                        <button type="button" type="button" class="btn btn-danger">Publish</button>
                     </div>
                 </div>
                 <div class="card-body">
@@ -155,7 +155,7 @@
         <div class="modal-content">
             <div class="modal-header bg-light">
                 <h5 class="modal-title" id="organizationLabel">Organization Detail</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="col-xl-12">
