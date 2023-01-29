@@ -20,7 +20,7 @@
     <div class="col-lg-12 table-responsive">
         <div class="card">
             <div class="card-header">
-                <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> Add </button>
+                <button type="button" type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> Add </button>
             </div>
             <div class="card-body">
                 <h4 class="header-title">Vehicles</h4>
@@ -59,7 +59,7 @@
         <div class="modal-content">
             <div class="modal-header bg-light">
                 <h5 class="modal-title" id="staticBackdropLabel">Add Vehicle</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form action="{{ route('vehicles.store') }}" method="POST" enctype="multipart/form-data">
@@ -113,15 +113,15 @@
                                 </div>
                             </div> <!-- end card-body -->
                             <div class="text-end">
-                                <button type="submit" class="btn btn-success form-control waves-effect waves-light">Save</button>
+                                <button type="button" type="submit" class="btn btn-success form-control waves-effect waves-light">Save</button>
                             </div>
                         </div> <!-- end card-->
                     </div>
                 </form>
             </div>
             <!-- <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Submit</button>
+                <button type="button" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" type="button" class="btn btn-primary">Submit</button>
             </div> -->
         </div>
     </div>

@@ -66,7 +66,7 @@
                                     </div>
                                 </div>
                                 <div class="text-center d-grid">
-                                    <button class="btn btn-success" type="submit"> Sign Up </button>
+                                    <button type="button" class="btn btn-success" type="submit"> Sign Up </button>
                                 </div>
                             </form>
                         </div> <!-- end card-body -->

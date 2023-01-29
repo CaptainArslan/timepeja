@@ -17,7 +17,7 @@
     <div class="col-lg-12 table-responsive">
         <div class="card">
             <div class="card-header">
-                <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> Add </button>
+                <button type="button" type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> Add </button>
             </div>
             <div class="card-body">
                 <h4 class="header-title">Routes</h4>
@@ -57,7 +57,7 @@
         <div class="modal-content">
             <div class="modal-header bg-light">
                 <h4 class="modal-title" id="myCenterModalLabel">Add Route</h4>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+                <button type="button" type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
             </div>
             <div class="modal-body p-4">
                 <form action="" method="POST">
@@ -90,7 +90,7 @@
                         <input type="text" id="route_name" name="route_name" class="form-control" readonly>
                     </div>
                     <div class="text-end">
-                        <button type="submit" class="btn btn-success waves-effect waves-light">Save</button>
+                        <button type="button" type="submit" class="btn btn-success waves-effect waves-light">Save</button>
                     </div>
                 </form>
             </div>

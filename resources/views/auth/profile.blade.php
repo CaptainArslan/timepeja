@@ -33,8 +33,8 @@
                     <h4 class="mb-0">Geneva McKnight</h4>
                     <p class="text-muted">@webdesigner</p>
 
-                    <button type="button" class="btn btn-success btn-xs waves-effect mb-2 waves-light">Follow</button>
-                    <button type="button" class="btn btn-danger btn-xs waves-effect mb-2 waves-light">Message</button>
+                    <button type="button" type="button" class="btn btn-success btn-xs waves-effect mb-2 waves-light">Follow</button>
+                    <button type="button" type="button" class="btn btn-danger btn-xs waves-effect mb-2 waves-light">Message</button>
 
                     <div class="text-start mt-3">
                         <h4 class="font-13 text-uppercase">About Me :</h4>
@@ -265,7 +265,7 @@
                                 </span>
                                 <div class="comment-area-btn">
                                     <div class="float-end">
-                                        <button type="submit" class="btn btn-sm btn-dark waves-effect waves-light">Post</button>
+                                        <button type="button" type="submit" class="btn btn-sm btn-dark waves-effect waves-light">Post</button>
                                     </div>
                                     <div>
                                         <a href="#" class="btn btn-sm btn-light text-black-50"><i class="far fa-user"></i></a>
@@ -500,7 +500,7 @@
                                 </div> <!-- end row -->
 
                                 <div class="text-end">
-                                    <button type="submit" class="btn btn-success waves-effect waves-light mt-2"><i class="mdi mdi-content-save"></i> Save</button>
+                                    <button type="button" type="submit" class="btn btn-success waves-effect waves-light mt-2"><i class="mdi mdi-content-save"></i> Save</button>
                                 </div>
                             </form>
                         </div>

@@ -39,15 +39,18 @@ Route::group(['middleware' => 'auth'], function(){
 
     Route::get('/profile', function () { return view('auth.profile'); })->name('profile');
     // Route::get('/manager', function () { return view('manager.index');})->name('manager');
-    Route::get('/awaiting/approvals', function () { return view('manager.awaiting_approvals');})->name('awaiting.approvals');
-    Route::get('/user/appreved', function () { return view('manager.approved_user');})->name('user.approved');
-    Route::get('/user/disapproved', function () { return view('manager.disapproved_user');})->name('user.disapproved');
+    // Approval User
+    Route::get('/awaiting/approvals', function () { return view('manager.approval.awaiting_approvals');})->name('awaiting.approvals');
+    Route::get('/user/approved', function () { return view('manager.approval.approved_user');})->name('user.approved');
+    Route::get('/user/disapproved', function () { return view('manager.approval.disapproved_user');})->name('user.disapproved');
+    Route::get('/user/approval', function () { return view('manager.approval.user_approval_form');})->name('user.approval');
+
     Route::get('/history', function () { return view('manager.history');})->name('history');
     Route::get('/log/reports', function () { return view('manager.log_report');})->name('log.reports');
     Route::get('/schedule/creation', function () { return view('manager.schedule_creation');})->name('schedule.creation');
     Route::get('/schedule/publishes', function () { return view('manager.schedule_published');})->name('schedule.publishes');
     Route::get('/transpot/schedule', function () { return view('manager.transport_scheduled');})->name('transpot.schedule');
-    Route::get('/transpot/users', function () { return view('manager.transport_users');})->name('transpot.users');
+    Route::get('/transpot/users', function () { return view('manager.users.transport_users');})->name('transpot.users');
     Route::get('/passenger', function () { return view('passenger.index');})->name('passenger');
     Route::get('/trans_routes', function () { return view('passenger.trans_routes');})->name('trans_routes');
     Route::get('/trans_schdule', function () { return view('passenger.trans_schdule');})->name('trans_schdule');

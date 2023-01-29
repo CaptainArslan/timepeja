@@ -44,7 +44,7 @@
                                 <div class="app-search-box dropdown">
                                     <div class="input-group">
                                         <input type="search" class="form-control" placeholder="Search..." id="top-search">
-                                        <button class="btn input-group-text" type="submit">
+                                        <button type="button" class="btn input-group-text" type="submit">
                                             <i class="fe-search"></i>
                                         </button>
                                     </div>
@@ -372,7 +372,7 @@
     
                     <ul class="list-unstyled topnav-menu topnav-menu-left m-0">
                         <li>
-                            <button class="button-menu-mobile waves-effect waves-light">
+                            <button type="button" class="button-menu-mobile waves-effect waves-light">
                                 <i class="fe-menu"></i>
                             </button>
                         </li>
@@ -526,7 +526,7 @@
                                         <div class="text-center mt-3">
                                             <h3 class="text-dark">Special Discount Sale!</h3>
                                             <h4>Save up to 70% off.</h4>
-                                            <button class="btn btn-primary rounded-pill mt-3">Download Now</button>
+                                            <button type="button" class="btn btn-primary rounded-pill mt-3">Download Now</button>
                                         </div>
                                     </div>
                                 </div>
@@ -1501,9 +1501,9 @@
                                     <div class="card-body pb-1">
                                         <div class="float-end d-none d-md-inline-block">
                                             <div class="btn-group mb-2">
-                                                <button type="button" class="btn btn-xs btn-light">Today</button>
-                                                <button type="button" class="btn btn-xs btn-light">Weekly</button>
-                                                <button type="button" class="btn btn-xs btn-secondary">Monthly</button>
+                                                <button type="button" type="button" class="btn btn-xs btn-light">Today</button>
+                                                <button type="button" type="button" class="btn btn-xs btn-light">Weekly</button>
+                                                <button type="button" type="button" class="btn btn-xs btn-secondary">Monthly</button>
                                             </div>
                                         </div>
     
@@ -2284,7 +2284,7 @@
 
 
                             <div class="d-grid mt-4">
-                                <button class="btn btn-primary" id="resetBtn">Reset to Default</button>
+                                <button type="button" class="btn btn-primary" id="resetBtn">Reset to Default</button>
                                 <a href="https://1.envato.market/uboldadmin" class="btn btn-danger mt-3" target="_blank"><i class="mdi mdi-basket me-1"></i> Purchase Now</a>
                             </div>
 

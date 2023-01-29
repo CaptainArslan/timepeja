@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Transport Routes')
+@section('title', 'Disapproved User')
 <!-- start page title -->
 @section('page_css')
 <!-- Plugins css -->
@@ -15,7 +15,7 @@
 <div class="row">
     <div class="col-12">
         <div class="page-title-box">
-            <h4 class="page-title">Transport Routes</h4>
+            <h4 class="page-title">All Disapproved User</h4>
         </div>
     </div>
 </div>
@@ -61,7 +61,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h4 class="header-title">Schedule</h4>
+                <h4 class="header-title">Disapproved Approvals <b class="text-primary">(count)</b> </h4>
             </div>
             <div class="card-body">
                 <table id="datatable-buttons" class="table table-striped dt-responsive nowrap w-100">
@@ -85,14 +85,17 @@
                             <td>
                                 <input type="checkbox">
                             </td>
+                            <td>20/12/2022</td>
                             <td><b><a href="#" data-bs-toggle="modal" data-bs-target="#modal_organization">Punjab University</a></b></td>
-                            <td>GT Road Branch</td>
-                            <td>123</td>
-                            <td><b><a href="#">1</a></b></td>
-                            <td>LHR-123</td>
                             <td>Ali</td>
-                            <td>09:45 PM</td>
-                            <td><a href="#" class="action-icon"> <i class="mdi mdi-delete"></i></a></td>
+                            <td>stu-123 / Emp-123</td>
+                            <td>7th / CS</td>
+                            <td>0</td>
+                            <td><span class="badge bg-danger">pending</span></td>
+                            <td>
+                                <a href="#" class="btn btn-success  show_request text-white action-icon"> <i class="mdi mdi-logout-variant"></i></a>
+                                <!-- <a href="#" class="btn btn-danger  text-white action-icon"> <i class="mdi mdi-delete"></i></a> -->
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -157,7 +160,16 @@
 @include('partials.datatable_js')
 <script>
     $(document).ready(function() {
+        $('.show_request').click(function(e) {
+            e.preventDefault();
+            var url = window.location.origin + "/user/approval";
+            var w1 = window.open(
+                url,
+                "_blank",
+                "width=850,height=650,left=150,top=200,toolbar=1,status=1"
+            );
 
+        });
     });
 </script>
 

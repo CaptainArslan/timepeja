@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Transport Routes')
+@section('title', 'Approved User')
 <!-- start page title -->
 @section('page_css')
 <!-- Plugins css -->
@@ -15,7 +15,7 @@
 <div class="row">
     <div class="col-12">
         <div class="page-title-box">
-            <h4 class="page-title">Transport Routes</h4>
+            <h4 class="page-title">All Approved User </h4>
         </div>
     </div>
 </div>
@@ -61,7 +61,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h4 class="header-title">Schedule</h4>
+                <h4 class="header-title">Approved Users <b class="text-primary">(count)</b> </h4>
             </div>
             <div class="card-body">
                 <table id="datatable-buttons" class="table table-striped dt-responsive nowrap w-100">
@@ -70,13 +70,13 @@
                             <th>
                                 <input type="checkbox">
                             </th>
+                            <th>Date</th>
                             <th>Organization Name</th>
-                            <th>Branch Name</th>
-                            <th>Branch Code</th>
-                            <th>Route No</th>
-                            <th>Vehicle</th>
-                            <th>Driver</th>
-                            <th>Time</th>
+                            <th>Title</th>
+                            <th>Roll no/ Emp Id</th>
+                            <th>Class/ Depart</th>
+                            <th>No. of Guardian</th>
+                            <th>Status</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -85,14 +85,17 @@
                             <td>
                                 <input type="checkbox">
                             </td>
+                            <td>20/12/2022</td>
                             <td><b><a href="#" data-bs-toggle="modal" data-bs-target="#modal_organization">Punjab University</a></b></td>
-                            <td>GT Road Branch</td>
-                            <td>123</td>
-                            <td><b><a href="#">1</a></b></td>
-                            <td>LHR-123</td>
                             <td>Ali</td>
-                            <td>09:45 PM</td>
-                            <td><a href="#" class="action-icon"> <i class="mdi mdi-delete"></i></a></td>
+                            <td>stu-123 / Emp-123</td>
+                            <td>7th / CS</td>
+                            <td>0</td>
+                            <td><span class="badge bg-success">Approved</span></td>
+                            <td>
+                                <a href="#" class="btn btn-success  show_request text-white action-icon"> <i class="mdi mdi-logout-variant"></i></a>
+                                <!-- <a href="#" class="btn btn-danger  text-white action-icon"> <i class="mdi mdi-delete"></i></a> -->
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -129,13 +132,13 @@
                                 </p>
 
                                 <h4 class="font-13 text-muted text-uppercase mb-1">Company :</h4>
-                                <p class="mb-3">Vine Corporation</p>
+                                <p class="mb-3">Punjab University</p>
 
-                                <h4 class="font-13 text-muted text-uppercase mb-1">Added :</h4>
+                                <!-- <h4 class="font-13 text-muted text-uppercase mb-1">Added :</h4>
                                 <p class="mb-3"> April 22, 2016</p>
 
                                 <h4 class="font-13 text-muted text-uppercase mb-1">Updated :</h4>
-                                <p class="mb-0"> Dec 13, 2017</p>
+                                <p class="mb-0"> Dec 13, 2017</p> -->
 
                             </div>
                         </div>

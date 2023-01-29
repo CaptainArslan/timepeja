@@ -18,7 +18,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> Add Organization </button>
+                <button type="button" type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> Add Organization </button>
             </div>
             <div class="card-body">
                 <h4 class="header-title">Managers</h4>
@@ -83,7 +83,7 @@
         <div class="modal-content">
             <div class="modal-header bg-light">
                 <h5 class="modal-title" id="staticBackdropLabel">Add Organization</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="col-xl-12">
@@ -348,7 +348,7 @@
                                                 </div>
                                             </div> <!-- end row -->
                                             <div class="text-end">
-                                                <button type="submit" class="btn btn-success waves-effect waves-light">Save</button>
+                                                <button type="button" type="submit" class="btn btn-success waves-effect waves-light">Save</button>
                                             </div>
                                         </div>
                                     </div> <!-- tab-content -->
@@ -359,8 +359,8 @@
                 </div>
             </div>
             <!-- <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Submit</button>
+                <button type="button" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" type="button" class="btn btn-primary">Submit</button>
             </div> -->
         </div>
     </div>
