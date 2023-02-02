@@ -70,12 +70,11 @@
                             <th>
                                 <input type="checkbox">
                             </th>
-                            <th>Date</th>
+                            <th>Name</th>
                             <th>Organization Name</th>
-                            <th>Title</th>
                             <th>Roll no/ Emp Id</th>
                             <th>Class/ Depart</th>
-                            <th>No. of Guardian</th>
+                            <th>Date</th>
                             <th>Status</th>
                             <th>Action</th>
                         </tr>
@@ -85,12 +84,11 @@
                             <td>
                                 <input type="checkbox">
                             </td>
-                            <td>20/12/2022</td>
-                            <td><b><a href="#" data-bs-toggle="modal" data-bs-target="#modal_organization">Punjab University</a></b></td>
                             <td>Ali</td>
+                            <td><b><a href="#" data-bs-toggle="modal" data-bs-target="#modal_organization">Punjab University</a></b></td>
                             <td>stu-123 / Emp-123</td>
                             <td>7th / CS</td>
-                            <td>0</td>
+                            <td>20/12/2022</td>
                             <td><span class="badge bg-success">Approved</span></td>
                             <td>
                                 <a href="#" class="btn btn-success  show_request text-white action-icon"> <i class="mdi mdi-logout-variant"></i></a>
@@ -160,7 +158,16 @@
 @include('partials.datatable_js')
 <script>
     $(document).ready(function() {
+        $('.show_request').click(function(e) {
+            e.preventDefault();
+            var url = window.location.origin + "/user/approval";
+            var w1 = window.open(
+                url,
+                "_blank",
+                "width=850,height=650,left=150,top=200,toolbar=1,status=1"
+            );
 
+        });
     });
 </script>
 

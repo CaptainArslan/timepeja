@@ -24,7 +24,7 @@ class TransportManagerController extends Controller
     public function index()
     {
         $organizaton_types = OrganizationType::all();
-        return view('manager.index', compact('organizaton_types'));
+        return view('manager.manager_list', compact('organizaton_types'));
     }
 
     /**
@@ -34,7 +34,8 @@ class TransportManagerController extends Controller
      */
     public function create()
     {
-        dd('create');
+        $organizaton_types = OrganizationType::all();
+        return view('manager.index', compact('organizaton_types'));
     }
 
     /**

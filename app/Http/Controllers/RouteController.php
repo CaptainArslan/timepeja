@@ -18,7 +18,7 @@ class RouteController extends Controller
     public function index()
     {
         $organizations = Organization::all();
-        return view('route.index', compact('organizations'));
+        return view('route.route_list', compact('organizations'));
     }
 
     /**
@@ -28,7 +28,8 @@ class RouteController extends Controller
      */
     public function create()
     {
-        //
+        $organizations = Organization::all();
+        return view('route.index', compact('organizations'));
     }
 
     /**

@@ -40,13 +40,8 @@
                             <td>View</td>
                             <td>2011/04/25</td>
                             <td>
-                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-success" style="float: none;"><span class="mdi mdi-pencil"></span></button></div>
                                 <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
                             </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div> <!-- end card body-->
         </div> <!-- end card -->
     </div><!-- end col-->
 </div>

@@ -33,17 +33,17 @@ Route::group(['middleware' => 'auth'], function(){
     Route::resource('/routes', RouteController::class);
     Route::resource('/vehicles', VehicleController::class);
     
-
-
     // Route::get('/vehicle', function () { return view('vehicle.index');})->name('vehicle');
-
     Route::get('/profile', function () { return view('auth.profile'); })->name('profile');
     // Route::get('/manager', function () { return view('manager.index');})->name('manager');
+    
     // Approval User
     Route::get('/awaiting/approvals', function () { return view('manager.approval.awaiting_approvals');})->name('awaiting.approvals');
+    Route::get('/awaiting/approval', function () { return view('manager.approval.awaiting_approved_form');})->name('awaiting.approval');
     Route::get('/user/approved', function () { return view('manager.approval.approved_user');})->name('user.approved');
     Route::get('/user/disapproved', function () { return view('manager.approval.disapproved_user');})->name('user.disapproved');
     Route::get('/user/approval', function () { return view('manager.approval.user_approval_form');})->name('user.approval');
+
 
     Route::get('/history', function () { return view('manager.history');})->name('history');
     Route::get('/log/reports', function () { return view('manager.log_report');})->name('log.reports');
@@ -52,6 +52,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/transpot/schedule', function () { return view('manager.transport_scheduled');})->name('transpot.schedule');
     Route::get('/transpot/users', function () { return view('manager.users.transport_users');})->name('transpot.users');
     Route::get('/passenger', function () { return view('passenger.index');})->name('passenger');
+    Route::get('/passenger/list', function () { return view('passenger.passenger_list');})->name('passenger_list');
     Route::get('/trans_routes', function () { return view('passenger.trans_routes');})->name('trans_routes');
     Route::get('/trans_schdule', function () { return view('passenger.trans_schdule');})->name('trans_schdule');
     Route::prefix('driver')->group(function () {
@@ -61,6 +62,7 @@ Route::group(['middleware' => 'auth'], function(){
         Route::get('/trips', function () { return view('driver.trips');})->name('driver.trips');
         Route::get('/tripstatus', function () { return view('driver.tripstatus');})->name('driver.tripstatus');
     });
+    Route::get('/list', function () { return view('vehicle.vehicle_list');})->name('vehicle');
     
     // Route::get('/route', function () { return view('route.index');})->name('route');
     Route::get('/revenue', function () { return view('report.revenue');})->name('revenue');
@@ -74,4 +76,5 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/system-users', function () { return view('admin.users.index');})->name('users.index');
     Route::get('/permissions', function () { return view('admin.permissions.index');})->name('permissions.index');
     Route::get('/support', function () { return view('support.support');})->name('support');
+    Route::get('/wallets', function () { return view('wallet.index');})->name('wallet');
 });

@@ -70,13 +70,14 @@
                             <th>
                                 <input type="checkbox">
                             </th>
-                            <th>Organization Name</th>
-                            <th>Branch Name</th>
-                            <th>Branch Code</th>
-                            <th>Route No</th>
-                            <th>Vehicle</th>
-                            <th>Driver</th>
+                            <th>Date</th>
                             <th>Time</th>
+                            <th>Organization Name</th>
+                            <th>Name</th>
+                            <th>Roll no/ Emp id</th>
+                            <th>Class/ Depart</th>
+                            <th>Guardians</th>
+                            <th>Status</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -86,12 +87,13 @@
                                 <input type="checkbox">
                             </td>
                             <td>20/12/2022</td>
+                            <td>10:00 am</td>
                             <td><b><a href="#" data-bs-toggle="modal" data-bs-target="#modal_organization">Punjab University</a></b></td>
                             <td>Ali</td>
                             <td>stu-123 / Emp-123</td>
                             <td>7th / CS</td>
                             <td>0</td>
-                            <td><span class="badge bg-danger">pending</span></td>
+                            <td><span class="badge bg-danger">Disapproved</span></td>
                             <td>
                                 <a href="#" class="btn btn-success  show_request text-white action-icon"> <i class="mdi mdi-logout-variant"></i></a>
                                 <!-- <a href="#" class="btn btn-danger  text-white action-icon"> <i class="mdi mdi-delete"></i></a> -->
