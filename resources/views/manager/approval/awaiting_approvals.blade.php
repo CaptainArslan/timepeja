@@ -47,7 +47,7 @@
                             <input class="form-control" id="example-date" type="date" name="date">
                         </div> <!-- end col -->
                         <div class="col-md-1">
-                            <label for="publish_schedule">.</label>
+                            <label for="publish_schedule"></label>
                             <button type="button" class="btn btn-success" id="publish_schedule"> Submit </button>
                         </div> <!-- end col -->
                     </div> <!-- end row -->
@@ -61,7 +61,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h4 class="header-title">Awaiting Approvals <b class="text-primary">(count)</b> </h4>
+                <h4 class="header-title">Awaiting Approvals <b class="text-primary">(01)</b> </h4>
             </div>
             <div class="card-body">
                 <table id="basic-datatable" class="table table-striped dt-responsive nowrap w-100">
@@ -71,11 +71,12 @@
                                 <input type="checkbox">
                             </th>
                             <th>Date</th>
+                            <th>Time</th>
                             <th>Organization Name</th>
                             <th>Title</th>
                             <th>Roll no/ Emp Id</th>
                             <th>Class/ Depart</th>
-                            <th>No. of Guardian</th>
+                            <th>Guardian</th>
                             <th>Status</th>
                             <th>Action</th>
                         </tr>
@@ -86,11 +87,12 @@
                                 <input type="checkbox">
                             </td>
                             <td>20/12/2022</td>
+                            <td>9:30 PM</td>
                             <td><b><a href="#" data-bs-toggle="modal" data-bs-target="#modal_organization">Punjab University</a></b></td>
                             <td>Ali</td>
                             <td>stu-123 / Emp-123</td>
                             <td>7th / CS</td>
-                            <td>0</td>
+                            <td>3</td>
                             <td><span class="badge bg-danger">pending</span></td>
                             <td>
                                 <a href="#" class="btn btn-success  show_request text-white action-icon"> <i class="mdi mdi-logout-variant"></i></a>
@@ -162,7 +164,7 @@
     $(document).ready(function() {
         $('.show_request').click(function(e) {
             e.preventDefault();
-            var url = window.location.origin + "/user/approval";
+            var url = "{{ route('awaiting.approval') }}";
             var w1 = window.open(
                 url,
                 "_blank",

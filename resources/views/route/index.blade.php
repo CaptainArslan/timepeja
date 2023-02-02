@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Routes')
+@section('title', 'Add Route')
 <!-- start page title -->
 @section('page_css')
 @include('partials.datatable_css')
@@ -8,7 +8,7 @@
 <div class="row">
     <div class="col-12">
         <div class="page-title-box">
-            <h4 class="page-title">All Routes</h4>
+            <h4 class="page-title">Add Route</h4>
         </div>
     </div>
 </div>
@@ -20,10 +20,12 @@
                 <button type="button" type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> Add </button>
             </div>
             <div class="card-body">
-                <h4 class="header-title">Routes</h4>
+                <h4 class="header-title">Latest Routes</h4>
                 <table id="datatable-buttons" class="table table-striped dt-responsive nowrap w-100">
                     <thead>
                         <tr>
+                            <th>Date</th>
+                            <th>Time</th>
                             <th>Organization Name</th>
                             <th>Route Name</th>
                             <th>To</th>
@@ -36,12 +38,17 @@
 
                     <tbody>
                         <tr>
+                            <td>2/1/2023</td>
+                            <td>9:00 PM</td>
                             <td><b><a href="#">Tiger Nixon</a></b></td>
                             <td>System Architect</td>
                             <td>Edinburgh</td>
                             <td>61</td>
                             <td>2011/04/25</td>
-                            <td><a href="#" class="action-icon"> <i class="mdi mdi-delete"></i></a></td>
+                            <td>
+                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" class="tabledit-edit-button btn btn-success" style="float: none;" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><span class="mdi mdi-pencil"></span></button></div>
+                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
+                            </td>
                         </tr>
                     </tbody>
                 </table>

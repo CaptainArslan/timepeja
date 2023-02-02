@@ -85,8 +85,13 @@
                     <div class="collapse" id="sidebarOrganization">
                         <ul class="nav-second-level">
                             <li>
+                                <a href="{{ route('managers.create') }}">
+                                    <span> Add Manager </span>
+                                </a>
+                            </li>
+                            <li>
                                 <a href="{{ route('managers.index') }}">
-                                    <span> All Manager </span>
+                                    <span> Managers List </span>
                                 </a>
                             </li>
                             <li>
@@ -114,23 +119,59 @@
                                 <a href="{{ route('user.disapproved') }}">Disapproved User</a>
                             </li>
                             <!-- <li>
+                                <a href="{{ route('user.disapproved') }}">Add user</a>
+                            </li> -->
+                            <!-- <li>
                                 <a href="{{ route('history') }}">History</a>
                             </li> -->
                         </ul>
                     </div>
 
                 </li>
-                <li>
+                <!-- <li>
                     <a href="{{ route('vehicles.index') }}">
                         <i class=" fas fa-car-alt"></i>
                         <span> Vehicles </span>
                     </a>
+                </li> -->
+                <li>
+                    <a href="#sidebarvehicles" data-bs-toggle="collapse">
+                        <i class="fas fa-car-alt"></i>
+                        <span> Vehicles </span>
+                        <span class="menu-arrow"></span>
+                    </a>
+                    <div class="collapse" id="sidebarvehicles">
+                        <ul class="nav-second-level">
+                            <li>
+                                <a href="{{ route('vehicles.index') }}">Add Vehicle</a>
+                            </li>
+                            <li>
+                                <a href="{{ route('vehicle') }}">Vehicle List</a>
+                            </li>
+                        </ul>
+                    </div>
                 </li>
                 <li>
-                    <a href="{{ route('routes.index') }}">
+                    <a href="#sidebarRoute" data-bs-toggle="collapse">
                         <i class="fas fa-route"></i>
-                        <span> Route </span>
+                        <span> Routes </span>
+                        <span class="menu-arrow"></span>
                     </a>
+                    <div class="collapse" id="sidebarRoute">
+                        <ul class="nav-second-level">
+                        <li>
+                                <a href="{{ route('routes.create') }}">
+                                    <span> Add Route </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('routes.index') }}">
+                                    <span> List of Route </span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
                 </li>
                 <li>
                     <a href="#sidebarDriver" data-bs-toggle="collapse">
@@ -151,9 +192,9 @@
                             <!-- <li>
                                 <a href="{{ route('driver.notification') }}">Notification</a>
                             </li> -->
-                            <li>
+                            <!-- <li>
                                 <a href="{{ route('driver.triphistory') }}">Trip History</a>
-                            </li>
+                            </li> -->
                         </ul>
                     </div>
 
@@ -168,7 +209,12 @@
                         <ul class="nav-second-level">
                             <li>
                                 <a href="{{ route('passenger') }}">
-                                    <span> All Passengers </span>
+                                    <span> Add Passengers </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('passenger_list') }}">
+                                    <span> Passengers List </span>
                                 </a>
                             </li>
                             <li>
@@ -217,18 +263,18 @@
                         </ul>
                     </div>
                 </li>
-                <li>
+                <!-- <li>
                     <a href="{{ route('support') }}">
                         <i class="fas fa-headset"></i>
                         <span> Support </span>
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="{{ route('wallet') }}">
                         <i class="fas fa-wallet"></i>
                         <span> Wallets </span>
                     </a>
-                </li>
+                </li> -->
             </ul>
         </div>
         <!-- End Sidebar -->

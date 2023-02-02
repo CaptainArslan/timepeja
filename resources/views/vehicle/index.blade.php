@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Vehicles')
+@section('title', 'Add Vehicle')
 <!-- start page title -->
 @section('page_css')
 @include('partials.datatable_css')
@@ -24,7 +24,7 @@
             </div>
             <div class="card-body">
                 <h4 class="header-title">Vehicles</h4>
-                <table id="datatable-buttons" class="table table-striped dt-responsive nowrap w-100">
+                <table id="basic-datatable" class="table table-striped dt-responsive nowrap w-100">
                     <thead>
                         <tr>
                             <th>Organization Name</th>
@@ -44,7 +44,10 @@
                             <td></td>
                             <td></td>
                             <td></td>
-                            <td><a href="#" class="action-icon"> <i class="mdi mdi-delete"></i></a></td>
+                            <td>
+                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" class="tabledit-edit-button btn btn-success" style="float: none;" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><span class="mdi mdi-pencil"></span></button></div>
+                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
+                            </td>
                         </tr>
                     </tbody>
                 </table>

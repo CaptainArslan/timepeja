@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Managers')
+@section('title', 'Add Managers')
 <!-- start page title -->
 @section('page_css')
 @include('partials.datatable_css')
@@ -8,7 +8,7 @@
 <div class="row">
     <div class="col-12">
         <div class="page-title-box">
-            <h4 class="page-title">All Managers</h4>
+            <h4 class="page-title">Add Managers</h4>
         </div>
     </div>
 </div>
@@ -21,7 +21,7 @@
                 <button type="button" type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> Add Organization </button>
             </div>
             <div class="card-body">
-                <h4 class="header-title">Managers</h4>
+                <h4 class="header-title">Latest Managers</h4>
                 <table id="datatable-buttons" class="table table-striped dt-responsive nowrap w-100">
                     <thead>
                         <tr>
@@ -29,6 +29,7 @@
                                 <input type="checkbox">
                             </th>
                             <th>Date</th>
+                            <th>Time</th>
                             <th>Org Name</th>
                             <th>Branch Name</th>
                             <th>Branch Code</th>
@@ -53,13 +54,14 @@
                                 <input type="checkbox">
                             </td>
                             <td>20/12/2022</td>
+                            <td>10:00 AM</td>
                             <td><b><a href="#">Tiger Nixon</a></b></td>
-                            <td>System Architect</td>
-                            <td>Edinburgh</td>
-                            <td>61</td>
-                            <td>2011/04/25</td>
-                            <td>$320,800</td>
-                            <td>$320,800</td>
+                            <td>UOG</td>
+                            <td>14358</td>
+                            <td>University</td>
+                            <td>uoguni@gmail.com</td>
+                            <td>055-486215</td>
+                            <td>Gujrat,Pakistan</td>
                             <td>435</td>
                             <td>435</td>
                             <td>435</td>

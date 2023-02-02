@@ -24,9 +24,13 @@
             </div>
             <div class="card-body">
                 <h4 class="header-title">Drivers</h4>
-                <table id="datatable-buttons" class="table table-striped dt-responsive nowrap w-100">
+                <table id="basic-datatable" class="table table-striped dt-responsive nowrap w-100">
                     <thead>
                         <tr>
+                            <th>
+                                <input type="checkbox">
+                            </th>
+                            <th>Date</th>
                             <th>Organization Name</th>
                             <th>Name</th>
                             <th>Phone No</th>
@@ -36,6 +40,7 @@
                             <th>CNIC Back</th>
                             <th>License Front</th>
                             <th>License Back</th>
+                            <th>Status</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -43,15 +48,49 @@
 
                     <tbody>
                         <tr>
-                            <td><b><a href="#">Tiger Nixon</a></b></td>
-                            <td>System Architect</td>
-                            <td>Edinburgh</td>
-                            <td>61</td>
-                            <td>2011/04/25</td>
-                            <td>$320,800</td>
-                            <td>61</td>
-                            <td>61</td>
-                            <td>61</td>
+                            <td><input type="checkbox"></td>
+                            <td>20/12/2022</td>
+                            <td><b><a href="#">University of Sargodha</a></b></td>
+                            <td>Ali</td>
+                            <td>0317-12345678</td>
+                            <td>34101-1231568-1</td>
+                            <td>GA-19-12017</td>
+                            <td>
+                                <img src="" alt="cnic front">
+                            </td>
+                            <td>
+                                <img src="" alt="cnic back">
+                            </td>
+                            <td>
+                                <img src="" alt="licsence front">
+                            </td>
+                            <td>
+                                <img src="" alt="License Back">
+                            </td>
+                            <td><span class="badge bg-success">active</span></td>
+                            <td><a href="#" class="action-icon"> <i class="mdi mdi-delete"></i></a></td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox"></td>
+                            <td>20/12/2022</td>
+                            <td><b><a href="#">University of Sargodha</a></b></td>
+                            <td>Ali</td>
+                            <td>0317-12345678</td>
+                            <td>34101-1231568-1</td>
+                            <td>GA-19-12017</td>
+                            <td>
+                                <img src="" alt="cnic front">
+                            </td>
+                            <td>
+                                <img src="" alt="cnic back">
+                            </td>
+                            <td>
+                                <img src="" alt="licsence front">
+                            </td>
+                            <td>
+                                <img src="" alt="License Back">
+                            </td>
+                            <td><span class="badge bg-danger">disable</span></td>
                             <td><a href="#" class="action-icon"> <i class="mdi mdi-delete"></i></a></td>
                         </tr>
                     </tbody>
