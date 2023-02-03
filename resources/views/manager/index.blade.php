@@ -37,15 +37,16 @@
                             <th>Email</th>
                             <th>Phone No</th>
                             <th>Address</th>
-                            <th>Action</th>
                             <th>Head Name</th>
                             <th>Email</th>
                             <th>Phone No</th>
                             <th>Address</th>
-                            <th>Name</th>
-                            <th>Email</th>
+                            <th>Transport Manager</th>
                             <th>Phone No</th>
+                            <th>Email</th>
+                            <th>Address</th>
                             <th>Manager Picture</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -62,15 +63,19 @@
                             <td>uoguni@gmail.com</td>
                             <td>055-486215</td>
                             <td>Gujrat,Pakistan</td>
-                            <td>435</td>
-                            <td>435</td>
-                            <td>435</td>
-                            <td>435</td>
-                            <td>John</td>
-                            <td>John</td>
-                            <td>John</td>
-                            <td>John</td>
-                            <td><a href="#" class="action-icon"> <i class="mdi mdi-delete"></i></a></td>
+                            <td>Shami</td>
+                            <td>shami@gmail.com</td>
+                            <td>055-435258</td>
+                            <td>Lahore Punjab Pakistan</td>
+                            <td>Qasim</td>
+                            <td>qasim@gmail.com</td>
+                            <td>055-435258</td>
+                            <td>Lahore Punjab Pakistan</td>
+                            <td>img</td>
+                            <td>
+                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-success" style="float: none;" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><span class="mdi mdi-pencil"></span></button></div>
+                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
+                            </td>
                         </tr>
                     </tbody>
                 </table>

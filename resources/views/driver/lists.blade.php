@@ -1,21 +1,17 @@
 @extends('layouts.app')
-@section('title', 'Upcoming Trips')
+@section('title', 'All Drivers')
 <!-- start page title -->
 @section('page_css')
-<!-- Plugins css -->
-<link href="{{ asset('libs/select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
-
-<!-- App css -->
-<link href="{{ asset('css/app.min.css') }}" rel="stylesheet" type="text/css" id="app-style" />
-
 @include('partials.datatable_css')
+<!-- Plugins css -->
+<link href="/libs/dropzone/min/dropzone.min.css" rel="stylesheet" type="text/css" />
+<link href="/libs/dropify/css/dropify.min.css" rel="stylesheet" type="text/css" />
 @endsection
-<!-- end page title -->
 @section('content')
 <div class="row">
     <div class="col-12">
         <div class="page-title-box">
-            <h4 class="page-title">Upcoming Trips</h4>
+            <h4 class="page-title">All Drivers</h4>
         </div>
     </div>
 </div>
@@ -74,90 +70,85 @@
         </div> <!-- end card-->
     </div> <!-- end col-->
 </div>
-
+<!-- end page title -->
 <div class="row">
-    <div class="col-12">
+    <div class="col-12 table-responsive">
         <div class="card">
             <div class="card-header">
-                <h4 class="header-title">Trips <b class="text-primary"> (4) </b></h4>
+                <h4 class="header-title">Drivers List</h4>
+                <!-- <button type="button" type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> Add </button> -->
             </div>
-            <div class="card-body table-responsive">
-                <table id="datatable-buttons" class="table table-striped dt-responsive nowrap w-100">
+            <div class="card-body">
+                <table id="basic-datatable" class="table table-striped dt-responsive nowrap w-100">
                     <thead>
                         <tr>
                             <th>
                                 <input type="checkbox">
                             </th>
                             <th>Date</th>
-                            <!-- <th>Organization Name</th> -->
-                            <th>Time</th>
-                            <th>Route</th>
-                            <th>Vehicle</th>
-                            <th>Trip Status</th>
-                            <th>Delay Reason</th>
+                            <th>Organization Name</th>
+                            <th>Name</th>
+                            <th>Phone No</th>
+                            <th>CNIC Number</th>
+                            <th>License Number</th>
+                            <th>CNIC Front</th>
+                            <th>CNIC Back</th>
+                            <th>License Front</th>
+                            <th>License Back</th>
+                            <th>Status</th>
                             <th>Action</th>
                         </tr>
                     </thead>
+
+
                     <tbody>
                         <tr>
-                            <td>
-                                <input type="checkbox">
-                            </td>
+                            <td><input type="checkbox"></td>
                             <td>20/12/2022</td>
-                            <!-- <td><b><a href="#" data-bs-toggle="modal" data-bs-target="#modal_organization">Punjab University</a></b></td> -->
-                            <td> 09:00 AM</td>
-                            <td> <b> <span class=" text-danger">15</span> - Gujranwala <span class="text-success"> TO </span> Lahore </b> </td>
-                            <td> LHR-123</td>
-                            <td><span class="badge bg-warning">pending</span></td>
-                            <td>Nill</td>
+                            <td><b><a href="#">University of Sargodha</a></b></td>
+                            <td>Ali</td>
+                            <td>0317-12345678</td>
+                            <td>34101-1231568-1</td>
+                            <td>GA-19-12017</td>
+                            <td>
+                                <img src="" alt="cnic front">
+                            </td>
+                            <td>
+                                <img src="" alt="cnic back">
+                            </td>
+                            <td>
+                                <img src="" alt="licsence front">
+                            </td>
+                            <td>
+                                <img src="" alt="License Back">
+                            </td>
+                            <td><span class="badge bg-success">active</span></td>
                             <td>
                                 <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-success" style="float: none;" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><span class="mdi mdi-pencil"></span></button></div>
                                 <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
                             </td>
                         </tr>
                         <tr>
-                            <td>
-                                <input type="checkbox">
-                            </td>
+                            <td><input type="checkbox"></td>
                             <td>20/12/2022</td>
-                            <!-- <td><b><a href="#" data-bs-toggle="modal" data-bs-target="#modal_organization">Punjab University</a></b></td> -->
-                            <td> 09:15 AM</td>
-                            <td> <b> <span class=" text-danger">10</span> - Lahore <span class="text-success"> TO </span> Multan </b> </td>
-                            <td> LHR-123</td>
-                            <td><span class="badge bg-dark">In Progress</span></td>
-                            <td>Nill</td>
+                            <td><b><a href="#">University of Sargodha</a></b></td>
+                            <td>Ali</td>
+                            <td>0317-12345678</td>
+                            <td>34101-1231568-1</td>
+                            <td>GA-19-12017</td>
                             <td>
-                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-success" style="float: none;" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><span class="mdi mdi-pencil"></span></button></div>
-                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
+                                <img src="" alt="cnic front">
                             </td>
-                        </tr>
-                        <tr>
                             <td>
-                                <input type="checkbox">
+                                <img src="" alt="cnic back">
                             </td>
-                            <td>20/12/2022</td>
-                            <!-- <td><b><a href="#" data-bs-toggle="modal" data-bs-target="#modal_organization">Punjab University</a></b></td> -->
-                            <td> 09:30 AM</td>
-                            <td> <b> <span class=" text-danger">5</span> - Multan <span class="text-success"> TO </span> Lahore </b> </td>
-                            <td> LHR-123</td>
-                            <td><span class="badge bg-success">Completed</span></td>
-                            <td>Nill</td>
                             <td>
-                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-success" style="float: none;" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><span class="mdi mdi-pencil"></span></button></div>
-                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
+                                <img src="" alt="licsence front">
                             </td>
-                        </tr>
-                        <tr>
                             <td>
-                                <input type="checkbox">
+                                <img src="" alt="License Back">
                             </td>
-                            <td>20/12/2022</td>
-                            <!-- <td><b><a href="#" data-bs-toggle="modal" data-bs-target="#modal_organization">Punjab University</a></b></td> -->
-                            <td> 10:00 AM</td>
-                            <td> <b> <span class=" text-danger">1</span> - Faisalabad <span class="text-success"> TO </span> Lahore </b> </td>
-                            <td> LHR-123</td>
-                            <td><span class="badge bg-danger">Delayed</span></td>
-                            <td>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Facere repudiandae quia excepturi eaque consequuntur.</td>
+                            <td><span class="badge bg-danger">disable</span></td>
                             <td>
                                 <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-success" style="float: none;" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><span class="mdi mdi-pencil"></span></button></div>
                                 <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
@@ -169,13 +160,13 @@
         </div> <!-- end card -->
     </div><!-- end col-->
 </div>
-
+<!-- end row-->
 <!-- Modal -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-light">
-                <h5 class="modal-title" id="staticBackdropLabel">Add Driver</h5>
+                <h5 class="modal-title" id="staticBackdropLabel">Update Driver</h5>
                 <button type="button" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -258,20 +249,23 @@
         </div>
     </div>
 </div>
-
-<!-- End Content  -->
 @endsection
 
 @section('page_js')
-<script src="{{ asset('/libs/select2/js/select2.min.js') }}"></script>
-<!-- Init js-->
-<script src="{{ asset('/js/pages/form-advanced.init.js') }}"></script>
-
 @include('partials.datatable_js')
+<!-- Plugins js-->
+<script src="/libs/twitter-bootstrap-wizard/jquery.bootstrap.wizard.min.js"></script>
+<!-- Plugins js -->
+<script src="/libs/dropzone/min/dropzone.min.js"></script>
+<script src="/libs/dropify/js/dropify.min.js"></script>
+
+<!-- Init js-->
+<script src="/js/pages/form-fileuploads.init.js"></script>
+<!-- Init js-->
+<script src="/js/pages/form-wizard.init.js"></script>
 <script>
     $(document).ready(function() {
 
     });
 </script>
-
 @endsection

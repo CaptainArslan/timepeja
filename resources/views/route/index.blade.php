@@ -24,6 +24,9 @@
                 <table id="datatable-buttons" class="table table-striped dt-responsive nowrap w-100">
                     <thead>
                         <tr>
+                        <th>
+                                <input type="checkbox">
+                            </th>
                             <th>Date</th>
                             <th>Time</th>
                             <th>Organization Name</th>
@@ -37,7 +40,9 @@
 
 
                     <tbody>
-                        <tr>
+                        <tr><td>
+                                <input type="checkbox">
+                            </td>
                             <td>2/1/2023</td>
                             <td>9:00 PM</td>
                             <td><b><a href="#">Tiger Nixon</a></b></td>

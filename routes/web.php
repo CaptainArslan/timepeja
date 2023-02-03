@@ -60,6 +60,7 @@ Route::group(['middleware' => 'auth'], function(){
         Route::get('/notification', function () { return view('driver.notification');})->name('driver.notification');
         Route::get('/triphistory', function () { return view('driver.triphistory');})->name('driver.triphistory');
         Route::get('/trips', function () { return view('driver.trips');})->name('driver.trips');
+        Route::get('/lists', function () { return view('driver.lists');})->name('driver.lists');
         Route::get('/tripstatus', function () { return view('driver.tripstatus');})->name('driver.tripstatus');
     });
     Route::get('/list', function () { return view('vehicle.vehicle_list');})->name('vehicle');
@@ -76,5 +77,6 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/system-users', function () { return view('admin.users.index');})->name('users.index');
     Route::get('/permissions', function () { return view('admin.permissions.index');})->name('permissions.index');
     Route::get('/support', function () { return view('support.support');})->name('support');
+    Route::get('/support/chat', function () { return view('support.index');})->name('support.chat');
     Route::get('/wallets', function () { return view('wallet.index');})->name('wallet');
 });
