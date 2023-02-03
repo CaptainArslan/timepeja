@@ -183,8 +183,11 @@
                         <ul class="nav-second-level">
                             <li>
                                 <a href="{{ route('driver') }}">
-                                    <span> All Drivers </span>
+                                    <span> Add Drivers </span>
                                 </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('driver.lists') }}">Driver List</a>
                             </li>
                             <li>
                                 <a href="{{ route('driver.trips') }}">Upcoming Trips</a>
@@ -263,13 +266,24 @@
                         </ul>
                     </div>
                 </li>
-                <!-- <li>
-                    <a href="{{ route('support') }}">
+                <li>
+                    <a href="#sidebarsupport" data-bs-toggle="collapse">
                         <i class="fas fa-headset"></i>
                         <span> Support </span>
+                        <span class="menu-arrow"></span>
                     </a>
+                    <div class="collapse" id="sidebarsupport">
+                        <ul class="nav-second-level">
+                            <li>
+                                <a href="{{ route('support.chat') }}">Support Chat</a>
+                            </li>
+                            <li>
+                                <a href="{{ route('support') }}">Queries List</a>
+                            </li>
+                        </ul>
+                    </div>
                 </li>
-                <li>
+                <!--<li>
                     <a href="{{ route('wallet') }}">
                         <i class="fas fa-wallet"></i>
                         <span> Wallets </span>

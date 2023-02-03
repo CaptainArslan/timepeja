@@ -105,49 +105,141 @@
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="modal_organization" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="organizationLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-md">
+<div class="modal fade " id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
             <div class="modal-header bg-light">
-                <h5 class="modal-title" id="organizationLabel">Organization Detail</h5>
-                <button type="button" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h4 class="modal-title" id="myCenterModalLabel">Add Passenger</h4>
+                <button type="button" type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
             </div>
-            <div class="modal-body">
-                <div class="col-xl-12">
-                    <div class="card shadow-none">
-                        <div class="card-body">
-                            <div class="d-flex align-items-start mb-3">
-                                <img class="d-flex me-3 rounded-circle avatar-lg" src="{{ asset('images/small/img-2.jpg') }}" alt="Generic placeholder image">
-                                <div class="w-100">
-                                    <h4 class="mt-0 mb-1">Punjab University</h4>
-                                    <p class="text-muted mb-1">Branch GT Road</p>
-                                    <p class="text-muted">Branch Code: 125345689</p>
-                                </div>
-                            </div>
-
-                            <div class="">
-                                <h4 class="font-13 text-muted text-uppercase">About :</h4>
-                                <p class="mb-3">
-                                    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quam explicabo amet laudantium eveniet dicta officia atque veniam impedit, reprehenderit, labore error magnam vitae nihil suscipit iure animi. Consectetur, porro in?
-                                </p>
-
-                                <h4 class="font-13 text-muted text-uppercase mb-1">Company :</h4>
-                                <p class="mb-3">Vine Corporation</p>
-
-                                <h4 class="font-13 text-muted text-uppercase mb-1">Added :</h4>
-                                <p class="mb-3"> April 22, 2016</p>
-
-                                <h4 class="font-13 text-muted text-uppercase mb-1">Updated :</h4>
-                                <p class="mb-0"> Dec 13, 2017</p>
-
+            <div class=" modal-body p-4">
+                <form>
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label for="simpleinput" class="form-label">Text</label>
+                                <select name="" id="" class="form-select">
+                                    <option value="">Select Organization</option>
+                                    <option value="pu">123 - pu - org Name</option>
+                                    <option value="uos">456 - UOS - org Name</option>
+                                    <option value="uog">789 - UOG - org Name</option>
+                                </select>
                             </div>
                         </div>
-                    </div> <!-- end card-->
-                </div>
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label for="user_type" class="form-label">User type Select</label>
+                                <select name="" id="user_type" class="form-select">
+                                    <option value="">Select</option>
+                                    <option value="student">student</option>
+                                    <option value="student_guardian">Student Guardian</option>
+                                    <option value="employee">Employee</option>
+                                    <option value="employee_guardian">Employee Guardian</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label for="further_user_type" class="form-label">Further type Select</label>
+                                <select name="" id="further_user_type" class="form-select" disabled="disabled">
+                                    <option value="">Select</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label for="simpleinput" class="form-label">Name</label>
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label for="simpleinput" class="form-label">Phone No</label>
+                                <input type="number" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label for="simpleinput" class="form-label">Email Address</label>
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label for="simpleinput" class="form-label">Home Address</label>
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label for="simpleinput" class="form-label">House No.</label>
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label for="simpleinput" class="form-label">Street No.</label>
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label for="simpleinput" class="form-label">Town</label>
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label for="simpleinput" class="form-label">Additional Details / Nearby (Optional)</label>
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label for="simpleinput" class="form-label">City</label>
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label for="simpleinput" class="form-label">Transport Pick-UP Loaction</label>
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label for="simpleinput" class="form-label">Address</label>
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label for="simpleinput" class="form-label">City</label>
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Student form container  -->
+                    <div class="student_school_form_container" id="student_school_form_container">
+                    </div>
+                    <div class="student_college_form_container" id="student_college_form_container">
+                    </div>
+                    <div class="student_university_form_container" id="student_university_form_container">
+                    </div>
+                    <!-- Employee form -->
+                    <div class="employee_form_container">
+                    </div>
+                    <!-- guardian form -->
+                    <div class="guradian_form_container">
+                    </div>
+                    <div class="text-end">
+                        <button type="button" type="submit" class="btn btn-success waves-effect waves-light">Save</button>
+                    </div>
+                </form>
             </div>
-        </div>
-    </div>
-</div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
 <!-- End Content  -->
 @endsection

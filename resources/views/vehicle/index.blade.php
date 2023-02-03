@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Add Vehicle')
+@section('title', 'Add Vehicles')
 <!-- start page title -->
 @section('page_css')
 @include('partials.datatable_css')
@@ -11,7 +11,7 @@
 <div class="row">
     <div class="col-12">
         <div class="page-title-box">
-            <h4 class="page-title">All Vehicles</h4>
+            <h4 class="page-title">Add Vehicles</h4>
         </div>
     </div>
 </div>
@@ -27,11 +27,17 @@
                 <table id="basic-datatable" class="table table-striped dt-responsive nowrap w-100">
                     <thead>
                         <tr>
+                            <th>
+                                <input type="checkbox">
+                            </th>
+                            <th>Date</th>
+                            <th>Time</th>
                             <th>Organization Name</th>
                             <th>Vehicle Type</th>
                             <th>Vehicle's Number</th>
                             <th>Vehicle picture from front</th>
                             <th>Vehicle license plate picture</th>
+                            <th>Created</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -39,11 +45,17 @@
 
                     <tbody>
                         <tr>
+                            <th>
+                                <input type="checkbox">
+                            </th>
+                            <th></th>
+                            <th></th>
                             <td><b><a href="#">Tiger Nixon</a></b></td>
+                            <td>Bus</td>
+                            <td>GAO-123</td>
                             <td></td>
                             <td></td>
-                            <td></td>
-                            <td></td>
+                            <td>2023/01/19</td>
                             <td>
                                 <div class="btn-group btn-group-sm" style="float: none;"><button type="button" class="tabledit-edit-button btn btn-success" style="float: none;" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><span class="mdi mdi-pencil"></span></button></div>
                                 <div class="btn-group btn-group-sm" style="float: none;"><button type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
@@ -116,7 +128,7 @@
                                 </div>
                             </div> <!-- end card-body -->
                             <div class="text-end">
-                                <button type="button" type="submit" class="btn btn-success form-control waves-effect waves-light">Save</button>
+                                <button type="button" type="submit" class="btn btn-success">Save</button>
                             </div>
                         </div> <!-- end card-->
                     </div>
