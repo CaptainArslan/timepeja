@@ -21,10 +21,12 @@ class CreateOrganizationsTable extends Migration
             $table->string('branch_name');
             $table->string('branch_code')->unique()->nullable();
             $table->unsignedBigInteger('org_type');
-            $table->foreign('org_type')->references('id')->on('organization_types')->onDelete('cascade');
+            $table->foreign('org_type')->references('id')->on('organization_types');
             $table->string('email')->unique()->nullable();
             $table->string('phone')->unique();
             $table->text('address');
+            $table->unsignedInteger('state');
+            $table->unsignedInteger('city');
             $table->string('head_name');
             $table->string('head_email')->nullable();
             $table->string('head_phone')->nullable();

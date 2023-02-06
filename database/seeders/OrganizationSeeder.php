@@ -26,6 +26,8 @@ class OrganizationSeeder extends Seeder
                 'email'=> Str::random(5).'@gmail.com',
                 'phone'=> '03001234567',
                 'address'=> Str::random(5),
+                'state'=> 1,
+                'city'=> 1,
                 'head_name'=> 'Romi'
             ],
             [
@@ -37,6 +39,8 @@ class OrganizationSeeder extends Seeder
                 'email'=> Str::random(5).'@gmail.com',
                 'phone'=> '03176987745',
                 'address'=> Str::random(5),
+                'state'=> 1,
+                'city'=> 1,
                 'head_name'=> 'Shami'
             ],
         ]);

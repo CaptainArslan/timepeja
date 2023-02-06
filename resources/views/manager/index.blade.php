@@ -22,7 +22,7 @@
             </div>
             <div class="card-body">
                 <h4 class="header-title">Latest Managers</h4>
-                <table id="datatable-buttons" class="table table-striped dt-responsive nowrap w-100">
+                <table id="basic-datatable" class="table table-striped dt-responsive nowrap w-100">
                     <thead>
                         <tr>
                             <th>
@@ -143,11 +143,10 @@
                                                         <input type="email" id="org_email" name="org_email" class="form-control" value="{{ old('org_email') }}" placeholder="Email">
                                                     </div>
                                                 </div>
-
                                                 <div class="col-lg-6">
                                                     <div class="mb-3">
                                                         <label for="org_branch_name" class="form-label">Branch Name</label>
-                                                        <input type="text" id="org_branch_name" class="form-control" value="{{ old('org_branch_name') }}" name="org_branch_name">
+                                                        <input type="text" id="org_branch_name" name="org_branch_name" class="form-control" value="{{ old('org_branch_name') }}">
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="org_type" class="form-label">Types</label>
@@ -162,12 +161,34 @@
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="org_phone" class="form-label">Phone No</label>
-                                                        <input type="number" id="org_phone" class="form-control" value="{{ old('org_phone') }}" name="org_phone">
+                                                        <input type="number" id="org_phone" name="org_phone" class="form-control" value="{{ old('org_phone') }}">
                                                     </div>
-                                                </div> <!-- end col -->
-                                                <div class="mb-3">
-                                                    <label for="org_address" class="form-label">Address</label>
-                                                    <input class="form-control" id="org_address" name="org_address" value="{{ old('org_address') }}"></input>
+                                                </div>
+                                                <div class="col-lg-12 row">
+                                                    <div class="mb-3 col-4">
+                                                        <label for="org_address" class="form-label">Address</label>
+                                                        <input class="form-control" id="org_address" name="org_address" value="{{ old('org_address') }}"></input>
+                                                    </div>
+                                                    <div class="mb-3 col-4">
+                                                        <label for="org_state" class="form-label">State</label>
+                                                        <select class="form-select" id="org_state" name="org_state">
+                                                            <option value="1">Punjab</option>
+                                                            <option value="2">Sindh</option>
+                                                            <option value="3">Balochistan</option>
+                                                            <option value="4">KPK</option>
+                                                            <option value="5">Gilgit Baltistan</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="mb-3 col-4">
+                                                        <label for="org_city" class="form-label">City</label>
+                                                        <select class="form-select" id="org_city" name="org_city">
+                                                            <option value="1">Lahore</option>
+                                                            <option value="2">Islamabad</option>
+                                                            <option value="3">Karachi</option>
+                                                            <option value="4">Gujranwala</option>
+                                                            <option value="5">Faiasalabad</option>
+                                                        </select>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -232,143 +253,98 @@
 
                                         <!-- Company financials -->
                                         <div class="tab-pane" id="financials">
-                                            <div class="row mt-2 mb-2">
-                                                <div class="row ">
-                                                    <h4 class="header-title">Organization Free Trial:</h4>
-                                                    <div class="col-lg-4 mb-2">
-                                                        <label for="org_trail_days" class="form-label">Day's</label>
-                                                        <input type="number" id="org_trail_days" name="org_trail_days" class="form-control">
+                                            <!-- Wallet Activation -->
+                                            <div class="row">
+                                                <div class="col-md-12 mt-2">
+                                                    <h4 class="header-title">Who will charge the fee form:</h4>
+                                                    <div class="form-check mb-2 form-check-primary">
+                                                        <input class="form-check-input" type="checkbox" name="manager_wallet" id="manager_wallet" value="manager_wallet" checked>
+                                                        <label class="form-check-label" for="manager_wallet">Organization</label>
                                                     </div>
-                                                    <div class="col-lg-4 mb-2">
-                                                        <label for="org_start_date" class="form-label">Starting Date</label>
-                                                        <input class="form-control" id="org_start_date" name="org_start_date" value="{{ old('org_start_date') }}" type="date" name="date">
+                                                    <div class="form-check mb-2 form-check-success">
+                                                        <input class="form-check-input" type="checkbox" name="driver_wallet" id="driver_wallet" value="driver_wallet" checked>
+                                                        <label class="form-check-label" for="driver_wallet">Sub Contracting Driver</label>
                                                     </div>
-                                                    <div class="col-lg-4  mb-2">
-                                                        <label for="org_end_date" class="form-label">Ending Date</label>
-                                                        <input class="form-control" id="org_end_date" name="org_end_date" value="{{ old('org_end_date') }}" type="date" name="date">
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-12 mt-2">
-                                                        <h4 class="header-title">Who will charge the fee form:</h4>
-                                                        <div class="form-check mb-2 form-check-primary">
-                                                            <input class="form-check-input" type="checkbox" name="wallet[]" id="manager_wallet" value="manager_wallet">
-                                                            <label class="form-check-label" for="manager_wallet">Manager</label>
-                                                        </div>
-
-                                                        <div class="form-check mb-2 form-check-success">
-                                                            <input class="form-check-input" type="checkbox" name="wallet[]" id="driver_wallet" value="driver_wallet">
-                                                            <label class="form-check-label" for="driver_wallet">Driver</label>
-                                                        </div>
-
-                                                        <div class="form-check mb-2 form-check-danger">
-                                                            <input class="form-check-input" type="checkbox" name="wallet[]" id="passenger_wallet" value="passenger_wallet">
-                                                            <label class="form-check-label" for="passenger_wallet">Passengers</label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-12 mt-3 mb-2">
-                                                        <h4 class="header-title">Basis of payment first:</h4>
-                                                        <div class="row">
-                                                            <div class="col-3 d-flex align-items-center">
-                                                                <input class="form-check-input" type="checkbox" name="payment[]" id="manager_payment" value="manager_payment" checked="">
-                                                                <label class="form-check-label mx-1" for="manager_payment">Manager</label>
-                                                            </div>
-                                                            <div class="col-3 ">
-                                                                <label for="org_start_date" class="form-label">Amount</label>
-                                                                <input class="form-control" type="number" placeholder="Amount" name="manager_amount" value="{{ old('manager_amount') }}">
-                                                            </div>
-                                                            <div class="col-3">
-                                                                <label for="org_start_date" class="form-label">Starting Date</label>
-                                                                <input class="form-control" id="org_start_date" name="org_start_date" value="{{ old('org_start_date') }}" type="date" name="date">
-                                                            </div>
-                                                            <div class="col-3">
-                                                                <label for="org_end_date" class="form-label">Ending Date</label>
-                                                                <input class="form-control" id="org_end_date" name="org_end_date" value="{{ old('org_end_date') }}" type="date" name="date">
-                                                            </div>
-                                                        </div>
-                                                        <div class="row mt-2">
-                                                            <div class="col-3 d-flex align-items-center">
-                                                                <input class="form-check-input" type="checkbox" name="payment[]" id="manager_payment" value="manager_payment" checked="">
-                                                                <label class="form-check-label mx-1" for="manager_payment">Driver</label>
-                                                            </div>
-                                                            <div class="col-3 ">
-                                                                <!-- <label for="org_start_date" class="form-label">Amount</label> -->
-                                                                <input class="form-control" type="number" placeholder="Amount" name="manager_amount" value="{{ old('manager_amount') }}">
-                                                            </div>
-                                                            <div class="col-3">
-                                                                <!-- <label for="org_start_date" class="form-label">Starting Date</label> -->
-                                                                <input class="form-control" id="org_start_date" name="org_start_date" value="{{ old('org_start_date') }}" type="date" name="date">
-                                                            </div>
-                                                            <div class="col-3">
-                                                                <!-- <label for="org_end_date" class="form-label">Ending Date</label> -->
-                                                                <input class="form-control" id="org_end_date" name="org_end_date" value="{{ old('org_end_date') }}" type="date" name="date">
-                                                            </div>
-                                                        </div>
-                                                        <div class="row mt-2">
-                                                            <div class="col-3 d-flex align-items-center">
-                                                                <input class="form-check-input" type="checkbox" name="payment[]" id="manager_payment" value="manager_payment" checked="">
-                                                                <label class="form-check-label mx-1" for="manager_payment">Passenger</label>
-                                                            </div>
-                                                            <div class="col-3 ">
-                                                                <!-- <label for="org_start_date" class="form-label">Amount</label> -->
-                                                                <input class="form-control" type="number" placeholder="Amount" name="manager_amount" value="{{ old('manager_amount') }}">
-                                                            </div>
-                                                            <div class="col-3">
-                                                                <!-- <label for="org_start_date" class="form-label">Starting Date</label> -->
-                                                                <input class="form-control" id="org_start_date" name="org_start_date" value="{{ old('org_start_date') }}" type="date" name="date">
-                                                            </div>
-                                                            <div class="col-3">
-                                                                <!-- <label for="org_end_date" class="form-label">Ending Date</label> -->
-                                                                <input class="form-control" id="org_end_date" name="org_end_date" value="{{ old('org_end_date') }}" type="date" name="date">
-                                                            </div>
-                                                        </div>
-                                                        <!--<div class="d-flex mt-1" style="justify-content: center; align-items: center;">
-                                                            <div class="form-check form-check-success col-lg-4">
-                                                                <input class="form-check-input" type="checkbox" value="driver_payment" id="driver1" name="payment[]" checked="">
-                                                                <label class="form-check-label" for="driver1">Driver</label>
-                                                            </div>
-                                                            <div class="col-lg-8 d-flex">
-                                                                <div class="col-lg-6">
-                                                                    <input class="form-control" type="number" placeholder="Amount" name="driver_amount">
-                                                                </div>
-                                                                <div class="col-lg-6 px-1">
-                                                                    <input class="form-control" type="date" id="driver_trail_end_date" name="driver_trail_end_date"
-                                                                    placeholder="Select date">
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="d-flex mt-1" style="justify-content: center; align-items: center;">
-                                                            <div class="form-check form-check-danger col-lg-4">
-                                                                <input class="form-check-input" type="checkbox" value="passenger_payment" id="passenger_payment" name="payment[]" checked="">
-                                                                <label class="form-check-label" for="passenger_payment">Passenger</label>
-                                                            </div>
-                                                            <div class="col-lg-8 d-flex">
-                                                                <div class="col-lg-6">
-                                                                    <input class="form-control" type="number" placeholder="Amount" name="passenger_amount">
-                                                                </div>
-                                                                <div class="col-lg-6 px-1">
-                                                                    <input class="form-control" type="date" id="example-date" placeholder="Select date" name="passenger_trail_end_date">
-                                                                </div>
-                                                            </div>
-                                                        </div> -->
+                                                    <div class="form-check mb-2 form-check-danger">
+                                                        <input class="form-check-input" type="checkbox" name="passenger_wallet" id="passenger_wallet" value="passenger_wallet" checked>
+                                                        <label class="form-check-label" for="passenger_wallet">Passengers</label>
                                                     </div>
                                                 </div>
-                                            </div> <!-- end row -->
-                                            <div class="text-end">
-                                                <button type="button" type="submit" class="btn btn-success waves-effect waves-light">Save</button>
+
+                                                <!-- Amount of all users -->
+                                                <div class="col-md-12 mt-3 mb-2">
+                                                    <h4 class="header-title">Basis of payment first:</h4>
+                                                    <div class="row">
+                                                        <div class="col-3 d-flex align-items-center">
+                                                            <input class="form-check-input" type="checkbox" name="payment[]" id="manager_payment" value="manager_payment" checked="">
+                                                            <label class="form-check-label mx-1" for="manager_payment">Organization</label>
+                                                        </div>
+                                                        <div class="col-3 ">
+                                                            <label for="org_amount" class="form-label">Amount</label>
+                                                            <input class="form-control" type="number" placeholder="Amount" name="org_amount" value="{{ old('org_amount') }}">
+                                                        </div>
+                                                        <div class="col-2 ">
+                                                            <label for="org_trial_days" class="form-label">Trial Days</label>
+                                                            <input class="form-control" type="number" name="org_trial_days" value="{{ old('org_trial_days') }}">
+                                                        </div>
+                                                        <div class="col-2">
+                                                            <label for="org_trail_start_date" class="form-label">Starting Date</label>
+                                                            <input type="date" class="form-control" id="org_trail_start_date" name="org_trail_start_date" value="{{ old('org_trail_start_date') }}" name="date">
+                                                        </div>
+                                                        <div class="col-2">
+                                                            <label for="org_trail_end_date" class="form-label">Ending Date</label>
+                                                            <input type="date" class="form-control" id="org_trail_end_date" name="org_trail_end_date" value="{{ old('org_trail_end_date') }}" name="date">
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mt-2">
+                                                        <div class="col-3 d-flex align-items-center">
+                                                            <input class="form-check-input" type="checkbox" name="payment[]" id="driver_payment" value="driver_payment" checked="">
+                                                            <label class="form-check-label mx-1" for="driver_payment">Driver</label>
+                                                        </div>
+                                                        <div class="col-3 ">
+                                                            <input class="form-control" type="number" placeholder="Amount" name="driver_amount" value="{{ old('driver_amount') }}">
+                                                        </div>
+                                                        <div class="col-2 ">
+                                                            <input class="form-control" type="number" name="driver_trial_days" value="{{ old('driver_trial_days') }}">
+                                                        </div>
+                                                        <div class="col-2">
+                                                            <input type="date" class="form-control" id="driver_trial_start_date" name="driver_trial_start_date" value="{{ old('driver_trial_start_date') }}" name="date">
+                                                        </div>
+                                                        <div class="col-2">
+                                                            <input type="date" class="form-control" id="driver_trial_end_date" name="driver_trial_end_date" value="{{ old('driver_trial_end_date') }}" name="date">
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mt-2">
+                                                        <div class="col-3 d-flex align-items-center">
+                                                            <input class="form-check-input" type="checkbox" name="payment[]" id="passenger_payment" value="passenger_payment" checked="">
+                                                            <label class="form-check-label mx-1" for="passenger_payment">Passenger</label>
+                                                        </div>
+                                                        <div class="col-3 ">
+                                                            <input class="form-control" type="number" placeholder="Amount" name="passenger_amount" value="{{ old('passenger_amount') }}">
+                                                        </div>
+                                                        <div class="col-2 ">
+                                                            <input class="form-control" type="number" name="passenger_trial_days" value="{{ old('passenger_trial_days') }}">
+                                                        </div>
+                                                        <div class="col-2">
+                                                            <input type="date" class="form-control" id="passenger_trail_start_date" name="passenger_trail_start_date" value="{{ old('passenger_trail_start_date') }}" name="date">
+                                                        </div>
+                                                        <div class="col-2">
+                                                            <input type="date" class="form-control" id="passenger_trail_end_date" name="passenger_trail_end_date" value="{{ old('passenger_trail_end_date') }}" name="date">
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div> <!-- tab-content -->
-                                </div> <!-- end #basicwizard-->
+                                            <div class="text-end mt-3">
+                                                <button type="submit" class="btn btn-success waves-effect waves-light">Save</button>
+                                            </div>
+                                        </div> <!-- end row -->
+                                    </div>
+                                </div> <!-- tab-content -->
                             </form>
                         </div> <!-- end card-body -->
                     </div> <!-- end card-->
                 </div>
             </div>
-            <!-- <div class="modal-footer">
-                <button type="button" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" type="button" class="btn btn-primary">Submit</button>
-            </div> -->
         </div>
     </div>
 </div>
