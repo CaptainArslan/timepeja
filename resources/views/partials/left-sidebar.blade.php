@@ -101,9 +101,6 @@
                                 <a href="{{ route('schedule.publishes') }}">Published Schedule</a>
                             </li>
                             <li>
-                                <a href="{{ route('transpot.schedule') }}">Scheduled Transport</a>
-                            </li>
-                            <li>
                                 <a href="{{ route('log.reports') }}">LOG Report</a>
                             </li>
                             <li>

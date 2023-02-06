@@ -19,11 +19,10 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique()->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('phone')->unique()->nullable();
+            $table->string('phone')->unique();
             $table->rememberToken();
             $table->enum('user_type', ['admin', 'manager', 'driver', 'passenger'])->default('admin');
             $table->bigInteger('otp')->unique()->nullable();
-            $table->string('token')->unique()->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

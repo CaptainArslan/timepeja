@@ -7,41 +7,13 @@ $(document).ready(function () {
         var user_type = $(this).val();
         options = get_user_further_type_option(user_type);
         $('#further_user_type').append(options);
+        set_further_user_type_dropdown();
+    });
+    $('#further_user_type').change(function (e) {
+        e.preventDefault();
+        check_user_type()
     });
 });
-
-function get_user_further_type_option(param) {
-    var option = '';
-    if (param == 'student' || param == 'student_guardian') {
-        option = `
-                <option value="">Select</option>
-                <option value="primary_level">Primary level (Play groun to 5th)</option>
-                <option value="middle_level">Middle Level (6th to 8th) </option>
-                <option value="high_level">Higher school (9th to 10th) </option>
-                <option value="college">Intermediate / college (11th / 12th)</option>
-                <option value="university">Bachelors / university</option>
-                <option value="university">Master / university</option>
-            `;
-    } else {
-        option = `<option value="">Select</option>`;
-    }
-    return option;
-}
-
-$('#user_type').change(function (e) {
-    e.preventDefault();
-    set_further_user_type_dropdown();
-});
-
-function set_further_user_type_dropdown() {
-    var type = $('#user_type').val();
-    if (type == 'student' || type == 'student_guardian') {
-        $('#further_user_type').prop('disabled', false);
-    } else {
-        $('#further_user_type').prop('disabled', true);
-    }
-}
-set_further_user_type_dropdown();
 
 function check_user_type() {
     var html = '';
@@ -63,18 +35,42 @@ function check_user_type() {
     }
 }
 
+check_user_type()
+
+function set_further_user_type_dropdown() {
+    var type = $('#user_type').val();
+    if (type == 'student' || type == 'student_guardian') {
+        $('#further_user_type').prop('disabled', false);
+    } else {
+        $('#further_user_type').prop('disabled', true);
+    }
+}
+
+set_further_user_type_dropdown();
+
+function get_user_further_type_option(param) {
+    var option = '';
+    if (param == 'student' || param == 'student_guardian') {
+        option = `
+                <option value="">Select</option>
+                <option value="primary_level">Primary level (Play groun to 5th)</option>
+                <option value="middle_level">Middle Level (6th to 8th) </option>
+                <option value="high_level">Higher school (9th to 10th) </option>
+                <option value="college">Intermediate / college (11th / 12th)</option>
+                <option value="university">Bachelors / university</option>
+                <option value="university">Master / university</option>
+            `;
+    } else {
+        option = `<option value="">Select</option>`;
+    }
+    return option;
+}
+
 function empty_form() {
     $('#student_school_form_container').empty();
     $('#student_college_form_container').empty();
     $('#student_university_form_container').empty();
 }
-
-check_user_type()
-
-$('#further_user_type').change(function (e) {
-    e.preventDefault();
-    check_user_type()
-});
 
 function student_school() {
     return `
@@ -241,4 +237,8 @@ function employee_form() {
                         </div> 
                     </div>
                 </form>`;
+}
+
+function guardian_student_form(){
+    
 }
