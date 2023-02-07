@@ -4,133 +4,80 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
-class AuthController extends Controller
+class AuthController extends BaseController
 {
     public function register(Request $request)
     {
-
-        $this->validate($request, [
-            'name' => 'required|max:120',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:6|confirmed'
+        Log::info('Register');
+        $validator = Validator::make($request->all(), [
+            'name' => ['required', 'min:5'],
+            'phone' => ['required', 'numeric', 'min:11'],
+            'otp' => ['required', 'numeric'],
+            'password' => ['required', 'confirmed']
         ]);
 
-        $user = User::create($request->only('email', 'name', 'password')); //Retrieving only the email and password data
-        // $user->assignRole('Client');
+        if ($validator->fails()) {
+            return $this->sendError('Validation Error.', $validator->errors(), 400);
+        }
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'User created successfully',
-        ]);
+        $res =  User::where([['phone', $request->phone], ['otp', $request->otp]])->first();
+        if (empty($res)) {
+            return $this->sendError('User not Exist', ['error' => 'Ask your Administration for registration'], 400);
+        } else if (!empty($res->password)) {
+            return $this->sendError('User Already Exist', ['error' => 'Manager Already registered Please Login'], 400);
+        }
+
+        $user = User::findOrFail($res->id);
+        $user->name = $request->name;
+        $user->password = Hash::make($request->password);
+        $user->save();
+        $success['token'] = $user->createToken('ApiToken')->plainTextToken;
+        $success['name'] = $user;
+        return $this->sendResponse($success, 'Manager register successfully.');
     }
 
     public function login(Request $request)
     {
-
-        $this->validate($request, [
-            'email' => 'required|email',
-            'password' => 'required|min:6'
+        $validator = Validator::make($request->all(), [
+            'phone' => ['required', 'numeric', 'min:11'],
+            'password' => ['required']
         ]);
-
-        $user = User::where('email', $request->email)->where('register_type', 'regular_login')->first(); //Retrieving only the email and password data
-
-
-        if (!isset($user)) {
-
-            return response()->json([
-                'status' => 'failed',
-                'message' => 'User dont exist',
-            ]);
+        if ($validator->fails()) {
+            return $this->sendError('Validation Error', $validator->errors(), 400);
         }
-
-        if ($user->is_deleted) {
-            return response()->json([
-                'status' => 'failed',
-                'message' => 'User dont exist',
-            ]);
+        $user = User::where([['phone', $request->phone], ['user_type', 'manager']])->first();
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return $this->sendError('Unauthorised', ['error' => 'Invalid phone or password'], 401);
         }
-
-        if (!isset($user->password) || !Hash::check($request->password, $user->password)) {
-            return response()->json([
-                'status' => 'failed',
-                'message' => 'Wrong password',
-            ]);
-        }
-
-        //Adding FCM Token
-        $fcm_token = isset($request->fcm_token) ? $request->fcm_token : '';
-        User::where('id', '=', $user->id)->update(['fcm_token' => $fcm_token]);
-
-        $user->memberships = $user->memberships;
-
-        //deleting refresh tokens of user before generating new
-        $user->deleteRefreshTokenByEmail($request->email);
-        //Deleting tokens
-        $user->tokens()->delete();
-
-        $token_obj = $user->createToken($request->email);
-        $token = $token_obj->plainTextToken;
-        $refresh_token = $token_obj->refreshToken;
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'User logged in successfully',
-            'user' => $user,
-            'token' => $token,
-            'refresh_token' => $refresh_token
-        ]);
+        $success['token'] = $user->createToken('ApiToken')->plainTextToken;
+        $success['user'] = $user;
+        return $this->sendResponse($success, 'User login successfully.');
     }
 
-
-    public function profile($user_id)
+    public function logout()
     {
-
-        $user = User::find($user_id);
-
-        if ($user->exists()) {
-            $user->memberships = $user->memberships;
-
-            return response()->json([
-                'status' => 'success',
-                'user' => $user
-            ]);
-        } else {
-            return response()->json([
-                'status' => 'failed',
-                'message' => 'User dont exist'
-            ]);
-        }
+        auth()->user()->tokens()->delete();
+        return $this->sendResponse('success', 'Manager successfully logout');
     }
 
-
-    public function logout(Request $request)
+    public function change_password(Request $request)
     {
+        return 'change Password';
+    }
 
-        $this->validate($request, [
-            'user_id' => 'required'
-        ]);
+    public function get_code(Request $request)
+    {
+        return 'get_code';
+    }
 
-        $user = User::where('id', $request->user_id)->first(); //Retrieving only the email and password data
-
-        if (!isset($user)) {
-            return response()->json([
-                'status' => 'failed',
-                'message' => 'User dont exist',
-            ]);
-        }
-
-        //deleting refresh tokens of user before generating new
-        $user->deleteRefreshTokenByEmail($user['email']);
-        //Deleting tokens
-        $user->tokens()->delete();
-
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Logged out successfully'
-        ]);
+    public function forgot_password(Request $request)
+    {
+        return 'forgot password';
     }
 
     public function profile_update(Request $request, $user_id)
@@ -150,87 +97,6 @@ class AuthController extends Controller
             return response()->json([
                 'status' => 'failed',
                 'message' => 'Failed to update profile'
-            ]);
-        }
-    }
-    //API
-    public function forgot_password(Request $request)
-    {
-
-        $this->validate($request, [
-            'email' => 'required'
-        ]);
-
-
-        $supporting = new Supporting();
-        $token = $supporting->token_string(80, 'forgot_password', 'token_string');
-
-        $email = $request->input('email');
-        $user = User::where('email', $email)->where('register_type', 'regular_login')->get()->toArray();
-
-        if (!empty($user)) {
-            ForgotPassword::where('email', $email)->delete();
-            ForgotPassword::insert([
-                'email' => $email,
-                'token_string' => $token,
-            ]);
-
-
-            $subject = 'Forgot Password';
-            $message = 'Click the link to reset the password: <a href="https://shred.pk/reset-password/' . $token . '">Reset Password</a>';
-            $headers = "MIME-Version: 1.0" . "\r\n";
-            $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-            $success = mail($email, $subject, $message, $headers);
-
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Reset link has been send to the mail.',
-            ]);
-        } else {
-            return response()->json([
-                'status' => 'failed',
-                'message' => 'User dont exist',
-            ]);
-        }
-    }
-
-    //API
-    public function forgot_password(Request $request)
-    {
-
-        $this->validate($request, [
-            'email' => 'required'
-        ]);
-
-
-        $supporting = new Supporting();
-        $token = $supporting->token_string(80, 'forgot_password', 'token_string');
-
-        $email = $request->input('email');
-        $user = User::where('email', $email)->where('register_type', 'regular_login')->get()->toArray();
-
-        if (!empty($user)) {
-            ForgotPassword::where('email', $email)->delete();
-            ForgotPassword::insert([
-                'email' => $email,
-                'token_string' => $token,
-            ]);
-
-
-            $subject = 'Forgot Password';
-            $message = 'Click the link to reset the password: <a href="https://shred.pk/reset-password/' . $token . '">Reset Password</a>';
-            $headers = "MIME-Version: 1.0" . "\r\n";
-            $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-            $success = mail($email, $subject, $message, $headers);
-
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Reset link has been send to the mail.',
-            ]);
-        } else {
-            return response()->json([
-                'status' => 'failed',
-                'message' => 'User dont exist',
             ]);
         }
     }

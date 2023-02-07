@@ -85,12 +85,12 @@
                     <div class="collapse" id="sidebarOrganization">
                         <ul class="nav-second-level">
                             <li>
-                                <a href="{{ route('managers.create') }}">
+                                <a href="{{ route('manager.index') }}">
                                     <span> Add Manager </span>
                                 </a>
                             </li>
                             <li>
-                                <a href="{{ route('managers.index') }}">
+                                <a href="{{ route('manager.create') }}">
                                     <span> Managers List </span>
                                 </a>
                             </li>

@@ -151,7 +151,7 @@
                 <div class="col-xl-12">
                     <div class="card shadow-none">
                         <div class="card-body">
-                            <form action="{{ route('managers.store') }}" method="POST">
+                            <form action="{{ route('manager.store') }}" method="POST">
                                 @csrf
                                 <div id="basicwizard">
                                     <ul class="nav nav-pills bg-light nav-justified form-wizard-header mb-4">

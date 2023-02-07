@@ -21,7 +21,7 @@
                 <button type="button" type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> Add Organization </button>
             </div>
             <div class="card-body">
-                <h4 class="header-title">Latest Managers</h4>
+                <h4 class="header-title">Latest Managers <a class="text-primary"> ({{ count($users) }}) </a> </h4>
                 <table id="basic-datatable" class="table table-striped dt-responsive nowrap w-100">
                     <thead>
                         <tr>
@@ -30,6 +30,7 @@
                             </th>
                             <th>Date</th>
                             <th>Time</th>
+                            <th>OTP</th>
                             <th>Org Name</th>
                             <th>Branch Name</th>
                             <th>Branch Code</th>
@@ -50,17 +51,19 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @forelse ($users as $user)
                         <tr>
                             <td>
                                 <input type="checkbox">
                             </td>
                             <td>20/12/2022</td>
                             <td>10:00 AM</td>
-                            <td><b><a href="#">Tiger Nixon</a></b></td>
+                            <td>{{ $user->otp }}</td>
+                            <td><b><a href="#">{{ $user->name }}</a></b></td>
                             <td>UOG</td>
                             <td>14358</td>
                             <td>University</td>
-                            <td>uoguni@gmail.com</td>
+                            <td>{{ $user->email }}</td>
                             <td>055-486215</td>
                             <td>Gujrat,Pakistan</td>
                             <td>Shami</td>
@@ -76,7 +79,13 @@
                                 <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-success" style="float: none;" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><span class="mdi mdi-pencil"></span></button></div>
                                 <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
                             </td>
+                        </tr> 
+                        @empty
+                        <tr>
+                            No Data Found
                         </tr>
+                        @endforelse
+
                     </tbody>
                 </table>
             </div> <!-- end card body-->
@@ -96,7 +105,7 @@
                 <div class="col-xl-12">
                     <div class="card shadow-none">
                         <div class="card-body">
-                            <form action="{{ route('managers.store') }}" method="POST">
+                            <form action="{{ route('manager.store') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 <div id="basicwizard">
                                     <ul class="nav nav-pills bg-light nav-justified form-wizard-header mb-4">
@@ -228,9 +237,18 @@
                                                         <input type="text" id="man_name" name="man_name" value="{{ old('man_name') }}" class="form-control">
                                                     </div>
                                                     <div class="mb-3">
-                                                        <label for="man_phone" class="form-label">Phone No</label>
-                                                        <input type="number" id="man_phone" name="man_phone" value="{{ old('man_phone') }}" class="form-control">
+                                                        <label for="phone" class="form-label">Phone No</label>
+                                                        <input type="number" id="phone" name="phone" value="{{ old('phone') }}" class="form-control">
                                                     </div>
+                                                    <!-- <div class="mb-3">
+                                                        <label for="man_password" class="form-label">Password</label>
+                                                        <div class="input-group input-group-merge">
+                                                            <input type="password" id="password" class="form-control" placeholder="Enter your password" name="password">
+                                                            <div class="input-group-text" data-password="false">
+                                                                <span class="password-eye"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div> -->
                                                 </div>
                                                 <div class="col-lg-6">
                                                     <div class="mb-3">
@@ -241,6 +259,15 @@
                                                         <label for="man_pic" class="form-label">Manager Picture</label>
                                                         <input type="file" id="man_pic" name="man_pic" value="{{ old('man_pic') }}" class="form-control">
                                                     </div>
+                                                    <!-- <div class="mb-3">
+                                                        <label for="password_confirmation" class="form-label">Confirm Password</label>
+                                                        <div class="input-group input-group-merge">
+                                                            <input type="password" id="password_confirmation" class="form-control" placeholder="Enter your password" name="password_confirmation">
+                                                            <div class="input-group-text" data-password="false">
+                                                                <span class="password-eye"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div> -->
                                                 </div> <!-- end col -->
                                                 <div class="col-lg-12">
                                                     <div class="mb-3">
@@ -258,15 +285,15 @@
                                                 <div class="col-md-12 mt-2">
                                                     <h4 class="header-title">Who will charge the fee form:</h4>
                                                     <div class="form-check mb-2 form-check-primary">
-                                                        <input class="form-check-input" type="checkbox" name="manager_wallet" id="manager_wallet" value="manager_wallet" checked>
-                                                        <label class="form-check-label" for="manager_wallet">Organization</label>
+                                                        <input class="form-check-input" type="checkbox" name="wallet[]" id="org_wallet" value="org_wallet" checked>
+                                                        <label class="form-check-label" for="org_wallet">Organization</label>
                                                     </div>
                                                     <div class="form-check mb-2 form-check-success">
-                                                        <input class="form-check-input" type="checkbox" name="driver_wallet" id="driver_wallet" value="driver_wallet" checked>
+                                                        <input class="form-check-input" type="checkbox" name="wallet[]" id="driver_wallet" value="driver_wallet" checked>
                                                         <label class="form-check-label" for="driver_wallet">Sub Contracting Driver</label>
                                                     </div>
                                                     <div class="form-check mb-2 form-check-danger">
-                                                        <input class="form-check-input" type="checkbox" name="passenger_wallet" id="passenger_wallet" value="passenger_wallet" checked>
+                                                        <input class="form-check-input" type="checkbox" name="wallet[]" id="passenger_wallet" value="passenger_wallet" checked>
                                                         <label class="form-check-label" for="passenger_wallet">Passengers</label>
                                                     </div>
                                                 </div>
@@ -276,8 +303,8 @@
                                                     <h4 class="header-title">Basis of payment first:</h4>
                                                     <div class="row">
                                                         <div class="col-3 d-flex align-items-center">
-                                                            <input class="form-check-input" type="checkbox" name="payment[]" id="manager_payment" value="manager_payment" checked="">
-                                                            <label class="form-check-label mx-1" for="manager_payment">Organization</label>
+                                                            <input class="form-check-input" type="checkbox" name="payment[]" id="org_payment" value="org_payment" checked="">
+                                                            <label class="form-check-label mx-1" for="org_payment">Organization</label>
                                                         </div>
                                                         <div class="col-3 ">
                                                             <label for="org_amount" class="form-label">Amount</label>
