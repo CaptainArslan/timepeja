@@ -10,4 +10,5 @@ class TransportManager extends Model
 {
     use HasFactory, SoftDeletes;
     protected $fillable = ['name', 'user_id', 'email ', 'phone'];
+
 }

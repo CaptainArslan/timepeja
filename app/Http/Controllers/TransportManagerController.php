@@ -9,6 +9,7 @@ use App\Models\Organization;
 use Illuminate\Http\Request;
 use App\Models\OrganizationType;
 use App\Models\TransportManager;
+use Illuminate\Mail\Transport\Transport;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
@@ -24,7 +25,9 @@ class TransportManagerController extends Controller
     public function index()
     {
         $organizaton_types = OrganizationType::all();
-        return view('manager.manager_list', compact('organizaton_types'));
+        $users = User::take(5)->orderby('id', 'desc')->get();
+        
+        return view('manager.index', compact('organizaton_types', 'users'));
     }
 
     /**
@@ -35,7 +38,8 @@ class TransportManagerController extends Controller
     public function create()
     {
         $organizaton_types = OrganizationType::all();
-        return view('manager.index', compact('organizaton_types'));
+        $managers = TransportManager::all();
+        return view('manager.manager_list', compact('organizaton_types', 'managers'));
     }
 
     /**
@@ -46,69 +50,132 @@ class TransportManagerController extends Controller
      */
     public function store(Request $request)
     {
-        dd($request->all());
+        // dd($request->all());
         $this->validate($request, [
-            // 'org_name' => 'required|string',
-            // 'org_branch_name' => 'required|string',
-            // 'org_branch_code' => 'required|string',
-            // 'org_type' => 'required|int',
-            // 'org_email' => 'required|email|string',
-            // 'org_phone' => 'required|string',
-            // 'org_address' => 'required|string',
-            // 'org_head_name' => 'required|string',
-            // 'org_head_email' => 'required|email',
-            // 'org_head_phone' => 'required',
-            // 'org_head_address' => '',
-            // 'man_name' => 'required',
-            // 'man_email' => 'required|email',
-            // 'man_phone' => 'required',
-            // 'man_pic' => '',
-            // 'man_address' => 'required',
-            // 'org_trail_days' => 'required',
-            // 'org_start_date' => 'required|date',
-            // 'org_end_date' => 'required|date',
-
-
             "org_name" => 'required|string',
-            "org_branch_code" => 'nullable|integer',
+            "org_branch_code" => 'nullable|numeric',
             "org_email" => 'required|email',
             "org_branch_name" => "required|string",
-            "org_type" => 'required|integer',
+            "org_type" => 'required|numeric',
             "org_phone" => 'nullable|string',
             "org_address" => 'string|nullable',
-            "org_state" => "required|integer",
-            "org_city" => "required|integer",
+            "org_state" => "required|numeric",
+            "org_city" => "required|numeric",
             "org_head_name" => 'required|string',
             "org_head_phone" => 'nullable',
             "org_head_email" => 'nullable|email',
             "org_head_address" => 'nullable|string',
             "man_name" => 'required|string',
-            "man_phone" => 'required|regex:/(01)[0-9]{9}/',
+            "phone" => 'required|unique:users',
             "man_email" => 'nullable|email',
             "man_pic" => 'nullable|mimes:jpg,png',
             "man_address" => 'nullable',
-            "manager_wallet" => "manager_wallet",
-            "payment" => "required",
-            "org_amount" => 'required|integer',
-            "org_trial_days" => 'required|integer',
-            "org_trail_start_date" => 'required|date',
-            "org_trail_end_date" => 'required|date',
-            "driver_amount" => 'required|integer',
-            "driver_trial_days" => 'required|integer',
-            "driver_trial_start_date" => 'required|date',
-            "driver_trial_end_date" => 'required|date',
-            "passenger_amount" => "required|integer",
-            "passenger_trial_days" => 'required|integer',
-            "passenger_trail_start_date" => 'required|date',
-            "passenger_trail_end_date" => 'required|date',
+
+            "manager_wallet" => "nullable",
+            "driver_wallet" => "nullable",
+            "passenger_wallet" => "nullable",
+
+            "org_payment" => "nullable",
+            "driver_payment" => "nullable",
+            "passenger_payment" => "nullable",
+
+            "org_amount" => 'nullable|numeric',
+            "org_trial_days" => 'nullable|numeric',
+            "org_trail_start_date" => 'nullable|date',
+            "org_trail_end_date" => 'nullable|date',
+            "driver_amount" => 'nullable|numeric',
+            "driver_trial_days" => 'nullable|numeric',
+            "driver_trial_start_date" => 'nullable|date',
+            "driver_trial_end_date" => 'nullable|date',
+            "passenger_amount" => "nullable|numeric",
+            "passenger_trial_days" => 'nullable|numeric',
+            "passenger_trail_start_date" => 'nullable|date',
+            "passenger_trail_end_date" => 'nullable|date',
         ]);
 
-
-        // $user = Auth::user();
-        // DB::beginTransaction();
-        // DB::rollback();
-        // DB::commit();
+        $user = Auth::user();
         $error = false;
+        DB::beginTransaction();
+        $users = new User();
+        $users->name         = $request->input('man_name');
+        $users->email        = $request->input('man_email');
+        $users->user_type    = 'manager';
+        $users->otp          = rand(100000, 999999);
+        $users->phone        = $request->input('phone');
+        $users_save          = $users->save();
+        if ($users_save) {
+            $org = new Organization();
+            $org->user_id        = $user->id;
+            $org->name          = $request->input('org_name');
+            $org->branch_name   = $request->input('org_branch_name');
+            $org->branch_code   = $request->input('org_branch_code');
+            $org->org_type      = $request->input('org_type');
+            $org->email         = $request->input('org_email');
+            $org->phone         = $request->input('org_phone');
+            $org->address       = $request->input('org_address');
+            $org->state         = $request->input('org_state');
+            $org->city          = $request->input('org_city');
+            $org->head_name     = $request->input('org_head_name');
+            $org->head_phone    = $request->input('org_head_phone');
+            $org->head_email    = $request->input('org_head_email');
+            $org->head_address  = $request->input('org_head_address');
+            $org_save = $org->save();
+            if ($org_save) {
+                $manager = new TransportManager();
+                $manager->user_id       = $user->id;
+                $manager->org_id        = $org->id;
+                $manager->name          = $request->input('man_name');
+                $manager->email         = $request->input('man_email');
+                $manager->phone         = $request->input('phone');
+                $manager->address       = $request->input('man_address');
+                $manager->pic           = '';
+                $manager_save = $manager->save();
+                if ($manager_save) {
+                    $financials = new Financials();
+                    $financials->user_id                    = $user->id;
+                    $financials->org_id                     = $org->id;
+
+                    $financials->org_wallet                 = isset($request->wallet[0]) ? 1 : 0;
+                    $financials->org_payment                = isset($request->payment[0]) ? 1 : 0;
+                    $financials->org_amount                 = $request->input('org_amount');
+                    $financials->org_trail_start_date       = $request->input('org_trail_start_date');
+                    $financials->org_trail_end_date         = $request->input('org_trail_end_date');
+
+                    $financials->driver_wallet              = isset($request->wallet[1]) ? 1 : 0;
+                    $financials->driver_payment             = isset($request->payment[1]) ? 1 : 0;
+                    $financials->driver_amount              = $request->input('driver_amount');
+                    $financials->driver_trail_start_date    = $request->input('driver_trial_start_date');
+                    $financials->driver_trail_end_date      = $request->input('driver_trial_end_date');
+
+                    $financials->passenger_wallet           = isset($request->wallet[2]) ? 1 : 0;
+                    $financials->passenger_payment          = isset($request->payment[2]) ? 1 : 0;
+                    $financials->passenger_amount           = $request->input('passenger_amount');
+                    $financials->passenger_trail_start_date = $request->input('passenger_trail_start_date');
+                    $financials->passenger_trail_end_date   = $request->input('passenger_trail_end_date');
+
+                    $financials_save = $financials->save();
+                    if (!$financials_save) {
+                        $error = true;
+                    }
+                } else {
+                    $error = true;
+                }
+            } else {
+                $error = true;
+            }
+        } else {
+            $error = true;
+        }
+        if (!$error) {
+            DB::commit();
+            return redirect()->route('manager.index')
+                ->with('success', 'Organization created successfully.');
+        } else {
+            DB::rollback();
+            return redirect()->route('manager.index')
+                ->with('error', 'Error Occured while Organization Creation.');
+        }
+        return response();
     }
 
     /**

@@ -29,7 +29,7 @@ Auth::routes();
 
 Route::group(['middleware' => 'auth'], function(){
     Route::get('/home', [HomeController::class, 'index'])->name('home');
-    Route::resource('/managers', TransportManagerController::class);
+    Route::resource('/manager', TransportManagerController::class);
     Route::resource('/routes', RouteController::class);
     Route::resource('/vehicles', VehicleController::class);
     
