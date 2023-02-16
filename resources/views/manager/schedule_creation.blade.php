@@ -91,10 +91,30 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header d-flex" style="justify-content: space-between;">
-                    <div class="col-6">
+                    <div class="col-2">
                         <h4 class="header-title">Created Schedule</h4>
                     </div>
-                    <div class="col-6 d-flex flex-row-reverse">
+                    <div class="col-9">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" value="123-lahore branch- Punjab University" readonly>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="date" class="form-control" value="123-lahore branch- Punjab University" readonly>
+                            </div>
+                            <!-- <div class="col-md-4">
+                                <select class="form-control" data-toggle="select2" data-width="100%" id="driver">
+                                    <option>Select</option>
+                                    <option value="AK">Arslan</option>
+                                    <option value="HI">Qasim</option>
+                                    <option value="CA">Romi</option>
+                                    <option value="NV">Ashtisham</option>
+                                    <option value="OR">Azam</option>
+                                </select>
+                            </div>  -->
+                        </div>
+                    </div>
+                    <div class="col-1 d-flex flex-row-reverse">
                         <button type="button" type="button" class="btn btn-danger">Publish</button>
                     </div>
                 </div>
@@ -106,11 +126,10 @@
                                     <input type="checkbox">
                                 </th>
                                 <th>Date</th>
-                                <th>Organization Name</th>
-                                <th>Driver</th>
+                                <th>Scheduled Time</th>
                                 <th>Route No</th>
                                 <th>Vehicle</th>
-                                <th>Time</th>
+                                <th>Driver</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -120,30 +139,28 @@
                                     <input type="checkbox">
                                 </td>
                                 <td>20/10/2023</td>
-                                <td><b><a href="#" data-bs-toggle="modal" data-bs-target="#modal_organization">Punjab University</a></b></td>
-                                <td>Ali</td>
-                                <td><b>Grw <a href="#" class="text-success">10</a> LHR</b></td>
-                                <td>GAO-123</td>
                                 <td>09:00 AM</td>
+                                <td><b><a href="#" class="text-success">10</a> - Gujranwala To Lahore</b></td>
+                                <td>GAO-123</td>
+                                <td>Ali</td>
                                 <td>
-                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-success" style="float: none;"><span class="mdi mdi-pencil"></span></button></div>
-                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
-                            </td>
+                                    <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-success" style="float: none;"><span class="mdi mdi-pencil"></span></button></div>
+                                    <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
+                                </td>
                             </tr>
                             <tr>
                                 <td>
                                     <input type="checkbox">
                                 </td>
                                 <td>20/10/2023</td>
-                                <td><b><a href="#" data-bs-toggle="modal" data-bs-target="#modal_organization">Punjab University</a></b></td>
-                                <td>AZam</td>
-                                <td><b>LHR <a href="#" class="text-success"> 15 </a> MLT </b></td>
-                                <td>LHR-123</td>
                                 <td>09:15 AM</td>
+                                <td><b><a href="#" class="text-success"> 15 </a> - lahore To  Multan </b></td>
+                                <td>LHR-123</td>
+                                <td>AZam</td>
                                 <td>
-                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-success" style="float: none;"><span class="mdi mdi-pencil"></span></button></div>
-                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
-                            </td>
+                                    <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-success" style="float: none;"><span class="mdi mdi-pencil"></span></button></div>
+                                    <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -152,8 +169,6 @@
         </div><!-- end col-->
     </div>
 </form>
-<!-- Modal -->
-
 <!-- End Content  -->
 @endsection
 
