@@ -198,6 +198,32 @@
                                                             <option value="5">Faiasalabad</option>
                                                         </select>
                                                     </div>
+                                                </div> <!-- end col -->
+                                                <div class="col-lg-12 row">
+                                                    <div class="mb-3 col-4">
+                                                        <label for="org_address" class="form-label">Address</label>
+                                                        <input class="form-control" id="org_address" name="org_address" value="{{ old('org_address') }}"></input>
+                                                    </div>
+                                                    <div class="mb-3 col-4">
+                                                        <label for="org_state" class="form-label">State</label>
+                                                        <select class="form-select" id="org_type" name="org_type">
+                                                            <option value="">Punjab</option>
+                                                            <option value="">Sindh</option>
+                                                            <option value="">Balochistan</option>
+                                                            <option value="">KPK</option>
+                                                            <option value="">Gilgit Baltistan</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="mb-3 col-4">
+                                                        <label for="org_city" class="form-label">City</label>
+                                                        <select class="form-select" id="org_type" name="org_type">
+                                                            <option value="">Lahore</option>
+                                                            <option value="">Islamabad</option>
+                                                            <option value="">Karachi</option>
+                                                            <option value="">Gujranwala</option>
+                                                            <option value="">Faiasalabad</option>
+                                                        </select>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>

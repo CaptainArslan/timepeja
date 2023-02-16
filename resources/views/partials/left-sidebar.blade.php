@@ -52,7 +52,7 @@
                 </li>
                 <li>
                     <a href="#usermanagement" data-bs-toggle="collapse">
-                        <i class="fas fa-users"></i>
+                        <i class="fas fa-users-cog"></i>
                         <span> User Management </span>
                         <span class="menu-arrow"></span>
                     </a>
@@ -78,7 +78,7 @@
                 </li>
                 <li>
                     <a href="#sidebarOrganization" data-bs-toggle="collapse">
-                        <i class="fas fa-users"></i>
+                        <i class="fas fa-user-circle"></i>
                         <span> Manager </span>
                         <span class="menu-arrow"></span>
                     </a>
@@ -103,17 +103,31 @@
                             <li>
                                 <a href="{{ route('log.reports') }}">LOG Report</a>
                             </li>
-                            <li>
+                            <!-- <li>
                                 <a href="{{ route('transpot.users') }}">Transport Users</a>
-                            </li>
+                            </li> -->
                             <li>
-                                <a href="{{ route('awaiting.approvals') }}">Awaiting Approvals</a>
-                            </li>
-                            <li>
-                                <a href="{{ route('user.approved') }}">Approved User</a>
-                            </li>
-                            <li>
-                                <a href="{{ route('user.disapproved') }}">Disapproved User</a>
+                                <a href="#sidebartransportuser" data-bs-toggle="collapse">
+                                    <i class="fas fa-user-check"></i>
+                                    <span> Transport Users </span>
+                                    <span class="menu-arrow"></span>
+                                </a>
+                                <div class="collapse" id="sidebartransportuser">
+                                    <ul class="nav-second-level">
+                                        <li>
+                                            <a href="{{ route('awaiting.approvals') }}">Awaiting Approvals</a>
+                                        </li>
+                                        <li>
+                                            <a href="{{ route('user.approved') }}">Approved User</a>
+                                        </li>
+                                        <li>
+                                            <a href="{{ route('user.disapproved') }}">Disapproved User</a>
+                                        </li>
+                                        <li>
+                                            <a href="{{ route('pastuser') }}">Past User</a>
+                                        </li>
+                                    </ul>
+                                </div>
                             </li>
                             <!-- <li>
                                 <a href="{{ route('user.disapproved') }}">Add user</a>
@@ -156,7 +170,7 @@
                     </a>
                     <div class="collapse" id="sidebarRoute">
                         <ul class="nav-second-level">
-                        <li>
+                            <li>
                                 <a href="{{ route('routes.create') }}">
                                     <span> Add Route </span>
                                 </a>
@@ -172,7 +186,7 @@
                 </li>
                 <li>
                     <a href="#sidebarDriver" data-bs-toggle="collapse">
-                        <i class="fas fa-users"></i>
+                        <i class="fas fa-user-tie"></i>
                         <span> Driver </span>
                         <span class="menu-arrow"></span>
                     </a>

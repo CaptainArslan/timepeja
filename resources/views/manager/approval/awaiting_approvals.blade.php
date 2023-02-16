@@ -27,15 +27,24 @@
                 <!-- <h4 class="header-title">Select Organization</h4> -->
                 <form action="">
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label for="organization">Select Oganization</label>
-                            <select class="form-control" data-toggle="select2" data-width="100%" id="organization">
+                            <select class="form-control" data-toggle="select2" data-width="100%" id="organization" multiple>
                                 <option>Select</option>
                                 <option value="AK">123456 - branch - Punjab University</option>
                                 <option value="HI">123456 - branch - Gujrant University</option>
                                 <option value="CA">123456 - branch - Gift University</option>
                                 <option value="NV">123456 - branch - Kips University</option>
                                 <option value="OR">123456 - branch - Sialkot Univeristy</option>
+                            </select>
+                        </div> <!-- end col -->
+                        <div class="col-md-2">
+                            <label for="user_type">User Type</label>
+                            <select class="form-control" data-toggle="select2" data-width="100%" id="user_type">
+                                <option>Select</option>
+                                <option value="AK">Manager</option>
+                                <option value="HI">Driver</option>
+                                <option value="CA">Passenger</option>
                             </select>
                         </div> <!-- end col -->
                         <div class="col-md-3">
@@ -48,7 +57,7 @@
                         </div> <!-- end col -->
                         <div class="col-md-1">
                             <label for="publish_schedule"></label>
-                            <button type="button" class="btn btn-success" id="publish_schedule"> Submit </button>
+                            <button type="button" class="btn btn-success" id="publish_schedule" style="margin-top: 20px;"> Submit </button>
                         </div> <!-- end col -->
                     </div> <!-- end row -->
                 </form>
@@ -70,7 +79,7 @@
                             <th>
                                 <input type="checkbox">
                             </th>
-                            <th>Date</th>
+                            <th>Request Date</th>
                             <th>Time</th>
                             <th>Organization Name</th>
                             <th>Title</th>

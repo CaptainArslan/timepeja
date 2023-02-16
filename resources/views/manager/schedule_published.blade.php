@@ -65,9 +65,9 @@
                 <div class="col-4">
                     <h4 class="header-title">Published Schedule</h4>
                 </div>
-                <div class="col-6 d-flex justify-content-between">
-                    <button type="button" type="button" class="btn btn-success">Modify schedule</button>
-                    <button type="button" type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Replicate schedule</button>
+                <div class="col-12 d-flex justify-content-between">
+                    <button type="button" type="button" class="btn btn-success" style="position: absolute; right: 170px; top: 10px;">Modify schedule</button>
+                    <button type="button" type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#staticBackdrop" style="position: absolute; right: 10px; top: 10px;">Replicate schedule</button>
                 </div>
             </div>
             <div class="card-body">
@@ -78,11 +78,11 @@
                                 <input type="checkbox">
                             </th>
                             <th>Date</th>
+                            <th>Time</th>
                             <th>Organization Name</th>
                             <th>Route Name</th>
                             <th>Vehicle</th>
                             <th>Driver</th>
-                            <th>Time</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -92,11 +92,11 @@
                                 <input type="checkbox">
                             </td>
                             <td>20/12/2022</td>
+                            <td>09:00 AM</td>
                             <td><b><a href="#" data-bs-toggle="modal" data-bs-target="#modal_organization">Punjab University</a></b></td>
                             <td><b>GRW <a href="#" class="text-success">TO </a> LHR</b></td>
                             <td>LHR-123</td>
                             <td>Ali</td>
-                            <td>09:00 AM</td>
                             <td>
                                 <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-success" style="float: none;"><span class="mdi mdi-pencil"></span></button></div>
                                 <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
@@ -107,11 +107,11 @@
                                 <input type="checkbox">
                             </td>
                             <td>20/12/2022</td>
+                            <td>09:15 AM</td>
                             <td><b><a href="#" data-bs-toggle="modal" data-bs-target="#modal_organization">Punjab University</a></b></td>
                             <td><b>LHR <a href="#" class="text-success">TO </a> GRW</b></td>
                             <td>GAO-123</td>
                             <td>Azam</td>
-                            <td>09:15 AM</td>
                             <td>
                                 <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-success" style="float: none;"><span class="mdi mdi-pencil"></span></button></div>
                                 <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>

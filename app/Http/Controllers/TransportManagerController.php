@@ -50,7 +50,6 @@ class TransportManagerController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->all());
         $this->validate($request, [
             "org_name" => 'required|string',
             "org_branch_code" => 'nullable|numeric',
@@ -70,15 +69,12 @@ class TransportManagerController extends Controller
             "man_email" => 'nullable|email',
             "man_pic" => 'nullable|mimes:jpg,png',
             "man_address" => 'nullable',
-
             "manager_wallet" => "nullable",
             "driver_wallet" => "nullable",
             "passenger_wallet" => "nullable",
-
             "org_payment" => "nullable",
             "driver_payment" => "nullable",
             "passenger_payment" => "nullable",
-
             "org_amount" => 'nullable|numeric',
             "org_trial_days" => 'nullable|numeric',
             "org_trail_start_date" => 'nullable|date',

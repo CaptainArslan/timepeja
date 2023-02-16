@@ -43,6 +43,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/user/approved', function () { return view('manager.approval.approved_user');})->name('user.approved');
     Route::get('/user/disapproved', function () { return view('manager.approval.disapproved_user');})->name('user.disapproved');
     Route::get('/user/approval', function () { return view('manager.approval.user_approval_form');})->name('user.approval');
+    Route::get('/pastuser', function () { return view('manager.approval.pastuser');})->name('pastuser');
 
 
     Route::get('/history', function () { return view('manager.history');})->name('history');
