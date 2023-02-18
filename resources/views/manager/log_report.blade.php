@@ -49,7 +49,7 @@
                         </div> <!-- end col -->
                         <div class="col-md-2">
                             <label for="selecttype" class="text-capitalize" id="filter_select_label">Select</label>
-                            <select class="form-control" data-toggle="select2" data-width="100%" id="filter_select">
+                            <select class="form-control" data-toggle="select2" data-width="100%" id="filter_select" multiple>
                                 <option value="">Select</option>
                             </select>
                         </div> <!-- end col -->

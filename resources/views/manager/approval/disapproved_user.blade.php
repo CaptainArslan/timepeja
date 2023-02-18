@@ -39,11 +39,11 @@
                             </select>
                         </div> <!-- end col -->
                         <div class="col-md-3">
-                            <label for="date-1">From</label>
+                            <label for="date-1">Registration From</label>
                             <input class="form-control" id="example-date-1" type="date" name="date">
                         </div> <!-- end col -->
                         <div class="col-md-3">
-                            <label for="date">To</label>
+                            <label for="date">Registration To</label>
                             <input class="form-control" id="example-date" type="date" name="date">
                         </div> <!-- end col -->
                         <div class="col-md-1">
@@ -60,8 +60,9 @@
 <div class="row">
     <div class="col-12">
         <div class="card">
-            <div class="card-header">
+            <div class="card-header d-flex" style="justify-content: space-between;">
                 <h4 class="header-title">Disapproved Approvals <b class="text-primary">(count)</b> </h4>
+                <h4 class="header-title" style="position:absolute; left:320px;"><b class="text-primary">Punjab University</b> </h4>
             </div>
             <div class="card-body">
                 <table id="basic-datatable" class="table table-striped dt-responsive nowrap w-100">
@@ -70,9 +71,8 @@
                             <th>
                                 <input type="checkbox">
                             </th>
-                            <th>Date</th>
+                            <th>Reg Date</th>
                             <th>Time</th>
-                            <th>Organization Name</th>
                             <th>Name</th>
                             <th>Roll no/ Emp id</th>
                             <th>Class/ Depart</th>
@@ -88,7 +88,6 @@
                             </td>
                             <td>20/12/2022</td>
                             <td>10:00 am</td>
-                            <td><b><a href="#" data-bs-toggle="modal" data-bs-target="#modal_organization">Punjab University</a></b></td>
                             <td>Ali</td>
                             <td>stu-123 / Emp-123</td>
                             <td>7th / CS</td>

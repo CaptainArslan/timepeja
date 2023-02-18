@@ -122,11 +122,13 @@
                                 <div class="row">
                                     <div class="mb-3">
                                         <label for="example-select" class="form-label">Organization Name</label>
-                                        <select class="form-select" id="example-select">
-                                            <option>School</option>
-                                            <option>college</option>
-                                            <option>University</option>
-                                            <!-- <option>Org</option> -->
+                                        <select class="form-select" id="org_type" name="org_type">
+                                            <option value="">Please Select Organization</option>
+                                            @forelse ($organizatons as $organizaton)
+                                            <option value="{{$organizaton->id}}">{{$organizaton->branch_code}} {{$organizaton->branch_name}}</option>
+                                            @empty
+                                            <option>No Option Found</option>
+                                            @endforelse
                                         </select>
                                     </div>
                                     <div class="col-lg-6">

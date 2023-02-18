@@ -26,10 +26,11 @@
                 <!-- <h4 class="header-title">Select Organization</h4> -->
                 <form action="">
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <label for="organization">Select Oganization</label>
                             <select class="form-control" data-toggle="select2" data-width="100%" id="organization">
                                 <option value="">Select</option>
+                                <option value="all">All</option>
                                 <option value="AK">123456 - branch - Punjab University</option>
                                 <option value="HI">123456 - branch - Gujrant University</option>
                                 <option value="CA">123456 - branch - Gift University</option>
@@ -38,27 +39,29 @@
                             </select>
                         </div> <!-- end col -->
                         <div class="col-md-3">
-                            <label for="selecttype">Select</label>
-                            <select class="form-control" data-toggle="select2" data-width="100%" id="filter">
+                            <label for="city">Select City</label>
+                            <select class="form-control" data-toggle="select2" data-width="100%" id="city">
                                 <option value="">Select</option>
-                                <option value="">All</option>
-                                <option value="Arslan">Arslan</option>
-                                <option value="Rashid">Rashid</option>
-                                <option value="Ahtisham">Ahtisham</option>
-                                <option value="Qasim">Qasim</option>
+                                <option value="all">Lahore</option>
+                                <option value="all">Multan</option>
+                                <option value="all">Peshawar</option>
+                                <option value="all">Islamabad</option>
+                                <option value="all">Karachi</option>
+                                <option value="all">Faisalabad</option>
+                                <option value="all">Gujrat</option>
                             </select>
                         </div> <!-- end col -->
                         <div class="col-md-2">
-                            <label for="date-1">From</label>
-                            <input class="form-control" id="example-date-1" type="date" name="date">
+                            <label for="from">Registration From</label>
+                            <input type="date" class="form-control" id="example-from" name="from">
                         </div> <!-- end col -->
                         <div class="col-md-2">
-                            <label for="date">To</label>
-                            <input class="form-control" id="example-date" type="date" name="date">
+                            <label for="to">Registration To</label>
+                            <input type="date" class="form-control" id="example-to" name="to">
                         </div> <!-- end col -->
                         <div class="col-md-1">
                             <label for="route_list"></label>
-                            <button type="button" type="button" class="btn btn-success" id="route_list"> Submit </button>
+                            <button type="button" type="button" class="btn btn-success" id="route_list" style="margin-top: 20px;"> Submit </button>
                         </div> <!-- end col -->
                     </div> <!-- end row -->
                 </form>
@@ -83,22 +86,21 @@
                             <th>
                                 <input type="checkbox">
                             </th>
-                            <th>Date</th>
+                            <th>Registration Date</th>
                             <th>Time</th>
                             <th>Org Name</th>
                             <th>Branch Name</th>
-                            <th>Branch Code</th>
+                            <th>System Code</th>
                             <th>Org Types</th>
-                            <th>Email</th>
+                            <th>Transport Manager</th>
                             <th>Phone No</th>
                             <th>Address</th>
                             <th>Head Name</th>
                             <th>Email</th>
                             <th>Phone No</th>
                             <th>Address</th>
-                            <th>Transport Manager</th>
-                            <th>Phone No</th>
                             <th>Email</th>
+                            <th>Phone No</th>
                             <th>Address</th>
                             <th>Manager Picture</th>
                             <th>Action</th>
@@ -113,16 +115,15 @@
                             <td>10:00 AM</td>
                             <td><b><a href="#">Tiger Nixon</a></b></td>
                             <td>UOG</td>
-                            <td>14358</td>
+                            <td>143586</td>
                             <td>University</td>
-                            <td>uoguni@gmail.com</td>
+                            <td>Qasim</td>s
                             <td>055-486215</td>
                             <td>Gujrat,Pakistan</td>
                             <td>Shami</td>
                             <td>shami@gmail.com</td>
                             <td>055-435258</td>
                             <td>Lahore Punjab Pakistan</td>
-                            <td>Qasim</td>
                             <td>qasim@gmail.com</td>
                             <td>055-435258</td>
                             <td>Lahore Punjab Pakistan</td>

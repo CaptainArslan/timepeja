@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use App\Models\Organization;
 use Illuminate\Http\Request;
 use App\Models\OrganizationType;
+use App\Models\State;
 use App\Models\TransportManager;
 use Illuminate\Mail\Transport\Transport;
 use Illuminate\Support\Facades\DB;
@@ -26,8 +27,8 @@ class TransportManagerController extends Controller
     {
         $organizaton_types = OrganizationType::all();
         $users = User::take(5)->orderby('id', 'desc')->get();
-        
-        return view('manager.index', compact('organizaton_types', 'users'));
+        $states = State::where('country_id', 167)->get();
+        return view('manager.index', compact('organizaton_types', 'users', 'states'));
     }
 
     /**
@@ -50,7 +51,6 @@ class TransportManagerController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->all());
         $this->validate($request, [
             "org_name" => 'required|string',
             "org_branch_code" => 'nullable|numeric',
@@ -70,15 +70,12 @@ class TransportManagerController extends Controller
             "man_email" => 'nullable|email',
             "man_pic" => 'nullable|mimes:jpg,png',
             "man_address" => 'nullable',
-
             "manager_wallet" => "nullable",
             "driver_wallet" => "nullable",
             "passenger_wallet" => "nullable",
-
             "org_payment" => "nullable",
             "driver_payment" => "nullable",
             "passenger_payment" => "nullable",
-
             "org_amount" => 'nullable|numeric',
             "org_trial_days" => 'nullable|numeric',
             "org_trail_start_date" => 'nullable|date',

@@ -31,7 +31,10 @@ class DatabaseSeeder extends Seeder
         $this->call([
             OrganizationTypeSeeder::class,
             OrganizationSeeder::class,
-            VehicleTypeSeeder::class
+            VehicleTypeSeeder::class,
+            CountrySeeder::class,
+            StateSeeder::class,
+            CitySeederChunkOne::class
         ]);
     }
 }

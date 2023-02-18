@@ -42,11 +42,11 @@
                             <label for="route_no">Select Route No</label>
                             <select class="form-control" data-toggle="select2" data-width="100%" id="route_no">
                                 <option>Select</option>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="5">5</option>
+                                <option value="1">1-LHR-KAR</option>
+                                <option value="2">2-GRW-ISL</option>
+                                <option value="3">3-GUJ-FSL</option>
+                                <option value="4">4-PSW-HYD</option>
+                                <option value="5">5-MLT-LAH</option>
                             </select>
                         </div> <!-- end col -->
                         <div class="col-md-2">
@@ -71,6 +71,10 @@
                                 <option value="OR">Azam</option>
                             </select>
                         </div> <!-- end col -->
+                        <div class="col-md-2">
+                            <label for="date">Select Date</label>
+                            <input type="date" class="form-control" id="example-date" name="date">
+                        </div>
                         <div class="col-md-2">
                             <label for="time">Time</label>
                             <input class="form-control" id="example-time" type="time" name="time">
@@ -122,7 +126,7 @@
                                 <td>20/10/2023</td>
                                 <td><b><a href="#" data-bs-toggle="modal" data-bs-target="#modal_organization">Punjab University</a></b></td>
                                 <td>Ali</td>
-                                <td><b>Grw <a href="#" class="text-success">10</a> LHR</b></td>
+                                <td><b><a href="#" class="text-success">10</a>-GRW-LHR</b></td>
                                 <td>GAO-123</td>
                                 <td>09:00 AM</td>
                                 <td>
@@ -136,8 +140,8 @@
                                 </td>
                                 <td>20/10/2023</td>
                                 <td><b><a href="#" data-bs-toggle="modal" data-bs-target="#modal_organization">Punjab University</a></b></td>
-                                <td>AZam</td>
-                                <td><b>LHR <a href="#" class="text-success"> 15 </a> MLT </b></td>
+                                <td>Azam</td>
+                                <td><b> <a href="#" class="text-success">15</a>-LHR-MLT </b></td>
                                 <td>LHR-123</td>
                                 <td>09:15 AM</td>
                                 <td>

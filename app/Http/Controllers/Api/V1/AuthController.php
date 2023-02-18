@@ -13,7 +13,6 @@ class AuthController extends BaseController
 {
     public function register(Request $request)
     {
-        Log::info('Register');
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'min:5'],
             'phone' => ['required', 'numeric', 'min:11'],
