@@ -24,7 +24,7 @@
                 <table id="datatable-buttons" class="table table-striped dt-responsive nowrap w-100">
                     <thead>
                         <tr>
-                        <th>
+                            <th>
                                 <input type="checkbox">
                             </th>
                             <th>Date</th>
@@ -40,7 +40,8 @@
 
 
                     <tbody>
-                        <tr><td>
+                        <tr>
+                            <td>
                                 <input type="checkbox">
                             </td>
                             <td>2/1/2023</td>
@@ -65,7 +66,7 @@
 
 <!-- Modal -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-lg  modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-light">
                 <h4 class="modal-title" id="myCenterModalLabel">Add Route</h4>
@@ -94,8 +95,16 @@
                         <input type="text" id="to" name="to" class="form-control">
                     </div>
                     <div class="mb-3">
+                        <label for="from" class="form-label">Select from Map</label>
+                        <div id="gmaps-basic" class="gmaps"></div>
+                    </div>
+                    <div class="mb-3">
                         <label for="from" class="form-label">From</label>
                         <input type="text" id="from" name="from" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label for="from" class="form-label">From Map</label>
+                        <div id="gmaps-basic" class="gmaps"></div>
                     </div>
                     <div class="mb-3">
                         <label for="route_name" class="form-label">Route Name</label>
@@ -118,6 +127,19 @@
 
 <!-- Init js-->
 <script src="/js/pages/form-wizard.init.js"></script>
+
+<!-- google maps api -->
+<script src="https://maps.google.com/maps/api/js?key=AIzaSyDsucrEdmswqYrw0f6ej3bf4M4suDeRgNA"></script>
+
+<!-- gmap js-->
+<script src="{{asset('libs/gmaps/gmaps.min.js')}}"></script>
+
+<!-- Init js-->
+<script src="{{asset('js/pages/google-maps.init.js')}}"></script>
+
+<!-- Dashboar 1 init js-->
+<script src="{{asset('js/pages/dashboard-1.init.js')}}"></script>
+
 <script>
     $(document).ready(function() {
         $('#route_no, #to,  #from').change(function(e) {
@@ -127,6 +149,7 @@
             var from = $('#from').val();
             $('#route_name').val(routeno + '  ' + to + '  ' + from);
         });
+
     });
 </script>
 @endsection

@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use App\Models\Organization;
 use Illuminate\Http\Request;
 use App\Models\OrganizationType;
+use App\Models\State;
 use App\Models\TransportManager;
 use Illuminate\Mail\Transport\Transport;
 use Illuminate\Support\Facades\DB;
@@ -26,8 +27,8 @@ class TransportManagerController extends Controller
     {
         $organizaton_types = OrganizationType::all();
         $users = User::take(5)->orderby('id', 'desc')->get();
-        
-        return view('manager.index', compact('organizaton_types', 'users'));
+        $states = State::where('country_id', 167)->get();
+        return view('manager.index', compact('organizaton_types', 'users', 'states'));
     }
 
     /**

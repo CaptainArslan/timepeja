@@ -193,7 +193,7 @@
                     <div class="collapse" id="sidebarDriver">
                         <ul class="nav-second-level">
                             <li>
-                                <a href="{{ route('driver') }}">
+                                <a href="{{ route('driver.index') }}">
                                     <span> Add Drivers </span>
                                 </a>
                             </li>

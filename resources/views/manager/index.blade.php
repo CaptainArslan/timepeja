@@ -79,7 +79,7 @@
                                 <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-success" style="float: none;" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><span class="mdi mdi-pencil"></span></button></div>
                                 <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
                             </td>
-                        </tr> 
+                        </tr>
                         @empty
                         <tr>
                             No Data Found
@@ -95,7 +95,7 @@
 <!-- end row-->
 <!-- Modal -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
             <div class="modal-header bg-light">
                 <h5 class="modal-title" id="staticBackdropLabel">Add Organization</h5>
@@ -175,17 +175,14 @@
                                                 </div>
                                                 <div class="col-lg-12 row">
                                                     <div class="mb-3 col-4">
-                                                        <label for="org_address" class="form-label">Address</label>
-                                                        <input class="form-control" id="org_address" name="org_address" value="{{ old('org_address') }}"></input>
-                                                    </div>
-                                                    <div class="mb-3 col-4">
                                                         <label for="org_state" class="form-label">State</label>
                                                         <select class="form-select" id="org_state" name="org_state">
-                                                            <option value="1">Punjab</option>
-                                                            <option value="2">Sindh</option>
-                                                            <option value="3">Balochistan</option>
-                                                            <option value="4">KPK</option>
-                                                            <option value="5">Gilgit Baltistan</option>
+                                                            <option value="" selected>Please Select State</option>
+                                                            @forelse ($states as $state)
+                                                            <option value="{{$state->id}}">{{$state->name}}</option>
+                                                            @empty
+                                                            <option>No Avaiable</option>
+                                                            @endforelse
                                                         </select>
                                                     </div>
                                                     <div class="mb-3 col-4">
@@ -198,33 +195,11 @@
                                                             <option value="5">Faiasalabad</option>
                                                         </select>
                                                     </div>
-                                                </div> <!-- end col -->
-                                                <div class="col-lg-12 row">
                                                     <div class="mb-3 col-4">
                                                         <label for="org_address" class="form-label">Address</label>
                                                         <input class="form-control" id="org_address" name="org_address" value="{{ old('org_address') }}"></input>
                                                     </div>
-                                                    <div class="mb-3 col-4">
-                                                        <label for="org_state" class="form-label">State</label>
-                                                        <select class="form-select" id="org_type" name="org_type">
-                                                            <option value="">Punjab</option>
-                                                            <option value="">Sindh</option>
-                                                            <option value="">Balochistan</option>
-                                                            <option value="">KPK</option>
-                                                            <option value="">Gilgit Baltistan</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="mb-3 col-4">
-                                                        <label for="org_city" class="form-label">City</label>
-                                                        <select class="form-select" id="org_type" name="org_type">
-                                                            <option value="">Lahore</option>
-                                                            <option value="">Islamabad</option>
-                                                            <option value="">Karachi</option>
-                                                            <option value="">Gujranwala</option>
-                                                            <option value="">Faiasalabad</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
+                                                </div> <!-- end col -->
                                             </div>
                                         </div>
 
@@ -332,19 +307,19 @@
                                                             <input class="form-check-input" type="checkbox" name="payment[]" id="org_payment" value="org_payment" checked="">
                                                             <label class="form-check-label mx-1" for="org_payment">Organization</label>
                                                         </div>
-                                                        <div class="col-3 ">
+                                                        <div class="col-2">
                                                             <label for="org_amount" class="form-label">Amount</label>
                                                             <input class="form-control" type="number" placeholder="Amount" name="org_amount" value="{{ old('org_amount') }}">
                                                         </div>
-                                                        <div class="col-2 ">
-                                                            <label for="org_trial_days" class="form-label">Trial Days</label>
+                                                        <div class="col-1">
+                                                            <label for="org_trial_days" class="form-label"> Days</label>
                                                             <input class="form-control" type="number" name="org_trial_days" value="{{ old('org_trial_days') }}">
                                                         </div>
-                                                        <div class="col-2">
+                                                        <div class="col-3">
                                                             <label for="org_trail_start_date" class="form-label">Starting Date</label>
                                                             <input type="date" class="form-control" id="org_trail_start_date" name="org_trail_start_date" value="{{ old('org_trail_start_date') }}" name="date">
                                                         </div>
-                                                        <div class="col-2">
+                                                        <div class="col-3">
                                                             <label for="org_trail_end_date" class="form-label">Ending Date</label>
                                                             <input type="date" class="form-control" id="org_trail_end_date" name="org_trail_end_date" value="{{ old('org_trail_end_date') }}" name="date">
                                                         </div>
@@ -354,16 +329,16 @@
                                                             <input class="form-check-input" type="checkbox" name="payment[]" id="driver_payment" value="driver_payment" checked="">
                                                             <label class="form-check-label mx-1" for="driver_payment">Driver</label>
                                                         </div>
-                                                        <div class="col-3 ">
+                                                        <div class="col-2 ">
                                                             <input class="form-control" type="number" placeholder="Amount" name="driver_amount" value="{{ old('driver_amount') }}">
                                                         </div>
-                                                        <div class="col-2 ">
+                                                        <div class="col-1 ">
                                                             <input class="form-control" type="number" name="driver_trial_days" value="{{ old('driver_trial_days') }}">
                                                         </div>
-                                                        <div class="col-2">
+                                                        <div class="col-3">
                                                             <input type="date" class="form-control" id="driver_trial_start_date" name="driver_trial_start_date" value="{{ old('driver_trial_start_date') }}" name="date">
                                                         </div>
-                                                        <div class="col-2">
+                                                        <div class="col-3">
                                                             <input type="date" class="form-control" id="driver_trial_end_date" name="driver_trial_end_date" value="{{ old('driver_trial_end_date') }}" name="date">
                                                         </div>
                                                     </div>
@@ -372,16 +347,16 @@
                                                             <input class="form-check-input" type="checkbox" name="payment[]" id="passenger_payment" value="passenger_payment" checked="">
                                                             <label class="form-check-label mx-1" for="passenger_payment">Passenger</label>
                                                         </div>
-                                                        <div class="col-3 ">
+                                                        <div class="col-2 ">
                                                             <input class="form-control" type="number" placeholder="Amount" name="passenger_amount" value="{{ old('passenger_amount') }}">
                                                         </div>
-                                                        <div class="col-2 ">
+                                                        <div class="col-1 ">
                                                             <input class="form-control" type="number" name="passenger_trial_days" value="{{ old('passenger_trial_days') }}">
                                                         </div>
-                                                        <div class="col-2">
+                                                        <div class="col-3">
                                                             <input type="date" class="form-control" id="passenger_trail_start_date" name="passenger_trail_start_date" value="{{ old('passenger_trail_start_date') }}" name="date">
                                                         </div>
-                                                        <div class="col-2">
+                                                        <div class="col-3">
                                                             <input type="date" class="form-control" id="passenger_trail_end_date" name="passenger_trail_end_date" value="{{ old('passenger_trail_end_date') }}" name="date">
                                                         </div>
                                                     </div>

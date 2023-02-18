@@ -5,8 +5,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RouteController;
-use App\Http\Controllers\TransportManagerController;
+use App\Http\Controllers\DriverController;
 use App\Http\Controllers\VehicleController;
+use App\Http\Controllers\TransportManagerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,6 +33,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::resource('/manager', TransportManagerController::class);
     Route::resource('/routes', RouteController::class);
     Route::resource('/vehicles', VehicleController::class);
+    Route::resource('/driver', DriverController::class);
     
     // Route::get('/vehicle', function () { return view('vehicle.index');})->name('vehicle');
     Route::get('/profile', function () { return view('auth.profile'); })->name('profile');
@@ -45,7 +47,6 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/user/approval', function () { return view('manager.approval.user_approval_form');})->name('user.approval');
     Route::get('/pastuser', function () { return view('manager.approval.pastuser');})->name('pastuser');
 
-
     Route::get('/history', function () { return view('manager.history');})->name('history');
     Route::get('/log/reports', function () { return view('manager.log_report');})->name('log.reports');
     Route::get('/schedule/creation', function () { return view('manager.schedule_creation');})->name('schedule.creation');
@@ -56,14 +57,13 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/passenger/list', function () { return view('passenger.passenger_list');})->name('passenger_list');
     Route::get('/trans_routes', function () { return view('passenger.trans_routes');})->name('trans_routes');
     Route::get('/trans_schdule', function () { return view('passenger.trans_schdule');})->name('trans_schdule');
-    Route::prefix('driver')->group(function () {
-        Route::get('/', function () { return view('driver.index');})->name('driver');
-        Route::get('/notification', function () { return view('driver.notification');})->name('driver.notification');
-        Route::get('/triphistory', function () { return view('driver.triphistory');})->name('driver.triphistory');
-        Route::get('/trips', function () { return view('driver.trips');})->name('driver.trips');
-        Route::get('/lists', function () { return view('driver.lists');})->name('driver.lists');
-        Route::get('/tripstatus', function () { return view('driver.tripstatus');})->name('driver.tripstatus');
-    });
+
+    // Route::get('driver/', function () { return view('driver.index');})->name('driver');
+    Route::get('driver/notification', function () { return view('driver.notification');})->name('driver.notification');
+    Route::get('driver/triphistory', function () { return view('driver.triphistory');})->name('driver.triphistory');
+    Route::get('driver/trips', function () { return view('driver.trips');})->name('driver.trips');
+    Route::get('driver/lists', function () { return view('driver.lists');})->name('driver.lists');
+    Route::get('driver/tripstatus', function () { return view('driver.tripstatus');})->name('driver.tripstatus');
     Route::get('/list', function () { return view('vehicle.vehicle_list');})->name('vehicle');
     
     // Route::get('/route', function () { return view('route.index');})->name('route');

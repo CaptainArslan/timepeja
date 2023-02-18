@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Driver;
-use Illuminate\Http\Request;
+use App\Models\Organization;
+use App\Models\OrganizationType;
 
 class DriverController extends Controller
 {
@@ -14,7 +15,8 @@ class DriverController extends Controller
      */
     public function index()
     {
-        //
+        $organizatons = Organization::all();
+        return view('driver.index', compact('organizatons'));
     }
 
     /**
@@ -24,7 +26,8 @@ class DriverController extends Controller
      */
     public function create()
     {
-        //
+        dd('create');
+        return view('driver.lists');
     }
 
     /**
