@@ -48,10 +48,12 @@
                             </select>
                         </div> <!-- end col -->
                         <div class="col-md-2">
-                            <label for="selecttype" class="text-capitalize" id="filter_select_label">Select</label>
-                            <select class="form-control" data-toggle="select2" data-width="100%" id="filter_select" multiple>
-                                <option value="">Select</option>
-                            </select>
+                            <label for="selecttype" class="text-capitalize" id="select_label">Select</label>
+                            <div class="col-12">
+                                <select class="form-control select2-multiple" data-toggle="select2" data-width="100%" id="filter_select" multiple="multiple" data-placeholder="Please Select">
+                                    <option value="" selected>Please Select</option>
+                                </select>
+                            </div>
                         </div> <!-- end col -->
                         <div class="col-md-2">
                             <label for="date-1">From</label>
@@ -75,44 +77,24 @@
 <div class="row">
     <div class="col-12">
         <div class="card">
-            <div class="card-header">
-                <h4 class="header-title">Reports</h4>
+            <div class="card-header d-flex">
+                <div class="col-1">
+                    <h4 class="header-title">Reports</h4>
+                </div>
+                <div class="col-7">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input class="form-control" id="" type="text" value="123456 - branch - Punjab University" name="organization" style="font-weight: bold;" readonly>
+                        </div>
+                        <div class="col-md-4">
+                            <input class="form-control" id="" type="text" value="Driver" name="organization" style="font-weight: bold;" readonly>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="card-body">
                 <table id="basic-datatable" class="table table-striped dt-responsive nowrap w-100">
-                    <thead>
-                        <tr>
-                            <th>
-                                <input type="checkbox">
-                            </th>
-                            <th>Organization Name</th>
-                            <th>Branch Name</th>
-                            <th>Branch Code</th>
-                            <th>Route No</th>
-                            <th>Vehicle</th>
-                            <th>Driver</th>
-                            <th>Time</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <input type="checkbox">
-                            </td>
-                            <td><b><a href="#" data-bs-toggle="modal" data-bs-target="#modal_organization">Punjab University</a></b></td>
-                            <td>GT Road Branch</td>
-                            <td>123</td>
-                            <td><b><a href="#">1</a></b></td>
-                            <td>LHR-123</td>
-                            <td>Ali</td>
-                            <td>09:45 PM</td>
-                            <td>
-                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-success" style="float: none;"><span class="mdi mdi-pencil"></span></button></div>
-                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
-                            </td>
-                        </tr>
-                    </tbody>
+
                 </table>
             </div> <!-- end card body-->
         </div> <!-- end card -->
@@ -126,32 +108,38 @@
 
 @section('page_js')
 <script src="{{ asset('/libs/select2/js/select2.min.js') }}"></script>
-<!-- Init js-->
-<script src="{{ asset('/js/pages/form-advanced.init.js') }}"></script>
+
 
 @include('partials.datatable_js')
 <script>
     $(document).ready(function() {
+
         $('#filter').change(function(e) {
             e.preventDefault();
-            var option = '';
-            var value = $(this).val();
-            $('#filter_select').empty();
-            if (value == 'driver') {
-                $('#filter_select_label').html(value);
-                var option = driver_option();
-            } else if (value == 'route') {
-                $('#filter_select_label').html(value);
-                var option = route_option();
-            } else if (value == 'vehicle') {
-                $('#filter_select_label').html(value);
-                var option = vehicle_option();
-            }else{
-                var option = `<option value="">Select</option>`;
-            }
-            $('#filter_select').append(option);
+            get_option()
         });
+
     });
+
+    function get_option() {
+        let value = $('#filter').val();
+        let option = `<option value="">Select</option>`;
+        if (value == 'driver') {
+            $('#select_label').html(value);
+            option = driver_option();
+        } else if (value == 'route') {
+            $('#select_label').html(value);
+            option = route_option();
+        } else if (value == 'vehicle') {
+            $('#select_label').html(value);
+            option = vehicle_option();
+        }
+
+        console.log(option);
+        $('#filter_select').append(option).trigger('change');
+    }
+
+    get_option()
 
     function driver_option() {
         return html = `<option value="">All</option>
@@ -172,7 +160,151 @@
                         <option value="">LHR 10 GRW </option>
                         <option value="">GRM 15 MLT</option>
                         <option value="">LHR 20 KCH</option>`;
-}
+    }
+
+
+
+    function get_driver_table() {
+        return `<thead>
+                        <tr>
+                            <th>
+                                <input type="checkbox">
+                            </th>
+                            <th>Date</th>
+                            <th>Schedule time</th>
+                            <th>Driver</th>
+                            <th>Vehicle</th>
+                            <th>Route No</th>
+                            <th>Actual trip start</th>
+                            <th>End Time</th>
+                            <!-- <th>Time</th>
+                            <th>Action</th> -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <input type="checkbox">
+                            </td>
+                            <td>21/02/2022</td>
+                            <td>06:00 </td>
+                            <td>Ali</td>
+                            <td>MLT-123</td>
+                            <td>9-Lahore To Gujranwala</td>
+                            <td>02:00</td>
+                            <td>20:15</td>
+                            <!-- <td>
+                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-success" style="float: none;"><span class="mdi mdi-pencil"></span></button></div>
+                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
+                            </td> -->
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="checkbox">
+                            </td>
+                            <td>21/02/2022</td>
+                            <td>06:00 </td>
+                            <td>Ali</td>
+                            <td>MLT-123</td>
+                            <td>9-Lahore To Gujranwala</td>
+                            <td>02:00</td>
+                            <td>20:15</td>
+                            <!-- <td>
+                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-success" style="float: none;"><span class="mdi mdi-pencil"></span></button></div>
+                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
+                            </td> -->
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="checkbox">
+                            </td>
+                            <td>21/02/2022</td>
+                            <td>06:00 </td>
+                            <td>Ali</td>
+                            <td>MLT-123</td>
+                            <td>9-Lahore To Gujranwala</td>
+                            <td>02:00</td>
+                            <td>20:15</td>
+                            <!-- <td>
+                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-success" style="float: none;"><span class="mdi mdi-pencil"></span></button></div>
+                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
+                            </td> -->
+                        </tr>
+                    </tbody>`;
+    }
+
+    function get_vehicle_option() {
+        return `<thead>
+                        <tr>
+                            <th>
+                                <input type="checkbox">
+                            </th>
+                            <th>Date</th>
+                            <th>Schedule time</th>
+                            <th>Driver</th>
+                            <th>Vehicle</th>
+                            <th>Route No</th>
+                            <th>Actual trip start</th>
+                            <th>End Time</th>
+                            <!-- <th>Time</th>
+                            <th>Action</th> -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <input type="checkbox">
+                            </td>
+                            <td>21/02/2022</td>
+                            <td>06:00 </td>
+                            <td>Ali</td>
+                            <td>MLT-123</td>
+                            <td>9-Lahore To Gujranwala</td>
+                            <td>02:00</td>
+                            <td>20:15</td>
+                            <!-- <td>
+                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-success" style="float: none;"><span class="mdi mdi-pencil"></span></button></div>
+                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
+                            </td> -->
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="checkbox">
+                            </td>
+                            <td>21/02/2022</td>
+                            <td>06:00 </td>
+                            <td>Ali</td>
+                            <td>MLT-123</td>
+                            <td>9-Lahore To Gujranwala</td>
+                            <td>02:00</td>
+                            <td>20:15</td>
+                            <!-- <td>
+                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-success" style="float: none;"><span class="mdi mdi-pencil"></span></button></div>
+                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
+                            </td> -->
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="checkbox">
+                            </td>
+                            <td>21/02/2022</td>
+                            <td>06:00 </td>
+                            <td>Ali</td>
+                            <td>MLT-123</td>
+                            <td>9-Lahore To Gujranwala</td>
+                            <td>02:00</td>
+                            <td>20:15</td>
+                            <!-- <td>
+                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-success" style="float: none;"><span class="mdi mdi-pencil"></span></button></div>
+                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
+                            </td> -->
+                        </tr>
+                    </tbody>`;
+    }
+
+
 </script>
 
+<!-- Init js-->
+<script src="{{ asset('/js/pages/form-advanced.init.js') }}"></script>
 @endsection
