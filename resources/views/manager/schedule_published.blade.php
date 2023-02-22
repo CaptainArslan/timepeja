@@ -37,19 +37,19 @@
                                 <option value="NV">123456 - branch - Kips University</option>
                                 <option value="OR">123456 - branch - Sialkot Univeristy</option>
                             </select>
-                        </div> <!-- end col -->
+                        </div>
                         <div class="col-md-3">
                             <label for="date-1">From</label>
                             <input class="form-control" id="example-date-1" type="date" name="date">
-                        </div> <!-- end col -->
+                        </div>
                         <div class="col-md-3">
                             <label for="date">To</label>
                             <input class="form-control" id="example-date" type="date" name="date">
-                        </div> <!-- end col -->
+                        </div>
                         <div class="col-md-1">
                             <label for="publish_schedule">.</label>
                             <button type="button" type="button" class="btn btn-success" id="publish_schedule"> Submit </button>
-                        </div> <!-- end col -->
+                        </div>
                     </div> <!-- end row -->
                 </form>
             </div> <!-- end card-body-->
@@ -62,10 +62,23 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header d-flex">
-                <div class="col-4">
+                <div class="col-2">
                     <h4 class="header-title">Published Schedule</h4>
                 </div>
-                <div class="col-12 d-flex justify-content-between">
+                <div class="col-7">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input class="form-control" id="" type="text" value="123456 - branch - Punjab University" name="organization" style="font-weight: bold;" readonly>
+                        </div>
+                        <!-- <div class="col-md-3">
+                            <input class="form-control" id="example-date-1" type="date" name="date">
+                        </div>
+                        <div class="col-md-3">
+                            <input class="form-control" id="example-date" type="date" name="date">
+                        </div> -->
+                    </div>
+                </div>
+                <div class="col-3 d-flex justify-content-between">
                     <button type="button" type="button" class="btn btn-success" style="position: absolute; right: 170px; top: 10px;">Modify schedule</button>
                     <button type="button" type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#staticBackdrop" style="position: absolute; right: 10px; top: 10px;">Replicate schedule</button>
                 </div>
@@ -79,11 +92,10 @@
                             </th>
                             <th>Date</th>
                             <th>Time</th>
-                            <th>Organization Name</th>
                             <th>Route Name</th>
                             <th>Vehicle</th>
                             <th>Driver</th>
-                            <th>Action</th>
+                            <!-- <th>Action</th> -->
                         </tr>
                     </thead>
                     <tbody>
@@ -93,14 +105,13 @@
                             </td>
                             <td>20/12/2022</td>
                             <td>09:00 AM</td>
-                            <td><b><a href="#" data-bs-toggle="modal" data-bs-target="#modal_organization">Punjab University</a></b></td>
-                            <td><b>GRW <a href="#" class="text-success">TO </a> LHR</b></td>
+                            <td> 15 -  Gujranwala To Lahore </td>
                             <td>LHR-123</td>
                             <td>Ali</td>
-                            <td>
+                            <!-- <td>
                                 <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-success" style="float: none;"><span class="mdi mdi-pencil"></span></button></div>
                                 <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
-                            </td>
+                            </td> -->
                         </tr>
                         <tr>
                             <td>
@@ -108,14 +119,27 @@
                             </td>
                             <td>20/12/2022</td>
                             <td>09:15 AM</td>
-                            <td><b><a href="#" data-bs-toggle="modal" data-bs-target="#modal_organization">Punjab University</a></b></td>
-                            <td><b>LHR <a href="#" class="text-success">TO </a> GRW</b></td>
+                            <td> 15 -  Gujranwala To Lahore </td>
                             <td>GAO-123</td>
                             <td>Azam</td>
-                            <td>
+                            <!-- <td>
                                 <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-success" style="float: none;"><span class="mdi mdi-pencil"></span></button></div>
                                 <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
+                            </td> -->
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="checkbox">
                             </td>
+                            <td>20/12/2022</td>
+                            <td>09:15 AM</td>
+                            <td> 15 -  Gujranwala To Lahore </td>
+                            <td>GAO-123</td>
+                            <td>Afzaal</td>
+                            <!-- <td>
+                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-success" style="float: none;"><span class="mdi mdi-pencil"></span></button></div>
+                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
+                            </td> -->
                         </tr>
                     </tbody>
                 </table>
