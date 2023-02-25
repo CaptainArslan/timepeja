@@ -86,14 +86,14 @@
                         <ul class="nav-second-level">
                             <li>
                                 <a href="{{ route('manager.index') }}">
-                                    <span> Add Manager </span>
+                                    <span> Managers </span>
                                 </a>
                             </li>
-                            <li>
+                           {{-- <li>
                                 <a href="{{ route('manager.create') }}">
                                     <span> Managers List </span>
                                 </a>
-                            </li>
+                            </li> --}}
                             <li>
                                 <a href="{{ route('schedule.creation') }}">Create Schedule</a>
                             </li>
@@ -102,6 +102,9 @@
                             </li>
                             <li>
                                 <a href="{{ route('log.reports') }}">LOG Report</a>
+                            </li>
+                            <li>
+                                <a href="{{ route('active_vehicle') }}">Active Vehicle</a>
                             </li>
                             <!-- <li>
                                 <a href="{{ route('transpot.users') }}">Transport Users</a>
@@ -198,10 +201,10 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="{{ route('driver.lists') }}">Driver List</a>
+                                <a href="{{ route('driver.list') }}">Driver List</a>
                             </li>
                             <li>
-                                <a href="{{ route('driver.trips') }}">Upcoming Trips</a>
+                                <a href="{{ route('driver.trip') }}">Upcoming Trips</a>
                             </li>
                             <!-- <li>
                                 <a href="{{ route('driver.notification') }}">Notification</a>

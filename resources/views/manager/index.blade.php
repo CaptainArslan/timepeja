@@ -2,27 +2,80 @@
 @section('title', 'Add Managers')
 <!-- start page title -->
 @section('page_css')
+<!-- Plugins css -->
+<link href="{{ asset('libs/select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
+<!-- App css -->
+<link href="{{ asset('css/app.min.css') }}" rel="stylesheet" type="text/css" id="app-style" />
 @include('partials.datatable_css')
 @endsection
 @section('content')
 <div class="row">
     <div class="col-12">
-        <div class="page-title-box">
-            <h4 class="page-title">Add Managers</h4>
+        <div class="page-title-box d-flex justify-content-between">
+            <h4 class="page-title">Organizations</h4>
+            <div class="page-title">
+                <button type="button" type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#create_modal"> Add Organization </button>
+            </div>
         </div>
     </div>
+</div>
+
+<!-- Filters -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <form action="" id="filter_form">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="organization">Select Oganization</label>
+                            <select class="form-control select2_filter" id="organization">
+                                <option value="">Select</option>
+                                <option value="all">All</option>
+                                <option value="AK">123456 - branch - Punjab University</option>
+                                <option value="HI">123456 - branch - Gujrant University</option>
+                                <option value="CA">123456 - branch - Gift University</option>
+                            </select>
+                        </div> <!-- end col -->
+                        <div class="col-md-3">
+                            <label for="city">Select City</label>
+                            <select class="form-control select2_filter" id="city">
+                                <option value="">Select</option>
+                                <option value="all">Lahore</option>
+                                <option value="all">Multan</option>
+                                <option value="all">Peshawar</option>
+                                <option value="all">Islamabad</option>
+                                <option value="all">Karachi</option>
+                                <option value="all">Faisalabad</option>
+                                <option value="all">Gujrat</option>
+                            </select>
+                        </div> <!-- end col -->
+                        <div class="col-md-2">
+                            <label for="from">Registration From</label>
+                            <input type="date" class="form-control" id="example-from" name="from">
+                        </div> <!-- end col -->
+                        <div class="col-md-2">
+                            <label for="to">Registration To</label>
+                            <input type="date" class="form-control" id="example-to" name="to">
+                        </div> <!-- end col -->
+                        <div class="col-md-1">
+                            <!-- <label for="route_list"></label> -->
+                            <button type="button" type="button" class="btn btn-success" id="route_list" style="margin-top: 20px;"> Submit </button>
+                        </div> <!-- end col -->
+                    </div> <!-- end row -->
+                </form>
+            </div> <!-- end card-body-->
+        </div> <!-- end card-->
+    </div> <!-- end col-->
 </div>
 
 <!-- end page title -->
 <div class="row">
     <div class="col-12">
         <div class="card">
-            <div class="card-header">
-                <button type="button" type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> Add Organization </button>
-            </div>
             <div class="card-body">
-                <h4 class="header-title">Latest Managers <a class="text-primary"> ({{ count($users) }}) </a> </h4>
-                <table id="basic-datatable" class="table table-striped dt-responsive nowrap w-100">
+                <h4 class="header-title">Latest Managers <a class="text-primary"> ( {{ $managers_count }} ) </a> </h4>
+                <table id="datatable-buttons" class="table table-striped dt-responsive nowrap w-100">
                     <thead>
                         <tr>
                             <th>
@@ -51,41 +104,38 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($users as $user)
+                        @forelse ($managers as $manager)
                         <tr>
                             <td>
                                 <input type="checkbox">
                             </td>
-                            <td>20/12/2022</td>
-                            <td>10:00 AM</td>
-                            <td>{{ $user->otp }}</td>
-                            <td><b><a href="#">{{ $user->name }}</a></b></td>
-                            <td>UOG</td>
-                            <td>14358</td>
-                            <td>University</td>
-                            <td>{{ $user->email }}</td>
-                            <td>055-486215</td>
-                            <td>Gujrat,Pakistan</td>
-                            <td>Shami</td>
-                            <td>shami@gmail.com</td>
-                            <td>055-435258</td>
-                            <td>Lahore Punjab Pakistan</td>
-                            <td>Qasim</td>
-                            <td>qasim@gmail.com</td>
-                            <td>055-435258</td>
-                            <td>Lahore Punjab Pakistan</td>
-                            <td>img</td>
+                            <td>{{ $manager->created_at }}</td>
+                            <td>{{ $manager->created_at }}</td>
+                            <td>{{ $manager->otp }}</td>
+                            <td>{{ $manager-> }}</td>
+                            <td>{{ $manager-> }}</td>
+                            <td>{{ $manager-> }}</td>
+                            <td>{{ $manager-> }}</td>
+                            <td>{{ $manager-> }}</td>
+                            <td>{{ $manager-> }}</td>
+                            <td>{{ $manager-> }}</td>
+                            <td>{{ $manager-> }}</td>
+                            <td>{{ $manager-> }}</td>
+                            <td>{{ $manager-> }}</td>
+                            <td>{{ $manager-> }}</td>
+                            <td>{{ $manager-> }}</td>
+                            <td>{{ $manager-> }}</td>
+                            <td>{{ $manager-> }}</td>
+                            <td>{{ $manager-> }}</td>
+                            <td>{{ $manager-> }}</td>
                             <td>
-                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-success" style="float: none;" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><span class="mdi mdi-pencil"></span></button></div>
+                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-success" style="float: none;" data-bs-toggle="modal" data-bs-target="#create_modal"><span class="mdi mdi-pencil"></span></button></div>
                                 <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
                             </td>
                         </tr>
                         @empty
-                        <tr>
-                            No Data Found
-                        </tr>
+                        <!--  -->
                         @endforelse
-
                     </tbody>
                 </table>
             </div> <!-- end card body-->
@@ -94,11 +144,11 @@
 </div>
 <!-- end row-->
 <!-- Modal -->
-<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fade" id="create_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="create_modalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
             <div class="modal-header bg-light">
-                <h5 class="modal-title" id="staticBackdropLabel">Add Organization</h5>
+                <h5 class="modal-title" id="create_modalLabel">Add Organization</h5>
                 <button type="button" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -159,13 +209,13 @@
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="org_type" class="form-label">Types</label>
-                                                        <select class="form-select" id="org_type" name="org_type">
+                                                        <select class="form-select" id="org_type" name="org_type select2">
                                                             <option value="">Please Select Organization Type</option>
-                                                            @forelse ($organizaton_types as $organizaton_type)
+                                                            {{-- @forelse ($organizaton_types as $organizaton_type)
                                                             <option value="{{$organizaton_type->id}}">{{$organizaton_type->name}} ({{$organizaton_type->desc}})</option>
                                                             @empty
                                                             <option>No Option Found</option>
-                                                            @endforelse
+                                                            @endforelse --}}
                                                         </select>
                                                     </div>
                                                     <div class="mb-3">
@@ -176,7 +226,7 @@
                                                 <div class="col-lg-12 row">
                                                     <div class="mb-3 col-4">
                                                         <label for="org_state" class="form-label">State</label>
-                                                        <select class="form-select" id="org_state" name="org_state">
+                                                        <select class="form-select select2" id="org_state" name="org_state select2">
                                                             <option value="" selected>Please Select State</option>
                                                             @forelse ($states as $state)
                                                             <option value="{{$state->id}}">{{$state->name}}</option>
@@ -187,7 +237,7 @@
                                                     </div>
                                                     <div class="mb-3 col-4">
                                                         <label for="org_city" class="form-label">City</label>
-                                                        <select class="form-select" id="org_city" name="org_city">
+                                                        <select class="form-select select2" id="org_city" name="org_city select2">
                                                             <option value="1">Lahore</option>
                                                             <option value="2">Islamabad</option>
                                                             <option value="3">Karachi</option>
@@ -378,15 +428,33 @@
 </div>
 @endsection
 @section('page_js')
+<script src="{{ asset('/libs/select2/js/select2.min.js') }}"></script>
+<!-- Init js-->
+<script src="{{ asset('/js/pages/form-advanced.init.js') }}"></script>
 @include('partials.datatable_js')
 <!-- Plugins js-->
 <script src="/libs/twitter-bootstrap-wizard/jquery.bootstrap.wizard.min.js"></script>
+
+
 
 <!-- Init js-->
 <script src="/js/pages/form-wizard.init.js"></script>
 <script>
     $(document).ready(function() {
-
+        $(".select2").select2({
+            placeholder: "Select",
+            allowClear: true,
+            dropdownParent: $("#create_modal "), // modal : id modal
+            width: "100%",
+            height: "30px",
+        });
+        $(".select2_filter").select2({
+            placeholder: "Select",
+            allowClear: true,
+            dropdownParent: $("#filter_form "), // modal : id modal
+            width: "100%",
+            height: "30px",
+        });
     });
 </script>
 @endsection

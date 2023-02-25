@@ -78,7 +78,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header d-flex">
-                <div class="col-1">
+                <div class="col-2">
                     <h4 class="header-title">Reports</h4>
                 </div>
                 <div class="col-7">
@@ -86,15 +86,48 @@
                         <div class="col-md-6">
                             <input class="form-control" id="" type="text" value="123456 - branch - Punjab University" name="organization" style="font-weight: bold;" readonly>
                         </div>
-                        <div class="col-md-4">
-                            <input class="form-control" id="" type="text" value="Driver" name="organization" style="font-weight: bold;" readonly>
+                        <!-- <div class="col-md-3">
+                            <input class="form-control" id="example-date-1" type="date" name="date">
                         </div>
+                        <div class="col-md-3">
+                            <input class="form-control" id="example-date" type="date" name="date">
+                        </div> -->
                     </div>
                 </div>
             </div>
             <div class="card-body">
                 <table id="basic-datatable" class="table table-striped dt-responsive nowrap w-100">
-
+                    <thead>
+                        <tr>
+                            <th>
+                                <input type="checkbox">
+                            </th>
+                            <th>Branch Name</th>
+                            <th>Branch Code</th>
+                            <th>Route No</th>
+                            <th>Vehicle</th>
+                            <th>Driver</th>
+                            <th>Time</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <input type="checkbox">
+                            </td>
+                            <td>GT Road Branch</td>
+                            <td>123</td>
+                            <td><b><a href="#">1</a></b></td>
+                            <td>LHR-123</td>
+                            <td>Ali</td>
+                            <td>09:45 PM</td>
+                            <td>
+                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-success" style="float: none;"><span class="mdi mdi-pencil"></span></button></div>
+                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
+                            </td>
+                        </tr>
+                    </tbody>
                 </table>
             </div> <!-- end card body-->
         </div> <!-- end card -->
@@ -116,7 +149,22 @@
 
         $('#filter').change(function(e) {
             e.preventDefault();
-            get_option()
+            var option = '';
+            var value = $(this).val();
+            $('#filter_select').empty();
+            if (value == 'driver') {
+                $('#filter_select_label').html(value);
+                var option = driver_option();
+            } else if (value == 'route') {
+                $('#filter_select_label').html(value);
+                var option = route_option();
+            } else if (value == 'vehicle') {
+                $('#filter_select_label').html(value);
+                var option = vehicle_option();
+            } else {
+                var option = `<option value="">Select</option>`;
+            }
+            $('#filter_select').append(option);
         });
 
     });
@@ -161,148 +209,6 @@
                         <option value="">GRM 15 MLT</option>
                         <option value="">LHR 20 KCH</option>`;
     }
-
-
-
-    function get_driver_table() {
-        return `<thead>
-                        <tr>
-                            <th>
-                                <input type="checkbox">
-                            </th>
-                            <th>Date</th>
-                            <th>Schedule time</th>
-                            <th>Driver</th>
-                            <th>Vehicle</th>
-                            <th>Route No</th>
-                            <th>Actual trip start</th>
-                            <th>End Time</th>
-                            <!-- <th>Time</th>
-                            <th>Action</th> -->
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <input type="checkbox">
-                            </td>
-                            <td>21/02/2022</td>
-                            <td>06:00 </td>
-                            <td>Ali</td>
-                            <td>MLT-123</td>
-                            <td>9-Lahore To Gujranwala</td>
-                            <td>02:00</td>
-                            <td>20:15</td>
-                            <!-- <td>
-                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-success" style="float: none;"><span class="mdi mdi-pencil"></span></button></div>
-                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
-                            </td> -->
-                        </tr>
-                        <tr>
-                            <td>
-                                <input type="checkbox">
-                            </td>
-                            <td>21/02/2022</td>
-                            <td>06:00 </td>
-                            <td>Ali</td>
-                            <td>MLT-123</td>
-                            <td>9-Lahore To Gujranwala</td>
-                            <td>02:00</td>
-                            <td>20:15</td>
-                            <!-- <td>
-                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-success" style="float: none;"><span class="mdi mdi-pencil"></span></button></div>
-                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
-                            </td> -->
-                        </tr>
-                        <tr>
-                            <td>
-                                <input type="checkbox">
-                            </td>
-                            <td>21/02/2022</td>
-                            <td>06:00 </td>
-                            <td>Ali</td>
-                            <td>MLT-123</td>
-                            <td>9-Lahore To Gujranwala</td>
-                            <td>02:00</td>
-                            <td>20:15</td>
-                            <!-- <td>
-                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-success" style="float: none;"><span class="mdi mdi-pencil"></span></button></div>
-                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
-                            </td> -->
-                        </tr>
-                    </tbody>`;
-    }
-
-    function get_vehicle_option() {
-        return `<thead>
-                        <tr>
-                            <th>
-                                <input type="checkbox">
-                            </th>
-                            <th>Date</th>
-                            <th>Schedule time</th>
-                            <th>Driver</th>
-                            <th>Vehicle</th>
-                            <th>Route No</th>
-                            <th>Actual trip start</th>
-                            <th>End Time</th>
-                            <!-- <th>Time</th>
-                            <th>Action</th> -->
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <input type="checkbox">
-                            </td>
-                            <td>21/02/2022</td>
-                            <td>06:00 </td>
-                            <td>Ali</td>
-                            <td>MLT-123</td>
-                            <td>9-Lahore To Gujranwala</td>
-                            <td>02:00</td>
-                            <td>20:15</td>
-                            <!-- <td>
-                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-success" style="float: none;"><span class="mdi mdi-pencil"></span></button></div>
-                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
-                            </td> -->
-                        </tr>
-                        <tr>
-                            <td>
-                                <input type="checkbox">
-                            </td>
-                            <td>21/02/2022</td>
-                            <td>06:00 </td>
-                            <td>Ali</td>
-                            <td>MLT-123</td>
-                            <td>9-Lahore To Gujranwala</td>
-                            <td>02:00</td>
-                            <td>20:15</td>
-                            <!-- <td>
-                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-success" style="float: none;"><span class="mdi mdi-pencil"></span></button></div>
-                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
-                            </td> -->
-                        </tr>
-                        <tr>
-                            <td>
-                                <input type="checkbox">
-                            </td>
-                            <td>21/02/2022</td>
-                            <td>06:00 </td>
-                            <td>Ali</td>
-                            <td>MLT-123</td>
-                            <td>9-Lahore To Gujranwala</td>
-                            <td>02:00</td>
-                            <td>20:15</td>
-                            <!-- <td>
-                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-success" style="float: none;"><span class="mdi mdi-pencil"></span></button></div>
-                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
-                            </td> -->
-                        </tr>
-                    </tbody>`;
-    }
-
-
 </script>
 
 <!-- Init js-->

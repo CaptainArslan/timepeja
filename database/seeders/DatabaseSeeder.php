@@ -17,24 +17,16 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        User::insert([
-            'id' => 1,
-            'name' => 'admin',
-            'email' => 'admin@admin.com',
-            'password' => Hash::make('12345678'),
-            'user_type' => 'admin',
-            'phone' => '0317638978',
-            'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
-            'updated_at' => Carbon::now()->format('Y-m-d H:i:s'),
-        ]);
-        
         $this->call([
+            RoleSeeder::class,
+            UserSeeder::class,
+            ModuleGroupSeeder::class,
+            ModuleSeeder::class,
+            ModuleUrlSeeder::class,
+            PermissionSeeder::class,
             OrganizationTypeSeeder::class,
             OrganizationSeeder::class,
-            VehicleTypeSeeder::class,
-            CountrySeeder::class,
-            StateSeeder::class,
-            CitySeederChunkOne::class
+            VehicleTypeSeeder::class
         ]);
     }
 }
