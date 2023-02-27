@@ -9,5 +9,5 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class OrganizationType extends Model
 {
     use HasFactory, SoftDeletes;
-    protected $fillable = ['name', 'desc', 'user_id'];
+    protected $fillable = ['name', 'desc', 'user_id', 'status'];
 }

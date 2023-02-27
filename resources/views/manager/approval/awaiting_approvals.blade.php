@@ -69,8 +69,23 @@
 <div class="row">
     <div class="col-12">
         <div class="card">
-            <div class="card-header">
-                <h4 class="header-title">Awaiting Approvals <b class="text-primary">(01)</b> </h4>
+            <div class="card-header d-flex">
+                <div class="col-2">
+                    <h4 class="header-title">Awaiting Approvals <b class="text-primary">(01)</b> </h4>
+                </div>
+                <div class="col-7">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input class="form-control" id="" type="text" value="123456 - branch - Punjab University" name="organization" style="font-weight: bold;" readonly>
+                        </div>
+                        <!-- <div class="col-md-3">
+                            <input class="form-control" id="example-date-1" type="date" name="date">
+                        </div>
+                        <div class="col-md-3">
+                            <input class="form-control" id="example-date" type="date" name="date">
+                        </div> -->
+                    </div>
+                </div>
             </div>
             <div class="card-body">
                 <table id="basic-datatable" class="table table-striped dt-responsive nowrap w-100">
@@ -79,13 +94,11 @@
                             <th>
                                 <input type="checkbox">
                             </th>
-                            <th>Request Date</th>
-                            <th>Time</th>
-                            <th>Organization Name</th>
-                            <th>Title</th>
-                            <th>Roll no/ Emp Id</th>
-                            <th>Class/ Depart</th>
-                            <th>Guardian</th>
+                            <th>Student/Employee Name</th>
+                            <th>Roll No/Employee ID</th>
+                            <th>Class/Department</th>
+                            <th>Town/City</th>
+                            <th>No of Guardian</th>
                             <th>Status</th>
                             <th>Action</th>
                         </tr>
@@ -95,12 +108,10 @@
                             <td>
                                 <input type="checkbox">
                             </td>
-                            <td>20/12/2022</td>
-                            <td>9:30 PM</td>
-                            <td><b><a href="#" data-bs-toggle="modal" data-bs-target="#modal_organization">Punjab University</a></b></td>
                             <td>Ali</td>
-                            <td>stu-123 / Emp-123</td>
-                            <td>7th / CS</td>
+                            <td>MSCS220444</td>
+                            <td>8th/Sales</td>
+                            <td>Johar Town Lahore</td>
                             <td>3</td>
                             <td><span class="badge bg-danger">pending</span></td>
                             <td>

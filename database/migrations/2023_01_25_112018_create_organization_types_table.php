@@ -15,10 +15,11 @@ class CreateOrganizationTypesTable extends Migration
     {
         Schema::create('organization_types', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->unsignedBigInteger('u_id')->index('u_id')->nullable();
+            // $table->foreign('u_id')->references('id')->on('users')->onUpdate('cascade');
             $table->string('name');
-            $table->string('desc');
+            $table->string('desc')->nullable();
+            $table->integer('status');
             $table->timestamps();
             $table->softDeletes();
         });

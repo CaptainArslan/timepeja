@@ -2,10 +2,18 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use Illuminate\Support\Carbon;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
+use Database\Seeders\RoleSeeder;
+use Database\Seeders\UserSeeder;
+use Database\Seeders\StateSeeder;
+use Database\Seeders\ModuleSeeder;
+use Database\Seeders\CountrySeeder;
+use Database\Seeders\ModuleUrlSeeder;
+use Database\Seeders\PermissionSeeder;
+use Database\Seeders\ModuleGroupSeeder;
+use Database\Seeders\VehicleTypeSeeder;
+use Database\Seeders\CitySeederChunkOne;
+use Database\Seeders\OrganizationSeeder;
 use Database\Seeders\OrganizationTypeSeeder;
 
 class DatabaseSeeder extends Seeder
@@ -17,24 +25,20 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        User::insert([
-            'id' => 1,
-            'name' => 'admin',
-            'email' => 'admin@admin.com',
-            'password' => Hash::make('12345678'),
-            'user_type' => 'admin',
-            'phone' => '0317638978',
-            'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
-            'updated_at' => Carbon::now()->format('Y-m-d H:i:s'),
-        ]);
-        
         $this->call([
+            RoleSeeder::class,
+            UserSeeder::class,
+            ModuleGroupSeeder::class,
+            ModuleSeeder::class,
+            ModuleUrlSeeder::class,
+            PermissionSeeder::class,
             OrganizationTypeSeeder::class,
             OrganizationSeeder::class,
             VehicleTypeSeeder::class,
             CountrySeeder::class,
             StateSeeder::class,
-            CitySeederChunkOne::class
+            CitySeederChunkOne::class,
+            
         ]);
     }
 }
