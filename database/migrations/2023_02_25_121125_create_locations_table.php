@@ -15,15 +15,16 @@ class CreateLocationsTable extends Migration
     {
         Schema::create('locations', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->unsignedBigInteger('u_id')->index('u_id')->nullable();
             $table->unsignedBigInteger('o_id')->index('o_id')->nullable();
             $table->foreign('o_id')->references('id')->on('organizations')->onUpdate('cascade');
             $table->string('name');
-            $table->unsignedBigInteger('d_id')->index('d_id')->nullable();
-            $table->foreign('d_id')->references('id')->on('drivers')->onUpdate('cascade');
             $table->unsignedBigInteger('p_id')->index('p_id')->nullable();
             $table->foreign('p_id')->references('id')->on('passengers')->onUpdate('cascade');
             $table->unsignedBigInteger('v_id')->index('v_id')->nullable();
             $table->foreign('v_id')->references('id')->on('vehicles')->onUpdate('cascade');
+            $table->unsignedBigInteger('d_id')->index('d_id')->nullable();
+            $table->foreign('d_id')->references('id')->on('drivers')->onUpdate('cascade');
             $table->enum('type', ['vehicle','driver','passenger']);
             $table->string('latitude');
             $table->string('longitude');

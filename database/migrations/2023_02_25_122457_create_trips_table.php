@@ -18,7 +18,7 @@ class CreateTripsTable extends Migration
             $table->unsignedBigInteger('o_id')->index('o_id')->nullable();
             $table->foreign('o_id')->references('id')->on('organizations')->onUpdate('cascade');
             $table->unsignedBigInteger('u_id')->index('u_id')->nullable();
-            $table->foreign('u_id')->references('id')->on('users')->onUpdate('cascade');
+            // $table->foreign('u_id')->references('id')->on('users')->onUpdate('cascade');
             $table->unsignedBigInteger('sch_id')->index('sch_id')->nullable();
             $table->foreign('sch_id')->references('id')->on('schedules')->onUpdate('cascade');
             $table->string('delay_reason')->nullable();

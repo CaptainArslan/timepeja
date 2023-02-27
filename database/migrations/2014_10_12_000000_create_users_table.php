@@ -15,8 +15,6 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('r_id')->index('r_id')->nullable();
-            $table->foreign('r_id')->references('id')->on('roles'); 
             $table->string('full_name');
             $table->string('user_name')->nullable();
             $table->string('phone');
@@ -26,7 +24,7 @@ return new class extends Migration
             $table->string('provider_id')->nullable();
             $table->string('provider')->nullable();
             $table->string('designation')->nullable();
-            $table->string('verify_code')->unique();
+            $table->string('verify_code')->unique()->nullable();
             $table->integer('status');
             $table->rememberToken();
             $table->timestamps();

@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Setting\ModulesUrl;
+use App\Models\ModulesUrl;
 use Illuminate\Database\Seeder;
 
 class ModuleUrlSeeder extends Seeder

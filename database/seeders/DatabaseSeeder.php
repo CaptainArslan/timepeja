@@ -2,10 +2,18 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use Illuminate\Support\Carbon;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
+use Database\Seeders\RoleSeeder;
+use Database\Seeders\UserSeeder;
+use Database\Seeders\StateSeeder;
+use Database\Seeders\ModuleSeeder;
+use Database\Seeders\CountrySeeder;
+use Database\Seeders\ModuleUrlSeeder;
+use Database\Seeders\PermissionSeeder;
+use Database\Seeders\ModuleGroupSeeder;
+use Database\Seeders\VehicleTypeSeeder;
+use Database\Seeders\CitySeederChunkOne;
+use Database\Seeders\OrganizationSeeder;
 use Database\Seeders\OrganizationTypeSeeder;
 
 class DatabaseSeeder extends Seeder
@@ -26,7 +34,11 @@ class DatabaseSeeder extends Seeder
             PermissionSeeder::class,
             OrganizationTypeSeeder::class,
             OrganizationSeeder::class,
-            VehicleTypeSeeder::class
+            VehicleTypeSeeder::class,
+            CountrySeeder::class,
+            StateSeeder::class,
+            CitySeederChunkOne::class,
+            
         ]);
     }
 }

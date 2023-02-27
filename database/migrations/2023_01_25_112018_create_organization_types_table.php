@@ -15,8 +15,8 @@ class CreateOrganizationTypesTable extends Migration
     {
         Schema::create('organization_types', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('u_id')->nullable();
-            $table->foreign('u_id')->references('id')->on('users')->onUpdate('cascade');
+            $table->unsignedBigInteger('u_id')->index('u_id')->nullable();
+            // $table->foreign('u_id')->references('id')->on('users')->onUpdate('cascade');
             $table->string('name');
             $table->string('desc')->nullable();
             $table->integer('status');

@@ -15,7 +15,6 @@ return new class extends Migration
     {
         Schema::create('modules', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('m_g_id')->index('m_g_id')->nullable();
             $table->string('name');
             $table->string('icon')->nullable();
             $table->string('status');
@@ -23,7 +22,6 @@ return new class extends Migration
             $table->string('type');
             $table->timestamps();
             $table->softDeletes();
-            $table->foreign('m_g_id')->references('id')->on('modules_groups')->onDelete('cascade');
         });
     }
 

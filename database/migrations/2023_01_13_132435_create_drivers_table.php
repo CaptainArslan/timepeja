@@ -15,10 +15,10 @@ class CreateDriversTable extends Migration
     {
         Schema::create('drivers', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('o_id')->index('o_id')->nullable();
-            $table->foreign('o_id')->references('id')->on('organizations')->onUpdate('cascade');
+            // $table->unsignedBigInteger('o_id')->index('o_id')->nullable();
+            // $table->foreign('o_id')->references('id')->on('organizations')->onUpdate('cascade');
             $table->unsignedBigInteger('u_id')->index('u_id')->nullable();
-            $table->foreign('u_id')->references('id')->on('users')->onUpdate('cascade');
+            // $table->foreign('u_id')->references('id')->on('users')->onUpdate('cascade');
             $table->string('name');
             $table->string('email')->unique()->nullable();
             $table->string('password');

@@ -10,9 +10,25 @@ use App\Models\TransportManager;
 class Organization extends Model
 {
     use HasFactory, SoftDeletes;
-    protected $fillable = ['name', 'user_id', 'branch_name', 'org_type ', 'email ', 'phone', 'address', 'head_name'];
+    protected $fillable = [
+        'name',
+        'branch_name',
+        'email',
+        'phone',
+        's_id',
+        'c_id',
+        'address',
+        'head_name',
+        'head_email',
+        'head_phone',
+        'head_address',
+        'status',
+        'created_at',
+        'updated_at',
+        'deleted_at'
+    ];
 
-     /**
+    /**
      * manager relation function with manager
      *
      * @return void
