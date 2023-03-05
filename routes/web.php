@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CommonController;
 use App\Models\TransportManager;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -8,6 +9,7 @@ use App\Http\Controllers\RouteController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\ManagerController;
+use App\Http\Controllers\ScheduleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,8 +36,30 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
     Route::resource('/manager', ManagerController::class);
     Route::resource('/routes', RouteController::class);
-    Route::resource('/vehicles', VehicleController::class);
     Route::resource('/driver', DriverController::class);
+
+    // Route::resource('/vehicle', VehicleController::class);
+    Route::prefix('vehicle')->name('vehicle.')->group(function () {
+        Route::get('/', [VehicleController::class, 'index'])->name('index');
+        Route::match(['get', 'post'], '/create', [VehicleController::class, 'create'])->name('create');
+        Route::post('/edit', [VehicleController::class, 'edit'])->name('edit');
+        Route::post('/delete', [VehicleController::class, 'delete'])->name('delete');
+    });
+
+    Route::resource('/schedule', ScheduleController::class);
+
+    // Route::prefix('schedule')->name('schedule.')->group(function () {
+    //     Route::get('/create', [ScheduleController::class, 'index'])->name('index');
+    // });
+
+    Route::get('/schedule/publishes', function () {
+        return view('manager.schedule_published');
+    })->name('schedule.publishes');
+    Route::get('/transpot/schedule', function () {
+        return view('manager.transport_scheduled');
+    })->name('transpot.schedule');
+
+
 
     // Route::get('/vehicle', function () { return view('vehicle.index');})->name('vehicle');
     Route::get('/profile', function () {
@@ -69,15 +93,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/log/reports', function () {
         return view('manager.log_report');
     })->name('log.reports');
-    Route::get('/schedule/creation', function () {
-        return view('manager.schedule_creation');
-    })->name('schedule.creation');
-    Route::get('/schedule/publishes', function () {
-        return view('manager.schedule_published');
-    })->name('schedule.publishes');
-    Route::get('/transpot/schedule', function () {
-        return view('manager.transport_scheduled');
-    })->name('transpot.schedule');
+
     Route::get('/transpot/users', function () {
         return view('manager.users.transport_users');
     })->name('transpot.users');
@@ -107,15 +123,15 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('driver-trips', function () {
         return view('driver.trips');
     })->name('driver.trip');
-    Route::get('driver-lists', function () {
-        return view('driver.lists');
-    })->name('driver.list');
+    // Route::get('driver-lists', function () {
+    //     return view('driver.lists');
+    // })->name('driver.list');
     Route::get('driver/tripstatus', function () {
         return view('driver.tripstatus');
     })->name('driver.tripstatus');
-    Route::get('/list', function () {
-        return view('vehicle.vehicle_list');
-    })->name('vehicle');
+    // Route::get('/list', function () {
+    //     return view('vehicle.vehicle_list');
+    // })->name('vehicle');
 
     // Route::get('/route', function () { return view('route.index');})->name('route');
     Route::get('/revenue', function () {
@@ -124,6 +140,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/expense', function () {
         return view('report.expense');
     })->name('expense');
+
     Route::get('/history/Passenger-to-Passenger', function () {
         return view('history.passenger_to_passenger');
     })->name('bus.passenger');
@@ -157,4 +174,19 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/wallets', function () {
         return view('wallet.index');
     })->name('wallet');
+
+
+    Route::get('get-cities/{state_id?}', [
+        CommonController::class, 'getCities'
+    ])->name('get_cities');
+    Route::get('get-schedule-route-driver-vehicle/{org_id}', [
+        CommonController::class, 'getScheduleRouteDriverVehicle'
+    ])->name('get_schedule_route_driver_vehicle');
 });
+
+// Route::prefix('vehicle')->name('vehicle.')->group(function () {
+//     Route::get('/', [VehicleController::class, 'index'])->name('index');
+//     Route::match(['get', 'post'], '/create', [VehicleController::class, 'create'])->name('create');
+//     Route::post('/edit', [VehicleController::class, 'edit'])->name('edit');
+//     Route::post('/delete', [VehicleController::class, 'delete'])->name('delete');
+// });

@@ -19,7 +19,6 @@ class OrganizationTypeSeeder extends Seeder
             [
                 'name' => 'primary',
                 'desc' => 'Play to 5th',
-                'u_id' => 1,
                 'status' => 1,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now()
@@ -27,7 +26,6 @@ class OrganizationTypeSeeder extends Seeder
             [
                 'name' => 'Middle School',
                 'desc' => '6th to 8th ',
-                'u_id' => 1,
                 'status' => 1,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now()
@@ -35,7 +33,6 @@ class OrganizationTypeSeeder extends Seeder
             [
                 'name' => 'Higer School',
                 'desc' => '9th to 10th ',
-                'u_id' => 1,
                 'status' => 1,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now()
@@ -43,7 +40,6 @@ class OrganizationTypeSeeder extends Seeder
             [
                 'name' => 'College',
                 'desc' => '11th to 12th ',
-                'u_id' => 1,
                 'status' => 1,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now()
@@ -51,7 +47,6 @@ class OrganizationTypeSeeder extends Seeder
             [
                 'name' => 'Higher College',
                 'desc' => 'Bachlor University',
-                'u_id' => 1,
                 'status' => 1,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now()
@@ -59,7 +54,6 @@ class OrganizationTypeSeeder extends Seeder
             [
                 'name' => 'University',
                 'desc' => 'Master Level / PHD',
-                'u_id' => 1,
                 'status' => 1,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now()

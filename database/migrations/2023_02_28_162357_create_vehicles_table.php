@@ -22,6 +22,7 @@ class CreateVehiclesTable extends Migration
             $table->unsignedBigInteger('u_id')->index('u_id')->nullable();
             // $table->foreign('u_id')->references('id')->on('users')->onUpdate('cascade');
             $table->unsignedBigInteger('v_type_id')->index('v_type_id')->nullable();
+            $table->unsignedBigInteger('o_id')->index('o_id')->nullable();
             $table->string('number');
             $table->string('no_of_seat')->nullable();
             $table->string('front_pic')->nullable();
@@ -41,6 +42,7 @@ class CreateVehiclesTable extends Migration
             $table->timestamps();
             $table->softDeletes();
             $table->foreign('v_type_id')->references('id')->on('vehicle_types')->onUpdate('cascade');
+            $table->foreign('o_id')->references('id')->on('organizations')->onUpdate('cascade');
         });
     }
 

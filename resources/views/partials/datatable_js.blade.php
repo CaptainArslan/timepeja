@@ -1,3 +1,6 @@
+<script src="{{ asset('/libs/jquery-toast-plugin/jquery.toast.min.js') }}"></script>
+<!-- toastr init js-->
+<script src="/js/pages/toastr.init.js"></script>
 <!-- third party js -->
 <script src="{{ asset('libs/datatables.net/js/jquery.dataTables.min.js') }}"></script>
 <script src="{{ asset('libs/datatables.net-bs5/js/dataTables.bootstrap5.min.js') }}"></script>

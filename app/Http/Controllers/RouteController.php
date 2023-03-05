@@ -17,8 +17,12 @@ class RouteController extends Controller
      */
     public function index()
     {
-        $organizations = Organization::all();
-        return view('route.route_list', compact('organizations'));
+        $organizations = Organization::get();
+        $routes = Route::get();
+        return view('route.index', [
+            'routes' => $routes,
+            'organizations' => $organizations
+        ]);
     }
 
     /**
@@ -28,8 +32,15 @@ class RouteController extends Controller
      */
     public function create()
     {
-        $organizations = Organization::all();
-        return view('route.index', compact('organizations'));
+        $organizations = Organization::get();
+        $routes = Route::with('organizations')
+        ->latest()
+        ->take(10)
+        ->get();
+        return view('route.create', [
+            'routes' => $routes,
+            'organizations' => $organizations
+        ]);
     }
 
     /**

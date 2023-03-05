@@ -25,7 +25,7 @@ class CreateSchedulesTable extends Migration
             $table->unsignedBigInteger('d_id')->index('d_id');
             $table->date('date');
             $table->time('time');
-            $table->enum('status', ['draft','published']);
+            $table->enum('status', ['0','1']);
             $table->timestamps();
             $table->softDeletes();
             $table->foreign('o_id')->references('id')->on('organizations')->onUpdate('cascade');

@@ -1,15 +1,23 @@
-<title>Login</title>
-<!-- App favicon -->
-<link rel="shortcut icon" href="{{ asset('images/favicon.ico')}}">
-<!-- Bootstrap css -->
-<link href="{{ asset('css/bootstrap.min.css')}}" rel="stylesheet" type="text/css" />
-<!-- App css -->
-<link href="{{ asset('css/app.min.css')}}" rel="stylesheet" type="text/css" id="app-style" />
-<!-- icons -->
-<link href="{{ asset('css/icons.min.css')}}" rel="stylesheet" type="text/css" />
-<!-- Head js -->
-<script src="{{ asset('js/head.js')}}"></script>
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="{{ asset('images/favicon.ico')}}">
+    <!-- Bootstrap css -->
+    <link href="{{ asset('css/bootstrap.min.css')}}" rel="stylesheet" type="text/css" />
+    <!-- App css -->
+    <link href="{{ asset('css/app.min.css')}}" rel="stylesheet" type="text/css" id="app-style" />
+    <!-- icons -->
+    <link href="{{ asset('css/icons.min.css')}}" rel="stylesheet" type="text/css" />
+    <!-- Head js -->
+    <script src="{{ asset('js/head.js')}}"></script>
+
+</head>
 
 <body class="authentication-bg authentication-bg-pattern">
 
@@ -67,7 +75,7 @@
                     <!-- end card -->
                     <div class="row mt-3">
                         <div class="col-12 text-center">
-                            <p> <a href="{{ route('password.request') }}" class="text-white-50 ms-1">Forgot your password?</a></p>
+                            <!-- <p> <a href="{{ route('password.request') }}" class="text-white-50 ms-1">Forgot your password?</a></p> -->
                             <!-- <p class="text-white-50">Don't have an account? <a href="{{ route('register')}}" class="text-white ms-1"><b>Sign Up</b></a></p> -->
                         </div> <!-- end col -->
                     </div>
@@ -84,3 +92,5 @@
     <!-- App js -->
     <script src="{{ asset('js/app.min.js')}}"></script>
 </body>
+
+</html>

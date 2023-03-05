@@ -24,11 +24,11 @@ class CreateFinancialsTable extends Migration
             
             $table->unsignedBigInteger('o_id')->index('o_id');
             
-            $table->boolean('manager_wallet')->default(0);
-            $table->boolean('manager_payment')->default(0);
-            $table->float('manager_amount');
-            $table->date('manager_trail_start_date');
-            $table->date('manager_trail_end_date');
+            $table->boolean('org_wallet')->default(0);
+            $table->boolean('org_payment')->default(0);
+            $table->float('org_amount');
+            $table->date('org_trail_start_date');
+            $table->date('org_trail_end_date');
             
             $table->boolean('driver_wallet')->default(0);
             $table->boolean('driver_payment')->default(0);

@@ -20,9 +20,9 @@ class CreateStatesTable extends Migration
             $table->string('name');
             $table->unsignedBigInteger('ctry_id')->index('ctry_id')->nullable();
             $table->foreign('ctry_id')->references('id')->on('countries')->onDelete('cascade');
-            $table->string('fips_code');
-            $table->string('latitude');
-            $table->string('longitude');
+            $table->string('fips_code')->nullable();
+            $table->string('latitude')->nullable();
+            $table->string('longitude')->nullable();
             $table->tinyInteger('flag');
             $table->string('wikiDataId');
             $table->timestamps();

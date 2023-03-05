@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\City;
 use App\Models\User;
 use App\Models\Financials;
 use App\Models\Organization;
@@ -23,11 +22,19 @@ class ManagerController extends Controller
     public function index()
     {
         $organization_types = OrganizationType::get();
-        $managers = Manager::with('organizations')->get();
+        $organizations = Organization::with('manager')
+        ->latest()
+        ->take(10)
+        ->get();
+        // dd($organizations->toArray());
         $managers_count = Manager::count();
-        $states = State::where('country_id', 167)->get();
-        // return view('manager.create', compact('organization_types', 'managers', 'managers_count', 'users', 'states'));
-        return view('manager.index', ['organization_types' => $organization_types, 'managers' => $managers, 'managers_count' => $managers_count, 'states'=> $states]);
+        $states = State::where('ctry_id', 167)->get();
+        return view('manager.index', [
+            'organization_types' => $organization_types,
+            'organizations' => $organizations,
+            'managers_count' => $managers_count,
+            'states'=> $states
+        ]);
     }
 
     /**
@@ -53,66 +60,61 @@ class ManagerController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            "org_name" => 'required|string',
-            "org_branch_code" => 'nullable|numeric',
-            "org_email" => 'required|email',
-            "org_branch_name" => "required|string",
-            "org_type" => 'required|numeric',
-            "org_phone" => 'nullable|string',
-            "org_address" => 'string|nullable',
-            "org_state" => "required|numeric",
-            "org_city" => "required|numeric",
-            "org_head_name" => 'required|string',
-            "org_head_phone" => 'nullable',
-            "org_head_email" => 'nullable|email',
-            "org_head_address" => 'nullable|string',
-            "man_name" => 'required|string',
-            "phone" => 'required|unique:users',
-            "man_email" => 'nullable|email',
-            "man_pic" => 'nullable|mimes:jpg,png',
-            "man_address" => 'nullable',
-            "manager_wallet" => "nullable",
-            "driver_wallet" => "nullable",
-            "passenger_wallet" => "nullable",
-            "org_payment" => "nullable",
-            "driver_payment" => "nullable",
-            "passenger_payment" => "nullable",
-            "org_amount" => 'nullable|numeric',
-            "org_trial_days" => 'nullable|numeric',
-            "org_trail_start_date" => 'nullable|date',
-            "org_trail_end_date" => 'nullable|date',
-            "driver_amount" => 'nullable|numeric',
-            "driver_trial_days" => 'nullable|numeric',
-            "driver_trial_start_date" => 'nullable|date',
-            "driver_trial_end_date" => 'nullable|date',
-            "passenger_amount" => "nullable|numeric",
-            "passenger_trial_days" => 'nullable|numeric',
-            "passenger_trail_start_date" => 'nullable|date',
-            "passenger_trail_end_date" => 'nullable|date',
+            'org_name' => 'required|string',
+            'org_type ' => 'nullable|numeric',
+            'org_email' => 'required|email',
+            'org_phone' => 'required|regex:/^\d{11}$/',
+            'org_state' => 'required|numeric',
+            'org_city' => 'required|numeric',
+            
+            'org_head_name' => 'required|string',
+            'org_head_phone' => 'required|regex:/^\d{11}$/',
+            'org_head_email' => 'required|email',
+
+            'man_name' => 'required|string',
+            'man_email' => 'nullable|email',
+            'man_phone' => 'required|unique:managers,phone',
+            'man_pic' => 'nullable|mimes:jpg,png',
+
+            'wallet' => 'required',
+            'payment' => 'required',
+
+            'org_amount' => 'nullable|numeric',
+            'org_trail_start_date' => 'nullable|date',
+            'org_trail_end_date' => 'nullable|date',
+
+            'driver_amount' => 'nullable|numeric',
+            'driver_trial_start_date' => 'nullable|date',
+            'driver_trial_end_date' => 'nullable|date',
+
+            'passenger_amount' => 'nullable|numeric',
+            'passenger_trail_start_date' => 'nullable|date',
+            'passenger_trail_end_date' => 'nullable|date',
         ]);
+
 
         $user = Auth::user();
         $error = false;
         DB::beginTransaction();
         $users = new User();
-        $users->name         = $request->input('man_name');
+        $users->user_name    = $request->input('man_name');
         $users->email        = $request->input('man_email');
-        $users->user_type    = 'manager';
-        $users->otp          = rand(100000, 999999);
-        $users->phone        = $request->input('phone');
+        // $users->user_type    = 'manager';
+        // $users->otp          = rand(100000, 999999);
+        $users->phone        = $request->input('man_phone');
         $users_save          = $users->save();
         if ($users_save) {
             $org = new Organization();
-            $org->user_id        = $user->id;
+            $org->u_id          = $user->id;
             $org->name          = $request->input('org_name');
             $org->branch_name   = $request->input('org_branch_name');
             $org->branch_code   = $request->input('org_branch_code');
-            $org->org_type      = $request->input('org_type');
+            $org->o_type        = $request->input('org_type');
             $org->email         = $request->input('org_email');
             $org->phone         = $request->input('org_phone');
             $org->address       = $request->input('org_address');
-            $org->state         = $request->input('org_state');
-            $org->city          = $request->input('org_city');
+            $org->s_id          = $request->input('org_state');
+            $org->c_id          = $request->input('org_city');
             $org->head_name     = $request->input('org_head_name');
             $org->head_phone    = $request->input('org_head_phone');
             $org->head_email    = $request->input('org_head_email');
@@ -120,18 +122,18 @@ class ManagerController extends Controller
             $org_save = $org->save();
             if ($org_save) {
                 $manager = new Manager();
-                $manager->user_id       = $user->id;
-                $manager->org_id        = $org->id;
+                $manager->o_id          = $org->id;
                 $manager->name          = $request->input('man_name');
                 $manager->email         = $request->input('man_email');
-                $manager->phone         = $request->input('phone');
+                $manager->phone         = $request->input('man_phone');
                 $manager->address       = $request->input('man_address');
-                $manager->pic           = '';
+                $manager->otp           = rand(1000, 9999);
+                $manager->picture       = '';
                 $manager_save = $manager->save();
                 if ($manager_save) {
                     $financials = new Financials();
-                    $financials->user_id                    = $user->id;
-                    $financials->org_id                     = $org->id;
+                    $financials->u_id                       = $user->id;
+                    $financials->o_id                       = $org->id;
 
                     $financials->org_wallet                 = isset($request->wallet[0]) ? 1 : 0;
                     $financials->org_payment                = isset($request->payment[0]) ? 1 : 0;
@@ -220,4 +222,5 @@ class ManagerController extends Controller
     {
         dd('destroy');
     }
+
 }

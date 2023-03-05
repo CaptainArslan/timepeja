@@ -1,61 +1,113 @@
 @extends('layouts.app')
-@section('title', 'Add Route')
+@section('title', 'All Routes')
 <!-- start page title -->
 @section('page_css')
+<!-- Plugins css -->
+<link href="{{ asset('libs/select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
+
+<!-- App css -->
+<link href="{{ asset('css/app.min.css') }}" rel="stylesheet" type="text/css" id="app-style" />
+
 @include('partials.datatable_css')
 @endsection
 @section('content')
 <div class="row">
     <div class="col-12">
         <div class="page-title-box">
-            <h4 class="page-title">Add Route</h4>
+            <h4 class="page-title">All Routes</h4>
         </div>
     </div>
 </div>
 <!-- end page title -->
 <div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <!-- <h4 class="header-title">Select Organization</h4> -->
+                <form action="">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label for="organization">Select Oganization</label>
+                            <select class="form-control" data-toggle="select2" data-width="100%" id="organization">
+                            <option value="" selected>Select</option>
+                            @forelse ($organizations as $organization)
+                            <option value="{{ $organization->id }}">{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
+                            @empty
+                            <option value="">Please select</option>
+                            @endforelse
+                            </select>
+                        </div> <!-- end col -->
+                        <div class="col-md-3">
+                            <label for="selecttype">Select</label>
+                            <select class="form-control" data-toggle="select2" data-width="100%" id="filter">
+                                <option value="">Select</option>
+                                <option value="">All</option>
+                                <option value="Gujranwala">Gujranwala</option>
+                                <option value="Lahore">Lahore</option>
+                                <option value="Peshawar">Peshawar</option>
+                            </select>
+                        </div> <!-- end col -->
+                        <div class="col-md-2">
+                            <label for="date-1">From</label>
+                            <input class="form-control today-date" id="example-date-1" type="date" name="date">
+                        </div> <!-- end col -->
+                        <div class="col-md-2">
+                            <label for="date">To</label>
+                            <input class="form-control today-date" id="example-date" type="date" name="date">
+                        </div> <!-- end col -->
+                        <div class="col-md-1">
+                            <label for="route_list"></label>
+                            <button type="button" type="button" class="btn btn-success" id="route_list"> Submit </button>
+                        </div> <!-- end col -->
+                    </div> <!-- end row -->
+                </form>
+            </div> <!-- end card-body-->
+        </div> <!-- end card-->
+    </div> <!-- end col-->
+</div>
+
+<div class="row">
     <div class="col-lg-12 table-responsive">
         <div class="card">
             <div class="card-header">
-                <button type="button" type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> Add </button>
+                <div class="d-flex justify-content-between">
+                    <h4 class="header-title">Route List</h4>
+                    <button class="btn btn-danger">Delete</button>
+                </div>
             </div>
             <div class="card-body">
-                <h4 class="header-title">Latest Routes</h4>
                 <table id="datatable-buttons" class="table table-striped dt-responsive nowrap w-100">
                     <thead>
                         <tr>
-                            <th>
-                                <input type="checkbox">
-                            </th>
                             <th>Date</th>
                             <th>Time</th>
                             <th>Organization Name</th>
                             <th>Route Name</th>
-                            <th>To</th>
-                            <th>From</th>
                             <th>Route No</th>
+                            <th>From</th>
+                            <th>To</th>
                             <th>Action</th>
                         </tr>
                     </thead>
 
 
                     <tbody>
+                        @forelse ($routes as $route)
                         <tr>
-                            <td>
-                                <input type="checkbox">
-                            </td>
-                            <td>2/1/2023</td>
-                            <td>9:00 PM</td>
-                            <td><b><a href="#">Tiger Nixon</a></b></td>
-                            <td>System Architect</td>
-                            <td>Edinburgh</td>
-                            <td>61</td>
-                            <td>2011/04/25</td>
+                            <td>{{ date("Y-m-d",strtotime($route->created_at)) }}</td>
+                            <td>{{ date("H:m:s",strtotime($route->created_at)) }}</td>
+                            <td><b><a href="#">{{ $route->organizations['name'] }}</a></b></td>
+                            <td>{{ $route->name }}</td>
+                            <td>{{ $route->number  }}</td>
+                            <td>{{ $route->to }}</td>
+                            <td>{{ $route->from }}</td>
                             <td>
                                 <div class="btn-group btn-group-sm" style="float: none;"><button type="button" class="tabledit-edit-button btn btn-success" style="float: none;" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><span class="mdi mdi-pencil"></span></button></div>
                                 <div class="btn-group btn-group-sm" style="float: none;"><button type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
                             </td>
                         </tr>
+                        @empty
+                        @endforelse
                     </tbody>
                 </table>
             </div> <!-- end card body-->
@@ -63,13 +115,12 @@
     </div><!-- end col-->
 </div>
 <!-- end row-->
-
 <!-- Modal -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg  modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-light">
-                <h4 class="modal-title" id="myCenterModalLabel">Add Route</h4>
+                <h4 class="modal-title" id="myCenterModalLabel">Update Route</h4>
                 <button type="button" type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
             </div>
             <div class="modal-body p-4">
@@ -79,10 +130,10 @@
                         <label for="org_name" class="form-label">Organization Name</label>
                         <select class="form-select" id="org_name" name="org_name">
                             <option value="">Please Select Organization Name</option>
-                            @forelse ($organizations as $organizaton)
-                            <option value="{{$organizaton->id}}">{{$organizaton->name}}</option>
+                            @forelse ($organizations as $organization)
+                            <option value="{{ $organization->id }}">{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
                             @empty
-                            <option>No Option Found</option>
+                            <option value="">Please select</option>
                             @endforelse
                         </select>
                     </div>
@@ -95,16 +146,8 @@
                         <input type="text" id="to" name="to" class="form-control">
                     </div>
                     <div class="mb-3">
-                        <label for="from" class="form-label">Select from Map</label>
-                        <div id="gmaps-basic" class="gmaps"></div>
-                    </div>
-                    <div class="mb-3">
                         <label for="from" class="form-label">From</label>
                         <input type="text" id="from" name="from" class="form-control">
-                    </div>
-                    <div class="mb-3">
-                        <label for="from" class="form-label">From Map</label>
-                        <div id="gmaps-basic" class="gmaps"></div>
                     </div>
                     <div class="mb-3">
                         <label for="route_name" class="form-label">Route Name</label>
@@ -121,35 +164,11 @@
 @endsection
 
 @section('page_js')
+<script src="{{ asset('/libs/select2/js/select2.min.js') }}"></script>
+<!-- Init js-->
+<script src="{{ asset('/js/pages/form-advanced.init.js') }}"></script>
+
 @include('partials.datatable_js')
-<!-- Plugins js-->
-<script src="/libs/twitter-bootstrap-wizard/jquery.bootstrap.wizard.min.js"></script>
 
-<!-- Init js-->
-<script src="/js/pages/form-wizard.init.js"></script>
 
-<!-- google maps api -->
-<script src="https://maps.google.com/maps/api/js?key=AIzaSyDsucrEdmswqYrw0f6ej3bf4M4suDeRgNA"></script>
-
-<!-- gmap js-->
-<script src="{{asset('libs/gmaps/gmaps.min.js')}}"></script>
-
-<!-- Init js-->
-<script src="{{asset('js/pages/google-maps.init.js')}}"></script>
-
-<!-- Dashboar 1 init js-->
-<script src="{{asset('js/pages/dashboard-1.init.js')}}"></script>
-
-<script>
-    $(document).ready(function() {
-        $('#route_no, #to,  #from').change(function(e) {
-            e.preventDefault();
-            var routeno = $('#route_no').val();
-            var to = $('#to').val();
-            var from = $('#from').val();
-            $('#route_name').val(routeno + '  ' + to + '  ' + from);
-        });
-
-    });
-</script>
 @endsection
