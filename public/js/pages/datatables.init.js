@@ -19,14 +19,14 @@ $(document).ready(function () {
 
     var a = $("#datatable-buttons").DataTable({
         // lengthChange: !1,
-        aLengthMenu: [
+        LengthMenu: [
             [10, 25, 50, -1],
             [10, 25, 50, "All"],
         ],
         buttons: [
-            // { extend: "copy", className: "btn-light" },
-            { extend: "print", className: "btn-light" },
+            // { extend: "print", className: "btn-light" },
             { extend: "pdf", className: "btn-light" },
+            { extend: "copy", className: "btn-light" },
         ],
         language: {
             paginate: {

@@ -18,6 +18,7 @@
     <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
     <!-- App css -->
     <link href="{{ asset('css/app.min.css') }}" rel="stylesheet" type="text/css" id="app-style" />
+    <link href="{{ asset('css/common.css') }}" rel="stylesheet" type="text/css" />
     <!-- icons -->
     <link href="{{ asset('css/icons.min.css') }}" rel="stylesheet" type="text/css" />
     <!-- Head js -->
@@ -62,7 +63,9 @@
     <script src="{{asset('libs/selectize/js/standalone/selectize.min.js')}}"></script>
     <!-- App js-->
     <script src="{{asset('js/app.min.js')}}"></script>
+    <script src="{{asset('js/common.js')}}"></script>
     @yield('page_js')
+
 </body>
 
 </html>

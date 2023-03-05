@@ -190,7 +190,7 @@
 
                     <!-- item-->
                     <a href="{{ route('logout') }}" class="dropdown-item notify-item" onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
+                                                    document.getElementById('logout-form').submit();">
                         <i class="fe-log-out"></i>
                         <span>Logout</span>
                     </a>

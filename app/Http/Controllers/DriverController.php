@@ -15,8 +15,9 @@ class DriverController extends Controller
      */
     public function index()
     {
-        $organizatons = Organization::all();
-        return view('driver.index', compact('organizatons'));
+        $drivers = Driver::with('organizations')
+        ->get();
+        return view('driver.index', ['drivers' => $drivers]);
     }
 
     /**
@@ -26,8 +27,16 @@ class DriverController extends Controller
      */
     public function create()
     {
-        dd('create');
-        return view('driver.lists');
+        $organizations = Organization::get();
+        $drivers = Driver::with('organizations')
+        ->latest()
+        ->take(10)
+        ->get();
+        // dd($drivers->toArray());
+        return view('driver.create', [
+            'organizations' => $organizations,
+            'drivers' => $drivers
+        ]);
     }
 
     /**

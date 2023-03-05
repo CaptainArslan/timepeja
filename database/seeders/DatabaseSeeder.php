@@ -26,19 +26,27 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call([
-            RoleSeeder::class,
-            UserSeeder::class,
-            ModuleGroupSeeder::class,
-            ModuleSeeder::class,
-            ModuleUrlSeeder::class,
-            PermissionSeeder::class,
-            OrganizationTypeSeeder::class,
-            OrganizationSeeder::class,
-            VehicleTypeSeeder::class,
+            // ModuleGroupSeeder::class,
+            // ModuleSeeder::class,
+            // ModuleUrlSeeder::class,
+            // PermissionSeeder::class,
             CountrySeeder::class,
             StateSeeder::class,
             CitySeederChunkOne::class,
-            
+            CitiesTableChunkTwoSeeder::class,
+            CitiesTableChunkThreeSeeder::class,
+            CitiesTableChunkFourSeeder::class,
+            CitiesTableChunkFiveSeeder::class,
+            RoleSeeder::class,
+            UserSeeder::class,
+            OrganizationTypeSeeder::class,
+            VehicleTypeSeeder::class,
+            OrganizationSeeder::class,
+            ManagerSeeder::class,
+            RouteSeeder::class,
+            VehicleSeeder::class,
+            DriverSeeder::class,
+            ScheduleSeeder::class
         ]);
     }
 }

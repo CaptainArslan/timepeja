@@ -95,7 +95,7 @@
                                 </a>
                             </li> --}}
                             <li>
-                                <a href="{{ route('schedule.creation') }}">Create Schedule</a>
+                                <a href="{{ route('schedule.index') }}">Create Schedule</a>
                             </li>
                             <li>
                                 <a href="{{ route('schedule.publishes') }}">Published Schedule</a>
@@ -142,12 +142,12 @@
                     </div>
 
                 </li>
-                <!-- <li>
+                {{-- <li>
                     <a href="{{ route('vehicles.index') }}">
                         <i class=" fas fa-car-alt"></i>
                         <span> Vehicles </span>
                     </a>
-                </li> -->
+                </li> --}}
                 <li>
                     <a href="#sidebarvehicles" data-bs-toggle="collapse">
                         <i class="fas fa-car-alt"></i>
@@ -157,10 +157,10 @@
                     <div class="collapse" id="sidebarvehicles">
                         <ul class="nav-second-level">
                             <li>
-                                <a href="{{ route('vehicles.index') }}">Add Vehicle</a>
+                                <a href="{{ route('vehicle.create') }}">Add Vehicle</a>
                             </li>
                             <li>
-                                <a href="{{ route('vehicle') }}">Vehicle List</a>
+                                <a href="{{ route('vehicle.index') }}">Vehicle List</a>
                             </li>
                         </ul>
                     </div>
@@ -196,12 +196,12 @@
                     <div class="collapse" id="sidebarDriver">
                         <ul class="nav-second-level">
                             <li>
-                                <a href="{{ route('driver.index') }}">
+                                <a href="{{ route('driver.create') }}">
                                     <span> Add Drivers </span>
                                 </a>
                             </li>
                             <li>
-                                <a href="{{ route('driver.list') }}">Driver List</a>
+                                <a href="{{ route('driver.index') }}">Driver List</a>
                             </li>
                             <li>
                                 <a href="{{ route('driver.trip') }}">Upcoming Trips</a>

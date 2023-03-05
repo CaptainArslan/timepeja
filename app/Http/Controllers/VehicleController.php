@@ -10,6 +10,20 @@ use Illuminate\Support\Facades\Auth;
 
 class VehicleController extends Controller
 {
+
+    /**
+     * roles and permission middleware
+     *
+     * @return  [type]  [return description]
+     */
+    public function __construct()
+    {
+        // $this->middleware(function ($request, $next) {
+        //     app(UserController::class)->main();
+        //     return $next($request);
+        // });
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -17,9 +31,18 @@ class VehicleController extends Controller
      */
     public function index()
     {
-        $organizations = Organization::all();
-        $vehicle_types = VehicleType::all();
-        return view('vehicle.index', compact('organizations', 'vehicle_types'));
+        $organizations = Organization::get();
+        $vehicle_types = VehicleType::get();
+        $vehicles = Vehicle::orderBy('id', 'DESC')->skip(0)->take(10)
+                    ->with('organizations')->with('vehiclesTypes')->get();
+        return view('vehicle.index', [
+            'organizations' => $organizations,
+            'vehicles' => $vehicles,
+            'vehicle_types' => $vehicle_types
+        ]);
+        // $vehicles = Vehicle::with('organizations', 'vehiclesTypes')
+        // ->get();
+        // return view('vehicle.index', ['vehivles' => $vehicles]);
     }
 
     /**
@@ -29,7 +52,18 @@ class VehicleController extends Controller
      */
     public function create()
     {
-        //
+        $organizations = Organization::get();
+        $vehicle_types = VehicleType::get();
+        $vehicles = Vehicle::with('organizations', 'vehiclesTypes')
+            ->latest()
+            ->take(10)
+            ->get();
+        // dd($vehicles->toArray());
+        return view('vehicle.create', [
+            'organizations' => $organizations,
+            'vehicle_types' => $vehicle_types,
+            'vehivles' => $vehicles
+        ]);
     }
 
     /**

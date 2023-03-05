@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\TransportManager;
 
 class Organization extends Model
 {
@@ -35,6 +34,16 @@ class Organization extends Model
      */
     public function manager()
     {
-        return $this->hasOne(TransportManager::class, 'org_id', 'id');
+        return $this->belongsTo(Manager::class, 'id', 'o_id');
+    }
+
+    public function city()
+    {
+        return $this->belongsTo(City::class, 'c_id', 'id');
+    }
+
+    public function state()
+    {
+        return $this->belongsTo(State::class, 's_id', 'id');
     }
 }

@@ -133,11 +133,11 @@
                         <label for="org_name" class="form-label">Organization Name</label>
                         <select class="form-select" id="org_name" name="org_name">
                             <option value="">Please Select Organization Name</option>
-                            @forelse ($organizations as $organizaton)
+                            {{-- @forelse ($organizations as $organizaton)
                             <option value="{{$organizaton->id}}">{{$organizaton->name}}</option>
                             @empty
                             <option>No Option Found</option>
-                            @endforelse
+                            @endforelse --}}
                         </select>
                     </div>
                     <div class="mb-3">
