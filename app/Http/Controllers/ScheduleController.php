@@ -43,7 +43,8 @@ class ScheduleController extends Controller
      */
     public function store(Request $request)
     {
-        $user = Auth::user();
+        // dd($request->all());
+        
         // $id = Schedule::insertGetId([
         //     [
         //         'o_id' => $request->organization,
@@ -56,6 +57,7 @@ class ScheduleController extends Controller
         //         'status' => 0
         //     ]
         // ]);
+        $user = Auth::user();
         $id = Schedule::insertGetId([
             'o_id' => $request->organization,
             'u_id' => $user->id,

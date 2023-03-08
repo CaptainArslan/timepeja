@@ -54,4 +54,19 @@ class CommonController extends Controller
             ]
         ]) ;
     }
+
+    public function moveImageGetName(Request $request, $inputName, $path)
+    {
+        if ($request->hasFile($inputName)) {
+            $file = $request->file($inputName);
+            $cnic_front_name = time() . $file->getClientOriginalName();
+            $file->move(public_path($path), $cnic_front_name);
+            $cnic_front_path = $path . $cnic_front_name;
+
+            $extension = $file->getClientOriginalExtension();
+            $filename = time().'.' . $extension;
+            $file->move(public_path('uploads/'), $filename);
+            $data['image'] = 'public/uploads/' . $filename;
+        }
+    }
 }

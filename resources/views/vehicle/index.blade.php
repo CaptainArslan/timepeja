@@ -299,11 +299,9 @@
 <!-- Init js-->
 <script src="{{asset('js/pages/form-fileuploads.init.js')}}"></script>
 
-<!-- Sweet Alerts js -->
-<script src="{{asset('libs/sweetalert2/sweetalert2.all.min.js')}}"></script>
 
-<!-- Sweet alert init js-->
-{{-- <script src="{{asset('js/pages/sweet-alerts.init.js')}}"></script> --}}
+
+
 <script>
     $(document).ready(function() {
         $(".select2").select2({
@@ -424,18 +422,15 @@
                             "id": id,
                         },
                         success: function(response) {
-                            Swal.fire(
-                                'Deleted!',
-                                'Data Successfully Updated.!',
-                                'success'
-                            ).then((result) => {
-                                $(el).closest('tr').css(
-                                    'background', 'tomato');
-                                $(el).closest('tr').fadeOut(800,
-                                    function() {
-                                        $(this).remove();
-                                    });
-                            });
+                            $(el).closest('tr').css( 'background', 'tomato');
+                            $(el).closest('tr').fadeOut(800, function() {  $(this).remove();  });
+                            // Swal.fire(
+                            //     'Deleted!',
+                            //     'Data Successfully Updated.!',
+                            //     'success'
+                            // ).then((result) => {
+                                
+                            // });
                         },
                         error: (error) => {
                             console.log(JSON.stringify(error));

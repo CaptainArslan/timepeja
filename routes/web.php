@@ -55,6 +55,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/schedule/publishes', function () {
         return view('manager.schedule_published');
     })->name('schedule.publishes');
+    
     Route::get('/transpot/schedule', function () {
         return view('manager.transport_scheduled');
     })->name('transpot.schedule');

@@ -24,7 +24,7 @@ class CreateWalletsTable extends Migration
             $table->integer('status');
             $table->timestamps();
             $table->softDeletes();
-            $table->foreign('u_id')->references('id')->on('users');
+            // $table->foreign('u_id')->references('id')->on('users');
         });
     }
 

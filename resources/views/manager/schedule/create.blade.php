@@ -73,7 +73,7 @@
                             <input class="form-control" id="time" type="time" name="time">
                             <span class="text-danger" id="time_error"></span>
                         </div> <!-- end col -->
-                        <div class="col-md-1">
+                        <div class="col-md-2">
                             <label for="add_schedule"></label>
                             <button type="submit" type="button" class="btn btn-success form-control" id="add_schedule"> Add </button>
                         </div> <!-- end col -->
@@ -165,6 +165,8 @@
             });
         });
 
+
+
         $('#create_schedule').submit(function(e) {
             e.preventDefault();
             if (checkOrganizationValidate()) {
@@ -174,7 +176,27 @@
                     url: "{{ route('schedule.store') }}",
                     data: $(this).serialize(),
                     success: function(response) {
-                        console.log(response);
+                        console.log(response.status);
+                        if (response.status == 'success') {
+                            html = `
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" class="child_checkbox">
+                                    </td>
+                                    <td>Date</td>
+                                    <td>Organization Name</td>
+                                    <td>Driver</td>
+                                    <td>Route No</td>
+                                    <td>Vehicle</td>
+                                    <td>Time</td>
+                                    <td>Action</td>
+                                <tr>
+                            `;
+                            $('#basic-datatable > tbody').append(html);
+
+                            let count = $('#basic-datatable > tbody').children('tr').length;
+                            alert(count);
+                        }
                     }
                 });
             } else {
@@ -183,8 +205,6 @@
         });
 
     });
-
-
 
     function checkOrganizationValidate() {
         let orgNameErr = routeNoErr = vehicleRegErr = driverErr = dateErr = timeErr = true;
