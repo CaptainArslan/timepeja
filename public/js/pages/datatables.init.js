@@ -25,7 +25,7 @@ $(document).ready(function () {
         ],
         buttons: [
             // { extend: "print", className: "btn-light" },
-            { extend: "pdf", className: "btn-light" },
+            // { extend: "pdf", className: "btn-light" },
             { extend: "copy", className: "btn-light" },
         ],
         language: {

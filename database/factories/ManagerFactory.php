@@ -21,7 +21,7 @@ class ManagerFactory extends Factory
             'email' => $this->faker->safeEmail(),
             'phone' => $this->faker->phoneNumber(),
             'password' => Hash::make('12345678'),
-            'otp' => rand(1000, 9999),
+            'otp' => substr(uniqid(), -4),
             'address' => $this->faker->address(),
             'status' => 1,
         ];

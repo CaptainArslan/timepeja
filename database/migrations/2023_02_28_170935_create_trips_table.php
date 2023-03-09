@@ -23,7 +23,7 @@ class CreateTripsTable extends Migration
             $table->unsignedBigInteger('sch_id')->index('sch_id')->nullable();
             $table->string('delay_reason')->nullable();
             $table->time('delay_time')->nullable();
-            $table->enum('status', ['pending','in_progress','completed','delay']);
+            $table->enum('status', ['pending','in-progress','completed','delay']);
             $table->timestamps();
             $table->softDeletes();
             $table->foreign('o_id')->references('id')->on('organizations')->onUpdate('cascade');

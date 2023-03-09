@@ -106,7 +106,7 @@
                             <td>{{ $driver->name }}</td>
                             <td>{{ $driver->phone }}</td>
                             <td>{{ $driver->cnic }}</td>
-                            <td>{{ $driver->licence_no }}</td>
+                            <td>{{ $driver->license_no }}</td>
                             <td>
                                 <img src="{{ $driver->cnic_front_pic }}" alt="cnic front" height="50" width="50">
                             </td>
@@ -114,10 +114,10 @@
                                 <img src="{{ $driver->cnic_back_pic }}" alt="cnic back" height="50" width="50">
                             </td>
                             <td>
-                                <img src="{{ $driver->licence_no_front_pic }}" alt="licsence front" height="50" width="50">
+                                <img src="{{ $driver->license_no_front_pic }}" alt="licsence front" height="50" width="50">
                             </td>
                             <td>
-                                <img src="{{ $driver->licence_no_back_pic }}" alt="License Back" height="50" width="50">
+                                <img src="{{ $driver->license_no_back_pic }}" alt="License Back" height="50" width="50">
                             </td>
                             <td><span class="badge  @if($driver->status) bg-success @else bg-danger @endif ">
                                     @if($driver->status) Active @else Deactive @endif</span></td>

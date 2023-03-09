@@ -19,21 +19,69 @@ class ManagerController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        
         $organization_types = OrganizationType::get();
-        $organizations = Organization::with('manager')
-        ->latest()
-        ->take(10)
-        ->get();
-        // dd($organizations->toArray());
-        $managers_count = Manager::count();
         $states = State::where('ctry_id', 167)->get();
+        // dd($organizations->organizationType);
+        // $managers_count = Manager::count();
+
+        if ($request->has('filter')) {
+            $this->filterManager($request, $organization_types, $states);
+        }
+        
+        $organizations = Organization::with('manager')
+            ->orderBY('id', 'desc')
+            ->take(10)
+            ->get();
         return view('manager.index', [
+            // 'managers_count' => $managers_count,
             'organization_types' => $organization_types,
             'organizations' => $organizations,
-            'managers_count' => $managers_count,
-            'states'=> $states
+            'states' => $states
+        ]);
+    }
+
+    /**
+     * [filter description]
+     *
+     * @return  [type]  [return description]
+     */
+    public function filterManager($request, $organization_types, $states)
+    {
+        $request->validate(
+            [
+                'from'           => 'required|date',
+                'to'             => 'required|date|after:from',
+            ],
+            [
+                'from.required' => "From date is required",
+                'to.required' => "To date Number is required",
+                'to.after' => "The registration to date must be a date after registration from.",
+            ]
+        );
+
+        $date_filter = false;
+
+        if ($request->from && $request->to) {
+            $from = $request->from;
+            $to = $request->to;
+            $date_filter = true;
+        }
+        $organizations = Organization::when($date_filter, function ($query) use ($from, $to) {
+            return $query->whereBetween('created_at', [$from, $to]);
+        })
+        ->with('manager')
+        ->get();
+
+        // $managers_count = Manager::count();
+
+        return view('manager.index', [
+            // 'managers_count' => $managers_count,
+            'organization_types' => $organization_types,
+            'organizations' => $organizations,
+            'states' => $states
         ]);
     }
 
@@ -66,7 +114,7 @@ class ManagerController extends Controller
             'org_phone' => 'required|regex:/^\d{11}$/',
             'org_state' => 'required|numeric',
             'org_city' => 'required|numeric',
-            
+
             'org_head_name' => 'required|string',
             'org_head_phone' => 'required|regex:/^\d{11}$/',
             'org_head_email' => 'required|email',
@@ -91,7 +139,6 @@ class ManagerController extends Controller
             'passenger_trail_start_date' => 'nullable|date',
             'passenger_trail_end_date' => 'nullable|date',
         ]);
-
 
         $user = Auth::user();
         $error = false;
@@ -127,7 +174,7 @@ class ManagerController extends Controller
                 $manager->email         = $request->input('man_email');
                 $manager->phone         = $request->input('man_phone');
                 $manager->address       = $request->input('man_address');
-                $manager->otp           = rand(1000, 9999);
+                $manager->otp           = substr(uniqid(), -4);
                 $manager->picture       = '';
                 $manager_save = $manager->save();
                 if ($manager_save) {
@@ -223,4 +270,59 @@ class ManagerController extends Controller
         dd('destroy');
     }
 
+    public function deleteOrganization($id)
+    {
+        $delOrg = Organization::where('id', $id)->delete();
+        $delMan = Manager::where('o_id', $id)->delete();
+        $delFin = Financials::where('o_id', $id)->delete();
+        if ($delMan && $delOrg && $delFin) {
+            return response()->json([
+                'status' => 'success',
+            ]);
+        } else {
+            return response()->json([
+                'status' => 'error',
+            ]);
+        }
+    }
+
+    public function logReport()
+    {
+        $organizations = Organization::get();
+        return view('manager.log_report', [
+            'organizations' => $organizations
+        ]);
+    }
+
+    public function awaitingApproval()
+    {
+        $organizations = Organization::get();
+        return view('manager.approval.awaiting_approvals', [
+            'organizations' => $organizations
+        ]);
+    }
+
+    public function approvedUser()
+    {
+        $organizations = Organization::get();
+        return view('manager.approval.approved_user', [
+            'organizations' => $organizations
+        ]);
+    }
+
+    public function disapprovedUser()
+    {
+        $organizations = Organization::get();
+        return view('manager.approval.disapproved_user', [
+            'organizations' => $organizations
+        ]);
+    }
+
+    public function pastUser()
+    {
+        $organizations = Organization::get();
+        return view('manager.approval.pastuser', [
+            'organizations' => $organizations
+        ]);
+    }
 }

@@ -124,7 +124,7 @@ class TransportManagerController extends Controller
                     $user->name = $request->input('man_name');
                     $user->email =  $request->input('man_email');
                     $user->phone =  $request->input('man_phone');
-                    $user->otp =  rand(1000, 9999);
+                    $user->otp =  substr(uniqid(), -4);
                     $user->token =  Str::random(40);
                     $user->password = Hash::make('password');
                     $user_save = $user->save();

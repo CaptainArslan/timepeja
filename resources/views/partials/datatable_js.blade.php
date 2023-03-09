@@ -1,3 +1,6 @@
+<!-- Sweet Alerts js -->
+<script src="{{asset('libs/sweetalert2/sweetalert2.all.min.js')}}"></script>
+<!-- Toaster plugin -->
 <script src="{{ asset('/libs/jquery-toast-plugin/jquery.toast.min.js') }}"></script>
 <!-- toastr init js-->
 <script src="/js/pages/toastr.init.js"></script>

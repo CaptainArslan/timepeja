@@ -32,18 +32,18 @@
             <div class="card-body">
                 <form action="" id="filter_form">
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-5">
                             <label for="organization">Select Oganization</label>
-                            <select class="form-control select2_filter" id="organization">
+                            <select class="form-select select2_filter" id="o_id" name="o_id">
                                 <option value="">Select</option>
-                                <option value="AK">123456 - branch - Punjab University</option>
-                                <option value="HI">123456 - branch - Gujrant University</option>
-                                <option value="CA">123456 - branch - Gift University</option>
-                                <option value="NV">123456 - branch - Kips University</option>
-                                <option value="OR">123456 - branch - Sialkot Univeristy</option>
+                                @forelse ($organizations as $organization)
+                                <option value="{{ $organization->id }}">{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
+                                @empty
+                                <option value="">Please select</option>
+                                @endforelse
                             </select>
-                        </div> <!-- end col -->
-                        <div class="col-md-3">
+                        </div>
+                        <!-- <div class="col-md-3">
                             <label for="filter">Select Vehicle</label>
                             <select class="form-control select2_filter" id="filter">
                                 <option value="">Select</option>
@@ -52,20 +52,20 @@
                                 <option value="vehicle">Bus</option>
                                 <option value="route">Hiace</option>
                             </select>
-                        </div> <!-- end col -->
-                        <div class="col-md-2">
+                        </div> -->
+                        <div class="col-md-3">
                             <label for="from">From</label>
                             <input class="form-control" id="example-date-1" type="date" name="from">
-                        </div> <!-- end col -->
-                        <div class="col-md-2">
+                        </div>
+                        <div class="col-md-3">
                             <label for="to">To</label>
                             <input class="form-control" id="example-date" type="date" name="to">
-                        </div> <!-- end col -->
+                        </div>
                         <div class="col-md-1">
                             <label for="publish_schedule">.</label>
                             <button type="button" type="button" class="btn btn-success" id="publish_schedule"> Submit
                             </button>
-                        </div> <!-- end col -->
+                        </div>
                     </div> <!-- end row -->
                 </form>
             </div> <!-- end card-body-->
@@ -87,7 +87,7 @@
                     <thead>
                         <tr>
                             <th>
-                                <input type="checkbox">
+                                <input type="checkbox" class="parent_checkbox">
                             </th>
                             <th>Date</th>
                             <th>Time</th>
@@ -99,14 +99,11 @@
                             <th>Action</th>
                         </tr>
                     </thead>
-
-
                     <tbody>
                         @forelse($vehicles as $vehicle)
-
                         <tr>
                             <th>
-                                <input type="checkbox">
+                                <input type="checkbox" class="child_checkbox">
                                 <input type="hidden" value="{{$vehicle->id}}" class="db_id" name="id">
                                 <input type="hidden" value="{{$vehicle->reg_date}}" class="reg_date" name="reg_date">
                                 <input type="hidden" value="{{$vehicle->o_id}}" class="db_o_id" name="o_id">
@@ -125,8 +122,16 @@
                             <td><img src="{{$vehicle->front_pic}}" alt="" width="50px" height="50px"></td>
                             <td><img src="{{$vehicle->number_pic}}" alt="" width="50px" height="50px"></td>
                             <td>
-                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" class="tabledit-edit-button btn btn-success edit_btn" style="float: none;" data-bs-toggle="modal" data-bs-target="#edit_modal"><span class="mdi mdi-pencil"></span></button></div>
-                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" class="tabledit-edit-button btn btn-danger delete" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
+                                <div class="btn-group btn-group-sm" style="float: none;">
+                                    <button type="button" class="tabledit-edit-button btn btn-success edit_btn" style="float: none;" data-bs-toggle="modal" data-bs-target="#edit_modal">
+                                        <span class="mdi mdi-pencil"></span>
+                                    </button>
+                                </div>
+                                <div class="btn-group btn-group-sm" style="float: none;">
+                                    <button type="button" class="tabledit-edit-button btn btn-danger delete" style="float: none;">
+                                        <span class="mdi mdi-delete"></span>
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                         @empty
@@ -154,8 +159,8 @@
                             <div class="card-body">
                                 <div class="row">
                                     <div class="mb-3">
-                                        <label for="organization" class="form-label">Organization Name</label>
-                                        <select class="form-select select2" id="organization" name="o_id">
+                                        <label for="veh_type" class="form-label">Vehicle Type</label>
+                                        <select class="form-select select2" id="o_id" name="o_id">
                                             @forelse ($organizations as $organization)
                                             <option value="{{$organization->id}}"> {{ucfirst($organization->name)}}
                                             </option>
@@ -165,8 +170,8 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="mb-3">
-                                            <label for="veh_type" class="form-label">Vehicle Type</label>
-                                            <select class="form-select select2" id="veh_type" name="v_type_id">
+                                            <label for="veh_type" class="form-label">Select Organization</label>
+                                            <select class="form-select select2" id="veh_type" name="v_type_id" required>
                                                 @forelse ($vehicle_types as $vehicle_type)
                                                 <option value="{{$vehicle_type->id}}"> {{ucfirst($vehicle_type->name)}}
                                                 </option>
@@ -299,24 +304,22 @@
 <!-- Init js-->
 <script src="{{asset('js/pages/form-fileuploads.init.js')}}"></script>
 
-<!-- Sweet Alerts js -->
-<script src="{{asset('libs/sweetalert2/sweetalert2.all.min.js')}}"></script>
 
-<!-- Sweet alert init js-->
-{{-- <script src="{{asset('js/pages/sweet-alerts.init.js')}}"></script> --}}
+
+
 <script>
     $(document).ready(function() {
         $(".select2").select2({
             placeholder: "Select",
             allowClear: true,
-            dropdownParent: $("#create_modal "), // modal : id modal
+            dropdownParent: $("#create_modal"), // modal : id modal
             width: "100%",
             height: "30px",
         });
         $(".select2_filter").select2({
             placeholder: "Select",
             allowClear: true,
-            dropdownParent: $("#filter_form "), // modal : id modal
+            dropdownParent: $("#filter_form"), // modal : id modal
             width: "100%",
             height: "30px",
         });
@@ -332,7 +335,7 @@
         $('#edit_number_pic').attr('src', _this.find('.db_number_pic').val());
 
     });
-    
+
     $(document).ready(function() {
         $('#create_modal_form').submit(function(e) {
             e.preventDefault();
@@ -359,7 +362,7 @@
                 }
             });
         });
-        
+
         $('#edit_modal_form').submit(function(e) {
             e.preventDefault();
             $.ajaxSetup({
@@ -424,18 +427,17 @@
                             "id": id,
                         },
                         success: function(response) {
-                            Swal.fire(
-                                'Deleted!',
-                                'Data Successfully Updated.!',
-                                'success'
-                            ).then((result) => {
-                                $(el).closest('tr').css(
-                                    'background', 'tomato');
-                                $(el).closest('tr').fadeOut(800,
-                                    function() {
-                                        $(this).remove();
-                                    });
+                            $(el).closest('tr').css('background', 'tomato');
+                            $(el).closest('tr').fadeOut(800, function() {
+                                $(this).remove();
                             });
+                            // Swal.fire(
+                            //     'Deleted!',
+                            //     'Data Successfully Updated.!',
+                            //     'success'
+                            // ).then((result) => {
+
+                            // });
                         },
                         error: (error) => {
                             console.log(JSON.stringify(error));

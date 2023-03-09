@@ -89,13 +89,13 @@
                                     <span> Managers </span>
                                 </a>
                             </li>
-                           {{-- <li>
+                            {{-- <li>
                                 <a href="{{ route('manager.create') }}">
                                     <span> Managers List </span>
                                 </a>
                             </li> --}}
                             <li>
-                                <a href="{{ route('schedule.index') }}">Create Schedule</a>
+                                <a href="{{ route('schedule.create') }}">Create Schedule</a>
                             </li>
                             <li>
                                 <a href="{{ route('schedule.publishes') }}">Published Schedule</a>
@@ -127,7 +127,7 @@
                                             <a href="{{ route('user.disapproved') }}">Disapproved User</a>
                                         </li>
                                         <li>
-                                            <a href="{{ route('pastuser') }}">Past User</a>
+                                            <a href="{{ route('user.pastuser') }}">Past User</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -156,11 +156,11 @@
                     </a>
                     <div class="collapse" id="sidebarvehicles">
                         <ul class="nav-second-level">
-                            <li>
+                            <!-- <li>
                                 <a href="{{ route('vehicle.create') }}">Add Vehicle</a>
-                            </li>
+                            </li> -->
                             <li>
-                                <a href="{{ route('vehicle.index') }}">Vehicle List</a>
+                                <a href="{{ route('vehicle.index') }}">Vehicles</a>
                             </li>
                         </ul>
                     </div>
@@ -180,7 +180,7 @@
                             </li>
                             <li>
                                 <a href="{{ route('routes.index') }}">
-                                    <span> List of Route </span>
+                                    <span> Routes </span>
                                 </a>
                             </li>
                         </ul>
@@ -197,15 +197,15 @@
                         <ul class="nav-second-level">
                             <li>
                                 <a href="{{ route('driver.create') }}">
-                                    <span> Add Drivers </span>
+                                    <span> Drivers </span>
                                 </a>
-                            </li>
-                            <li>
-                                <a href="{{ route('driver.index') }}">Driver List</a>
                             </li>
                             <li>
                                 <a href="{{ route('driver.trip') }}">Upcoming Trips</a>
                             </li>
+                            <!-- <li>
+                                <a href="{{ route('driver.index') }}">Driver List</a>
+                            </li> -->
                             <!-- <li>
                                 <a href="{{ route('driver.notification') }}">Notification</a>
                             </li> -->
@@ -260,7 +260,7 @@
                         </ul>
                     </div>
                 </li>
-                <li>
+                <!-- <li>
                     <a href="#sidebarhistory" data-bs-toggle="collapse">
                         <i class="fas fa-history"></i>
                         <span> History </span>
@@ -296,7 +296,7 @@
                             </li>
                         </ul>
                     </div>
-                </li>
+                </li> -->
                 <!--<li>
                     <a href="{{ route('wallet') }}">
                         <i class="fas fa-wallet"></i>

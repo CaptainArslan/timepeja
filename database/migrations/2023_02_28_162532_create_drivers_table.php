@@ -23,23 +23,23 @@ class CreateDriversTable extends Migration
             // $table->foreign('u_id')->references('id')->on('users')->onUpdate('cascade');
             $table->string('name');
             $table->string('email')->unique()->nullable();
-            $table->string('password');
+            $table->string('password')->nullable();
             $table->string('phone');
             $table->string('cnic')->unique();
             $table->string('cnic_front_pic')->nullable();
             $table->string('cnic_back_pic')->nullable();
             $table->date('cnic_expiry_date')->nullable();
-            $table->string('licence_no')->unique();
-            $table->string('licence_no_front_pic')->nullable();
-            $table->string('licence_no_back_pic')->nullable();
-            $table->date('licence_expiry_date')->nullable();
+            $table->string('license_no')->unique();
+            $table->string('license_no_front_pic')->nullable();
+            $table->string('license_no_back_pic')->nullable();
+            $table->date('license_expiry_date')->nullable();
             $table->string('otp')->unique();
             $table->string('token')->unique()->nullable();
             $table->integer('status');
             $table->integer('online_status');
             $table->timestamps();
             $table->softDeletes();
-            $table->foreign('o_id')->references('id')->on('organizations')->onUpdate('cascade');
+            $table->foreign('o_id')->references('id')->on('organizations')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 

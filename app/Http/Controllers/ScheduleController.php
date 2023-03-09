@@ -43,7 +43,8 @@ class ScheduleController extends Controller
      */
     public function store(Request $request)
     {
-        $user = Auth::user();
+        // dd($request->all());
+
         // $id = Schedule::insertGetId([
         //     [
         //         'o_id' => $request->organization,
@@ -56,6 +57,7 @@ class ScheduleController extends Controller
         //         'status' => 0
         //     ]
         // ]);
+        $user = Auth::user();
         $id = Schedule::insertGetId([
             'o_id' => $request->organization,
             'u_id' => $user->id,
@@ -66,9 +68,9 @@ class ScheduleController extends Controller
             'time' => $request->time,
             'status' => 0
         ]);
-        
+
         $data = Schedule::where('id', $id)->with('organizations', 'routes', 'vehicles', 'drivers')->get();
-        
+
         return response()->json([
             'status' => 'success',
             'data' => $data
@@ -117,6 +119,15 @@ class ScheduleController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $del = Schedule::find($id)->delete();
+        if ($del) {
+            return response()->json([
+                'status' => 'success'
+            ]);
+        } else {
+            return response()->json([
+                'status' => 'error'
+            ]);
+        }
     }
 }

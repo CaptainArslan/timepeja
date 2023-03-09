@@ -15,7 +15,7 @@ class CreateManagersTable extends Migration
     {
         Schema::create('managers', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('o_id')->index('o_id')->nullable();
+            $table->unsignedBigInteger('o_id')->index('o_id') ;
             $table->string('name');
             $table->string('email')->unique()->nullable();
             $table->string('phone')->unique();
@@ -28,7 +28,7 @@ class CreateManagersTable extends Migration
             $table->integer('status');
             $table->timestamps();
             $table->softDeletes();
-            $table->foreign('o_id')->references('id')->on('organizations')->onUpdate('cascade');
+            $table->foreign('o_id')->references('id')->on('organizations')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 

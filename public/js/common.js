@@ -85,6 +85,24 @@ const isPhone = (phoneval) => {
     return true;
 };
 
+//validate cnic number
+const isCnic = (cnicval) => {
+    var cnicPattern = /^[0-9]{13}$/;
+    var onlyNumbers = /^[0-9]+$/;
+    if (!cnicPattern.test(cnicval)) return false;
+    else if (!onlyNumbers.test(cnicval)) return false;
+    return true;
+};
+
+//validate license number
+const isLicense = (licenseval) => {
+    var licensePattern = /^[A-Z]{2,3}[-\s][0-9]{2}[-\s][A-Z0-9]{1,4}$/;
+    // var onlyNumbers = /^[0-9]+$/;
+    if (!licensePattern.test(licenseval)) return false;
+    // else if (!onlyNumbers.test(cnicval)) return false;
+    return true;
+};
+
 //set error message function
 function setErrorMsg(input, errormsgs) {
     $(input).addClass("is-invalid");
@@ -100,22 +118,21 @@ function setSuccessMsg(input) {
 /**
  * it return options as we send him the object or data
  *
- * @param   {[type]}  options  [res description]
+ * @param   {[type]}  options  response is the response
  *
- * @return  {[type]}       dynamic options
+ * @return  {[type]}       this will make html option and return that options
  */
 function makeOptions(res) {
-    console.log(res);
     let html = '<option value="">Please Select</option>';
-    $.map(res, function (object, index) {
-        html += `<option value="${index}">${object.name}</option>`;
+    res.map((item) => {
+        html += `<option value="${item.id}">${item.name}</option>`;
     });
     return html;
 }
 
 
 /**
- * [preventPreviousDate description]
+ * this function is use to hide all the previous date from calender
  *
  * @param   {[type]}  pramaid  [pramaid description]
  *
@@ -133,7 +150,6 @@ function preventPreviousDate(pramaid){
         month = '0' + month;
     }
     var today_formatted = year + '-' + month + '-' + day;
-
     // Set the minimum date for the date input field
     document.getElementById(pramaid).setAttribute('min', today_formatted);
 }
