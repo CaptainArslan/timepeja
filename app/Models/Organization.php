@@ -37,13 +37,33 @@ class Organization extends Model
         return $this->belongsTo(Manager::class, 'id', 'o_id');
     }
 
+    /**
+     * [city description]
+     *
+     * @return  [type]  [return description]
+     */
     public function city()
     {
         return $this->belongsTo(City::class, 'c_id', 'id');
     }
 
+    /**
+     * [state description]
+     *
+     * @return  [type]  [return description]
+     */
     public function state()
     {
         return $this->belongsTo(State::class, 's_id', 'id');
+    }
+
+    /**
+     * This return the organization type
+     *
+     * @return  [type]  [return description]
+     */
+    public function organizationType()
+    {
+        return $this->belongsTo(OrganizationType::class, 'o_type_id', 'id');
     }
 }

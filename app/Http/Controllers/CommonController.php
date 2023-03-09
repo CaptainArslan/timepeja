@@ -69,4 +69,13 @@ class CommonController extends Controller
             $data['image'] = 'public/uploads/' . $filename;
         }
     }
+
+    public function getDrivers($id)
+    {
+        $drivers = Driver::where('o_id', $id)->select('id', 'name')->get();
+        return response()->json([
+            'status'=>'success',
+            'data' => $drivers
+        ]) ;
+    }
 }

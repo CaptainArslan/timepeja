@@ -39,7 +39,7 @@ class CreateDriversTable extends Migration
             $table->integer('online_status');
             $table->timestamps();
             $table->softDeletes();
-            $table->foreign('o_id')->references('id')->on('organizations')->onUpdate('cascade');
+            $table->foreign('o_id')->references('id')->on('organizations')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 

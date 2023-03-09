@@ -25,40 +25,43 @@
         <div class="card">
             <div class="card-body">
                 <!-- <h4 class="header-title">Select Organization</h4> -->
-                <form action="">
+                <form action="" id="awaiting_approval_form">
+                    @csrf
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <label for="organization">Select Oganization</label>
-                            <select class="form-control" data-toggle="select2" data-width="100%" id="organization" multiple>
-                                <option>Select</option>
-                                <option value="AK">123456 - branch - Punjab University</option>
-                                <option value="HI">123456 - branch - Gujrant University</option>
-                                <option value="CA">123456 - branch - Gift University</option>
-                                <option value="NV">123456 - branch - Kips University</option>
-                                <option value="OR">123456 - branch - Sialkot Univeristy</option>
+                            <select class="form-control select2" id="organization_filter" name="o_id" required>
+                                <option value="">Select</option>
+                                @forelse ($organizations as $organization)
+                                <option value="{{ $organization->id }}">{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
+                                @empty
+                                <option value="">Please select</option>
+                                @endforelse
                             </select>
-                        </div> <!-- end col -->
-                        <div class="col-md-2">
+                        </div>
+                        <div class="col-md-3">
                             <label for="user_type">User Type</label>
-                            <select class="form-control" data-toggle="select2" data-width="100%" id="user_type">
-                                <option>Select</option>
+                            <select class="form-control select2" data-toggle="select2" data-width="100%" id="user_type" required>
+                                <option value="" selected>Select</option>
                                 <option value="AK">Manager</option>
                                 <option value="HI">Driver</option>
                                 <option value="CA">Passenger</option>
                             </select>
-                        </div> <!-- end col -->
+                        </div>
                         <div class="col-md-3">
                             <label for="date-1">From</label>
-                            <input class="form-control" id="example-date-1" type="date" name="date">
-                        </div> <!-- end col -->
+                            <input class="form-control today-date" id="" type="date" name="date">
+                        </div>
+                    </div>
+                    <div class="row mt-2">
                         <div class="col-md-3">
                             <label for="date">To</label>
-                            <input class="form-control" id="example-date" type="date" name="date">
-                        </div> <!-- end col -->
+                            <input class="form-control today-date" id="" type="date" name="date">
+                        </div>
                         <div class="col-md-1">
                             <label for="publish_schedule"></label>
-                            <button type="button" class="btn btn-success" id="publish_schedule" style="margin-top: 20px;"> Submit </button>
-                        </div> <!-- end col -->
+                            <button type="button" class="btn btn-success" id="publish_schedule" name="submit"> Submit </button>
+                        </div>
                     </div> <!-- end row -->
                 </form>
             </div> <!-- end card-body-->
@@ -66,24 +69,25 @@
     </div> <!-- end col-->
 </div>
 
+@if(isset($_POST['submit']))
 <div class="row">
     <div class="col-12">
         <div class="card">
             <div class="card-header d-flex">
                 <div class="col-2">
-                    <h4 class="header-title">Awaiting Approvals <b class="text-primary">(01)</b> </h4>
+                    <h4 class="header-title">Awaiting Approvals</h4>
                 </div>
                 <div class="col-7">
                     <div class="row">
                         <div class="col-md-6">
                             <input class="form-control" id="" type="text" value="123456 - branch - Punjab University" name="organization" style="font-weight: bold;" readonly>
                         </div>
-                        <!-- <div class="col-md-3">
-                            <input class="form-control" id="example-date-1" type="date" name="date">
+                        <div class="col-md-3">
+                            <input class="form-control today-date" id="" type="date" name="date">
                         </div>
                         <div class="col-md-3">
-                            <input class="form-control" id="example-date" type="date" name="date">
-                        </div> -->
+                            <input class="form-control today-date" id="" type="date" name="date">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -125,6 +129,7 @@
         </div> <!-- end card -->
     </div><!-- end col-->
 </div>
+@endif
 
 <!-- Modal -->
 <div class="modal fade" id="modal_organization" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="organizationLabel" aria-hidden="true">
@@ -182,6 +187,14 @@
 @include('partials.datatable_js')
 <script>
     $(document).ready(function() {
+        $(".select2").select2({
+            placeholder: "Select",
+            allowClear: true,
+            dropdownParent: $("#awaiting_approval_form"), // modal : id modal
+            width: "100%",
+            height: "30px",
+        });
+
         $('.show_request').click(function(e) {
             e.preventDefault();
             var url = "{{ route('awaiting.approval') }}";

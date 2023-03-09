@@ -165,4 +165,12 @@ class DriverController extends Controller
             return response()->json(['status' => 'error']);
         }
     }
+
+    public function upcomingTrips()
+    {
+        $organizations = Organization::get();
+        return view('driver.trips', [
+            'organizations' => $organizations
+        ]);
+    }
 }

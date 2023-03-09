@@ -21,7 +21,7 @@ class OrganizationFactory extends Factory
             'u_id' => 1,
             'name' => $this->faker->name(),
             'branch_name' => $this->faker->city(),
-            'branch_code' => rand(1000, 9999),
+            'branch_code' => substr(uniqid(), -4),
             'o_type_id' =>  OrganizationType::inRandomOrder()->first()->id,
             'email' => $this->faker->safeEmail(),
             'phone' => $this->faker->phoneNumber(),

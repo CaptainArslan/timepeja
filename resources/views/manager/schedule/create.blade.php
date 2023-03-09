@@ -39,28 +39,28 @@
                                 @endforelse
                             </select>
                             <span class="text-danger" id="organization_error"></span>
-                        </div> <!-- end col -->
+                        </div>
                         <div class="col-md-3">
                             <label for="route_no">Select Route No</label>
                             <select class="form-control" data-toggle="select2" name="route_no" data-width="100%" id="route_no">
                                 <option value="" selected>Select</option>
                             </select>
                             <span class="text-danger" id="route_no_error"></span>
-                        </div> <!-- end col -->
+                        </div>
                         <div class="col-md-3">
                             <label for="vehicle">Select Vehicle Reg</label>
                             <select class="form-control" data-toggle="select2" name="vehicle" data-width="100%" id="vehicle">
                                 <option value="" selected>Select</option>
                             </select>
                             <span class="text-danger" id="vehicle_error"></span>
-                        </div> <!-- end col -->
+                        </div>
                         <div class="col-md-3">
                             <label for="driver">Select Driver</label>
                             <select class="form-control" data-toggle="select2" name="driver" data-width="100%" id="driver">
                                 <option value="" selected>Select</option>
                             </select>
                             <span class="text-danger" id="driver_error"></span>
-                        </div> <!-- end col -->
+                        </div>
                     </div>
                     <div class="row mt-2">
                         <div class="col-md-3">
@@ -72,11 +72,11 @@
                             <label for="time">Time</label>
                             <input class="form-control" id="time" type="time" name="time">
                             <span class="text-danger" id="time_error"></span>
-                        </div> <!-- end col -->
+                        </div>
                         <div class="col-md-2">
                             <label for="add_schedule"></label>
                             <button type="submit" type="button" class="btn btn-success form-control" id="add_schedule"> Add </button>
-                        </div> <!-- end col -->
+                        </div>
                     </div> <!-- end row -->
                 </form>
             </div> <!-- end card-body-->
@@ -92,15 +92,17 @@
                     <div class="col-2 d-flex justify-content-center align-items-center">
                         <h4 class="header-title">Created Schedule</h4>
                     </div>
-                    <div class="col-9 bg-dark">
-
+                    <div class="col-9 ">
+                        <!-- <div class="col-md-4">
+                            <input type="text" class="form-control font-weight-bold" value="bde1 - Hellen Ernser - Koeppfort">
+                        </div> -->
                     </div>
                     <div class="col-1 d-flex flex-row-reverse">
                         <button type="button" type="button" class="btn btn-danger">Publish</button>
                     </div>
                 </div>
                 <div class="card-body table-container">
-                    <table id="basic-datatable" class="table table-striped dt-responsive nowrap w-100">
+                    <table id="schedule-table" class="table table-striped dt-responsive nowrap w-100">
                         <thead>
                             <tr>
                                 <th>
@@ -137,6 +139,9 @@
 @include('partials.datatable_js')
 <script>
     $(document).ready(function() {
+
+        var t = $('#schedule-table').DataTable();
+
         $('#organization').change(function(e) {
             e.preventDefault();
             let id = $(this).val();
@@ -165,8 +170,6 @@
             });
         });
 
-
-
         $('#create_schedule').submit(function(e) {
             e.preventDefault();
             if (checkOrganizationValidate()) {
@@ -176,35 +179,71 @@
                     url: "{{ route('schedule.store') }}",
                     data: $(this).serialize(),
                     success: function(response) {
-                        console.log(response.status);
                         if (response.status == 'success') {
-                            html = `
-                                <tr>
-                                    <td>
-                                        <input type="checkbox" class="child_checkbox">
-                                    </td>
-                                    <td>Date</td>
-                                    <td>Organization Name</td>
-                                    <td>Driver</td>
-                                    <td>Route No</td>
-                                    <td>Vehicle</td>
-                                    <td>Time</td>
-                                    <td>Action</td>
-                                <tr>
-                            `;
-                            $('#basic-datatable > tbody').append(html);
-
-                            let count = $('#basic-datatable > tbody').children('tr').length;
-                            alert(count);
+                            addRow(t, response.data);
+                            $('#route_no').val(null).trigger('change');
+                            $('#vehicle').val(null).trigger('change');
+                            $('#driver').val(null).trigger('change');
+                            $('#time').val('');
                         }
                     }
                 });
             } else {
-
+                alert('validation Error')
             }
         });
 
     });
+
+    function addRow(tableInstance, res) {
+        res.map((item) => {
+            tableInstance.row.add([
+                `<td> <input type="checkbox" class="child_checkbox"> </td>`,
+                `<td>${item.date}</td>`,
+                `<td><b>${item.organizations.name}</b></td>`,
+                `<td>${item.drivers.name}</td>`,
+                `<td><td> <b> <span class=" text-danger">${item.routes.number}</span> - ${item.routes.from} <span class="text-success"> TO </span> ${item.routes.to} </b> </td></td>`,
+                `<td>${item.vehicles.number}</td>`,
+                `<td>${item.time}</td>`,
+                `<td>
+                    <div class="btn-group btn-group-sm" style="float: none;">
+                        <button type="button" class="tabledit-edit-button btn btn-success edit_btn" style="float: none;" data-bs-toggle="modal" data-bs-target="#edit_modal">
+                            <span class="mdi mdi-pencil"></span>
+                        </button>
+                    </div>
+                    <div class="btn-group btn-group-sm delete_schedule" data-id="${item.id}" style="float: none;" onclick="deleteScedule(this)">
+                        <button type="button" class="tabledit-edit-button btn btn-danger delete" style="float: none;">
+                            <span class="mdi mdi-delete"></span>
+                        </button>
+                    </div>
+                </td>`
+            ]).draw(false);
+        });
+    }
+
+    function deleteScedule(param) {
+        let id = $(param).data('id');
+        let csrf_token = "{{ csrf_token() }}";
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            type: "POST",
+            url: "/schedule/delete/" + id,
+            data: {
+                'token': csrf_token
+            },
+            success: function(response) {
+                if (response.status == 'success') {
+                    alert('deleted');
+                } else {
+                    alert('error Occured while deletion');
+                }
+            }
+        });
+    }
 
     function checkOrganizationValidate() {
         let orgNameErr = routeNoErr = vehicleRegErr = driverErr = dateErr = timeErr = true;

@@ -5,6 +5,7 @@
 <!-- Plugins css -->
 <link href="{{ asset('libs/select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
 <!-- App css -->
+<link href="{{ asset('libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet" type="text/css" id="app-style" />
 <link href="{{ asset('css/app.min.css') }}" rel="stylesheet" type="text/css" id="app-style" />
 @include('partials.datatable_css')
 @endsection
@@ -14,7 +15,7 @@
         <div class="page-title-box d-flex justify-content-between">
             <h4 class="page-title">Organizations</h4>
             <div class="page-title">
-                <button type="button" type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#create_modal"> Add Organization </button>
+                <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#create_modal"> Add Organization </button>
             </div>
         </div>
     </div>
@@ -25,11 +26,12 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <form action="{{ route('manager.store') }}" method="POST" id="filter_form">
+                <form action="{{ route('manager.index') }}" method="GET" id="filter_form">
+                    @csrf
                     <div class="row">
                         <div class="col-md-4">
                             <label for="organization">Select Oganization</label>
-                            <select class="form-control select2_filter" id="organization">
+                            <select class="form-control select2_filter" id="organization_filter" name="o_id">
                                 <option value="">Select</option>
                                 @forelse ($organizations as $organization)
                                 <option value="{{ $organization->id }}">{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
@@ -37,7 +39,7 @@
                                 <option value="">Please select</option>
                                 @endforelse
                             </select>
-                        </div> <!-- end col -->
+                        </div>
                         <!-- <div class="col-md-3">
                             <label for="city">Select City</label>
                             <select class="form-control select2_filter" id="city">
@@ -53,16 +55,16 @@
                         </div> -->
                         <div class="col-md-3">
                             <label for="from">Registration From</label>
-                            <input type="date" class="form-control today-date" id="example-from" name="from">
-                        </div> <!-- end col -->
+                            <input type="date" class="form-control today-date" id="example-from" name="from" required>
+                        </div>
                         <div class="col-md-3">
                             <label for="to">Registration To</label>
-                            <input type="date" class="form-control today-date" id="example-to" name="to">
-                        </div> <!-- end col -->
+                            <input type="date" class="form-control" id="example-to" name="to" required>
+                        </div>
                         <div class="col-md-1">
                             <!-- <label for="route_list"></label> -->
-                            <button type="button" type="button" class="btn btn-success" id="route_list" style="margin-top: 20px;"> Submit </button>
-                        </div> <!-- end col -->
+                            <button type="submit" class="btn btn-success" id="route_list" value="filter" name="filter" style="margin-top: 20px;"> Submit </button>
+                        </div>
                     </div> <!-- end row -->
                 </form>
             </div> <!-- end card-body-->
@@ -76,7 +78,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between">
                 <div class="col-2">
-                    <h4 class="header-title">Latest Managers <!-- <a class="text-primary"> ( {{ $managers_count }} ) </a> --> </h4>
+                    <h4 class="header-title">Latest Managers </h4>
                 </div>
                 <!-- <div class="col-9">
                     <div class="row">
@@ -125,84 +127,93 @@
                         @forelse ($organizations as $organization)
                         <tr>
                             <td>
-                                {{ date("Y-m-d",strtotime($organization->created_at)) }} 
+                                {{ date("Y-m-d",strtotime($organization->created_at)) }}
                                 <input type="hidden" name="" id="" class="db_date">
                             </td>
                             <td>
-                                {{ date("H:m:s",strtotime($organization->created_at)) }} 
+                                {{ date("H:m:s",strtotime($organization->created_at)) }}
                                 <input type="hidden" name="" id="" class="db_time">
                             </td>
                             <td>
-                                {{ $organization->manager['otp'] }} 
+                                {{ ($organization->manager['otp']) ?? '' }}
                                 <input type="hidden" name="" id="" class="db_otp">
                             </td>
                             <td>
-                                {{ $organization->name }} 
+                                {{ $organization->id }} - {{ $organization->name }}
                                 <input type="hidden" name="" id="" class="db_org_name">
                             </td>
                             <td>
-                                {{ $organization->branch_name }} 
+                                {{ $organization->branch_name }}
                                 <input type="hidden" name="" id="" class="db_branch_name">
                             </td>
                             <td>
-                                {{ $organization->branch_code }} 
+                                {{ $organization->branch_code }}
                                 <input type="hidden" name="" id="" class="db_branch_code">
                             </td>
                             <td>
-                                {{ $organization->o_type }} 
+                                {{ $organization->o_type }}
                                 <input type="hidden" name="" id="" class="db_org_type">
                             </td>
                             <td>
-                                {{ $organization->email }} 
+                                {{ $organization->email }}
                                 <input type="hidden" name="" id="" class="db_org_email">
                             </td>
                             <td>
-                                {{ $organization->phone }} 
+                                {{ $organization->phone }}
                                 <input type="hidden" name="" id="" class="db_org_phone">
                             </td>
                             <td>
-                                {{ $organization->address }} 
+                                {{ $organization->address }}
                                 <input type="hidden" name="" id="" class="db_org_address">
                             </td>
                             <td>
-                                {{ $organization->manager['name'] }} 
+                                {{ $organization->manager['name'] ?? '' }}
                                 <input type="hidden" name="" id="" class="db_man_name">
                             </td>
                             <td>
-                                {{ $organization->manager['email'] }} 
+                                {{ $organization->manager['email'] ?? ''}}
                                 <input type="hidden" name="" id="" class="db_man_email">
                             </td>
                             <td>
-                                {{ $organization->manager['phone'] }} 
+                                {{ $organization->manager['phone'] ?? ''}}
                                 <input type="hidden" name="" id="" class="db_man_phone">
                             </td>
                             <td>
-                                {{ $organization->manager['address'] }} 
+                                {{ $organization->manager['address'] ?? ''}}
                                 <input type="hidden" name="" id="" class="db_man_manager">
                             </td>
                             <td>
-                                {{ $organization->manager['picture'] }} 
+                                {{ $organization->manager['picture'] ?? ''}}
                                 <input type="hidden" name="" id="" class="db_man_picture">
                             </td>
                             <td>
-                                {{ $organization->manager['otp'] }} 
+                                {{ $organization->head_name}}
                                 <input type="hidden" name="" id="" class="">
                             </td>
                             <td>
-                                {{ $organization->manager['otp'] }} 
+                                {{ $organization->head_email}}
                                 <input type="hidden" name="" id="" class="">
                             </td>
                             <td>
-                                {{ $organization->manager['otp'] }} 
+                                {{ $organization->head_phone}}
                                 <input type="hidden" name="" id="" class="">
                             </td>
                             <td>
-                                {{ $organization->manager['otp'] }} 
+                                {{ $organization->head_address}}
                                 <input type="hidden" name="" id="" class="">
                             </td>
                             <td>
-                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-success" style="float: none;" data-bs-toggle="modal" data-bs-target="#create_modal"><span class="mdi mdi-pencil"></span></button></div>
-                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
+
+                                <!-- <div class="btn-group btn-group-sm" style="float: none;">
+                                    <button type="button" class="tabledit-edit-button btn btn-success" style="float: none;" data-bs-toggle="modal" data-bs-target="#create_modal">
+                                        <span class="mdi mdi-pencil"></span>
+                                    </button>
+                                </div> -->
+                                <div class="btn-group btn-group-sm delete_organization" style="float: none;" data-id="{{ $organization->id }}" onclick="deleteOrganization(this)">
+                                    <button type="button" class="tabledit-edit-button btn btn-danger" style="float: none;">
+                                        <span class="mdi mdi-delete"></span>
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                         @empty
@@ -221,7 +232,7 @@
         <div class="modal-content">
             <div class="modal-header bg-light">
                 <h5 class="modal-title" id="create_modalLabel">Add Organization</h5>
-                <button type="button" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="col-xl-12">
@@ -525,22 +536,7 @@
 <script src="/js/pages/form-wizard.init.js"></script>
 <script>
     $(document).ready(function() {
-        $(".select2").select2({
-            placeholder: "Select",
-            allowClear: true,
-            dropdownParent: $("#create_modal "), // modal : id modal
-            width: "100%",
-            height: "30px",
-        });
-
-        $(".select2_filter").select2({
-            placeholder: "Select",
-            allowClear: true,
-            dropdownParent: $("#filter_form "), // modal : id modal
-            width: "100%",
-            height: "30px",
-        });
-
+        // alert("{{old('organzation_id')}}")
         $('#org_state').change(function(e) {
             e.preventDefault();
             let id = $(this).val();
@@ -561,11 +557,70 @@
             });
         });
 
-        $('.btn-close').click(function (e) { 
+        $('.btn-close').click(function(e) {
             e.preventDefault();
             $('#organization_creation')[0].reset();
         });
+
+        $(".select2").select2({
+            placeholder: "Select",
+            allowClear: true,
+            dropdownParent: $("#create_modal "), // modal : id modal
+            width: "100%",
+            height: "30px",
+        });
+
+        $(".select2_filter").select2({
+            placeholder: "Select",
+            allowClear: true,
+            dropdownParent: $("#filter_form "), // modal : id modal
+            width: "100%",
+            height: "30px",
+        });
     });
+
+    function deleteOrganization(param) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Once Deleted, All your record regarding to this Organization will be deleted!",
+            icon: 'warning',
+            confirmButtonColor: '#e64942',
+            showCancelButton: true,
+            confirmButtonText: 'Yes',
+            cancelButtonText: `No`,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // var el = param;
+                let id = $(param).data('id');
+                // alert(id)
+                let csrf_token = "{{ csrf_token() }}";
+
+                $.ajax({
+                    type: "DELETE",
+                    url: "/organizatrion/" + id,
+                    data: {
+                        "_token": csrf_token
+                    },
+                    success: function(response) {
+                        console.log(response)
+                        if (response != '' && response.status == 'success') {
+                            $(param).parent().find('.child').css('background', 'tomato');
+                            $(param).parent().find('.dt-hasChild').css('background', 'tomato');
+                            $(param).closest('tr').fadeOut(800, function() {
+                                $(this).parent().find('.dt-hasChild').remove();
+                                $(this).parent().find('.child').remove();
+                            });
+                        } else {
+                            alert('error occured while deltion ')
+                        }
+                    },
+                    error: (error) => {
+                        console.log(JSON.stringify(error));
+                    }
+                });
+            }
+        });
+    }
 
     function orgDetailFormValidate() {
         let orgNameErr = orgTypeErr = orgEmailErr = orgPhoneErr = orgStateErr = orgCityErr = true;
