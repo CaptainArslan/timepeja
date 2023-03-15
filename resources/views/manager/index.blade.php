@@ -13,7 +13,7 @@
 <div class="row">
     <div class="col-12">
         <div class="page-title-box d-flex justify-content-between">
-            <h4 class="page-title">Organizations</h4>
+            <h4 class="page-title">Organizations {{ old('o_id') }}</h4>
             <div class="page-title">
                 <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#create_modal"> Add Organization </button>
             </div>
@@ -26,7 +26,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <form action="{{ route('manager.index') }}" method="GET" id="filter_form">
+                <form action="{{ route('manager.index') }}" method="POST" id="filter_form">
                     @csrf
                     <div class="row">
                         <div class="col-md-4">
@@ -249,19 +249,19 @@
                                             </a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="#company_head" data-bs-toggle="tab" id="company_head_tab" data-toggle="tab" class="nav-link rounded-0 pt-2 pb-2" onclick="checkOrgDetailForm()" disabled>
+                                            <a href="#company_head" data-bs-toggle="tab" id="company_head_tab" data-toggle="tab" class="nav-link rounded-0 pt-2 pb-2" onclick="">
                                                 <i class="fas fa-user"></i>
                                                 <span class="d-none d-sm-inline">Company Head</span>
                                             </a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="#transport_manager" data-bs-toggle="tab" data-toggle="tab" id="transport_manager_tab" class="nav-link rounded-0 pt-2 pb-2" onclick="checkOrgHeadForm()" disabled>
+                                            <a href="#transport_manager" data-bs-toggle="tab" data-toggle="tab" id="transport_manager_tab" class="nav-link rounded-0 pt-2 pb-2" onclick="">
                                                 <i class="fas fa-bus-alt"></i>
                                                 <span class="d-none d-sm-inline">Transport Manager</span>
                                             </a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="#financials" id="financials_tabs" value="financials" data-bs-toggle="tab" data-toggle="tab" class="nav-link rounded-0 pt-2 pb-2" onclick="checkTransportManagerForm()" disabled>
+                                            <a href="#financials" id="financials_tabs" value="financials" data-bs-toggle="tab" data-toggle="tab" class="nav-link rounded-0 pt-2 pb-2" onclick="">
                                                 <i class=" fas fa-money-bill-wave"></i>
                                                 <span class="d-none d-sm-inline">Financial</span>
                                             </a>
@@ -425,7 +425,7 @@
                                             <!-- Wallet Activation -->
                                             <div class="row">
                                                 <div class="col-md-12 mt-2">
-                                                    <h4 class="header-title">Who will charge the fee from:</h4>
+                                                    <h4 class="header-title">Who we will charge the fee from:</h4>
                                                     <div class="form-check mb-2 form-check-primary">
                                                         <input class="form-check-input" type="checkbox" name="wallet[]" id="org_wallet" value="org_wallet" checked>
                                                         <label class="form-check-label" for="org_wallet">Organization</label>
@@ -442,7 +442,7 @@
 
                                                 <!-- Amount of all users -->
                                                 <div class="col-md-12 mt-3 mb-2">
-                                                    <h4 class="header-title">Basis of payment:</h4>
+                                                    <h4 class="header-title">Basis of payment calculation:</h4>
                                                     <div class="row">
                                                         <div class="col-3 d-flex align-items-center">
                                                             <input class="form-check-input" type="checkbox" name="payment[]" id="org_payment" value="org_payment" checked="">
@@ -691,7 +691,7 @@
     function checkOrgDetailForm() {
         if (orgDetailFormValidate()) {
             $('#company_head_tab').prop('disabled', false);
-            resetFormView();
+            // resetFormView();
             $('#company_head_tab').addClass('active');
             $('#company_head').addClass('active');
         } else {

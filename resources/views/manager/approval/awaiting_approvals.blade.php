@@ -15,7 +15,7 @@
 <div class="row">
     <div class="col-12">
         <div class="page-title-box">
-            <h4 class="page-title">All Awaiting Approvals</h4>
+            <h4 class="page-title">Awaiting Approvals</h4>
         </div>
     </div>
 </div>
@@ -42,25 +42,25 @@
                         <div class="col-md-3">
                             <label for="user_type">User Type</label>
                             <select class="form-control select2" data-toggle="select2" data-width="100%" id="user_type" required>
-                                <option value="" selected>Select</option>
-                                <option value="AK">Manager</option>
-                                <option value="HI">Driver</option>
-                                <option value="CA">Passenger</option>
+                                <<option value="" selected="">Select</option>
+                                    <option value="student">Student</option>
+                                    <option value="employee">Employee</option>
+                                    <option value="guardian">Guardian</option>
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <label for="date-1">From</label>
+                            <label for="date-1">Registration From</label>
                             <input class="form-control today-date" id="" type="date" name="date">
                         </div>
                     </div>
                     <div class="row mt-2">
                         <div class="col-md-3">
-                            <label for="date">To</label>
+                            <label for="date">Reistration To</label>
                             <input class="form-control today-date" id="" type="date" name="date">
                         </div>
                         <div class="col-md-1">
                             <label for="publish_schedule"></label>
-                            <button type="button" class="btn btn-success" id="publish_schedule" name="submit"> Submit </button>
+                            <button type="submit" class="btn btn-success" id="publish_schedule" name="submit"> Submit </button>
                         </div>
                     </div> <!-- end row -->
                 </form>
@@ -197,7 +197,7 @@
 
         $('.show_request').click(function(e) {
             e.preventDefault();
-            var url = "{{ route('awaiting.approval') }}";
+            var url = "{{ route('awaiting.approvals') }}";
             var w1 = window.open(
                 url,
                 "_blank",

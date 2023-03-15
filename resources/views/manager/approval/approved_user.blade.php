@@ -49,13 +49,13 @@
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <label for="date-1">Registration From</label>
+                            <label for="date-1">Registered From</label>
                             <input class="form-control today-date" id="" type="date" name="date">
                         </div>
                     </div>
                     <div class="row mt-2">
                         <div class="col-md-3">
-                            <label for="date">Registration To</label>
+                            <label for="date">Registered To</label>
                             <input class="form-control today-date" id="" type="date" name="date">
                         </div>
                         <div class="col-md-1">
@@ -83,10 +83,10 @@
                             <input class="form-control" id="" type="text" value="123456 - branch - Punjab University" name="organization" style="font-weight: bold;" readonly>
                         </div>
                         <div class="col-md-3">
-                            <input class="form-control" id="example-date-1" type="date" name="date">
+                            <input class="form-control today-date" id="" type="date" name="date">
                         </div>
                         <div class="col-md-3">
-                            <input class="form-control" id="example-date" type="date" name="date">
+                            <input class="form-control today-date" id="" type="date" name="date">
                         </div>
                     </div>
                 </div>

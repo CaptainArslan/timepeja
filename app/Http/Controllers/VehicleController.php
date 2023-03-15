@@ -33,8 +33,10 @@ class VehicleController extends Controller
     {
         $organizations = Organization::get();
         $vehicle_types = VehicleType::get();
-        $vehicles = Vehicle::orderBy('id', 'DESC')->skip(0)->take(10)
-                    ->with('organizations')->with('vehiclesTypes')->get();
+        $vehicles = Vehicle::with('organizations', 'vehiclesTypes')
+        ->orderBy('id', 'DESC')
+        ->take(10)
+        ->get();
         return view('vehicle.index', [
             'organizations' => $organizations,
             'vehicles' => $vehicles,
@@ -59,7 +61,7 @@ class VehicleController extends Controller
             ->take(10)
             ->get();
         // dd($vehicles->toArray());
-        return view('vehicle.create', [
+        return view('vehicle.index', [
             'organizations' => $organizations,
             'vehicle_types' => $vehicle_types,
             'vehivles' => $vehicles
@@ -75,21 +77,30 @@ class VehicleController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'org_id' => 'required|integer',
-            'veh_id' => 'required|integer',
-            'veh_no' => 'required',
-            'veh_front_pic' => '',
-            'veh_back_pic' => '',
+            'o_id' => 'required|integer',
+            'v_type_id' => 'required|integer',
+            'number' => 'required',
+            'veh_front_pic' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'veh_license_plate' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ], [
+            'o_id.required' => 'Organization required',
+            'v_type_id.required' => 'Vehicle required',
+            'number.required' => 'Vehicle number required',
+            'veh_front_pic.required' => 'Vehicle Front pic required',
+            'veh_front_pic.mimes' => 'The image must be a JPEG or PNG file',
+            'veh_license_plate.required' => 'License Vehicle plate required',
+            'veh_license_plate.mimes' => 'The image must be a JPEG or PNG file',
         ]);
 
+        // dd($request->all());
         if ($request->hasFile('veh_front_pic')) {
             $file = $request->file('veh_front_pic');
             $extension = $file->getClientOriginalExtension();
             $front_filename = time() . '.' . $extension;
             $file->move(public_path('uploads/vehicles'), $front_filename);
         }
-        if ($request->hasFile('veh_back_pic')) {
-            $file = $request->file('veh_back_pic');
+        if ($request->hasFile('veh_license_plate')) {
+            $file = $request->file('veh_license_plate');
             $extension = $file->getClientOriginalExtension();
             $back_filename = time() . '.' . $extension;
             $file->move(public_path('uploads/vehicles'), $back_filename);
@@ -97,18 +108,18 @@ class VehicleController extends Controller
 
         $user = Auth::user();
         $vehicle = new Vehicle();
-        $vehicle->user_id  = $user->id;
-        $vehicle->org_id   = $request->org_id;
-        $vehicle->veh_id   = $request->veh_id;
-        $vehicle->veh_num   = $request->veh_no;
-        $vehicle->veh_front_pic   = $front_filename;
-        $vehicle->veh_back_pic   = $back_filename;
+        $vehicle->u_id  = $user->id;
+        $vehicle->o_id   = $request->o_id;
+        $vehicle->v_type_id    = $request->v_type_id;
+        $vehicle->number   = $request->number;
+        $vehicle->front_pic   = $front_filename;
+        $vehicle->number_pic   = $back_filename;
         if ($vehicle->save()) {
-            return redirect()->route('vehicles.index')
+            return redirect()->route('vehicle.index')
                 ->with('success', 'Vehicle created successfully.');
         } else {
-            return redirect()->route('vehicles.index')
-                ->with('error', 'Error Occured while Vehicle creation .');
+            return redirect()->route('vehicle.index')
+                ->with('error', 'Error Occured while Vehicle creation.');
         }
     }
 
@@ -152,8 +163,17 @@ class VehicleController extends Controller
      * @param  \App\Models\Vehicle  $vehicle
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Vehicle $vehicle)
+    public function destroy(Request $request, Vehicle $vehicle)
     {
-        //
+        $delete = $vehicle::find($request->id)->delete();
+        if ($delete) {
+            return response()->json([
+                'status' => 'success'
+            ]);
+        } else {
+            return response()->json([
+                'status' => 'error'
+            ]);
+        }
     }
 }

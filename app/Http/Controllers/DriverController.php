@@ -64,30 +64,26 @@ class DriverController extends Controller
 
         if ($request->hasFile('cnic_front')) {
             $image_front_cnic = $request->file('cnic_front');
-            $cnic_front_name = time() . $image_front_cnic->getClientOriginalName();
-            $image_front_cnic->move(public_path('/images/drivers/cnic/'), $cnic_front_name);
-            $cnic_front_path = "/images/drivers/cnic/" . $cnic_front_name;
+            $cnic_front_pic = time() . $image_front_cnic->getClientOriginalName();
+            $image_front_cnic->move(public_path('/uploads/drivers/cnic/'), $cnic_front_pic);
         }
 
         if ($request->hasFile('cnic_back')) {
             $image_back_cnic = $request->file('cnic_back');
-            $cnic_back_name = time() . $image_back_cnic->getClientOriginalName();
-            $image_back_cnic->move(public_path('/images/drivers/cnic/'), $cnic_back_name);
-            $cnic_back_path = "/images/drivers/cnic/" . $cnic_back_name;
+            $cnic_back_pic = time() . $image_back_cnic->getClientOriginalName();
+            $image_back_cnic->move(public_path('/uploads/drivers/cnic/'), $cnic_back_pic);
         }
 
         if ($request->hasFile('license_front')) {
             $image_front_license = $request->file('license_front');
-            $license_front_name = time() . $image_front_license->getClientOriginalName();
-            $image_front_license->move(public_path('/images/drivers/license/'), $license_front_name);
-            $license_front_path = "/images/drivers/license/" . $license_front_name;
+            $license_front_pic = time() . $image_front_license->getClientOriginalName();
+            $image_front_license->move(public_path('/uploads/drivers/license/'), $license_front_pic);
         }
 
         if ($request->hasFile('license_back')) {
             $image_back_license = $request->file('license_back');
-            $license_back_name = time() . $image_back_license->getClientOriginalName();
-            $image_back_license->move(public_path('/images/drivers/license/'), $license_back_name);
-            $license_back_path = "/images/drivers/license/" . $license_back_name;
+            $license_back_pic = time() . $image_back_license->getClientOriginalName();
+            $image_back_license->move(public_path('/uploads/drivers/license/'), $license_back_pic);
         }
 
         $user = Auth::user();
@@ -101,11 +97,11 @@ class DriverController extends Controller
         $driver->otp = substr(uniqid(), -4);
         $driver->status = $request->input('status');
 
-        $driver->cnic_front_pic =  $cnic_front_path;
-        $driver->cnic_back_pic =  $cnic_back_path;
+        $driver->cnic_front_pic =  $cnic_front_pic;
+        $driver->cnic_back_pic =  $cnic_back_pic;
 
-        $driver->license_no_front_pic =  $license_front_path;
-        $driver->license_no_back_pic = $license_back_path;
+        $driver->license_no_front_pic =  $license_front_pic;
+        $driver->license_no_back_pic = $license_back_pic;
 
         if ($driver->save()) {
             return redirect()->route('driver.create')

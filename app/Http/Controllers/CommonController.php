@@ -16,13 +16,13 @@ class CommonController extends Controller
         $res = State::get();
         if (!empty($country_id)) {
             $res = State::where('ctry_id', $country_id)
-            ->select('id', 'name')
-            ->get();
+                ->select('id', 'name')
+                ->get();
         }
         return response()->json([
-            'status'=>'success',
+            'status' => 'success',
             'data' => $res
-        ]) ;
+        ]);
     }
 
     public function getCities($state_id)
@@ -30,13 +30,13 @@ class CommonController extends Controller
         $res = City::get();
         if (!empty($state_id)) {
             $res = City::where('s_id', $state_id)
-            ->select('id', 'name')
-            ->get();
+                ->select('id', 'name')
+                ->get();
         }
         return response()->json([
-            'status'=>'success',
+            'status' => 'success',
             'data' => $res
-        ]) ;
+        ]);
     }
 
     public function getScheduleRouteDriverVehicle($org_id)
@@ -46,13 +46,13 @@ class CommonController extends Controller
         $drivers = Driver::where('o_id', $org_id)->select('id', 'name')->get();
 
         return response()->json([
-            'status'=>'success',
+            'status' => 'success',
             'data' => [
                 'routes' => $routes,
                 'vehicles' => $vehicles,
                 'drivers' => $drivers,
             ]
-        ]) ;
+        ]);
     }
 
     public function moveImageGetName(Request $request, $inputName, $path)
@@ -64,7 +64,7 @@ class CommonController extends Controller
             $cnic_front_path = $path . $cnic_front_name;
 
             $extension = $file->getClientOriginalExtension();
-            $filename = time().'.' . $extension;
+            $filename = time() . '.' . $extension;
             $file->move(public_path('uploads/'), $filename);
             $data['image'] = 'public/uploads/' . $filename;
         }
@@ -74,8 +74,8 @@ class CommonController extends Controller
     {
         $drivers = Driver::where('o_id', $id)->select('id', 'name')->get();
         return response()->json([
-            'status'=>'success',
+            'status' => 'success',
             'data' => $drivers
-        ]) ;
+        ]);
     }
 }

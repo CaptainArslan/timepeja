@@ -2,9 +2,7 @@ $(document).ready(function () {
     // this is for to add asterick for all the required fields
     $("input[required], select[required], textarea[required]")
         .prev("label")
-        .append(
-            '<span class="required-asterisk text-danger"> * </span>'
-        );
+        .append('<span class="required-asterisk text-danger"> * </span>');
 
     // this for to select today date
     var today = new Date();
@@ -130,7 +128,6 @@ function makeOptions(res) {
     return html;
 }
 
-
 /**
  * this function is use to hide all the previous date from calender
  *
@@ -138,18 +135,32 @@ function makeOptions(res) {
  *
  * @return  {[type]}           [return description]
  */
-function preventPreviousDate(pramaid){
+function preventPreviousDate(pramaid) {
     var today = new Date();
     var day = today.getDate();
     var month = today.getMonth() + 1;
     var year = today.getFullYear();
     if (day < 10) {
-        day = '0' + day;
+        day = "0" + day;
     }
     if (month < 10) {
-        month = '0' + month;
+        month = "0" + month;
     }
-    var today_formatted = year + '-' + month + '-' + day;
+    var today_formatted = year + "-" + month + "-" + day;
     // Set the minimum date for the date input field
-    document.getElementById(pramaid).setAttribute('min', today_formatted);
+    document.getElementById(pramaid).setAttribute("min", today_formatted);
+}
+
+
+/**
+ * [formatTime description]
+ *
+ * @param   {[type]}  timeString  [timeString description]
+ *
+ * @return  {[type]}              [return description]
+ */
+function formatTime(timeString) {
+    const [hourString, minute] = timeString.split(":");
+    const hour = + hourString % 24;
+    return (hour % 12 || 12) + " : " + minute + (hour < 12 ? " AM " : " PM ");
 }

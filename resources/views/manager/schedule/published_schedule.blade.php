@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Active Vehicles')
+@section('title', 'Published Schedule')
 <!-- start page title -->
 @section('page_css')
 <!-- Plugins css -->
@@ -15,7 +15,7 @@
 <div class="row">
     <div class="col-12">
         <div class="page-title-box">
-            <h4 class="page-title">Active Vehicle</h4>
+            <h4 class="page-title">Published Schedule</h4>
         </div>
     </div>
 </div>
@@ -25,30 +25,32 @@
         <div class="card">
             <div class="card-body">
                 <!-- <h4 class="header-title">Select Organization</h4> -->
-                <form action="">
+                <form action="{{ route('schedule.published') }}" method="post" enctype="multipart/form-data">
+                    @csrf
                     <div class="row">
                         <div class="col-md-4">
                             <label for="organization">Select Oganization</label>
-                            <select class="form-control" data-toggle="select2" data-width="100%" id="organization">
-                                <option>Select</option>
-                                <option value="AK">123456 - branch - Punjab University</option>
-                                <option value="HI">123456 - branch - Gujrant University</option>
-                                <option value="CA">123456 - branch - Gift University</option>
-                                <option value="NV">123456 - branch - Kips University</option>
-                                <option value="OR">123456 - branch - Sialkot Univeristy</option>
+                            <select class="form-control" data-toggle="select2" name="o_id" data-width="100%" id="organization" required>
+                                <option value="">Select</option>
+                                @forelse ($organizations as $organization)
+                                <option value="{{ $organization->id }}">{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
+                                @empty
+                                <option value="">Please select</option>
+                                @endforelse
                             </select>
+                            <span></span>
                         </div>
                         <div class="col-md-3">
-                            <label for="date-1">From</label>
-                            <input class="form-control" id="example-date-1" type="date" name="date">
+                            <label for="from">From</label>
+                            <input class="form-control today-date" name="from" id="from" type="date"  required>
                         </div>
                         <div class="col-md-3">
-                            <label for="date">To</label>
-                            <input class="form-control" id="example-date" type="date" name="date">
+                            <label for="to">To</label>
+                            <input class="form-control today-date" name="to" id="to" type="date"  required>
                         </div>
                         <div class="col-md-1">
-                            <label for="publish_schedule">.</label>
-                            <button type="button" type="button" class="btn btn-success" id="publish_schedule"> Submit </button>
+                            <label for="submit">.</label>
+                            <button type="submit" class="btn btn-success" name="submit" id="submit"> Submit </button>
                         </div>
                     </div> <!-- end row -->
                 </form>
@@ -57,30 +59,36 @@
     </div> <!-- end col-->
 </div>
 
+
+@if(isset($_POST['submit']))
 <!--  Schedule Table -->
 <div class="row">
     <div class="col-12">
         <div class="card">
             <div class="card-header d-flex">
                 <div class="col-2">
-                    <h4 class="header-title">Active Vehicle</h4>
+                    <h4 class="header-title">Published Schedule</h4>
                 </div>
-                <div class="col-9">
+                <div class="col-7">
                     <div class="row">
-                        <div class="col-md-5">
-                            <input class="form-control" id="" type="text" value="123456 - branch - Punjab University" name="organization" style="font-weight: bold;" readonly>
+                        <div class="col-md-6">
+                            <input class="form-control" id="" type="text" value="{{ old('organization') }}" name="organization" style="font-weight: bold;" readonly>
                         </div>
                         <div class="col-md-3">
-                            <input class="form-control" id="example-date-1" type="date" name="date">
+                            <input class="form-control today-date" id="selected_from" type="text" value="old('from')">
                         </div>
                         <div class="col-md-3">
-                            <input class="form-control" id="example-date" type="date" name="date">
+                            <input class="form-control today-date" id="selected_to" type="text" value="old('to')">
                         </div>
                     </div>
                 </div>
+                <div class="col-3 d-flex justify-content-between">
+                    <button type="button" type="button" class="btn btn-success" style="position: absolute; right: 170px; top: 10px;">Modify schedule</button>
+                    <button type="button" type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#staticBackdrop" style="position: absolute; right: 10px; top: 10px;">Replicate schedule</button>
+                </div>
             </div>
             <div class="card-body">
-                <table id="basic-datatable" class="table table-striped dt-responsive nowrap w-100">
+                <table id="datatable-buttons" class="table table-striped dt-responsive nowrap w-100">
                     <thead>
                         <tr>
                             <th>
@@ -95,13 +103,14 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @forelse($schedules as $schedule)
                         <tr>
                             <td>
-                                <input type="checkbox" class="child_checkbox">
+                                <input type="checkbox"  class="child_checkbox" value="" name="">
                             </td>
                             <td>20/12/2022</td>
                             <td>09:00 AM</td>
-                            <td> 15 -  Gujranwala To Lahore </td>
+                            <td> 15 - Gujranwala To Lahore </td>
                             <td>LHR-123</td>
                             <td>Ali</td>
                             <!-- <td>
@@ -111,11 +120,11 @@
                         </tr>
                         <tr>
                             <td>
-                                <input type="checkbox" class="child_checkbox">
+                                <input type="checkbox" class="child_checkbox" value="" name="">
                             </td>
                             <td>20/12/2022</td>
                             <td>09:15 AM</td>
-                            <td> 15 -  Gujranwala To Lahore </td>
+                            <td> 15 - Gujranwala To Lahore </td>
                             <td>GAO-123</td>
                             <td>Azam</td>
                             <!-- <td>
@@ -125,11 +134,11 @@
                         </tr>
                         <tr>
                             <td>
-                                <input type="checkbox" class="child_checkbox">
+                                <input type="checkbox" class="child_checkbox" value="" name="">
                             </td>
                             <td>20/12/2022</td>
                             <td>09:15 AM</td>
-                            <td> 15 -  Gujranwala To Lahore </td>
+                            <td> 15 - Gujranwala To Lahore </td>
                             <td>GAO-123</td>
                             <td>Afzaal</td>
                             <!-- <td>
@@ -137,31 +146,39 @@
                                 <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
                             </td> -->
                         </tr>
+                        @empty
+                        @endforelse
                     </tbody>
                 </table>
             </div> <!-- end card body-->
         </div> <!-- end card -->
     </div><!-- end col-->
 </div>
-<!-- end row -->
-<div class="col-lg-12">
-    <div class="card">
-        <div class="card-body">
-            <h4 class="header-title mb-3">Map</h4>
-            <div class="mb-3">
-                <label class="form-label">Search</label>
-                <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Search on map" aria-label="Username" aria-describedby="basic-addon1">
-                    <span class="input-group-text" id="basic-addon1" role="button"><i class="fas fa-search"></i></span>
-                </div>
-            </div>
-            <div id="gmaps-basic" class="gmaps"></div>
-        </div>
-    </div> <!-- end card-->
-</div>
-<!-- Modal -->
+@endif
 
-<!-- /.modal -->
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-light">
+                <h4 class="modal-title" id="myCenterModalLabel">Replicate Schedule</h4>
+                <button type="button" type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form action="#" method="post">
+                    @csrf
+                    <div class="mb-3">
+                        <label for="role_name" class="form-label">Select Date, when you want to replicate </label>
+                        <input type="date" id="role_name" class="form-control" required>
+                    </div>
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-success waves-effect waves-light">Replicate</button>
+                    </div>
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
 <!-- End Content  -->
 @endsection
