@@ -3,100 +3,261 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Models\User;
+use App\Models\Manager;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends BaseController
 {
     public function register(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => ['required', 'min:5'],
-            'phone' => ['required', 'numeric', 'min:11'],
-            'otp' => ['required', 'numeric'],
-            'password' => ['required', 'confirmed']
+        $fields = $request->all();
+        $validate = Validator::make($fields, [
+            'name' => 'required|string|min:3|max:255',
+            'phone' => 'required|numeric|digits:11',
+            'otp' => 'required|string',
+            'password' => 'required|alpha_num|between:8,255|confirmed',
+            'password_confirmation' => 'required|alpha_num|between:8,255',
+            'email' => 'nullable|email|max:255',
+        ], [
+            'name.required' => 'Name is required',
+            'phone.required' => 'Phone is required',
+            'email.required' => 'Email is required',
+            'password.required' => 'Password is required',
+            'otp.required' => 'Verification code is required',
         ]);
 
-        if ($validator->fails()) {
-            return $this->sendError('Validation Error.', $validator->errors(), 400);
+        if ($validate->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation errors',
+                'errors' => $validate->errors(),
+            ], 422);
         }
 
-        $res =  User::where([['phone', $request->phone], ['otp', $request->otp]])->first();
-        if (empty($res)) {
-            return $this->sendError('User not Exist', ['error' => 'Ask your Administration for registration'], 400);
-        } else if (!empty($res->password)) {
-            return $this->sendError('User Already Exist', ['error' => 'Manager Already registered Please Login'], 400);
+        $manager = Manager::where('phone', $request->phone)
+            ->where('otp', $request->otp)
+            ->first();
+
+        if (!$manager) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid phone or verification code'
+            ], 401);
         }
 
-        $user = User::findOrFail($res->id);
-        $user->name = $request->name;
-        $user->password = Hash::make($request->password);
-        $user->save();
-        $success['token'] = $user->createToken('ApiToken')->plainTextToken;
-        $success['name'] = $user;
-        return $this->sendResponse($success, 'Manager register successfully.');
+        if (empty($manager->token) && empty($manager->password)) {
+            $manager->update([
+                'password' => Hash::make($request->password),
+                'token' => Str::random(30),
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Manager registered successfully',
+                'code' => 'Registered_Success',
+                'data' => $manager,
+            ], 200);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Manager already exists. Please login.',
+            ], 401);
+        }
     }
 
     public function login(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'phone' => ['required', 'numeric', 'min:11'],
-            'password' => ['required']
+        $fields = $request->all();
+        $validate = Validator::make($fields, [
+            'phone' => 'required|numeric|digits:11',
+            'password' => 'required|alpha_num|between:8,255',
+        ], [
+            'phone.required' => 'Phone is required',
+            'password.required' => 'Password is required',
         ]);
-        if ($validator->fails()) {
-            return $this->sendError('Validation Error', $validator->errors(), 400);
+
+        if ($validate->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'success' => false,
+                'errors' => $validate->errors()->all()
+            ], 401);
         }
-        $user = User::where([['phone', $request->phone], ['user_type', 'manager']])->first();
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            return $this->sendError('Unauthorised', ['error' => 'Invalid phone or password'], 401);
-        }
-        $success['token'] = $user->createToken('ApiToken')->plainTextToken;
-        $success['user'] = $user;
-        return $this->sendResponse($success, 'User login successfully.');
-    }
 
-    public function logout()
-    {
-        auth()->user()->tokens()->delete();
-        return $this->sendResponse('success', 'Manager successfully logout');
-    }
+        $manager = Manager::where('phone', $fields['phone'])->with('managerOrganization')->first();
 
-    public function change_password(Request $request)
-    {
-        return 'change Password';
-    }
-
-    public function get_code(Request $request)
-    {
-        return 'get_code';
-    }
-
-    public function forgot_password(Request $request)
-    {
-        return 'forgot password';
-    }
-
-    public function profile_update(Request $request, $user_id)
-    {
-
-        if (isset($user_id)) {
-            $user = User::find($user_id);
-
-            $user->update($request->all());
+        if (!empty($manager) && Hash::check($request->password, $manager->password)) {
+            $manager->makeHidden(['password']);
 
             return response()->json([
-                'status' => 'success',
-                'message' => 'Profile updated successfully',
-                'user' => $user
+                "success" => true,
+                "message" => "Login Successfully",
+                "code" => "Login_API",
+                "data" => $manager
             ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'errors' => ['Invalid Phone or Password']
+        ], 401);
+    }
+
+    public function getCode(Request $request)
+    {
+        $fields = $request->all();
+        $validate = Validator::make($fields, [
+            'phone' => 'required|numeric|digits:11',
+        ], [
+            'phone.required' => 'Phone is required',
+        ]);
+
+        if ($validate->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation errors',
+                'errors' => $validate->errors(),
+            ], 422);
+        }
+
+        $manager = Manager::where('phone', $fields['phone'])->first();
+        if (!empty($manager)) {
+            $manager = Manager::find($manager->id);
+            $manager->otp = substr(uniqid(), -4);
+            $save = $manager->save();
+            if ($save) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Otp sent successfully',
+                    'code' => 'Get_Otp',
+                    'data' => $manager->otp,
+                ], 200);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'errors' => ['Error Occured while sending otp']
+                ], 401);
+            }
+        }
+
+        return response()->json([
+            'success' => false,
+            'errors' => ['Invalid Phone number']
+        ], 401);
+    }
+
+
+    public function forgetPassword(Request $request)
+    {
+        $fields = $request->all();
+        $validate = Validator::make($fields, [
+            'phone' => 'required|numeric|digits:11',
+            'otp' => 'required|string',
+            'password' => 'required|alpha_num|between:8,255|confirmed',
+            'password_confirmation' => 'required|alpha_num|between:8,255',
+        ], [
+            'phone.required' => 'Phone is required',
+            'password.required' => 'Password is required',
+            'otp.required' => 'Verification code is required',
+        ]);
+
+        if ($validate->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation errors',
+                'errors' => $validate->errors(),
+            ], 422);
+        }
+
+        $manager = Manager::where('phone', $request->phone)
+            ->where('otp', $request->otp)
+            ->with('managerOrganization')
+            ->first();
+
+        if (!$manager) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid phone or verification code'
+            ], 401);
+        }
+
+        if (!empty($manager->password)) {
+            $manager->makeHidden(['password']);
+            $manager->update([
+                'password' => Hash::make($request->password),
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Password updated Successfully',
+                'code' => 'Password_change',
+                'data' => $manager,
+            ], 200);
+        }
+    }
+
+    public function oauthSMS(Request $request)
+    {
+        $fields = $request->all();
+        $validate = Validator::make($fields, [
+            'code' => 'required|string|max:6',
+        ], [
+            'code.required' => 'Locale Code is required',
+        ]);
+        if ($validate->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validate->errors()->first()
+            ], 400);
+        }
+
+        $getuser = PersonalAccessToken::where(
+            'token',
+            $request->header('token')
+        )->get();
+
+        if ($getuser->count()) {
+            $auth = UserCode::where('user_id', $getuser[0]->tokenable_id)
+                ->orderBy('id', 'desc')->take(1)->get();
+            if ($auth->count()) {
+                if ($auth[0]->code == $request->code) {
+                    $user = User::where('id', $getuser[0]->tokenable_id)->first();
+                    $user->istwofa = 1;
+                    $user->Save();
+                    $user->createToken('ams_app_token')->plainTextToken;
+                    $token = PersonalAccessToken::where('tokenable_id', $user->id)
+                        ->orderBy('id', 'desc')->first();
+                    $token->machine = $request->header('machine');
+                    $token->Save();
+                    ActivityLog::addToLog('OAuth-success', '', '', '', $request->id, $request->id);
+                    $respons = [
+                        "status" =>  'success',
+                        'message' => 'User Authenticated',
+                        'user' => $user,
+                        'token' => $token->token,
+                    ];
+                    return response()->json($respons, '200');
+                } else {
+                    ActivityLog::addToLog('OAuth-Failed', '', '', '', $request->id, $request->id);
+                    $status = 'failed';
+                    $message = 'Invalid code';
+                }
+            } else {
+                $status = 'failed';
+                $message = 'Enter valid code';
+            }
         } else {
-            return response()->json([
-                'status' => 'failed',
-                'message' => 'Failed to update profile'
-            ]);
+            $status = 'failed';
+            $message = 'Enter valid token';
         }
+        $respons = [
+            "status" =>  $status,
+            'message' => 'message sent to user',
+        ];
+        return response()->json($respons, '422');
     }
 }

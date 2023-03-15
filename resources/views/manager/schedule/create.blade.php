@@ -42,21 +42,21 @@
                         </div>
                         <div class="col-md-3">
                             <label for="route_no">Select Route No</label>
-                            <select class="form-control" data-toggle="select2" name="route_no" data-width="100%" id="route_no">
+                            <select class="form-control" data-toggle="select2" name="route_no" data-width="100%" id="route_no" required>
                                 <option value="" selected>Select</option>
                             </select>
                             <span class="text-danger" id="route_no_error"></span>
                         </div>
                         <div class="col-md-3">
                             <label for="vehicle">Select Vehicle Reg</label>
-                            <select class="form-control" data-toggle="select2" name="vehicle" data-width="100%" id="vehicle">
+                            <select class="form-control" data-toggle="select2" name="vehicle" data-width="100%" id="vehicle" required>
                                 <option value="" selected>Select</option>
                             </select>
                             <span class="text-danger" id="vehicle_error"></span>
                         </div>
                         <div class="col-md-3">
                             <label for="driver">Select Driver</label>
-                            <select class="form-control" data-toggle="select2" name="driver" data-width="100%" id="driver">
+                            <select class="form-control" data-toggle="select2" name="driver" data-width="100%" id="driver" required>
                                 <option value="" selected>Select</option>
                             </select>
                             <span class="text-danger" id="driver_error"></span>
@@ -65,12 +65,12 @@
                     <div class="row mt-2">
                         <div class="col-md-3">
                             <label for="date">Select Date</label>
-                            <input type="date" class="form-control today-date" id="date" name="date">
+                            <input type="date" class="form-control today-date" id="date" name="date" onchange="addScheduleToTable()" required>
                             <span class="text-danger" id="date_error"></span>
                         </div>
                         <div class="col-md-3">
                             <label for="time">Time</label>
-                            <input class="form-control" id="time" type="time" name="time">
+                            <input class="form-control" id="time" type="time" name="time" required>
                             <span class="text-danger" id="time_error"></span>
                         </div>
                         <div class="col-md-2">
@@ -86,7 +86,8 @@
 
 <div class="row">
     <div class="col-12">
-        <form action="">
+        <form action="{{ route('schedule.publish') }}" method="post">
+            @csrf
             <div class="card">
                 <div class="card-header d-flex" style="justify-content: space-arond;">
                     <div class="col-2 d-flex justify-content-center align-items-center">
@@ -98,7 +99,7 @@
                         </div> -->
                     </div>
                     <div class="col-1 d-flex flex-row-reverse">
-                        <button type="button" type="button" class="btn btn-danger">Publish</button>
+                        <button type="submit" id="btn_published" class="btn btn-danger">Publish</button>
                     </div>
                 </div>
                 <div class="card-body table-container">
@@ -118,7 +119,6 @@
                             </tr>
                         </thead>
                         <tbody>
-
                         </tbody>
                     </table>
                 </div> <!-- end card body-->
@@ -138,10 +138,8 @@
 
 @include('partials.datatable_js')
 <script>
+    var table = $('#schedule-table').DataTable();
     $(document).ready(function() {
-
-        var t = $('#schedule-table').DataTable();
-
         $('#organization').change(function(e) {
             e.preventDefault();
             let id = $(this).val();
@@ -163,6 +161,7 @@
                         $('#route_no').append(routesOption);
                         $('#vehicle').append(vehiclesOption);
                         $('#driver').append(driversOption);
+                        addScheduleToTable()
                     } else {
                         console.log(response);
                     }
@@ -180,7 +179,7 @@
                     data: $(this).serialize(),
                     success: function(response) {
                         if (response.status == 'success') {
-                            addRow(t, response.data);
+                            addRow(table, response.data);
                             $('#route_no').val(null).trigger('change');
                             $('#vehicle').val(null).trigger('change');
                             $('#driver').val(null).trigger('change');
@@ -193,25 +192,62 @@
             }
         });
 
+
     });
+
+    function addScheduleToTable() {
+        table.clear().draw();
+        let org = $('#organization').val();
+        let date = $('#date').val();
+        let csrf_token = "{{ csrf_token() }}";
+        if (org != '' && date != '') {
+            $.ajax({
+                type: "GET",
+                url: "{{ route('getSchedule') }}",
+                data: {
+                    orgId: org,
+                    date: date,
+                    "_token": csrf_token
+                },
+                success: function(response) {
+                    if (response.status == 'success') {
+                        if (response.data.length > 0) {
+                            appendRows(table, response.data)
+                        }
+                    } else {
+                        alert('error Occured while fetching schedule');
+                    }
+                }
+            });
+        }
+    }
+
+    function appendRows(table, res) {
+        table.rows().nodes();
+        // $('#schedule-table > tbody').empty();
+        addRow(table, res);
+    }
 
     function addRow(tableInstance, res) {
         res.map((item) => {
             tableInstance.row.add([
-                `<td> <input type="checkbox" class="child_checkbox"> </td>`,
+                `<td> 
+                    <input type="checkbox" class="child_checkbox" value="${item.id}" name="schedule_ids[]" >
+                    <input type="hidden" value="${item.organizations.id}" name="o_id" >
+                </td>`,
                 `<td>${item.date}</td>`,
                 `<td><b>${item.organizations.name}</b></td>`,
                 `<td>${item.drivers.name}</td>`,
                 `<td><td> <b> <span class=" text-danger">${item.routes.number}</span> - ${item.routes.from} <span class="text-success"> TO </span> ${item.routes.to} </b> </td></td>`,
                 `<td>${item.vehicles.number}</td>`,
-                `<td>${item.time}</td>`,
+                `<td>${ formatTime(item.time) }</td>`,
                 `<td>
                     <div class="btn-group btn-group-sm" style="float: none;">
                         <button type="button" class="tabledit-edit-button btn btn-success edit_btn" style="float: none;" data-bs-toggle="modal" data-bs-target="#edit_modal">
                             <span class="mdi mdi-pencil"></span>
                         </button>
                     </div>
-                    <div class="btn-group btn-group-sm delete_schedule" data-id="${item.id}" style="float: none;" onclick="deleteScedule(this)">
+                    <div class="btn-group btn-group-sm delete_schedule" data-id="${item.id}" style="float: none;" onclick="deleteScedule(this, '{{ csrf_token() }}')">
                         <button type="button" class="tabledit-edit-button btn btn-danger delete" style="float: none;">
                             <span class="mdi mdi-delete"></span>
                         </button>
@@ -221,14 +257,14 @@
         });
     }
 
-    function deleteScedule(param) {
+    function deleteScedule(param, csrf_token) {
         let id = $(param).data('id');
-        let csrf_token = "{{ csrf_token() }}";
         $.ajaxSetup({
             headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                'X-CSRF-TOKEN': csrf_token
             }
         });
+        var csrf_token = "{{ csrf_token() }}";
         $.ajax({
             type: "POST",
             url: "/schedule/delete/" + id,
@@ -237,7 +273,10 @@
             },
             success: function(response) {
                 if (response.status == 'success') {
-                    alert('deleted');
+                    $(param).closest('tr').css('background', 'tomato');
+                    $(param).closest('tr').fadeOut(800, function() {
+                        $(this).remove();
+                    });
                 } else {
                     alert('error Occured while deletion');
                 }

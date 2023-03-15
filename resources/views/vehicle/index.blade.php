@@ -30,11 +30,12 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <form action="" id="filter_form">
+                <form action="" method="post" id="filter_form">
+                    @csrf
                     <div class="row">
                         <div class="col-md-5">
                             <label for="organization">Select Oganization</label>
-                            <select class="form-select select2_filter" id="o_id" name="o_id">
+                            <select class="form-select select2_filter" id="o_id" name="o_id" required>
                                 <option value="">Select</option>
                                 @forelse ($organizations as $organization)
                                 <option value="{{ $organization->id }}">{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
@@ -55,15 +56,15 @@
                         </div> -->
                         <div class="col-md-3">
                             <label for="from">From</label>
-                            <input class="form-control" id="example-date-1" type="date" name="from">
+                            <input class="form-control today-date" type="date" name="from_date" value="{{ old('from_date') }}" required>
                         </div>
                         <div class="col-md-3">
                             <label for="to">To</label>
-                            <input class="form-control" id="example-date" type="date" name="to">
+                            <input class="form-control today-date" type="date" name="to_date" value="{{ old('to_date') }}" required>
                         </div>
                         <div class="col-md-1">
                             <label for="publish_schedule">.</label>
-                            <button type="button" type="button" class="btn btn-success" id="publish_schedule"> Submit
+                            <button type="submit" class="btn btn-success" name="filter"> Submit
                             </button>
                         </div>
                     </div> <!-- end row -->
@@ -116,11 +117,11 @@
                             </th>
                             <th>{{ date("Y-m-d",strtotime($vehicle->created_at)) }}</th>
                             <th>{{ date("H:m:s",strtotime($vehicle->created_at)) }}</th>
-                            <td>{{$vehicle->organizations['name']}}</td>
-                            <td>{{$vehicle->vehiclesTypes['name']}}</td>
+                            <td>{{$vehicle->organizations['name'] ?? '' }}</td>
+                            <td>{{$vehicle->vehiclesTypes['name'] ?? ''}}</td>
                             <td>{{$vehicle->number}}</td>
-                            <td><img src="{{$vehicle->front_pic}}" alt="" width="50px" height="50px"></td>
-                            <td><img src="{{$vehicle->number_pic}}" alt="" width="50px" height="50px"></td>
+                            <td><img src="{{ asset('/uploads/vehicles/').'/'.$vehicle->front_pic }}" alt="" width="50px" height="50px"></td>
+                            <td><img src="{{ asset('/uploads/vehicles/').'/'.$vehicle->number_pic }}" alt="" width="50px" height="50px"></td>
                             <td>
                                 <div class="btn-group btn-group-sm" style="float: none;">
                                     <button type="button" class="tabledit-edit-button btn btn-success edit_btn" style="float: none;" data-bs-toggle="modal" data-bs-target="#edit_modal">
@@ -152,26 +153,28 @@
                 <button type="button" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="{{ route('vehicle.create') }}" method="POST" enctype="multipart/form-data" id="create_modal_form">
+                <form action="{{ route('vehicle.store') }}" method="POST" enctype="multipart/form-data" id="create_modal_form">
                     @csrf
                     <div class="col-xl-12">
                         <div class="card shadow-none">
                             <div class="card-body">
                                 <div class="row">
                                     <div class="mb-3">
-                                        <label for="veh_type" class="form-label">Vehicle Type</label>
-                                        <select class="form-select select2" id="o_id" name="o_id">
+                                        <label for="veh_type" class="form-label">Select Organization</label>
+                                        <select class="form-select select2" id="o_id" name="o_id" required>
+                                            <option value="">Select</option>
                                             @forelse ($organizations as $organization)
-                                            <option value="{{$organization->id}}"> {{ucfirst($organization->name)}}
-                                            </option>
+                                            <option value="{{ $organization->id }}">{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
                                             @empty
+                                            <option value="">Please select</option>
                                             @endforelse
                                         </select>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="mb-3">
-                                            <label for="veh_type" class="form-label">Select Organization</label>
+                                            <label for="veh_type" class="form-label">Vehicle Type</label>
                                             <select class="form-select select2" id="veh_type" name="v_type_id" required>
+                                                <option value="" selected>Please select</option>
                                                 @forelse ($vehicle_types as $vehicle_type)
                                                 <option value="{{$vehicle_type->id}}"> {{ucfirst($vehicle_type->name)}}
                                                 </option>
@@ -181,7 +184,7 @@
                                         </div>
                                         <div class="col-12">
                                             <div class="mt-1">
-                                                <input type="file" data-plugins="dropify" name="veh_front_pic" data-default-file="/images/small/img-2.jpg" />
+                                                <input type="file" accept="image/*" data-plugins="dropify" name="veh_front_pic" data-default-file="/images/small/img-2.jpg" />
                                                 <p class="text-muted text-center mt-2 mb-0">Vehicle Picture from front
                                                 </p>
                                             </div>
@@ -190,11 +193,12 @@
                                     <div class="col-lg-6">
                                         <div class="mb-3">
                                             <label for="simpleinput" class="form-label">Vehicle's Number</label>
-                                            <input type="text" id="simpleinput" name="number" class="form-control">
+                                            <input type="text" id="simpleinput" name="number" class="form-control" required>
                                         </div>
+
                                         <div class="col-12">
                                             <div class="mt-1">
-                                                <input type="file" data-plugins="dropify" name="veh_back_pic" data-default-file="/images/small/img-2.jpg" />
+                                                <input type="file" accept="image/*" data-plugins="dropify" name="veh_license_plate" data-default-file="/images/small/img-2.jpg" />
                                                 <p class="text-muted text-center mt-2 mb-0">Vehicle license plate
                                                     picture</p>
                                             </div>
@@ -337,31 +341,31 @@
     });
 
     $(document).ready(function() {
-        $('#create_modal_form').submit(function(e) {
-            e.preventDefault();
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-            $.ajax({
-                type: "post",
-                url: $(this).attr('action'),
-                data: $(this).serialize(),
-                success: function(response) {
-                    Swal.fire(
-                        'Done!',
-                        'Inserted Successfully!',
-                        'success'
-                    ).then((result) => {
-                        location.reload();
-                    });
-                },
-                error: (error) => {
-                    console.log(JSON.stringify(error));
-                }
-            });
-        });
+        // $('#create_modal_form').submit(function(e) {
+        //     e.preventDefault();
+        //     $.ajaxSetup({
+        //         headers: {
+        //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        //         }
+        //     });
+        //     $.ajax({
+        //         type: "post",
+        //         url: $(this).attr('action'),
+        //         data: $(this).serialize(),
+        //         success: function(response) {
+        //             Swal.fire(
+        //                 'Done!',
+        //                 'Inserted Successfully!',
+        //                 'success'
+        //             ).then((result) => {
+        //                 location.reload();
+        //             });
+        //         },
+        //         error: (error) => {
+        //             console.log(JSON.stringify(error));
+        //         }
+        //     });
+        // });
 
         $('#edit_modal_form').submit(function(e) {
             e.preventDefault();
@@ -405,11 +409,11 @@
             var el = this;
             var id = $(this).closest("tr").find('.db_id').val();
             console.log(id);
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
+            // $.ajaxSetup({
+            //     headers: {
+            //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            //     }
+            // });
             Swal.fire({
                 title: 'Are you sure?',
                 text: "Once Deleted, you will not be able to recover this record!!",
@@ -424,6 +428,7 @@
                         type: "post",
                         url: "{{ route('vehicle.delete') }}",
                         data: {
+                            "_token": "{{ csrf_token() }}",
                             "id": id,
                         },
                         success: function(response) {

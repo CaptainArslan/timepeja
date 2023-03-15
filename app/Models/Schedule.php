@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Schedule extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+    use SoftDeletes;
+
     protected $table = 'schedules';
 
     protected $fillable = [
@@ -21,23 +23,52 @@ class Schedule extends Model
         'time',
         'status'
     ];
-    
+
+    /**
+     * [organizations description]
+     *
+     * @return  [type]  [return description]
+     */
     public function organizations()
     {
         return $this->belongsTo(Organization::class, 'o_id', 'id');
     }
+
+    /**
+     * [routes description]
+     *
+     * @return  [type]  [return description]
+     */
     public function routes()
     {
         return $this->belongsTo(Route::class, 'route_id', 'id');
     }
+
+    /**
+     * [vehicles description]
+     *
+     * @return  [type]  [return description]
+     */
     public function vehicles()
     {
         return $this->belongsTo(Vehicle::class, 'v_id', 'id');
     }
+
+    /**
+     * [drivers description]
+     *
+     * @return  [type]  [return description]
+     */
     public function drivers()
     {
         return $this->belongsTo(Driver::class, 'd_id', 'id');
     }
+
+    /**
+     * [users description]
+     *
+     * @return  [type]  [return description]
+     */
     public function users()
     {
         return $this->belongsTo(User::class, 'u_id', 'id');

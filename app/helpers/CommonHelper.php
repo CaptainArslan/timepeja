@@ -10,3 +10,15 @@ function print_data($array)
     }
     echo "</pre></div>";
 }
+
+function formatDate($date)
+{
+    $res = date("Y-m-d", strtotime($date));
+    return $res;
+}
+
+function formatTime($time)
+{
+    $res = date("H:m:s", strtotime($time));
+    return $res;
+}

@@ -146,7 +146,6 @@
             var from = $('#from').val();
             $('#route_name').val(routeno + '  ' + to + '  ' + from);
         });
-
     });
 </script>
 @endsection

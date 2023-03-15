@@ -21,20 +21,17 @@ class ManagerController extends Controller
      */
     public function index(Request $request)
     {
-        
         $organization_types = OrganizationType::get();
         $states = State::where('ctry_id', 167)->get();
         // dd($organizations->organizationType);
         // $managers_count = Manager::count();
-
         if ($request->has('filter')) {
             $this->filterManager($request, $organization_types, $states);
         }
-        
         $organizations = Organization::with('manager')
-            ->orderBY('id', 'desc')
-            ->take(10)
-            ->get();
+        ->orderBY('id', 'DESC')
+        ->take(10)
+        ->get();
         return view('manager.index', [
             // 'managers_count' => $managers_count,
             'organization_types' => $organization_types,
@@ -63,7 +60,6 @@ class ManagerController extends Controller
         );
 
         $date_filter = false;
-
         if ($request->from && $request->to) {
             $from = $request->from;
             $to = $request->to;
@@ -74,9 +70,7 @@ class ManagerController extends Controller
         })
         ->with('manager')
         ->get();
-
         // $managers_count = Manager::count();
-
         return view('manager.index', [
             // 'managers_count' => $managers_count,
             'organization_types' => $organization_types,
@@ -156,7 +150,7 @@ class ManagerController extends Controller
             $org->name          = $request->input('org_name');
             $org->branch_name   = $request->input('org_branch_name');
             $org->branch_code   = $request->input('org_branch_code');
-            $org->o_type        = $request->input('org_type');
+            $org->o_type_id     = $request->input('org_type');
             $org->email         = $request->input('org_email');
             $org->phone         = $request->input('org_phone');
             $org->address       = $request->input('org_address');
@@ -274,8 +268,8 @@ class ManagerController extends Controller
     {
         $delOrg = Organization::where('id', $id)->delete();
         $delMan = Manager::where('o_id', $id)->delete();
-        $delFin = Financials::where('o_id', $id)->delete();
-        if ($delMan && $delOrg && $delFin) {
+        // $delFin = Financials::where('o_id', $id)->delete();
+        if ($delMan && $delOrg) {
             return response()->json([
                 'status' => 'success',
             ]);

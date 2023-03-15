@@ -58,12 +58,12 @@
                     </a>
                     <div class="collapse" id="usermanagement">
                         <ul class="nav-second-level">
-                            <!-- <li>
+                            <li>
                                 <a href="{{ route('modules.index') }}">Modules</a>
                             </li>
                             <li>
                                 <a href="{{ route('module-groups.index') }}">Module Groups</a>
-                            </li> -->
+                            </li>
                             <li>
                                 <a href="{{ route('users.index') }}">All system Users</a>
                             </li>
@@ -98,14 +98,14 @@
                                 <a href="{{ route('schedule.create') }}">Create Schedule</a>
                             </li>
                             <li>
-                                <a href="{{ route('schedule.publishes') }}">Published Schedule</a>
+                                <a href="{{ route('schedule.published') }}">Published Schedule</a>
                             </li>
                             <li>
                                 <a href="{{ route('log.reports') }}">LOG Report</a>
                             </li>
-                            <li>
+                            <!-- <li>
                                 <a href="{{ route('active_vehicle') }}">Active Vehicle</a>
-                            </li>
+                            </li> -->
                             <!-- <li>
                                 <a href="{{ route('transpot.users') }}">Transport Users</a>
                             </li> -->
@@ -173,11 +173,11 @@
                     </a>
                     <div class="collapse" id="sidebarRoute">
                         <ul class="nav-second-level">
-                            <li>
+                            <!-- <li>
                                 <a href="{{ route('routes.create') }}">
                                     <span> Add Route </span>
                                 </a>
-                            </li>
+                            </li> -->
                             <li>
                                 <a href="{{ route('routes.index') }}">
                                     <span> Routes </span>

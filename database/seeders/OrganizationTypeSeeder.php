@@ -58,6 +58,13 @@ class OrganizationTypeSeeder extends Seeder
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now()
             ],
+            [
+                'name' => 'Other',
+                'desc' => 'Private and other organization',
+                'status' => 1,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
+            ],
         ]);
     }
 }
