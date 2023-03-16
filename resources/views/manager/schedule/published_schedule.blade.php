@@ -42,11 +42,11 @@
                         </div>
                         <div class="col-md-3">
                             <label for="from">From</label>
-                            <input class="form-control today-date" name="from" id="from" type="date"  required>
+                            <input class="form-control today-date" name="from" id="from" type="date" required>
                         </div>
                         <div class="col-md-3">
                             <label for="to">To</label>
-                            <input class="form-control today-date" name="to" id="to" type="date"  required>
+                            <input class="form-control today-date" name="to" id="to" type="date" required>
                         </div>
                         <div class="col-md-1">
                             <label for="submit">.</label>
@@ -106,41 +106,13 @@
                         @forelse($schedules as $schedule)
                         <tr>
                             <td>
-                                <input type="checkbox"  class="child_checkbox" value="" name="">
-                            </td>
-                            <td>20/12/2022</td>
-                            <td>09:00 AM</td>
-                            <td> 15 - Gujranwala To Lahore </td>
-                            <td>LHR-123</td>
-                            <td>Ali</td>
-                            <!-- <td>
-                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-success" style="float: none;"><span class="mdi mdi-pencil"></span></button></div>
-                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
-                            </td> -->
-                        </tr>
-                        <tr>
-                            <td>
                                 <input type="checkbox" class="child_checkbox" value="" name="">
                             </td>
-                            <td>20/12/2022</td>
-                            <td>09:15 AM</td>
-                            <td> 15 - Gujranwala To Lahore </td>
-                            <td>GAO-123</td>
-                            <td>Azam</td>
-                            <!-- <td>
-                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-success" style="float: none;"><span class="mdi mdi-pencil"></span></button></div>
-                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
-                            </td> -->
-                        </tr>
-                        <tr>
-                            <td>
-                                <input type="checkbox" class="child_checkbox" value="" name="">
-                            </td>
-                            <td>20/12/2022</td>
-                            <td>09:15 AM</td>
-                            <td> 15 - Gujranwala To Lahore </td>
-                            <td>GAO-123</td>
-                            <td>Afzaal</td>
+                            <td>{{ formatDate($schedule->date) }}</td>
+                            <td>{{ timeInAmPm($schedule->time); }}</td>
+                            <td> <b> <span class=" text-danger">{{ $schedule->routes['number']  }}</span> - {{ $schedule->routes['from'] }} <span class="text-success"> TO </span> {{ $schedule->routes['to'] }} </b> </td>
+                            <td>{{ $schedule->vehicles['number'] }}</td>
+                            <td>{{ $schedule->drivers['name'] }}</td>
                             <!-- <td>
                                 <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-success" style="float: none;"><span class="mdi mdi-pencil"></span></button></div>
                                 <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>

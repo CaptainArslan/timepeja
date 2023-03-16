@@ -166,9 +166,10 @@ class ScheduleController extends Controller
             );
             $schedules = Schedule::where('o_id', $request->o_id)
                 ->where('status', 'published')
-                ->whereBetween('created_at', [$request->from, $request->to])
+                ->whereBetween('date', [$request->from, $request->to])
                 ->with('organizations', 'routes', 'vehicles', 'drivers')
                 ->get();
+            // dd($schedules->toArray());
         }
         $organizations = Organization::get();
         return view('manager.schedule.published_schedule', [
