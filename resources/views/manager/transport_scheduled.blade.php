@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('layouts.app')
 @section('title', 'Transport Scheduled')
 <!-- start page title -->
 @section('page_css')
@@ -48,7 +48,7 @@
                         </div> <!-- end col -->
                         <div class="col-md-1">
                             <label for="publish_schedule">.</label>
-                            <button class="btn btn-success" id="publish_schedule"> Submit </button>
+                            <button type="button" class="btn btn-success" id="publish_schedule"> Submit </button>
                         </div> <!-- end col -->
                     </div> <!-- end row -->
                 </form>
@@ -70,12 +70,11 @@
                             <th>
                                 <input type="checkbox">
                             </th>
+                            <th>Date</th>
                             <th>Organization Name</th>
-                            <th>Branch Name</th>
-                            <th>Branch Code</th>
-                            <th>Route No</th>
-                            <th>Vehicle</th>
                             <th>Driver</th>
+                            <th>Route No</th>
+                            <th>Vehicle No</th>
                             <th>Time</th>
                             <th>Action</th>
                         </tr>
@@ -85,14 +84,46 @@
                             <td>
                                 <input type="checkbox">
                             </td>
+                            <td>20/12/2022</td>
                             <td><b><a href="#" data-bs-toggle="modal" data-bs-target="#modal_organization">Punjab University</a></b></td>
-                            <td>GT Road Branch</td>
-                            <td>123</td>
-                            <td><b><a href="#">1</a></b></td>
-                            <td>LHR-123</td>
                             <td>Ali</td>
+                            <td><b>Grw <a href="#" class="text-success"> 15 </a> MLT</b></td>
+                            <td>LHR-123</td>
                             <td>09:45 PM</td>
-                            <td><a href="#" class="action-icon"> <i class="mdi mdi-delete"></i></a></td>
+                            <td>
+                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-success" style="float: none;"><span class="mdi mdi-pencil"></span></button></div>
+                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="checkbox">
+                            </td>
+                            <td>20/12/2022</td>
+                            <td><b><a href="#" data-bs-toggle="modal" data-bs-target="#modal_organization">Punjab University</a></b></td>
+                            <td>Azam</td>
+                            <td><b>Grw <a href="#" class="text-success"> 10 </a> LHR</b></td>
+                            <td>LHR-123</td>
+                            <td>09:45 PM</td>
+                            <td>
+                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-success" style="float: none;"><span class="mdi mdi-pencil"></span></button></div>
+                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="checkbox">
+                            </td>
+                            <td>20/12/2022</td>
+                            <td><b><a href="#" data-bs-toggle="modal" data-bs-target="#modal_organization">Punjab University</a></b></td>
+                            <td>Afzal</td>
+                            <td><b>Grw <a href="#" class="text-success"> 06 </a> KCH</b></td>
+                            <td>LHR-123</td>
+                            <td>09:45 PM</td>
+                            <td>
+                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-success" style="float: none;"><span class="mdi mdi-pencil"></span></button></div>
+                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -101,50 +132,7 @@
     </div><!-- end col-->
 </div>
 
-<!-- Modal -->
-<div class="modal fade" id="modal_organization" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="organizationLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-md">
-        <div class="modal-content">
-            <div class="modal-header bg-light">
-                <h5 class="modal-title" id="organizationLabel">Organization Detail</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="col-xl-12">
-                    <div class="card shadow-none">
-                        <div class="card-body">
-                            <div class="d-flex align-items-start mb-3">
-                                <img class="d-flex me-3 rounded-circle avatar-lg" src="{{ asset('images/small/img-2.jpg') }}" alt="Generic placeholder image">
-                                <div class="w-100">
-                                    <h4 class="mt-0 mb-1">Punjab University</h4>
-                                    <p class="text-muted mb-1">Branch GT Road</p>
-                                    <p class="text-muted">Branch Code: 125345689</p>
-                                </div>
-                            </div>
-
-                            <div class="">
-                                <h4 class="font-13 text-muted text-uppercase">About :</h4>
-                                <p class="mb-3">
-                                    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quam explicabo amet laudantium eveniet dicta officia atque veniam impedit, reprehenderit, labore error magnam vitae nihil suscipit iure animi. Consectetur, porro in?
-                                </p>
-
-                                <h4 class="font-13 text-muted text-uppercase mb-1">Company :</h4>
-                                <p class="mb-3">Vine Corporation</p>
-
-                                <h4 class="font-13 text-muted text-uppercase mb-1">Added :</h4>
-                                <p class="mb-3"> April 22, 2016</p>
-
-                                <h4 class="font-13 text-muted text-uppercase mb-1">Updated :</h4>
-                                <p class="mb-0"> Dec 13, 2017</p>
-
-                            </div>
-                        </div>
-                    </div> <!-- end card-->
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<<!-- Modal -->
 
 <!-- End Content  -->
 @endsection

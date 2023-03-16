@@ -373,7 +373,7 @@
 
 
                         <div class="d-grid mt-4">
-                            <button class="btn btn-primary" id="resetBtn">Reset to Default</button>
+                            <button type="button" class="btn btn-primary" id="resetBtn">Reset to Default</button>
                             <a href="https://1.envato.market/uboldadmin" class="btn btn-danger mt-3" target="_blank"><i class="mdi mdi-basket me-1"></i> Purchase Now</a>
                         </div>
 

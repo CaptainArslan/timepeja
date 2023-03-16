@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('layouts.app')
 @section('title', 'Dashboard')
 <!-- start page title -->
 @section('content')
@@ -548,6 +548,9 @@
 <script src="{{asset('libs/apexcharts/apexcharts.min.js')}}"></script>
 <script src="https://apexcharts.com/samples/assets/irregular-data-series.js"></script>
 <script src="https://apexcharts.com/samples/assets/ohlc.js"></script>
+
+<!-- Dashboar 1 init js-->
+<script src="{{asset('js/pages/dashboard-1.init.js')}}"></script>
 
 <!-- init js -->
 <script src="{{asset('js/pages/apexcharts.init.js')}}"></script>

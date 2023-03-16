@@ -185,25 +185,18 @@
                         <span>My Account</span>
                     </a>
 
-                    <!-- item-->
-                    <a href="javascript:void(0);" class="dropdown-item notify-item">
-                        <i class="fe-settings"></i>
-                        <span>Settings</span>
-                    </a>
-
-                    <!-- item-->
-                    <a href="javascript:void(0);" class="dropdown-item notify-item">
-                        <i class="fe-lock"></i>
-                        <span>Lock Screen</span>
-                    </a>
 
                     <div class="dropdown-divider"></div>
 
                     <!-- item-->
-                    <a href="javascript:void(0);" class="dropdown-item notify-item">
+                    <a href="{{ route('logout') }}" class="dropdown-item notify-item" onclick="event.preventDefault();
+                                                    document.getElementById('logout-form').submit();">
                         <i class="fe-log-out"></i>
                         <span>Logout</span>
                     </a>
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                        @csrf
+                    </form>
 
                 </div>
             </li>
@@ -241,7 +234,7 @@
 
         <ul class="list-unstyled topnav-menu topnav-menu-left m-0">
             <li>
-                <button class="button-menu-mobile waves-effect waves-light">
+                <button type="button" class="button-menu-mobile waves-effect waves-light">
                     <i class="fe-menu"></i>
                 </button>
             </li>

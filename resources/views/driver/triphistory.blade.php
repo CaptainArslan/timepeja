@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('layouts.app')
 @section('title', 'Trip History')
 <!-- start page title -->
 @section('page_css')
@@ -59,7 +59,7 @@
                         </div> <!-- end col -->
                         <div class="col-md-1">
                             <label for="add_schedule">.</label>
-                            <button class="btn btn-success form-control" id="add_schedule"> Submit </button>
+                            <button type="button" class="btn btn-success form-control" id="add_schedule"> Submit </button>
                         </div> <!-- end col -->
                     </div> <!-- end row -->
                 </form>
@@ -75,7 +75,7 @@
                 <h4 class="header-title">History</h4>
             </div>
             <div class="card-body">
-                <table id="datatable-buttons" class="table table-striped dt-responsive nowrap w-100">
+                <table id="basic-datatable" class="table table-striped dt-responsive nowrap w-100">
                     <thead>
                         <tr>
                             <th>
@@ -103,7 +103,10 @@
                             <td>LHR-123</td>
                             <td>Ali</td>
                             <td>09:45 PM</td>
-                            <td><a href="#" class="action-icon"> <i class="mdi mdi-delete"></i></a></td>
+                            <td>
+                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" class="tabledit-edit-button btn btn-success" style="float: none;" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><span class="mdi mdi-pencil"></span></button></div>
+                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -118,7 +121,7 @@
         <div class="modal-content">
             <div class="modal-header bg-light">
                 <h5 class="modal-title" id="organizationLabel">Organization Detail</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="col-xl-12">
