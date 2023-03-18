@@ -154,9 +154,8 @@ class DriverController extends Controller
      */
     public function destroy(Driver $driver)
     {
-
         if ($driver->delete()) {
-            return response()->json(['status'=> 'success']);
+            return response()->json(['status' => 'success']);
         } else {
             return response()->json(['status' => 'error']);
         }

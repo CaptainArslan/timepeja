@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'LOG Reports')
+@section('title', 'History Reports Driver-Vehicle-Route ')
 <!-- start page title -->
 @section('page_css')
 <!-- Plugins css -->
@@ -15,7 +15,7 @@
 <div class="row">
     <div class="col-12">
         <div class="page-title-box">
-            <h4 class="page-title">All LOG Reports</h4>
+            <h4 class="page-title">History Reports</h4>
         </div>
     </div>
 </div>
@@ -25,48 +25,51 @@
         <div class="card">
             <div class="card-body">
                 <!-- <h4 class="header-title">Select Organization</h4> -->
-                <form action="" method="post" enctype="multipart/form-data">
+                <form action="{{ route('log.reports') }}" method="post" enctype="multipart/form-data">
                     @csrf
                     <div class="row">
                         <div class="col-md-4">
                             <label for="organization">Select Oganization</label>
-                            <select class="form-control" data-toggle="select2" data-width="100%" id="organization" required>
+                            <select class="form-control" data-toggle="select2" data-width="100%" name="o_id" id="o_id" required onchange="get_option()">
                                 <option value="">Select</option>
-                                @forelse ($organizations as $organization)
+                                @forelse ($org_dropdowns as $organization)
+                                @if (request()->input('o_id'))
+                                <option value="{{ $organization->id }}" selected>{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
+                                @else
                                 <option value="{{ $organization->id }}">{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
+                                @endif
                                 @empty
                                 <option value="">Please select</option>
                                 @endforelse
                             </select>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-2">
                             <label for="selecttype">Select</label>
-                            <select class="form-control" data-toggle="select2" name="type" data-width="100%" id="filter" required>
-                                <option value="">Select</option>
+                            <select class="form-control" data-toggle="select2" name="type" data-width="100%" id="type" required onchange="get_option()">
+                                <option value="" selected>Select</option>
                                 <option value="driver">Driver</option>
                                 <option value="vehicle">Vehicle</option>
                                 <option value="route">Route</option>
                             </select>
                         </div>
+                        <div class="col-md-3">
+                            <label for="date-1">From</label>
+                            <input class="form-control" type="date" name="from" value="{{ request()->input('from') }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="date">To</label>
+                            <input class="form-control" type="date" name="to" value="{{ request()->input('to')}}">
+                        </div>
+                    </div>
+                    <div class="row mt-2">
                         <div class="col-md-4">
                             <label for="selecttype" class="text-capitalize" id="select_label">Select</label>
-                            <div class="col-12">
-                                <select class="form-control" id="filter_select" multiple="multiple" data-placeholder="Please Select" multiple required>
-                                    <option value="" selected>Please Select</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="date-1">From</label>
-                            <input class="form-control today-date" id="" type="date" name="date">
-                        </div>
-                        <div class="col-md-4">
-                            <label for="date">To</label>
-                            <input class="form-control today-date" id="" type="date" name="date">
+                            <select class="form-control" id="selection" multiple="multiple" data-placeholder="Please Select" multiple required>
+                            </select>
                         </div>
                         <div class="col-md-1">
-                            <label for="publish_schedule">.</label>
-                            <button type="submit" class="btn btn-success" id="publish_schedule" name="submit"> Submit </button>
+                            <label for="publish_schedule"></label>
+                            <button type="submit" class="btn btn-success" id="publish_schedule" name="filter" value="filter"> Submit </button>
                         </div>
                     </div> <!-- end row -->
                 </form>
@@ -75,7 +78,7 @@
     </div> <!-- end col-->
 </div>
 
-@if(isset($_POST['submit']) && isset($_POST['type']) && $_POST['type'] == 'driver')
+@if(isset($_POST['filter']) && isset($_POST['type']) && $_POST['type'] == 'driver')
 <div class="row">
     <div class="col-12">
         <div class="card">
@@ -132,7 +135,7 @@
         </div> <!-- end card -->
     </div><!-- end col-->
 </div>
-@elseif(isset($_POST['submit']) && isset($_POST['type']) && $_POST['type'] == 'vehicle')
+@elseif(isset($_POST['filter']) && isset($_POST['type']) && $_POST['type'] == 'vehicle')
 <div class="row">
     <div class="col-12">
         <div class="card">
@@ -197,7 +200,7 @@
         </div> <!-- end card -->
     </div><!-- end col-->
 </div>
-@elseif(isset($_POST['submit']) && isset($_POST['type']) && $_POST['type'] == 'route')
+@elseif(isset($_POST['filter']) && isset($_POST['type']) && $_POST['type'] == 'route')
 <div class="row">
     <div class="col-12">
         <div class="card">
@@ -247,82 +250,47 @@
     </div><!-- end col-->
 </div>
 @endif
-
-<!-- Modal -->
-
-<!-- End Content  -->
 @endsection
 
 @section('page_js')
 <script src="{{ asset('/libs/select2/js/select2.min.js') }}"></script>
-
-
 @include('partials.datatable_js')
 <script>
-    $(document).ready(function() {
-
-        $('#filter').change(function(e) {
-            e.preventDefault();
-            var value = $(this).val();
-            var option = '';
-            $('#filter_select').empty();
-            if (value == 'driver') {
-                $('#filter_select_label').html(value);
-                var option = driver_option();
-            } else if (value == 'route') {
-                $('#filter_select_label').html(value);
-                var option = route_option();
-            } else if (value == 'vehicle') {
-                $('#filter_select_label').html(value);
-                var option = vehicle_option();
-            } else {
-                var option = `<option value="">Select</option>`;
-            }
-
-            $('#filter_select').append(option);
-        });
-
-    });
-
     function get_option() {
-        let value = $('#filter').val();
-        let option = `<option value="">Select</option>`;
-        if (value == 'driver') {
-            $('#select_label').html(value);
-            option = driver_option();
-        } else if (value == 'route') {
-            $('#select_label').html(value);
-            option = route_option();
-        } else if (value == 'vehicle') {
-            $('#select_label').html(value);
-            option = vehicle_option();
+        // $('#selection').empty();
+        let type = $('#type').val();
+        let o_id = $('#o_id').val();
+        if (type != '' && o_id != '') {
+            let csrf_token = "{{ csrf_token() }}";
+            $.ajax({
+                type: "get",
+                url: "/get-driver-vehicle-route",
+                data: {
+                    '_token': csrf_token,
+                    'o_id': o_id,
+                    'type': type
+                },
+                success: function(response) {
+                    if (response.status = 'success') {
+                        $('#selection').empty();
+                        let option = '<option value="">Select </option>';
+                        option = getOption(response.data, type)
+                        $('#selection').append(option).trigger('change');
+                    }
+                }
+            });
+        } else {
+            // console.log('error Occured while fetching');
         }
-
-        console.log(option);
-        $('#filter_select').append(option).trigger('change');
     }
 
-    get_option()
-
-    function driver_option() {
-        return html = `<option value="">All</option>
-                        <option value="">Azam </option>
-                        <option value="">Afzal </option>
-                        <option value="">Ali</option>`;
-    }
-
-    function vehicle_option() {
-        return html = `<option value="">All</option>
-                    <option value="">GAO-123 </option>
-                    <option value="">LHR-123</option>
-                    <option value="">KCH_123</option>`;
-    }
-
-    function route_option() {
-        return html = `<option value="">All</option>
-                        <option value="">LHR 10 GRW </option>
-                        <option value="">GRM 15 MLT</option>
-                        <option value="">LHR 20 KCH</option>`;
+    function getOption(res, type) {
+        let html = '<option value="">All</option>';
+        res.map((item) => {
+            html += `<option value="${item.id}"> ${item.id} - ${item.name}</option>`;
+        });
+        // console.log(html);
+        return html
     }
 </script>
 

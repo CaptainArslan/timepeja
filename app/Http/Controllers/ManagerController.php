@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\OrganizationType;
 use App\Models\State;
 use App\Models\Manager;
+use App\Models\Trip;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
@@ -296,16 +297,56 @@ class ManagerController extends Controller
     }
 
     /**
-     * [logReport description]
+     * Display the log report for the organization.
      *
-     * @return  [type]  [return description]
+     * @return \Illuminate\Contracts\View\View
      */
-    public function logReport()
+    public function logReport(Request $request)
     {
-        $organizations = Organization::get();
-        return view('manager.log_report', [
-            'organizations' => $organizations
+        $request->validate([
+            'o_id' => 'nullable|numeric',
+            'from' => 'nullable|date',
+            'to' => 'nullable|date|after:from',
+        ], [
+            'to.after' => "The registration to date must be a date after registration from.",
         ]);
+
+        $data = [];
+        if ($request->isMethod('post')) {
+            if ($request->has('filter')) {
+                $data = $this->filterReport($request);
+            }
+        }
+        $organizations = Organization::get();
+        $org_dropdowns = $organizations;
+        return view('manager.report.index', [
+            'organizations' => $organizations,
+            'org_dropdowns' => $org_dropdowns,
+            'report_date' => $data
+        ]);
+    }
+
+    protected function filterReport($request)
+    {
+        $query = Trip::query();
+
+        // Add date range constraint if both dates are provided
+        $query->when($request->input('from') && $request->input('to'), function ($query) use ($request) {
+            $query->whereBetween('created_at', [$request->input('from'), $request->input('to')]);
+        })->when($request->input('from') && !$request->input('to'), function ($query) use ($request) {
+            $query->where('created_at', '>=', $request->input('from'));
+        })->when(!$request->input('from') && $request->input('to'), function ($query) use ($request) {
+            $query->where('created_at', '<=', $request->input('to'));
+        });
+
+        $trpis = $query->where('o_id', $request->o_id)
+        ->with('organizations:id,name')
+        ->with('routes:id,name,number,from,to')
+        ->with('vehicles:id,number')
+        ->with('drivers:id,name')
+        ->get();
+        dd($trpis->toArray());
+        return $trpis;
     }
 
     /**
@@ -316,8 +357,10 @@ class ManagerController extends Controller
     public function awaitingApproval()
     {
         $organizations = Organization::get();
+        $org_dropdowns = $organizations;
         return view('manager.approval.awaiting_approvals', [
-            'organizations' => $organizations
+            'organizations' => $organizations,
+            'org_dropdowns' => $org_dropdowns
         ]);
     }
 

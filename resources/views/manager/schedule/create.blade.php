@@ -86,7 +86,7 @@
 
 <div class="row">
     <div class="col-12">
-        <form action="{{ route('schedule.publish') }}" method="post">
+        <form action="{{ route('schedule.publish', 'published') }}" method="post">
             @csrf
             <div class="card">
                 <div class="card-header d-flex" style="justify-content: space-arond;">

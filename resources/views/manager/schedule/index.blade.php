@@ -91,7 +91,7 @@
                     <div class="col-3 d-flex justify-content-around mx-1">
                         <button type="submit" class="btn btn-success" id="btn_modify" name="modify" value="modify" disabled>Modify</button>
                         <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#staticBackdrop" id="btn_replicate" disabled>Replicate</button>
-                        <button type="submit" class="btn btn-dark" name="print" value="print">Print</button>
+                        <button type="submit" class="btn btn-primary" name="print" value="print">Export</button>
                     </div>
                 </div>
                 <div class="card-body">
@@ -117,7 +117,7 @@
                                     <input type="hidden" name="schedule_ids[]" value="{{ $schedule->id }}">
                                 </td>
                                 <td>{{ $schedule->date }}</td>
-                                <td>{{ formatTimeToAmPm($schedule->time) }}</td>
+                                <td>{{ formatTime($schedule->time, 'h:i:s A') }}</td>
                                 <td> <span class=" text-danger">{{ $schedule->routes['number'] }}</span> -{{ $schedule->routes['from'] }} <span class="text-success"> To </span> {{ $schedule->routes['to'] }} </td>
                                 <td>{{ $schedule->vehicles['number'] }}</td>
                                 <td>{{ $schedule->drivers['name'] }}</td>

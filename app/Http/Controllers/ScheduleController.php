@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Driver;
 use App\Models\Schedule;
 use PDF;
 use App\Models\Organization;
+use App\Models\Route;
+use App\Models\Vehicle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -18,10 +21,11 @@ class ScheduleController extends Controller
      */
     public function index()
     {
-        $organizations = Organization::get();
-        return view('manager.schedule.create', [
-            'organizations' => $organizations
-        ]);
+        return $this->create();
+        // $organizations = Organization::get();
+        // return view('manager.schedule.create', [
+        //     'organizations' => $organizations
+        // ]);
     }
 
     /**
@@ -132,8 +136,19 @@ class ScheduleController extends Controller
     {
         $data = Schedule::where('o_id', $request->orgId)
             ->where('date', '=', $request->date)
-            ->where('status', 'draft')
-            ->with('organizations', 'routes', 'vehicles', 'drivers')
+            ->where('status', Schedule::STATUS_DRAFT)
+            ->with('organizations', function ($query) {
+                $query->select('id', 'name');
+            })
+            ->with('routes', function ($query) {
+                $query->select('id', 'name', 'number', 'from', 'to');
+            })
+            ->with('vehicles', function ($query) {
+                $query->select('id', 'number');
+            })
+            ->with('drivers', function ($query) {
+                $query->select('id', 'name');
+            })
             ->get();
         return response()->json([
             'status' => 'success',
@@ -151,23 +166,22 @@ class ScheduleController extends Controller
     public function schedulePublished(Request $request)
     {
         $schedules = [];
-        if (isset($_POST['filter'])) {
-            $schedules = $this->filterSchedule($request);
-            // dd($schedules->toArray());
-        } elseif ($request->has('print')) {
-            // dd($request->all())
-            $schedules = $this->filterSchedule($request);
-            // return view('welcome');
-            $pdf = PDF::loadView('manager.schedule.report.publish_schedule', $schedules->toArray());
-            return $pdf->download('report.pdf');
+        if ($request->isMethod('post')) {
+            if ($request->has('filter')) {
+                $schedules = $this->filterSchedule($request);
+            } elseif ($request->has('print')) {
+                $schedules = $this->filterSchedule($request);
+                $pdf = PDF::loadView('manager.schedule.report.publish_schedule', [
+                    'schedules' => $schedules->toArray()
+                ]);
+                return $pdf->download(formatDate(date('Y-m-d')) . formatTime(time()) . 'report.pdf');
+            } elseif ($request->has('modify')) {
+                $this->publishDraftSchedule($request, Schedule::STATUS_DRAFT);
+            }
         }
         $organizations = Organization::get();
         $org_dropdowns = $organizations;
-        return view('manager.schedule.published_schedule', [
-            'org_dropdowns' => $org_dropdowns,
-            'organizations' => $organizations,
-            'schedules' => $schedules
-        ]);
+        return view('manager.schedule.index', compact('org_dropdowns', 'organizations', 'schedules'));
     }
 
     /**
@@ -175,56 +189,41 @@ class ScheduleController extends Controller
      *
      * @return  [type]  [return description]
      */
-    public function filterSchedule($request)
+    public function filterSchedule(Request $request)
     {
-        $request->validate(
-            [
-                'o_id'           => 'nullable|numeric',
-                'from'           => 'nullable|date',
-                'to'             => 'nullable|date|after:from',
-            ],
-            [
-                'to.after' => "The registration to date must be a date after registration from.",
-            ]
-        );
-        // Retrieve user input
-        $oId = $request->input('o_id');
-        $from = $request->input('from');
-        $to = $request->input('to');
+        $request->validate([
+            'o_id' => 'nullable|numeric',
+            'from' => 'nullable|date',
+            'to' => 'nullable|date|after:from',
+        ], [
+            'to.after' => "The registration to date must be a date after registration from.",
+        ]);
 
         // Start with base query
         $query = Schedule::query();
 
         // Add organization ID constraint if provided
-        if ($oId) {
+        $query->when($request->input('o_id'), function ($query, $oId) {
             $query->where('o_id', $oId);
-        }
+        });
+
         // Add date range constraint if both dates are provided
-        if ($from && $to) {
-            $query->whereBetween('date', [$from, $to]);
-        } else {
-            // If only one date is provided, add an equal constraint
-            if ($from) {
-                $query->where('date', '>=', $from);
-            } elseif ($to) {
-                $query->where('date', '<=', $to);
-            }
-        }
+        $query->when($request->input('from') && $request->input('to'), function ($query) use ($request) {
+            $query->whereBetween('date', [$request->input('from'), $request->input('to')]);
+        })->when($request->input('from') && !$request->input('to'), function ($query) use ($request) {
+            $query->where('date', '>=', $request->input('from'));
+        })->when(!$request->input('from') && $request->input('to'), function ($query) use ($request) {
+            $query->where('date', '<=', $request->input('to'));
+        });
+
         // Execute the query
-        $organizations = $query->with('organizations', function ($query) {
-            $query->select('id', 'name');
-        })
-            ->with('routes', function ($query) {
-                $query->select('id', 'name', 'number', 'from', 'to');
-            })
-            ->with('vehicles', function ($query) {
-                $query->select('id', 'number');
-            })
-            ->with('drivers', function ($query) {
-                $query->select('id', 'name');
-            })
+        $organizations = $query->with('organizations:id,name')
+            ->with('routes:id,name,number,from,to')
+            ->with('vehicles:id,number')
+            ->with('drivers:id,name')
+            ->where('status', Schedule::STATUS_PUBLISHED)
             ->get();
-        // dd($organizations->toArray());
+
         return $organizations;
     }
 
@@ -235,27 +234,62 @@ class ScheduleController extends Controller
      *
      * @return  [type]             [return description]
      */
-    public function publish(Request $request)
+    public function publishDraftSchedule(Request $request, $status = Schedule::STATUS_PUBLISHED)
     {
-        DB::beginTransaction();
-        $error = false;
-        foreach ($request->schedule_ids as $schedule_id) {
-            $update = Schedule::where('id', $schedule_id)->update([
-                'status' => 'published'
-            ]);
-            if (!$update) {
-                $error = true;
+        try {
+            DB::transaction(function () use ($request, $status) {
+                foreach ($request->schedule_ids as $schedule_id) {
+                    $update = Schedule::where('id', $schedule_id)->update([
+                        'status' => $status == Schedule::STATUS_DRAFT ? Schedule::STATUS_DRAFT : Schedule::STATUS_PUBLISHED
+                    ]);
+                    if (!$update) {
+                        throw new \Exception('Error updating schedule.');
+                    }
+                }
+            });
+            return redirect()->route('schedule.create')
+                ->with('success', 'Schedule updated successfully.');
+        } catch (\Exception $e) {
+            return redirect()->route('schedule.create')
+                ->with('error', 'Error occurred while updating schedule.');
+        }
+    }
+
+    /**
+     * Get a list of drivers, vehicles, or routes based on organization ID and type.
+     *
+     * @param Illuminate\Http\Request $request The HTTP request object containing the organization ID and type.
+     *
+     * @return Illuminate\Http\JsonResponse The JSON response containing the list of drivers, vehicles, or routes.
+     */
+
+    public function getDriverVehicleRoute(Request $request)
+    {
+        $data = null;
+        $type = $request->type;
+
+        switch ($type) {
+            case 'driver':
+                $data = Driver::where('o_id', $request->o_id)->select('id', 'name')->get();
                 break;
-            }
+            case 'vehicle':
+                $data = Vehicle::where('o_id', $request->o_id)->select('id', 'number as name')->get();
+                break;
+            case 'route':
+                $data = Route::where('o_id', $request->o_id)->select('id', 'name')->get();
+                break;
+            default:
+                return response()->json(['status' => 'error', 'message' => 'Invalid request type']);
         }
-        if (!$error) {
-            DB::commit();
-            return redirect()->route('schedule.create')
-                ->with('success', 'Schedule Published Successfully.');
-        } else {
-            DB::rollBack();
-            return redirect()->route('schedule.create')
-                ->with('error', 'Error occured while schedule publishing.');
+
+        if (!$data) {
+            return response()->json(['status' => 'error', 'message' => 'No data found']);
         }
+
+        return response()->json([
+            'status' => 'success',
+            'type' => $type,
+            'data' => $data
+        ]);
     }
 }

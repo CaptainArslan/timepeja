@@ -38,23 +38,12 @@ function formatDate($date)
  *
  * @return  [type]         [return description]
  */
-function formatTime($time)
+function formatTime($time, $format = 'H:m:s')
 {
-    $res = date("H:m:s", strtotime($time));
+    $res = date($format, strtotime($time));
     return $res;
 }
 
-/**
- * [formatTimeToAmPm description]
- *
- * @param   [type]  $time  [$time description]
- *
- * @return  [type]         [return description]
- */
-function formatTimeToAmPm($time)
-{
-    return  date('g:i A', strtotime($time));
-}
 /**
  * [removeHypon description]
  *
@@ -65,4 +54,17 @@ function formatTimeToAmPm($time)
 function removeHypon($string)
 {
     return str_replace('-', '', $string);
+}
+
+/**
+ * [makeCnicFormat description]
+ *
+ * @param   [type]  $cnic_number  [$cnic_number description]
+ *
+ * @return  [type]                [return description]
+ */
+function makeCnicFormat($cnic_number)
+{
+    $cnic_formatted = substr($cnic_number, 0, 5) . '-' . substr($cnic_number, 5, 7) . '-' . substr($cnic_number, 12);
+    return $cnic_formatted;
 }

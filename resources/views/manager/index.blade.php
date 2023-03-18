@@ -85,7 +85,7 @@
                     </div> -->
                 </div>
                 <div class="col-1">
-                    <button class="btn btn-dark">Print</button>
+                    <!-- <button class="btn btn-dark">Print</button> -->
                 </div>
             </div>
             <div class="card-body table-container">
