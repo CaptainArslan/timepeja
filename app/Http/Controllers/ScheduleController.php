@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Schedule;
+use PDF;
 use App\Models\Organization;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -150,31 +151,81 @@ class ScheduleController extends Controller
     public function schedulePublished(Request $request)
     {
         $schedules = [];
-        if (isset($_POST['submit'])) {
-            $request->validate(
-                [
-                    'o_id'  =>  'required|numeric',
-                    'from'  => 'required|date',
-                    'to'    => 'required|date|after:from'
-                ],
-                [
-                    'o_id.required' => 'Organization is required',
-                    'from.required' => "From date is required",
-                    'to.required' => "To date Number is required",
-                    'to.after' => "The registration to date must be a date after registration from.",
-                ]
-            );
-            $schedules = Schedule::where('o_id', $request->o_id)
-                ->where('status', 'published')
-                ->whereBetween('created_at', [$request->from, $request->to])
-                ->with('organizations', 'routes', 'vehicles', 'drivers')
-                ->get();
+        if (isset($_POST['filter'])) {
+            $schedules = $this->filterSchedule($request);
+            // dd($schedules->toArray());
+        } elseif ($request->has('print')) {
+            // dd($request->all())
+            $schedules = $this->filterSchedule($request);
+            // return view('welcome');
+            $pdf = PDF::loadView('manager.schedule.report.publish_schedule', $schedules->toArray());
+            return $pdf->download('report.pdf');
         }
         $organizations = Organization::get();
+        $org_dropdowns = $organizations;
         return view('manager.schedule.published_schedule', [
+            'org_dropdowns' => $org_dropdowns,
             'organizations' => $organizations,
             'schedules' => $schedules
         ]);
+    }
+
+    /**
+     * [filter description]
+     *
+     * @return  [type]  [return description]
+     */
+    public function filterSchedule($request)
+    {
+        $request->validate(
+            [
+                'o_id'           => 'nullable|numeric',
+                'from'           => 'nullable|date',
+                'to'             => 'nullable|date|after:from',
+            ],
+            [
+                'to.after' => "The registration to date must be a date after registration from.",
+            ]
+        );
+        // Retrieve user input
+        $oId = $request->input('o_id');
+        $from = $request->input('from');
+        $to = $request->input('to');
+
+        // Start with base query
+        $query = Schedule::query();
+
+        // Add organization ID constraint if provided
+        if ($oId) {
+            $query->where('o_id', $oId);
+        }
+        // Add date range constraint if both dates are provided
+        if ($from && $to) {
+            $query->whereBetween('date', [$from, $to]);
+        } else {
+            // If only one date is provided, add an equal constraint
+            if ($from) {
+                $query->where('date', '>=', $from);
+            } elseif ($to) {
+                $query->where('date', '<=', $to);
+            }
+        }
+        // Execute the query
+        $organizations = $query->with('organizations', function ($query) {
+            $query->select('id', 'name');
+        })
+            ->with('routes', function ($query) {
+                $query->select('id', 'name', 'number', 'from', 'to');
+            })
+            ->with('vehicles', function ($query) {
+                $query->select('id', 'number');
+            })
+            ->with('drivers', function ($query) {
+                $query->select('id', 'name');
+            })
+            ->get();
+        // dd($organizations->toArray());
+        return $organizations;
     }
 
     /**

@@ -265,8 +265,6 @@
             e.preventDefault();
             var value = $(this).val();
             var option = '';
-
-
             $('#filter_select').empty();
             if (value == 'driver') {
                 $('#filter_select_label').html(value);

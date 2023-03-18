@@ -23,18 +23,22 @@ class ManagerController extends Controller
     {
         $organization_types = OrganizationType::get();
         $states = State::where('ctry_id', 167)->get();
-        // dd($organizations->organizationType);
+        $org_dropdowns = Organization::get();
         // $managers_count = Manager::count();
+
+        $organizations = Organization::with('manager', 'city', 'state', 'organizationType')
+            ->orderBY('id', 'DESC')
+            ->take(10)
+            ->get();
+        // dd($organizations->toArray());
         if ($request->has('filter')) {
-            $this->filterManager($request, $organization_types, $states);
+            $organizations =  $this->filterManager($request);
         }
-        $organizations = Organization::with('manager')
-        ->orderBY('id', 'DESC')
-        ->take(10)
-        ->get();
+
         return view('manager.index', [
             // 'managers_count' => $managers_count,
             'organization_types' => $organization_types,
+            'org_dropdowns' => $org_dropdowns,
             'organizations' => $organizations,
             'states' => $states
         ]);
@@ -45,38 +49,46 @@ class ManagerController extends Controller
      *
      * @return  [type]  [return description]
      */
-    public function filterManager($request, $organization_types, $states)
+    public function filterManager($request)
     {
         $request->validate(
             [
-                'from'           => 'required|date',
-                'to'             => 'required|date|after:from',
+                'o_id'           => 'nullable|numeric',
+                'from'           => 'nullable|date',
+                'to'             => 'nullable|date|after:from',
             ],
             [
-                'from.required' => "From date is required",
-                'to.required' => "To date Number is required",
                 'to.after' => "The registration to date must be a date after registration from.",
             ]
         );
+        // Retrieve user input
+        $oId = $request->input('o_id');
+        $from = $request->input('from');
+        $to = $request->input('to');
 
-        $date_filter = false;
-        if ($request->from && $request->to) {
-            $from = $request->from;
-            $to = $request->to;
-            $date_filter = true;
+        // Start with base query
+        $query = Organization::query();
+
+        // Add organization ID constraint if provided
+        if ($oId) {
+            $query->where('id', $oId);
         }
-        $organizations = Organization::when($date_filter, function ($query) use ($from, $to) {
-            return $query->whereBetween('created_at', [$from, $to]);
-        })
-        ->with('manager')
-        ->get();
-        // $managers_count = Manager::count();
-        return view('manager.index', [
-            // 'managers_count' => $managers_count,
-            'organization_types' => $organization_types,
-            'organizations' => $organizations,
-            'states' => $states
-        ]);
+        // Add date range constraint if both dates are provided
+        if ($from && $to) {
+            $query->whereBetween('created_at', [$from, $to]);
+        } else {
+            // If only one date is provided, add an equal constraint
+            if ($from) {
+                $query->where('created_at', '>=', $from);
+            } elseif ($to) {
+                $query->where('created_at', '<=', $to);
+            }
+        }
+        // Execute the query
+        $organizations = $query->with('manager', 'city', 'state', 'organizationType')
+            ->get();
+        // dd($organizations->toArray());
+        return $organizations;
     }
 
     /**
@@ -84,13 +96,9 @@ class ManagerController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        $organizaton_types = OrganizationType::all();
-        $managers = Manager::all();
-        $users = User::take(5)->orderby('id', 'desc')->get();
-        $states = State::where('country_id', 167)->get();
-        return view('manager.create', compact('organizaton_types', 'managers', 'users', 'states'));
+        dd('create');
     }
 
     /**
@@ -264,6 +272,13 @@ class ManagerController extends Controller
         dd('destroy');
     }
 
+    /**
+     * [deleteOrganization description]
+     *
+     * @param   [type]  $id  [$id description]
+     *
+     * @return  [type]       [return description]
+     */
     public function deleteOrganization($id)
     {
         $delOrg = Organization::where('id', $id)->delete();
@@ -280,6 +295,11 @@ class ManagerController extends Controller
         }
     }
 
+    /**
+     * [logReport description]
+     *
+     * @return  [type]  [return description]
+     */
     public function logReport()
     {
         $organizations = Organization::get();
@@ -288,6 +308,11 @@ class ManagerController extends Controller
         ]);
     }
 
+    /**
+     * [awaitingApproval description]
+     *
+     * @return  [type]  [return description]
+     */
     public function awaitingApproval()
     {
         $organizations = Organization::get();
@@ -296,6 +321,11 @@ class ManagerController extends Controller
         ]);
     }
 
+    /**
+     * [approvedUser description]
+     *
+     * @return  [type]  [return description]
+     */
     public function approvedUser()
     {
         $organizations = Organization::get();
@@ -304,6 +334,11 @@ class ManagerController extends Controller
         ]);
     }
 
+    /**
+     * [disapprovedUser description]
+     *
+     * @return  [type]  [return description]
+     */
     public function disapprovedUser()
     {
         $organizations = Organization::get();
@@ -312,6 +347,11 @@ class ManagerController extends Controller
         ]);
     }
 
+    /**
+     * [pastUser description]
+     *
+     * @return  [type]  [return description]
+     */
     public function pastUser()
     {
         $organizations = Organization::get();

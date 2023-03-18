@@ -238,7 +238,7 @@
                 `<td>${item.date}</td>`,
                 `<td><b>${item.organizations.name}</b></td>`,
                 `<td>${item.drivers.name}</td>`,
-                `<td><td> <b> <span class=" text-danger">${item.routes.number}</span> - ${item.routes.from} <span class="text-success"> TO </span> ${item.routes.to} </b> </td></td>`,
+                `<td><span class=" text-danger">${item.routes.number}</span> - ${item.routes.from} <span class="text-success"> TO </span> ${item.routes.to}</td>`,
                 `<td>${item.vehicles.number}</td>`,
                 `<td>${ formatTime(item.time) }</td>`,
                 `<td>
