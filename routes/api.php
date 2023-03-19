@@ -19,14 +19,13 @@ Route::group(['middleware' => 'api'], function () {
     Route::prefix('v1/manager')->name('manager.')->group(function () {
         Route::post('/register', [AuthController::class, 'register']);
         Route::post('/login', [AuthController::class, 'login']);
-        Route::post('/get-code', [AuthController::class, 'getCode']);
+        Route::post('/get-code', [AuthController::class, 'getVerificationCode']);
         Route::post('/forget-password', [AuthController::class, 'forgetPassword']);
     });
-});
-
-Route::group(['middleware' => 'api','prefix' => 'auth'], function ($router) {
-    Route::post('login', 'AuthController@login');
-    Route::post('logout', 'AuthController@logout');
-    Route::post('refresh', 'AuthController@refresh');
-    Route::post('me', 'AuthController@me');
+    Route::group(['middleware' => ['jwt.verify']], function() {
+        // Protected routes
+    });
+    Route::group(['middleware' => ['veify.header']], function() {
+        // Protected routes
+    });
 });

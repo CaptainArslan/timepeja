@@ -53,14 +53,36 @@ class Manager extends Authenticatable implements JWTSubject
         return [];
     }
 
-    public function organizations()
+    /**
+     * Send the password reset notification.
+     *
+     * @param  string  $token
+     * @return void
+    */
+    public function organization()
     {
-        return $this->hasOne(Organization::class, 'o_id', 'id');
+        return $this->belongsTo(Organization::class, 'o_id', 'id');
     }
 
+    /**
+     * [managerOrganization description]
+     *
+     * @return  [type]  [return description]
+     */
     public function managerOrganization()
     {
         return $this->hasOne(Manager::class, 'id', 'o_id');
+    }
+
+    /**
+     * [managerUser description]
+     *
+     * @return  [type]  [return description]
+     *
+     */
+    public function organizationType()
+    {
+        return $this->hasOne(Organization::class, 'id', 'o_type_id');
     }
 
     /**

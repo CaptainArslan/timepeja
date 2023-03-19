@@ -45,11 +45,7 @@ return [
         ],
         'api' => [
             'driver' => 'jwt',
-            'provider' => 'users',
-        ],
-        'manager' => [
-            'driver' => 'session',
-            'provider' => 'managers',
+            'provider' => 'manager',
         ],
     ],
 
@@ -75,7 +71,7 @@ return [
             'driver' => 'eloquent',
             'model' => User::class,
         ],
-        'managers' => [
+        'manager' => [
             'driver' => 'eloquent',
             'model' => Manager::class,
         ],

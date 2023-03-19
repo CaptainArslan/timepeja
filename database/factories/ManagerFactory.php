@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use Illuminate\Support\Str;
 use App\Models\Organization;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -20,7 +21,8 @@ class ManagerFactory extends Factory
             'name' => $this->faker->name(),
             'email' => $this->faker->safeEmail(),
             'phone' => $this->faker->phoneNumber(),
-            'password' => Hash::make('12345678'),
+            'password' => Hash::make('12345678@it'),
+            'token' => Str::random(60),
             'otp' => substr(uniqid(), -4),
             'address' => $this->faker->address(),
             'status' => 1,

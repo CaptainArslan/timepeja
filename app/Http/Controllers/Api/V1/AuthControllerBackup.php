@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthControllerBackup extends BaseController
 {
+    
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [

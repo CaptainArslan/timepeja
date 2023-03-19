@@ -26,7 +26,7 @@ class CreateManagersTable extends Migration
             $table->longText('picture')->nullable();
             $table->longText('address')->nullable();
             $table->longText('about')->nullable();
-            $table->integer('status');
+            $table->integer('status')->comment('0 for deactive and 1 for active');
             $table->timestamps();
             $table->softDeletes();
         });

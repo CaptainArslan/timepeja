@@ -142,7 +142,7 @@
                                 <input type="hidden" name="" id="" value="{{ $organization->id }}" class="db_org_id">
                                 <input type="hidden" name="" id="" value="{{ $organization->branch_name }}" class="db_branch_name">
                                 <input type="hidden" name="" id="" value="{{ $organization->branch_code }}" class="db_branch_code">
-                                <input type="hidden" name="" id="" value="{{ $organization->organizationType['id'] }}" class="db_org_type">
+                                <input type="hidden" name="" id="" value="{{ isset($organization->organizationType['id']) ? $organization->organizationType['id'] .' - ' : ''  }}" class="db_org_type">
                                 <input type="hidden" name="" id="" value="{{ $organization->email }}" class="db_org_email">
                                 <input type="hidden" name="" id="" value="{{ $organization->phone }}" class="db_org_phone">
                                 <input type="hidden" name="" id="" value="{{ $organization->address }}" class="db_org_address">
