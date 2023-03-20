@@ -36,8 +36,10 @@ class ScheduleController extends Controller
     public function create()
     {
         $organizations = Organization::get();
+        $org_dropdowns = $organizations;
         return view('manager.schedule.create', [
-            'organizations' => $organizations
+            'organizations' => $organizations,
+            'org_dropdowns' => $org_dropdowns
         ]);
     }
 

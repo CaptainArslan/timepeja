@@ -64,6 +64,13 @@
     <!-- App js-->
     <script src="{{asset('js/app.min.js')}}"></script>
     <script src="{{asset('js/common.js')}}"></script>
+
+    <!-- Plugins js -->
+    <script src="/libs/jquery-mask-plugin/jquery.mask.min.js"></script>
+    <script src="/libs/autonumeric/autoNumeric.min.js"></script>
+
+    <!-- Init js-->
+    <script src="/js/pages/form-masks.init.js"></script>
     @yield('page_js')
 
 </body>

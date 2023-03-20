@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Tymon\JWTAuth\Contracts\JWTSubject;
@@ -13,6 +12,7 @@ class Manager extends Authenticatable implements JWTSubject
 {
     use HasFactory;
     use SoftDeletes;
+    use Notifiable;
 
     protected $table = 'managers';
     protected $appends = ['picture'];
@@ -58,7 +58,7 @@ class Manager extends Authenticatable implements JWTSubject
      *
      * @param  string  $token
      * @return void
-    */
+     */
     public function organization()
     {
         return $this->belongsTo(Organization::class, 'o_id', 'id');
@@ -93,5 +93,58 @@ class Manager extends Authenticatable implements JWTSubject
     public function getPictureAttribute()
     {
         return $this->attributes['picture'] ? asset('uploads/managers/' . $this->attributes['picture']) : null;
+    }
+
+
+
+
+
+    // ----------------------------------------------------------------
+    // ------------------ Accessors & Mutator -------------------------
+    // ----------------------------------------------------------------
+
+    /**
+     * Set the name attribute.
+     *
+     * @param  string  $value
+     * @return void
+     */
+    public function setNameAttribute($value)
+    {
+        $this->attributes['name'] = ucwords(strtolower($value));
+    }
+
+    /**
+     * Get the name attribute.
+     *
+     * @param  string  $value
+     * @return string
+     */
+    public function getNameAttribute($value)
+    {
+        return ucwords(strtolower($value));
+    }
+
+
+    /**
+     * Set the phone number attribute.
+     *
+     * @param  string  $value
+     * @return void
+     */
+    public function setPhoneAttribute($value)
+    {
+        $this->attributes['phone'] = str_replace('-', '', $value);
+    }
+
+    /**
+     * Get the phone number attribute.
+     *
+     * @param  string  $value
+     * @return string
+     */
+    public function getPhoneAttribute($value)
+    {
+        return substr($value, 0, 4) . '-' . substr($value, 7);
     }
 }

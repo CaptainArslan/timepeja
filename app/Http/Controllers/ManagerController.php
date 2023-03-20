@@ -110,20 +110,21 @@ class ManagerController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request->all());
         $this->validate($request, [
-            'org_name' => 'required|string',
+            'org_name' => ['required', 'string', 'max:255'],
             'org_type ' => 'nullable|numeric',
-            'org_email' => 'required|email',
-            'org_phone' => 'required|regex:/^\d{11}$/',
+            'org_email' => 'required|email|unique:organizations,email',
+            'org_phone' => 'required|regex:/^03\d{2}-\d{7}$/',
             'org_state' => 'required|numeric',
             'org_city' => 'required|numeric',
 
-            'org_head_name' => 'required|string',
-            'org_head_phone' => 'required|regex:/^\d{11}$/',
-            'org_head_email' => 'required|email',
+            'org_head_name' => ['required', 'string', 'max:255'],
+            'org_head_phone' => 'required|regex:/^03\d{2}-\d{7}$/',
+            'org_head_email' => 'required|email|unique:organizations,head_email',
 
-            'man_name' => 'required|string',
-            'man_email' => 'nullable|email',
+            'man_name' => ['required', 'string', 'max:255'],
+            'man_email' => 'nullable|email|unique:managers,email',
             'man_phone' => 'required|unique:managers,phone',
             'man_pic' => 'nullable|mimes:jpg,png',
 
@@ -141,73 +142,85 @@ class ManagerController extends Controller
             'passenger_amount' => 'nullable|numeric',
             'passenger_trail_start_date' => 'nullable|date',
             'passenger_trail_end_date' => 'nullable|date',
+        ], [
+            'org_name.required' => 'Organization name required!',
+            'org_type.required' => 'Organization Organization type required!',
+            'org_email.required' => 'Organization email required',
+            'org_phone.required' => 'Organization phone required!',
+            'org_state.required' => 'Organization state required!',
+            'org_city.required' => 'Organization city required!',
+
+            'org_head_name.required' => 'Organization head name required!',
+            'org_head_phone.required' => 'Organization head phone required!',
+            'org_head_email.required' => 'Organization head email required!',
+
+            'man_name.required' => 'Manager name required!',
+            'man_email.required' => 'Manager email required!',
+            'man_phone.required' => 'Manager phone required!',
         ]);
 
         $user = Auth::user();
         $error = false;
         DB::beginTransaction();
-        $users = new User();
-        $users->user_name    = $request->input('man_name');
-        $users->email        = $request->input('man_email');
-        // $users->user_type    = 'manager';
-        // $users->otp          = rand(100000, 999999);
-        $users->phone        = $request->input('man_phone');
-        $users_save          = $users->save();
-        if ($users_save) {
-            $org = new Organization();
-            $org->u_id          = $user->id;
-            $org->name          = $request->input('org_name');
-            $org->branch_name   = $request->input('org_branch_name');
-            $org->branch_code   = $request->input('org_branch_code');
-            $org->o_type_id     = $request->input('org_type');
-            $org->email         = $request->input('org_email');
-            $org->phone         = $request->input('org_phone');
-            $org->address       = $request->input('org_address');
-            $org->s_id          = $request->input('org_state');
-            $org->c_id          = $request->input('org_city');
-            $org->head_name     = $request->input('org_head_name');
-            $org->head_phone    = $request->input('org_head_phone');
-            $org->head_email    = $request->input('org_head_email');
-            $org->head_address  = $request->input('org_head_address');
-            $org_save = $org->save();
-            if ($org_save) {
-                $manager = new Manager();
-                $manager->o_id          = $org->id;
-                $manager->name          = $request->input('man_name');
-                $manager->email         = $request->input('man_email');
-                $manager->phone         = $request->input('man_phone');
-                $manager->address       = $request->input('man_address');
-                $manager->otp           = substr(uniqid(), -4);
-                $manager->picture       = '';
-                $manager_save = $manager->save();
-                if ($manager_save) {
-                    $financials = new Financials();
-                    $financials->u_id                       = $user->id;
-                    $financials->o_id                       = $org->id;
+        // $users = new User();
+        // $users->user_name    = $request->input('man_name');
+        // $users->email        = $request->input('man_email');
+        // // $users->user_type    = 'manager';
+        // // $users->otp          = rand(100000, 999999);
+        // $users->phone        = $request->input('man_phone');
+        // $users_save          = $users->save();
+        // if ($users_save) {
+        $org = new Organization();
+        $org->u_id          = $user->id;
+        $org->name          = $request->input('org_name');
+        $org->branch_name   = $request->input('org_branch_name');
+        $org->branch_code   = $request->input('org_branch_code');
+        $org->o_type_id     = $request->input('org_type');
+        $org->email         = $request->input('org_email');
+        $org->phone         = $request->input('org_phone');
+        $org->address       = $request->input('org_address');
+        $org->s_id          = $request->input('org_state');
+        $org->c_id          = $request->input('org_city');
+        $org->head_name     = $request->input('org_head_name');
+        $org->head_phone    = $request->input('org_head_phone');
+        $org->head_email    = $request->input('org_head_email');
+        $org->head_address  = $request->input('org_head_address');
+        $org_save = $org->save();
+        if ($org_save) {
+            $manager = new Manager();
+            $manager->o_id          = $org->id;
+            $manager->name          = $request->input('man_name');
+            $manager->email         = $request->input('man_email');
+            $manager->phone         = $request->input('man_phone');
+            $manager->address       = $request->input('man_address');
+            $manager->otp           = substr(uniqid(), -4);
+            $manager->picture       = '';
+            $manager_save = $manager->save();
+            if ($manager_save) {
+                $financials = new Financials();
+                $financials->u_id                       = $user->id;
+                $financials->o_id                       = $org->id;
 
-                    $financials->org_wallet                 = isset($request->wallet[0]) ? 1 : 0;
-                    $financials->org_payment                = isset($request->payment[0]) ? 1 : 0;
-                    $financials->org_amount                 = $request->input('org_amount');
-                    $financials->org_trail_start_date       = $request->input('org_trail_start_date');
-                    $financials->org_trail_end_date         = $request->input('org_trail_end_date');
+                $financials->org_wallet                 = isset($request->wallet[0]) ? 1 : 0;
+                $financials->org_payment                = isset($request->payment[0]) ? 1 : 0;
+                $financials->org_amount                 = $request->input('org_amount');
+                $financials->org_trail_start_date       = $request->input('org_trail_start_date');
+                $financials->org_trail_end_date         = $request->input('org_trail_end_date');
 
-                    $financials->driver_wallet              = isset($request->wallet[1]) ? 1 : 0;
-                    $financials->driver_payment             = isset($request->payment[1]) ? 1 : 0;
-                    $financials->driver_amount              = $request->input('driver_amount');
-                    $financials->driver_trail_start_date    = $request->input('driver_trial_start_date');
-                    $financials->driver_trail_end_date      = $request->input('driver_trial_end_date');
+                $financials->driver_wallet              = isset($request->wallet[1]) ? 1 : 0;
+                $financials->driver_payment             = isset($request->payment[1]) ? 1 : 0;
+                $financials->driver_amount              = $request->input('driver_amount');
+                $financials->driver_trail_start_date    = $request->input('driver_trial_start_date');
+                $financials->driver_trail_end_date      = $request->input('driver_trial_end_date');
 
-                    $financials->passenger_wallet           = isset($request->wallet[2]) ? 1 : 0;
-                    $financials->passenger_payment          = isset($request->payment[2]) ? 1 : 0;
-                    $financials->passenger_amount           = $request->input('passenger_amount');
-                    $financials->passenger_trail_start_date = $request->input('passenger_trail_start_date');
-                    $financials->passenger_trail_end_date   = $request->input('passenger_trail_end_date');
+                $financials->passenger_wallet           = isset($request->wallet[2]) ? 1 : 0;
+                $financials->passenger_payment          = isset($request->payment[2]) ? 1 : 0;
+                $financials->passenger_amount           = $request->input('passenger_amount');
+                $financials->passenger_trail_start_date = $request->input('passenger_trail_start_date');
+                $financials->passenger_trail_end_date   = $request->input('passenger_trail_end_date');
 
-                    $financials_save = $financials->save();
-                    if (!$financials_save) {
-                        $error = true;
-                    }
-                } else {
+                $financials_save = $financials->save();
+                if (!$financials_save) {
                     $error = true;
                 }
             } else {
@@ -216,6 +229,9 @@ class ManagerController extends Controller
         } else {
             $error = true;
         }
+        // } else {
+        //     $error = true;
+        // }
         if (!$error) {
             DB::commit();
             return redirect()->route('manager.index')
@@ -340,11 +356,11 @@ class ManagerController extends Controller
         });
 
         $trpis = $query->where('o_id', $request->o_id)
-        ->with('organizations:id,name')
-        ->with('routes:id,name,number,from,to')
-        ->with('vehicles:id,number')
-        ->with('drivers:id,name')
-        ->get();
+            ->with('organizations:id,name')
+            ->with('routes:id,name,number,from,to')
+            ->with('vehicles:id,number')
+            ->with('drivers:id,name')
+            ->get();
         dd($trpis->toArray());
         return $trpis;
     }

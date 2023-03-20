@@ -31,12 +31,7 @@
                         <div class="col-md-3">
                             <label for="organization">Select Oganization</label>
                             <select class="form-control" data-toggle="select2" name="organization" data-width="100%" id="organization" required>
-                                <option value="">Select</option>
-                                @forelse ($organizations as $organization)
-                                <option value="{{ $organization->id }}">{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
-                                @empty
-                                <option value="">Please select</option>
-                                @endforelse
+                                @include('partials/organization_dropdown_option')
                             </select>
                             <span class="text-danger" id="organization_error"></span>
                         </div>

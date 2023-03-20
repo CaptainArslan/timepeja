@@ -76,7 +76,7 @@ const isEmail = (emailval) => {
 
 //validate phone number
 const isPhone = (phoneval) => {
-    var phonePattern = /^[0-9]{11}$/;
+    var phonePattern = /^[0-9]{4}-[0-9]{7}$/;
     var onlyNumbers = /^[0-9]+$/;
     if (!phonePattern.test(phoneval)) return false;
     else if (!onlyNumbers.test(phoneval)) return false;

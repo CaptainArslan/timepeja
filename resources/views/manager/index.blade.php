@@ -31,17 +31,8 @@
                     <div class="row">
                         <div class="col-md-4">
                             <label for="organization">Select Oganization</label>
-                            <select class="form-control select2_filter" id="organization_filter" name="o_id">
-                                <option value="" selected>Select</option>
-                                @forelse ($org_dropdowns as $organization)
-                                @if (request()->input('o_id'))
-                                <option value="{{ $organization->id }}" selected>{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
-                                @else
-                                <option value="{{ $organization->id }}">{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
-                                @endif
-                                @empty
-                                <option value="">Please select</option>
-                                @endforelse
+                            <select class="form-control select2_filter" id="organization_filter" name="o_id" required>
+                            @include('partials/organization_dropdown_option')
                             </select>
                         </div>
                         <div class="col-md-3">
@@ -126,8 +117,8 @@
                             <td> {{ $organization->phone }} </td>
                             <td> {{ $organization->address }} </td>
                             <td> {{ $organization->manager['name'] ?? '' }} </td>
-                            <td> {{ $organization->manager['email'] ?? ''}} </td>
                             <td> {{ $organization->manager['phone'] ?? ''}} </td>
+                            <td> {{ $organization->manager['email'] ?? ''}} </td>
                             <td> {{ $organization->manager['address'] ?? ''}} </td>
                             <td> {{ $organization->manager['picture'] ?? ''}} </td>
                             <td> {{ $organization->head_name}} </td>
@@ -200,19 +191,19 @@
                                             </a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="#company_head" data-bs-toggle="tab" id="company_head_tab" data-toggle="tab" class="nav-link rounded-0 pt-2 pb-2" onclick="">
+                                            <a href="#company_head" data-bs-toggle="tab" id="company_head_tab" data-toggle="tab" class="nav-link rounded-0 pt-2 pb-2" onclick="checkOrgDetailForm()" disabled="disabled">
                                                 <i class="fas fa-user"></i>
                                                 <span class="d-none d-sm-inline">Company Head</span>
                                             </a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="#transport_manager" data-bs-toggle="tab" data-toggle="tab" id="transport_manager_tab" class="nav-link rounded-0 pt-2 pb-2" onclick="">
+                                            <a href="#transport_manager" data-bs-toggle="tab" data-toggle="tab" id="transport_manager_tab" class="nav-link rounded-0 pt-2 pb-2" onclick="checkOrgHeadForm()" disabled="disabled">
                                                 <i class="fas fa-bus-alt"></i>
                                                 <span class="d-none d-sm-inline">Transport Manager</span>
                                             </a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="#financials" id="financials_tabs" value="financials" data-bs-toggle="tab" data-toggle="tab" class="nav-link rounded-0 pt-2 pb-2" onclick="">
+                                            <a href="#financials" id="financials_tabs" value="financials" data-bs-toggle="tab" data-toggle="tab" class="nav-link rounded-0 pt-2 pb-2" onclick="checkTransportManagerForm()" disabled="disabled">
                                                 <i class=" fas fa-money-bill-wave"></i>
                                                 <span class="d-none d-sm-inline">Financial</span>
                                             </a>
@@ -225,30 +216,30 @@
                                                 <div class="col-lg-6">
                                                     <div class="mb-3">
                                                         <label for="org_name" class="form-label">Organization Name</label>
-                                                        <input type="text" id="org_name" name="org_name" value="{{ old('org_name') }}" class="form-control" required>
+                                                        <input type="text" id="org_name" name="org_name" value="{{ old('org_name') }}" class="form-control" placeholder="Punjab University" required>
                                                         <span class="text-danger" id="org_name_error"></span>
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="org_branch_code" class="form-label">Branch code</label>
-                                                        <input type="number" id="org_branch_code" name="org_branch_code" value="{{ old('org_branch_code') }}" class="form-control">
+                                                        <input type="text" id="org_branch_code" name="org_branch_code" value="{{ old('org_branch_code') }}" class="form-control" data-toggle="input-mask" data-mask-format="00000000000" placeholder="12345">
                                                         <span class="text-danger" id="org_branch_code_error"></span>
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="org_email" class="form-label">Email</label>
-                                                        <input type="email" id="org_email" name="org_email" class="form-control" value="{{ old('org_email') }}" placeholder="Email" required>
+                                                        <input type="email" id="org_email" name="org_email" class="form-control" value="{{ old('org_email') }}" placeholder="text@gmail.com" required>
                                                         <span class="text-danger" id="org_email_error"></span>
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-6">
                                                     <div class="mb-3">
                                                         <label for="org_branch_name" class="form-label">Branch Name</label>
-                                                        <input type="text" id="org_branch_name" name="org_branch_name" class="form-control" value="{{ old('org_branch_name') }}">
+                                                        <input type="text" id="org_branch_name" name="org_branch_name" class="form-control" value="{{ old('org_branch_name') }}" placeholder="Lahore branch"    >
                                                         <span class="text-danger" id="org_branch_name_error"></span>
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="org_type" class="form-label">Types</label>
-                                                        <select class="form-select select2" id="org_type" name="org_type " required>
-                                                            <option value="">Please Select Organization Type</option>
+                                                        <select class="form-select select2" id="org_type" name="org_type" required>
+                                                            <option value="" selected>Please Select Organization Type</option>
                                                             @forelse ($organization_types as $organizaton_type)
                                                             <option value="{{$organizaton_type->id}}">{{$organizaton_type->name}} ({{$organizaton_type->desc}})</option>
                                                             @empty
@@ -259,7 +250,7 @@
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="org_phone" class="form-label">Phone No</label>
-                                                        <input type="number" id="org_phone" name="org_phone" class="form-control" value="{{ old('org_phone') }}" required>
+                                                        <input type="text" id="org_phone" name="org_phone" class="form-control" data-toggle="input-mask" data-mask-format="0000-0000000" value="{{ old('org_phone') }}" placeholder="0300-1234567" required>
                                                         <span class="text-danger" id="org_phone_error"></span>
                                                     </div>
                                                 </div>
@@ -298,24 +289,24 @@
                                                 <div class="col-lg-6">
                                                     <div class="mb-3">
                                                         <label for="org_head_name" class="form-label">Head Name</label>
-                                                        <input type="text" id="org_head_name" name="org_head_name" value="{{ old('org_head_name') }}" class="form-control" required>
+                                                        <input type="text" id="org_head_name" name="org_head_name" placeholder="John Doe" value="{{ old('org_head_name') }}" class="form-control" required>
                                                         <span class="text-danger" id="org_head_name_error"></span>
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="org_head_phone" class="form-label">Phone No</label>
-                                                        <input type="number" id="org_head_phone" name="org_head_phone" value="{{ old('org_head_phone') }}" class="form-control" required>
+                                                        <input type="text" id="org_head_phone" name="org_head_phone" data-toggle="input-mask" data-mask-format="0000-0000000"  value="{{ old('org_head_phone') }}" placeholder="0300-1234567" class="form-control" required>
                                                         <span class="text-danger" id="org_head_phone_error"></span>
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-6">
                                                     <div class="mb-3">
                                                         <label for="org_head_email" class="form-label">Email</label>
-                                                        <input type="email" id="org_head_email" name="org_head_email" value="{{ old('org_head_email') }}" class="form-control" placeholder="Email" required>
+                                                        <input type="email" id="org_head_email" name="org_head_email" placeholder="test@gmail.com" value="{{ old('org_head_email') }}" class="form-control" placeholder="Email" required>
                                                         <span class="text-danger" id="org_head_email_error"></span>
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="org_head_address" class="form-label">Address</label>
-                                                        <input class="form-control" id="org_head_address" name="org_head_address" value="{{ old('org_head_address') }}" rows="5"></input>
+                                                        <input class="form-control" id="org_head_address" name="org_head_address"  value="{{ old('org_head_address') }}" rows="5"></input>
                                                     </div>
                                                 </div> <!-- end col -->
                                             </div> <!-- end row -->
@@ -327,11 +318,11 @@
                                                 <div class="col-lg-6">
                                                     <div class="mb-3">
                                                         <label for="man_name" class="form-label">Name</label>
-                                                        <input type="text" id="man_name" name="man_name" value="{{ old('man_name') }}" class="form-control" required>
+                                                        <input type="text" id="man_name" name="man_name" value="{{ old('man_name') }}" placeholder="John Doe" class="form-control" required>
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="phone" class="form-label">Phone No</label>
-                                                        <input type="number" id="man_phone" name="man_phone" value="{{ old('phone') }}" class="form-control" required>
+                                                        <input type="text" id="man_phone" name="man_phone" data-toggle="input-mask" data-mask-format="0000-0000000"  value="{{ old('phone') }}" placeholder="0300-1234567" class="form-control" required>
                                                     </div>
                                                     <!-- <div class="mb-3">
                                                         <label for="man_password" class="form-label">Password</label>
@@ -346,7 +337,7 @@
                                                 <div class="col-lg-6">
                                                     <div class="mb-3">
                                                         <label for="man_email" class="form-label">Email</label>
-                                                        <input type="email" id="man_email" name="man_email" value="{{ old('man_email') }}" class="form-control" placeholder="Email" required>
+                                                        <input type="email" id="man_email" name="man_email" value="{{ old('man_email') }}" aria-placeholder="text@gmail.com" class="form-control" placeholder="Email" required>
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="man_pic" class="form-label">Manager Picture</label>
@@ -378,15 +369,15 @@
                                                 <div class="col-md-12 mt-2">
                                                     <h4 class="header-title">Who we will charge the fee from:</h4>
                                                     <div class="form-check mb-2 form-check-primary">
-                                                        <input class="form-check-input" type="checkbox" name="wallet[]" id="org_wallet" value="org_wallet">
+                                                        <input class="form-check-input" type="checkbox" name="wallet[]" id="org_wallet" value="org_wallet" required>
                                                         <label class="form-check-label" for="org_wallet">Organization</label>
                                                     </div>
                                                     <div class="form-check mb-2 form-check-success">
-                                                        <input class="form-check-input" type="checkbox" name="wallet[]" id="driver_wallet" value="driver_wallet">
+                                                        <input class="form-check-input" type="checkbox" name="wallet[]" id="driver_wallet" value="driver_wallet" required>
                                                         <label class="form-check-label" for="driver_wallet">Sub Contracting Driver</label>
                                                     </div>
                                                     <div class="form-check mb-2 form-check-danger">
-                                                        <input class="form-check-input" type="checkbox" name="wallet[]" id="passenger_wallet" value="passenger_wallet" checked>
+                                                        <input class="form-check-input" type="checkbox" name="wallet[]" id="passenger_wallet" value="passenger_wallet" required>
                                                         <label class="form-check-label" for="passenger_wallet">Passengers</label>
                                                     </div>
                                                 </div>
@@ -396,7 +387,7 @@
                                                     <h4 class="header-title">Basis of payment calculation:</h4>
                                                     <div class="row">
                                                         <div class="col-3 d-flex align-items-center">
-                                                            <input class="form-check-input" type="checkbox" name="payment[]" id="org_payment" value="org_payment" checked="">
+                                                            <input class="form-check-input" type="checkbox" name="payment[]" id="org_payment" value="org_payment">
                                                             <label class="form-check-label mx-1" for="org_payment">Organization</label>
                                                         </div>
                                                         <div class="col-2">
@@ -418,7 +409,7 @@
                                                     </div>
                                                     <div class="row mt-2">
                                                         <div class="col-3 d-flex align-items-center">
-                                                            <input class="form-check-input" type="checkbox" name="payment[]" id="driver_payment" value="driver_payment" checked="">
+                                                            <input class="form-check-input" type="checkbox" name="payment[]" id="driver_payment" value="driver_payment">
                                                             <label class="form-check-label mx-1" for="driver_payment">Driver</label>
                                                         </div>
                                                         <div class="col-2 ">
@@ -436,7 +427,7 @@
                                                     </div>
                                                     <div class="row mt-2">
                                                         <div class="col-3 d-flex align-items-center">
-                                                            <input class="form-check-input" type="checkbox" name="payment[]" id="passenger_payment" value="passenger_payment" checked="">
+                                                            <input class="form-check-input" type="checkbox" name="payment[]" id="passenger_payment" value="passenger_payment">
                                                             <label class="form-check-label mx-1" for="passenger_payment">Passenger</label>
                                                         </div>
                                                         <div class="col-2 ">
@@ -615,10 +606,12 @@
         if (orgPhone === "") {
             setErrorMsg('#org_phone', "* Required!");
             orgPhoneErr = false;
-        } else if (!isPhone(orgPhone)) {
-            setErrorMsg('#org_phone', "* Phone number length must be 11 digits and only numbers are allowed");
-            orgPhoneErr = false;
-        } else {
+        } 
+        // else if (!isPhone(orgPhone)) {
+        //     setErrorMsg('#org_phone', "* Invalid format!");
+        //     orgPhoneErr = false;
+        // } 
+        else {
             setSuccessMsg('#org_phone');
         }
 
@@ -637,16 +630,22 @@
         } else {
             setSuccessMsg('#org_city');
         }
+
+        if ((orgNameErr && orgTypeErr && orgEmailErr && orgPhoneErr && orgStateErr && orgCityErr) == false) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     function checkOrgDetailForm() {
         if (orgDetailFormValidate()) {
-            $('#company_head_tab').prop('disabled', false);
-            // resetFormView();
+            $('#company_head_tab').removeAttr('disabled');
+            resetFormView();
             $('#company_head_tab').addClass('active');
             $('#company_head').addClass('active');
         } else {
-            $('#company_head_tab').prop('disabled', true);
+            $("#company_head_tab").attr("disabled", true);
         }
     }
 
@@ -682,10 +681,12 @@
         if (orgHeadPhone === "") {
             setErrorMsg('#org_head_phone', "* Required!");
             orgHeadPhoneErr = false;
-        } else if (!isPhone(orgHeadPhone)) {
-            setErrorMsg('#org_head_phone', "* Phone number length must be 11 digits and only numbers are allowed");
-            orgHeadPhoneErr = false;
-        } else {
+        } 
+        // else if (!isPhone(orgHeadPhone)) {
+        //     setErrorMsg('#org_head_phone', "* Phone number length must be 11 digits and only numbers are allowed");
+        //     orgHeadPhoneErr = false;
+        // } 
+        else {
             setSuccessMsg('#org_head_phone');
         }
 
@@ -698,24 +699,13 @@
 
     function checkOrgHeadForm() {
         if (orgHeadFormValidate()) {
-            $('#transport_manager_tab').prop('disabled', false);
+            $('#transport_manager_tab').removeAttr('disabled');
             resetFormView();
             $('#transport_manager_tab').addClass('active');
             $('#transport_manager').addClass('active');
         } else {
-            $('#transport_manager_tab').prop('disabled', true);
+            $('#transport_manager_tab').attr('disabled', true);
         }
-    }
-
-    function resetFormView() {
-        $('#company_tab').removeClass('active');
-        $('#company').removeClass('active');
-        $('#transport_manager_tab').removeClass('active');
-        $('#transport_manager').removeClass('active');
-        $('#financials_tabs').removeClass('active');
-        $('#financials').removeClass('active');
-        $('#company_head_tab').removeClass('active');
-        $('#company_head').removeClass('active');
     }
 
     function transportManagerFormValidate() {
@@ -737,24 +727,26 @@
 
         //Validate Email
         if (manEmail === "") {
-            setErrorMsg("#man_phone", "* Required!");
+            setErrorMsg("#man_email", "* Required!");
             manEmailErr = false;
         } else if (!isEmail(manEmail)) {
-            setErrorMsg("#man_phone", "* invalid email format! ");
+            setErrorMsg("#man_email", "* invalid email format! ");
             manEmailErr = false;
         } else {
-            setSuccessMsg("#man_phone");
+            setSuccessMsg("#man_email");
         }
 
         //validate Phone
         if (manPhone === "") {
-            setErrorMsg('#man_email', "* Required!");
+            setErrorMsg('#man_phone', "* Required!");
             manPhoneErr = false;
-        } else if (!isPhone(manPhone)) {
-            setErrorMsg('#man_email', "* Phone number length must be 11 digits and only numbers are allowed");
-            manPhoneErr = false;
-        } else {
-            setSuccessMsg('#man_email');
+        } 
+        // else if (!isPhone(manPhone)) {
+        //     setErrorMsg('#man_email', "* Phone number length must be 11 digits and only numbers are allowed");
+        //     manPhoneErr = false;
+        // } 
+        else {
+            setSuccessMsg('#man_phone');
         }
 
         if ((manNameErr && manEmailErr && manPhoneErr) == false) {
@@ -766,13 +758,28 @@
 
     function checkTransportManagerForm() {
         if (transportManagerFormValidate()) {
-            $('#financials_tabs').prop('disabled', false);
+            $('#financials_tabs').removeAttr('disabled');
             resetFormView();
             $('#financials_tabs').addClass('active');
             $('#financials').addClass('active');
         } else {
-            $('#company_head_tab').prop('disabled', true);
+            $('#financials_tabs').attr('disabled', true);
         }
+    }
+
+    function resetFormView() {
+        $('#company_tab').removeClass('active');
+        $('#company').removeClass('active');
+        $('#transport_manager_tab').removeClass('active');
+        $('#transport_manager').removeClass('active');
+        $('#financials_tabs').removeClass('active');
+        $('#financials').removeClass('active');
+        $('#company_head_tab').removeClass('active');
+        $('#company_head').removeClass('active');
+        // reset the attribute to disable
+        $("#company_head_tab").attr("disabled", true);
+        $('#transport_manager_tab').attr('disabled', true);
+        $('#financials_tabs').attr('disabled', true);
     }
 
     function setDays(startDateId, endDateId, setDaysId) {

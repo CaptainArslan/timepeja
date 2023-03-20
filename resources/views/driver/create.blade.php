@@ -618,13 +618,6 @@
 <!-- Init js-->
 <script src="/js/pages/form-fileuploads.init.js"></script>
 
-<!-- Plugins js -->
-<script src="/libs/jquery-mask-plugin/jquery.mask.min.js"></script>
-<script src="/libs/autonumeric/autoNumeric.min.js"></script>
-
-<!-- Init js-->
-<script src="/js/pages/form-masks.init.js"></script>
-
 <!-- Init js-->
 <script src="/js/pages/form-wizard.init.js"></script>
 <!-- Init js-->
