@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * [print_data description]
  *
@@ -67,4 +68,26 @@ function makeCnicFormat($cnic_number)
 {
     $cnic_formatted = substr($cnic_number, 0, 5) . '-' . substr($cnic_number, 5, 7) . '-' . substr($cnic_number, 12);
     return $cnic_formatted;
+}
+
+/**
+ * [moveImageGetName description]
+ *
+ * @param   Request  $request    [$request description]
+ * @param   [type]   $inputName  [$inputName description]
+ * @param   [type]   $path       [$path description]
+ *
+ * @return  [type]               [return description]
+ */
+function saveImageGetName($request, $inputName, $path)
+{
+    if ($request->hasFile($inputName)) {
+        $file = $request->file($inputName);
+        $extension = $file->getClientOriginalExtension();
+        $filename = time() . '.' . $extension;
+        $file->move(public_path('uploads/' . $path), $filename);
+        return $filename;
+    } else {
+        return null;
+    }
 }

@@ -156,6 +156,7 @@ class ManagerController extends Controller
 
             'man_name.required' => 'Manager name required!',
             'man_email.required' => 'Manager email required!',
+            'man_email.unique' => 'Manager email already taken!',
             'man_phone.required' => 'Manager phone required!',
         ]);
 
@@ -194,7 +195,7 @@ class ManagerController extends Controller
             $manager->phone         = $request->input('man_phone');
             $manager->address       = $request->input('man_address');
             $manager->otp           = substr(uniqid(), -4);
-            $manager->picture       = '';
+            $manager->picture       = saveImageGetName($request, 'man_pic', 'managers/');
             $manager_save = $manager->save();
             if ($manager_save) {
                 $financials = new Financials();

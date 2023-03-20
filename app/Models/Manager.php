@@ -85,15 +85,6 @@ class Manager extends Authenticatable implements JWTSubject
         return $this->hasOne(Organization::class, 'id', 'o_type_id');
     }
 
-    /**
-     * Manager Picture Accessor
-     *
-     * @return  [image with path]  [this function will return the manager image with full path]
-     */
-    public function getPictureAttribute()
-    {
-        return $this->attributes['picture'] ? asset('uploads/managers/' . $this->attributes['picture']) : null;
-    }
 
 
 
@@ -146,5 +137,16 @@ class Manager extends Authenticatable implements JWTSubject
     public function getPhoneAttribute($value)
     {
         return substr($value, 0, 4) . '-' . substr($value, 7);
+    }
+
+    
+    /**
+     * Manager Picture Accessor
+     *
+     * @return  [image with path]  [this function will return the manager image with full path]
+     */
+    public function getPictureAttribute()
+    {
+        return $this->attributes['picture'] ? asset('uploads/managers/' . $this->attributes['picture']) : null;
     }
 }
