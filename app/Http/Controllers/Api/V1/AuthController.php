@@ -40,7 +40,7 @@ class AuthController extends BaseController
                 'string',
                 'confirmed',
                 'between:8,255',
-                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'
+                // 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'
             ],
             'password_confirmation' => ['required', 'string', 'between:8,255'],
             'email' => ['nullable', 'email', 'max:255'],
@@ -62,9 +62,9 @@ class AuthController extends BaseController
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => $validator->errors()->all(),
+                'message' => "Please fill the form correctly",
                 // 'message' => $validator->errors()->all(),
-            ], 422);
+            ], 400);
         }
 
         $manager = Manager::where('phone', $request->phone)
@@ -75,7 +75,7 @@ class AuthController extends BaseController
             return response()->json([
                 'success' => false,
                 'message' => 'Invalid phone number or verification code'
-            ], 401);
+            ], 400);
         }
 
         if (empty($manager->token) && empty($manager->password)) {
@@ -87,6 +87,7 @@ class AuthController extends BaseController
 
             return response()->json([
                 'success' => true,
+                'code' => 'REGISTER_API_SUCCESS',
                 'message' => 'Manager registered successfully',
                 'data' => $manager,
             ], 200);
@@ -94,7 +95,7 @@ class AuthController extends BaseController
             return response()->json([
                 'success' => false,
                 'message' => 'Manager already exists. Please login.',
-            ], 401);
+            ], 400);
         }
     }
 
@@ -129,7 +130,7 @@ class AuthController extends BaseController
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => $validator->errors()->all()
+                'message' => "Please fill the form correctly"
             ], 401);
         }
 
@@ -149,7 +150,6 @@ class AuthController extends BaseController
                 'error' => 'User not found'
             ], 401);
         }
-        
         $user->makeHidden('password');
 
         return response()->json(
@@ -238,7 +238,7 @@ class AuthController extends BaseController
                 'string',
                 'confirmed',
                 'between:8,255',
-                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'
+                // 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'
             ],
         ], [
             'phone.required' => 'Phone is required',
@@ -249,8 +249,8 @@ class AuthController extends BaseController
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Validation errors',
-                'message' => $validator->errors()->all(),
+                'message' => 'Please fill the form correctly',
+                // 'message' => $validator->errors()->all(),
             ], 401);
         }
 
