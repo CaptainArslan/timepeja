@@ -18,3 +18,4 @@ vendor/phpunit/phpunit
 /public/images/*
 /database/migrations-backup
 /database/seeders-backup
+/public/uploads

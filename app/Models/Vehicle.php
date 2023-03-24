@@ -53,8 +53,63 @@ class Vehicle extends Model
      * @param  string  $value
      * @return string|null
      */
-    public function getVehFrontPicAttribute($value)
+    public function getFrontPicAttribute()
     {
         return $this->attributes['front_pic'] ? asset('uploads/vehicles/' . $this->attributes['front_pic']) : null;
+    }
+
+    /**
+     * Get the front picture name of the vehicle.
+     *
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getFrontPicNameAttribute()
+    {
+        return $this->attributes['front_pic'] ;
+    }
+
+    /**
+     * Get the back picture of the vehicle.
+     *
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getBackPicAttribute()
+    {
+        return $this->attributes['back_pic'] ? asset('uploads/vehicles/' . $this->attributes['back_pic']) : null;
+    }
+
+    /**
+     * Get the back picture of the vehicle.
+     *
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getBackPicNameAttribute()
+    {
+        return $this->attributes['back_pic'] ;
+    }
+
+    /**
+     * Get the number plate picture of the vehicle.
+     *
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getNumberPicAttribute()
+    {
+        return $this->attributes['number_pic'] ? asset('uploads/vehicles/' . $this->attributes['number_pic']) : null;
+    }
+
+    /**
+     * Get the number plate picture of the vehicle.
+     *
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getNumberPicNameAttribute()
+    {
+        return $this->attributes['number_pic'] ;
     }
 }

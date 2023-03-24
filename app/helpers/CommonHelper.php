@@ -39,7 +39,7 @@ function formatDate($date)
  *
  * @return  [type]         [return description]
  */
-function formatTime($time, $format = 'H:m:s')
+function formatTime($time, $format = 'h:i A')
 {
     $res = date($format, strtotime($time));
     return $res;
@@ -71,23 +71,55 @@ function makeCnicFormat($cnic_number)
 }
 
 /**
- * [moveImageGetName description]
+
+ *Uploads an image to a specified folder and returns the filename
  *
- * @param   Request  $request    [$request description]
- * @param   [type]   $inputName  [$inputName description]
- * @param   [type]   $path       [$path description]
+ *@param \Illuminate\Http\UploadedFile $image The uploaded image file
  *
- * @return  [type]               [return description]
+ *@param string $folderName The name of the folder to store the image in
+ *
+ *@return string The generated filename of the uploaded image
+ *
+ *@throws \Exception if the image is invalid or an error occurs during the upload process
  */
-function saveImageGetName($request, $inputName, $path)
+
+function uploadImage($image, $folderName)
 {
-    if ($request->hasFile($inputName)) {
-        $file = $request->file($inputName);
-        $extension = $file->getClientOriginalExtension();
-        $filename = time() . '.' . $extension;
-        $file->move(public_path('uploads/' . $path), $filename);
-        return $filename;
-    } else {
-        return null;
+    // Check if the image is valid
+    if (!$image->isValid()) {
+        throw new \Exception('Invalid image.');
+    }
+
+    // Generate a unique filename for the image
+    $filename = time() . '_' . $image->getClientOriginalName();
+
+    if (!is_dir(public_path('uploads/' . $folderName))) {
+        // create the directory if it does not exist
+        mkdir(public_path('uploads/' . $folderName), 0777, true);
+    }
+
+    // Upload the image to the specified folder
+    try {
+        $image->move(public_path('uploads/' . $folderName), $filename);
+    } catch (\Exception $e) {
+        throw new \Exception('Error uploading image: ' . $e->getMessage());
+    }
+
+    // Return the filename so it can be saved to a database or used in a view
+    return $filename;
+}
+
+/**
+ * Removes an image file from the specified folder in the public directory.
+ *
+ * @param string $imageName The name of the image file to remove.
+ * @param string $folderName The name of the folder where the image file is stored.
+ * @return void
+ */
+function removeImage($imageName, $folderName)
+{
+    $imagePath = public_path('uploads/' . $folderName . '/' . $imageName);
+    if (file_exists($imagePath)) {
+        unlink($imagePath);
     }
 }

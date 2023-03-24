@@ -103,27 +103,27 @@
                     <tbody>
                         @forelse($vehicles as $vehicle)
                         <tr>
-                            <th>
+                            <td>
                                 <input type="checkbox" class="child_checkbox">
-                                <input type="hidden" value="{{$vehicle->id}}" class="db_id" name="id">
-                                <input type="hidden" value="{{$vehicle->reg_date}}" class="reg_date" name="reg_date">
-                                <input type="hidden" value="{{$vehicle->o_id}}" class="db_o_id" name="o_id">
-                                <input type="hidden" value="{{$vehicle->v_type_id}}" class="db_v_type_id" name="v_type_id">
-                                <input type="hidden" value="{{$vehicle->front_pic}}" class="db_front_pic" name="front_pic">
-                                <input type="hidden" value="{{$vehicle->back_pic}}" class="db_back_pic" name="back_pic">
-                                <input type="hidden" value="{{$vehicle->number}}" class="db_number" name="number">
-                                <input type="hidden" value="{{$vehicle->number_pic}}" class="db_number_pic" name="number_pic">
-                                <input type="hidden" value="{{$vehicle->created_at}}" class="db_created_at" name="created_at">
-                            </th>
-                            <th>{{ date("Y-m-d",strtotime($vehicle->created_at)) }}</th>
-                            <th>{{ date("H:m:s",strtotime($vehicle->created_at)) }}</th>
+                            </td>
+                            <td>{{ formatDate($vehicle->created_at) }}</td>
+                            <td>{{ formatTime($vehicle->created_at)  }}</td>
                             <td>{{$vehicle->organizations['name'] ?? '' }}</td>
                             <td>{{$vehicle->vehiclesTypes['name'] ?? ''}}</td>
                             <td>{{$vehicle->number}}</td>
-                            <td><img src="{{ asset('/uploads/vehicles/').'/'.$vehicle->front_pic }}" alt="" width="50px" height="50px"></td>
-                            <td><img src="{{ asset('/uploads/vehicles/').'/'.$vehicle->number_pic }}" alt="" width="50px" height="50px"></td>
+                            <td><img src="{{ $vehicle->front_pic }}" alt="" width="50px" height="50px"></td>
+                            <td><img src="{{ $vehicle->number_pic }}" alt="" width="50px" height="50px"></td>
                             <td>
-                                <div class="btn-group btn-group-sm" style="float: none;">
+                                <input type="hidden" value="{{ $vehicle->id }}" class="db_id" name="id">
+                                <input type="hidden" value="{{ $vehicle->reg_date }}" class="reg_date" name="reg_date">
+                                <input type="hidden" value="{{ $vehicle->o_id }}" class="db_o_id" name="o_id">
+                                <input type="hidden" value="{{ $vehicle->v_type_id }}" class="db_v_type_id" name="v_type_id">
+                                <input type="hidden" value="{{ $vehicle->front_pic }}" class="db_front_pic" name="front_pic">
+                                <input type="hidden" value="{{ $vehicle->back_pic }}" class="db_back_pic" name="back_pic">
+                                <input type="hidden" value="{{ $vehicle->number }}" class="db_number" name="number">
+                                <input type="hidden" value="{{ $vehicle->number_pic }}" class="db_number_pic" name="number_pic">
+                                <input type="hidden" value="{{$vehicle->created_at }}" class="db_created_at" name="created_at">
+                                <div class="btn-group btn-group-sm" style="float: none;" data-id="{{ $vehicle->id  }}">
                                     <button type="button" class="tabledit-edit-button btn btn-success edit_btn" style="float: none;" data-bs-toggle="modal" data-bs-target="#edit_modal">
                                         <span class="mdi mdi-pencil"></span>
                                     </button>
@@ -227,7 +227,7 @@
             <div class="modal-body">
                 <form action="{{ route('vehicle.edit') }}" method="POST" enctype="multipart/form-data" id="edit_modal_form">
                     @csrf
-                    <input type="hidden" name="id" id="edit_id">
+                    <input type="hidden" class="form-control" name="id" id="edit_id">
                     <div class="col-xl-12">
                         <div class="card shadow-none">
                             <div class="card-body">
@@ -259,7 +259,7 @@
                                         </div>
                                         <div class="col-12">
                                             <div class="mt-1">
-                                                <input type="file" data-plugins="dropify" name="veh_front_pic" data-default-file="/images/small/img-2.jpg" />
+                                                <input type="file" data-plugins="dropify" name="veh_front_pic" id="edit_front_pic" data-default-file="{{ asset('/images/small/img-2.jpg')}}" />
                                                 <p class="text-muted text-center mt-2 mb-0">Vehicle Picture from front
                                                 </p>
                                             </div>
@@ -272,7 +272,7 @@
                                         </div>
                                         <div class="col-12">
                                             <div class="mt-1">
-                                                <input type="file" data-plugins="dropify" name="edit_number_pic" data-default-file="/images/small/img-2.jpg" />
+                                                <input type="file" data-plugins="dropify" name="veh_license_plate" id="edit_number_pic" data-default-file="{{ asset('/images/small/img-2.jpg')}}" />
                                                 <p class="text-muted text-center mt-2 mb-0">Vehicle license plate
                                                     picture</p>
                                             </div>
@@ -333,11 +333,10 @@
         var _this = $(this).parents('tr');
         $('#edit_id').val(_this.find('.db_id').val());
         $('#edit_number').val(_this.find('.db_number').val());
-        $('#edit_o_id').val(_this.find('.db_o_id').val()).trigger('change'); // Select the option with a value of ''1
-        $('#edit_v_type_id').val(_this.find('.db_v_type_id').val()).trigger('change'); // Select the option with a value of '1'
-        $('#edit_front_pic').attr('src', _this.find('.db_front_pic').val());
-        $('#edit_number_pic').attr('src', _this.find('.db_number_pic').val());
-
+        $('#edit_o_id').val(_this.find('.db_o_id').val()).trigger('change');
+        $('#edit_v_type_id').val(_this.find('.db_v_type_id').val()).trigger('change');
+        $('#edit_front_pic').attr('data-default-file', _this.find('.db_front_pic').val()).dropify();
+        $('#edit_number_pic').attr('data-default-file', _this.find('.db_number_pic').val()).dropify();
     });
 
     $(document).ready(function() {
@@ -367,42 +366,42 @@
         //     });
         // });
 
-        $('#edit_modal_form').submit(function(e) {
-            e.preventDefault();
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-            Swal.fire({
-                title: 'Are you sure?',
-                icon: 'warning',
-                confirmButtonColor: '#e64942',
-                showCancelButton: true,
-                confirmButtonText: 'Yes',
-                cancelButtonText: `No`,
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        type: "post",
-                        url: $(this).attr('action'),
-                        data: $(this).serialize(),
-                        success: function(response) {
-                            Swal.fire(
-                                'Updated!',
-                                'Data Successfully Updated.!',
-                                'success'
-                            ).then((result) => {
-                                location.reload();
-                            });
-                        },
-                        error: (error) => {
-                            console.log(JSON.stringify(error));
-                        }
-                    });
-                }
-            });
-        });
+        // $('#edit_modal_form').submit(function(e) {
+        //     e.preventDefault();
+        //     $.ajaxSetup({
+        //         headers: {
+        //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        //         }
+        //     });
+        //     Swal.fire({
+        //         title: 'Are you sure?',
+        //         icon: 'warning',
+        //         confirmButtonColor: '#e64942',
+        //         showCancelButton: true,
+        //         confirmButtonText: 'Yes',
+        //         cancelButtonText: `No`,
+        //     }).then((result) => {
+        //         if (result.isConfirmed) {
+        //             $.ajax({
+        //                 type: "post",
+        //                 url: $(this).attr('action'),
+        //                 data: $(this).serialize(),
+        //                 success: function(response) {
+        //                     Swal.fire(
+        //                         'Updated!',
+        //                         'Data Successfully Updated.!',
+        //                         'success'
+        //                     ).then((result) => {
+        //                         location.reload();
+        //                     });
+        //                 },
+        //                 error: (error) => {
+        //                     console.log(JSON.stringify(error));
+        //                 }
+        //             });
+        //         }
+        //     });
+        // });
 
         $('.delete').click(function(e) {
             e.preventDefault();

@@ -34,9 +34,9 @@ class VehicleController extends Controller
         $organizations = Organization::get();
         $vehicle_types = VehicleType::get();
         $vehicles = Vehicle::with('organizations', 'vehiclesTypes')
-        ->orderBy('id', 'DESC')
-        ->take(10)
-        ->get();
+            ->orderBy('id', 'DESC')
+            ->take(10)
+            ->get();
         return view('vehicle.index', [
             'organizations' => $organizations,
             'vehicles' => $vehicles,
@@ -92,19 +92,8 @@ class VehicleController extends Controller
             'veh_license_plate.mimes' => 'The image must be a JPEG or PNG file',
         ]);
 
-        // dd($request->all());
-        if ($request->hasFile('veh_front_pic')) {
-            $file = $request->file('veh_front_pic');
-            $extension = $file->getClientOriginalExtension();
-            $front_filename = time() . '.' . $extension;
-            $file->move(public_path('uploads/vehicles'), $front_filename);
-        }
-        if ($request->hasFile('veh_license_plate')) {
-            $file = $request->file('veh_license_plate');
-            $extension = $file->getClientOriginalExtension();
-            $back_filename = time() . '.' . $extension;
-            $file->move(public_path('uploads/vehicles'), $back_filename);
-        }
+        $imageFront = $request->file('veh_front_pic');
+        $imageNumber = $request->file('veh_license_plate');
 
         $user = Auth::user();
         $vehicle = new Vehicle();
@@ -112,8 +101,8 @@ class VehicleController extends Controller
         $vehicle->o_id   = $request->o_id;
         $vehicle->v_type_id    = $request->v_type_id;
         $vehicle->number   = $request->number;
-        $vehicle->front_pic   = $front_filename;
-        $vehicle->number_pic   = $back_filename;
+        $vehicle->front_pic   = uploadImage($imageFront, 'vehicles');
+        $vehicle->number_pic   = uploadImage($imageNumber, 'vehicles');
         if ($vehicle->save()) {
             return redirect()->route('vehicle.index')
                 ->with('success', 'Vehicle created successfully.');
@@ -140,9 +129,49 @@ class VehicleController extends Controller
      * @param  \App\Models\Vehicle  $vehicle
      * @return \Illuminate\Http\Response
      */
-    public function edit(Vehicle $vehicle)
+    public function edit(Request $request)
     {
-        //
+        $this->validate($request, [
+            'id' => 'required|integer',
+            'o_id' => 'required|integer',
+            'v_type_id' => 'required|integer',
+            'number' => 'required',
+            'veh_front_pic' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'veh_license_plate' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ], [
+            'id.required' => 'Id is required to edit',
+            'o_id.required' => 'Organization required',
+            'v_type_id.required' => 'Vehicle required',
+            'number.required' => 'Vehicle number required',
+            'veh_front_pic.required' => 'Vehicle Front pic required',
+            'veh_front_pic.mimes' => 'The image must be a JPEG or PNG file',
+            'veh_license_plate.required' => 'License Vehicle plate required',
+            'veh_license_plate.mimes' => 'The image must be a JPEG or PNG file',
+        ]);
+
+        $vehicle = Vehicle::find($request->id);
+        $user = Auth::user();
+
+        removeImage($vehicle->front_pic_name, 'vehicles');
+        removeImage($vehicle->number_pic_name, 'vehicles');
+
+        $imageFront = $request->file('veh_front_pic');
+        $imageNumber = $request->file('veh_license_plate');
+
+        $vehicle->u_id  = $user->id;
+        $vehicle->o_id   = $request->o_id;
+        $vehicle->v_type_id    = $request->v_type_id;
+        $vehicle->number   = $request->number;
+        $vehicle->front_pic   = uploadImage($imageFront, 'vehicles');
+        $vehicle->number_pic   = uploadImage($imageNumber, 'vehicles');
+
+        if ($vehicle->save()) {
+            return redirect()->route('vehicle.index')
+                ->with('success', 'Vehicle updated successfully.');
+        } else {
+            return redirect()->route('vehicle.index')
+                ->with('error', 'Error Occured while Vehicle updation.');
+        }
     }
 
     /**
