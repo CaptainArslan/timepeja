@@ -53,15 +53,17 @@ class AuthController extends BaseController
             'password.required' => 'Password is required',
             'password.between' => 'Password must be between :min and :max characters',
             'password.confirmed' => 'Password confirmation does not match',
-            'password.regex' => 'The password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.',
+            'password.regex' =>
+            'The password must contain at least one uppercase letter, one lowercase letter, one number, 
+            and one special character.',
             'otp.required' => 'Verification code is required',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Validation errors',
-                'errors' => $validator->errors()->all(),
+                'message' => $validator->errors()->all(),
+                // 'message' => $validator->errors()->all(),
             ], 422);
         }
 
@@ -119,13 +121,15 @@ class AuthController extends BaseController
             'phone.digits' => 'Phone number must be 11 digits',
             'password.required' => 'Password is required',
             'password.between' => 'Password must be between :min and :max characters',
-            'password.regex' => 'The password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.'
+            'password.regex' =>
+            'The password must contain at least one uppercase letter, one lowercase letter, 
+            one number, and one special character.'
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors' => $validator->errors()->all()
+                'message' => $validator->errors()->all()
             ], 401);
         }
 
@@ -145,6 +149,7 @@ class AuthController extends BaseController
                 'error' => 'User not found'
             ], 401);
         }
+        
         $user->makeHidden('password');
 
         return response()->json(
@@ -186,7 +191,7 @@ class AuthController extends BaseController
             return response()->json([
                 'success' => false,
                 'message' => 'Validation errors',
-                'errors' => $validate->errors(),
+                'message' => $validate->errors(),
             ], 401);
         }
 
@@ -205,13 +210,13 @@ class AuthController extends BaseController
             } else {
                 return response()->json([
                     'success' => false,
-                    'errors' => ['Error Occured while sending otp']
+                    'message' => ['Error Occured while sending otp']
                 ], 401);
             }
         } else {
             return response()->json([
                 'success' => false,
-                'errors' => ['Invalid Phone number provided']
+                'message' => ['Invalid Phone number provided']
             ], 200);
         }
     }
@@ -245,7 +250,7 @@ class AuthController extends BaseController
             return response()->json([
                 'success' => false,
                 'message' => 'Validation errors',
-                'errors' => $validator->errors()->all(),
+                'message' => $validator->errors()->all(),
             ], 401);
         }
 

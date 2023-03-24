@@ -362,7 +362,7 @@ class ManagerController extends Controller
             ->with('vehicles:id,number')
             ->with('drivers:id,name')
             ->get();
-        dd($trpis->toArray());
+        // dd($trpis->toArray());
         return $trpis;
     }
 

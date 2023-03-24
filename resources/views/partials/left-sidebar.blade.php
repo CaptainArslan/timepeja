@@ -193,22 +193,13 @@
                     <div class="collapse" id="sidebarDriver">
                         <ul class="nav-second-level">
                             <li>
-                                <a href="{{ route('driver.create') }}">
+                                <a href="{{ route('driver.index') }}">
                                     <span> Drivers </span>
                                 </a>
                             </li>
                             <li>
                                 <a href="{{ route('driver.trip') }}">Upcoming Trips</a>
                             </li>
-                            <!-- <li>
-                                <a href="{{ route('driver.index') }}">Driver List</a>
-                            </li> -->
-                            <!-- <li>
-                                <a href="{{ route('driver.notification') }}">Notification</a>
-                            </li> -->
-                            <!-- <li>
-                                <a href="{{ route('driver.triphistory') }}">Trip History</a>
-                            </li> -->
                         </ul>
                     </div>
 

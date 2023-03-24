@@ -11,6 +11,8 @@ use App\Models\Vehicle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Dompdf\Dompdf;
+use Illuminate\Support\Facades\View;
 
 class ScheduleController extends Controller
 {
@@ -152,6 +154,7 @@ class ScheduleController extends Controller
                 $query->select('id', 'name');
             })
             ->get();
+
         return response()->json([
             'status' => 'success',
             'data' => $data
@@ -173,10 +176,13 @@ class ScheduleController extends Controller
                 $schedules = $this->filterSchedule($request);
             } elseif ($request->has('print')) {
                 $schedules = $this->filterSchedule($request);
-                $pdf = PDF::loadView('manager.schedule.report.publish_schedule', [
-                    'schedules' => $schedules->toArray()
-                ]);
-                return $pdf->download(formatDate(date('Y-m-d')) . formatTime(time()) . 'report.pdf');
+                // dd($schedules->toArray());
+                return view('manager.schedule.report.publish_schedule', compact('schedules'));
+                $this->generatePdf('manager.schedule.report.publish_schedule', $schedules);
+                // $pdf = PDF::loadView('manager.schedule.report.publish_schedule', [
+                //     'schedules' => $schedules->toArray()
+                // ]);
+                // return $pdf->download('report.pdf');
             } elseif ($request->has('modify')) {
                 $this->publishDraftSchedule($request, Schedule::STATUS_DRAFT);
             }
@@ -219,14 +225,14 @@ class ScheduleController extends Controller
         });
 
         // Execute the query
-        $organizations = $query->with('organizations:id,name')
+        $schedule = $query->with('organizations:id,name')
             ->with('routes:id,name,number,from,to')
             ->with('vehicles:id,number')
             ->with('drivers:id,name')
             ->where('status', Schedule::STATUS_PUBLISHED)
             ->get();
 
-        return $organizations;
+        return $schedule;
     }
 
     /**
@@ -293,5 +299,20 @@ class ScheduleController extends Controller
             'type' => $type,
             'data' => $data
         ]);
+    }
+
+    public function generatePdf($view, $data)
+    {
+        // Load the view and pass the data
+        $html = View::make($view, $data)->render();
+        return $html;
+        // Create a new instance of Dompdf
+        $pdf = new Dompdf();
+        // Load the HTML content
+        $pdf->loadHtml($html);
+        // Render the PDF
+        $pdf->render();
+        // Output the generated PDF to the browser
+        return $pdf->stream();
     }
 }

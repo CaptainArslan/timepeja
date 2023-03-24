@@ -83,7 +83,7 @@
             <div class="card-header">
                 <div class="d-flex justify-content-around">
                     <div class="col-2">
-                        <h4 class="header-title">Lates Vehicle</h4>
+                        <h4 class="header-title">Vehicle</h4>
                     </div>
                     <div class="col-8 bg-dark">
                         <!-- selection show here -->

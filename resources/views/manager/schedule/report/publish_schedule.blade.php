@@ -3,89 +3,201 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Schedule Report</title>
+    <title>Published Schedule</title>
+    <style>
+        body {
+            background-color: #F6F6F6;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            margin: 0;
+            padding: 0;
+        }
+
+        p {
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin-right: auto;
+            margin-left: auto;
+        }
+
+        .brand-section {
+            background-color: #0d1033;
+            padding: 10px 40px;
+        }
+
+        .logo {
+            width: 50%;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .col-6 {
+            width: 50%;
+            flex: 0 0 auto;
+        }
+
+        .col-3 {
+            width: 30%;
+            flex: 0 0 auto;
+        }
+
+        .text-white {
+            color: #fff;
+        }
+
+        .company-details {
+            float: right;
+            text-align: right;
+        }
+
+        .body-section {
+            padding: 16px;
+            border: 1px solid gray;
+        }
+
+        .heading {
+            font-size: 20px;
+            margin-bottom: 08px;
+        }
+
+        .sub-heading {
+            color: #262626;
+            margin-bottom: 05px;
+        }
+
+        table {
+            background-color: #fff;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table thead tr {
+            border: 1px solid #111;
+            background-color: #f2f2f2;
+        }
+
+        table td {
+            vertical-align: middle !important;
+            text-align: center;
+        }
+
+        table th,
+        table td {
+            padding-top: 08px;
+            padding-bottom: 08px;
+        }
+
+        .table-bordered {
+            box-shadow: 0px 0px 5px 0.5px gray;
+        }
+
+        .table-bordered td,
+        .table-bordered th {
+            border: 1px solid #dee2e6;
+        }
+
+        .text-right {
+            text-align: end;
+        }
+
+        .w-20 {
+            width: 20%;
+        }
+
+        .float-right {
+            float: right;
+        }
+    </style>
 </head>
 
 <body>
-    <div class="row">
-        <div class="col-12">
-            <form action="{{ route('schedule.published') }}" method="post" enctype="multipart/form-data">
-                @csrf
-                <div class="card">
-                    <div class="card-header d-flex">
-                        <div class="col-1">
-                            <h4 class="header-title">Schedule</h4>
-                        </div>
-                        <div class="col-8">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <input class="form-control" id="" type="hidden" value="{{ request()->input('o_id') }}" name="o_id" style="font-weight: bold;" readonly>
-                                </div>
-                                <div class="col-md-3">
-                                    <input class="form-control" id="selected_from" type="hidden" name="from" value="{{ request()->input('from') }}" readonly>
-                                </div>
-                                <div class="col-md-3">
-                                    <input class="form-control" id="selected_to" type="hidden" name="to" value="{{ request()->input('to') }}" readonly>
-                                </div>
-                            </div>
-                        </div>
+
+    <div class="container">
+        <div class="brand-section">
+            <div class="row" style="justify-content: space-between;">
+                <div class="col-3">
+                    <h1 class="text-white">Stoppick</h1>
+                </div>
+                <div class="col-3">
+                    <div class="company-details">
+                        <p class="text-white">Stoppick Association </p>
+                        <p class="text-white">+92 300-1234567</p>
                     </div>
-                    <div class="card-body">
-                        <table id="datatable-buttons" class="table table-striped dt-responsive nowrap w-100">
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Time</th>
-                                    <th>Route Name</th>
-                                    <th>Vehicle</th>
-                                    <th>Driver</th>
-                                    <!-- <th>Action</th> -->
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Date</td>
-                                    <td>Time</td>
-                                    <td>Route Name</td>
-                                    <td>Vehicle</td>
-                                    <td>Driver</td>
-                                    <!-- <td>Action</td> -->
-                                </tr>
-                                <tr>
-                                    <td>Date</td>
-                                    <td>Time</td>
-                                    <td>Route Name</td>
-                                    <td>Vehicle</td>
-                                    <td>Driver</td>
-                                    <!-- <th>Action</th> -->
-                                </tr>
-                                {{-- @forelse($schedules as $schedule)
-                                <tr>
-                                    <td>
-                                        <input type="checkbox" class="child_checkbox" value="{{ $schedule->id }}" name="" onchange="countCheckboxChecked()">
-                                <input type="hidden" name="schedule_ids[]" value="{{ $schedule->id }}">
-                                </td>
-                                <td>{{ $schedule->date }}</td>
-                                <td>{{ formatTime($schedule->time, 'h:i:s A') }}</td>
-                                <td> <span class=" text-danger">{{ $schedule->routes['number'] }}</span> -{{ $schedule->routes['from'] }} <span class="text-success"> To </span> {{ $schedule->routes['to'] }} </td>
-                                <td>{{ $schedule->vehicles['number'] }}</td>
-                                <td>{{ $schedule->drivers['name'] }}</td>
-                                <!-- <td>
-                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-success" style="float: none;"><span class="mdi mdi-pencil"></span></button></div>
-                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
-                            </td> -->
-                                </tr>
-                                @empty
-                                @endforelse --}}
-                            </tbody>
-                        </table>
-                    </div> <!-- end card body-->
-                </div> <!-- end card -->
-            </form>
-        </div><!-- end col-->
+                </div>
+            </div>
+        </div>
+
+        <div class="body-section">
+            <div class="row">
+                <div class="col-6">
+                    <h2 class="heading">Invoice No.: 001</h2>
+                    <p class="sub-heading">Tracking No. fabcart2025 </p>
+                    <p class="sub-heading">Order Date: 20-20-2021 </p>
+                    <p class="sub-heading">Email Address: customer@gfmail.com </p>
+                </div>
+                <div class="col-6">
+                    <p class="sub-heading">Full Name: {{ auth()->user()->name }}</p>
+                    <p class="sub-heading">Address: </p>
+                    <p class="sub-heading">Phone Number: </p>
+                    <p class="sub-heading">City,State,Pincode: </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="body-section">
+            <h3 class="heading">Published Schedule</h3>
+            <br>
+            <table class="table-bordered">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Route Name</th>
+                        <th>Vehicle</th>
+                        <th>Driver</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($schedules as $schedule)
+                    <tr>
+                        <td>{{ formatDate($schedule->date) }}</td>
+                        <td>{{ formatTime($schedule->time, 'h:i:s A') }}</td>
+                        <td><span class=" text-danger">{{ $schedule->routes['number'] }}</span> -{{ $schedule->routes['from'] }} <span class="text-success"> To </span> {{ $schedule->routes['to'] }}</td>
+                        <td>{{ $schedule->vehicles['number'] }}</td>
+                        <td>{{ $schedule->drivers['name'] }}</td>
+                    </tr>
+                    @empty
+                    @endforelse
+                </tbody>
+            </table>
+            <!-- <br>
+            <h3 class="heading">Payment Status: Paid</h3>
+            <h3 class="heading">Payment Mode: Cash on Delivery</h3> -->
+        </div>
+
+        <div class="body-section">
+            <p>&copy; Copyright 2023 - Stoppick. All rights reserved.
+                <a href="https://www.fundaofwebit.com/" class="float-right">www.stoppick.com</a>
+            </p>
+        </div>
     </div>
+
 </body>
 
 </html>
