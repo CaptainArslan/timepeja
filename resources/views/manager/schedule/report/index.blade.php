@@ -103,9 +103,9 @@
             padding-bottom: 08px;
         }
 
-        .table-bordered {
+        /* .table-bordered {
             box-shadow: 0px 0px 5px 0.5px gray;
-        }
+        } */
 
         .table-bordered td,
         .table-bordered th {
@@ -146,16 +146,16 @@
         <div class="body-section">
             <div class="row">
                 <div class="col-6">
-                    <h2 class="heading">Invoice No.: 001</h2>
-                    <p class="sub-heading">Tracking No. fabcart2025 </p>
-                    <p class="sub-heading">Order Date: 20-20-2021 </p>
+                    <h2 class="heading">Organiation: Xyz</h2>
+                    <p class="sub-heading">From Date: </p>
                     <p class="sub-heading">Email Address: customer@gfmail.com </p>
+                    <!-- <p class="sub-heading">Order Date: 20-20-2021 </p> -->
+                    <p class="sub-heading">Address: </p>
                 </div>
                 <div class="col-6">
-                    <p class="sub-heading">Full Name: {{ auth()->user()->name }}</p>
-                    <p class="sub-heading">Address: </p>
+                    <p class="sub-heading">Organiation Code: </p>
+                    <p class="sub-heading">To Date: </p>
                     <p class="sub-heading">Phone Number: </p>
-                    <p class="sub-heading">City,State,Pincode: </p>
                 </div>
             </div>
         </div>
@@ -193,7 +193,7 @@
 
         <div class="body-section">
             <p>&copy; Copyright 2023 - Stoppick. All rights reserved.
-                <a href="https://www.fundaofwebit.com/" class="float-right">www.stoppick.com</a>
+                <a href="{{ route('home') }}" class="float-right">www.stoppick.com</a>
             </p>
         </div>
     </div>

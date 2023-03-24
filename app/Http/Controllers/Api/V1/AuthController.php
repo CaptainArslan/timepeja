@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Models\User;
 use App\Models\Manager;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -60,11 +59,7 @@ class AuthController extends BaseController
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => "Please fill the form correctly",
-                // 'message' => $validator->errors()->all(),
-            ], 400);
+            return $this->respondWithError("Please fill the form correctly");
         }
 
         $manager = Manager::where('phone', $request->phone)
@@ -72,10 +67,7 @@ class AuthController extends BaseController
             ->first();
 
         if (!$manager) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Invalid phone number or verification code'
-            ], 400);
+            return $this->respondWithError("Invalid phone number or verification code");
         }
 
         if (empty($manager->token) && empty($manager->password)) {
@@ -84,18 +76,9 @@ class AuthController extends BaseController
                 'token' => Str::random(60),
             ]);
             $manager->makeHidden(['password']);
-
-            return response()->json([
-                'success' => true,
-                'code' => 'REGISTER_API_SUCCESS',
-                'message' => 'Manager registered successfully',
-                'data' => $manager,
-            ], 200);
+            return $this->respondWithSuccess($manager, 'Manager registered successfully', 'REGISTER_API_SUCCESS');
         } else {
-            return response()->json([
-                'success' => false,
-                'message' => 'Manager already exists. Please login.',
-            ], 400);
+            return $this->respondWithError('Manager alreasy exist. Please login ');
         }
     }
 
@@ -137,36 +120,21 @@ class AuthController extends BaseController
         $credentials = $request->only(['phone', 'password']);
 
         if (!$token = auth('api')->attempt($credentials)) {
-            return response()->json([
-                'success' => false,
-                'error' => 'Invalid phone number or password'
-            ], 401);
+            return $this->respondWithError('Invalida phone number or password');
         }
 
         $user = auth('api')->user();
         if (!$user) {
-            return response()->json([
-                'success' => false,
-                'error' => 'User not found'
-            ], 401);
+            return $this->respondWithError('User not Found');
         }
         $user->makeHidden('password');
 
-        return response()->json(
-            [
-                'success' => true,
-                'code' => 'LOGIN_API_SUCCESS',
-                'message' => 'Login successful',
-                'data' => $user,
-            ],
-            200,
-            [
-                'content-type' => 'application/json',
-                'uid' => $user->email,
-                'access-token' => $user->token,
-                'Authorization' => 'Bearer ' . $token
-            ]
-        );
+        return $this->respondWithSuccess($user, 'Login successfully', 'LOGIN_API_SUCCESS', [
+            'content-type' => 'application/json',
+            'uid' => $user->email,
+            // 'access-token' => $user->token,
+            'Authorization' => 'Bearer ' . $token
+        ]);
     }
 
     /**
@@ -188,11 +156,7 @@ class AuthController extends BaseController
         ]);
 
         if ($validate->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation errors',
-                'message' => $validate->errors(),
-            ], 401);
+            return $this->respondWithError('Please fill the form correctly');
         }
 
         $manager = Manager::where('phone', $fields['phone'])->first();
@@ -201,23 +165,12 @@ class AuthController extends BaseController
             $manager->otp = substr(uniqid(), -4);
             $save = $manager->save();
             if ($save) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Otp sent successfully',
-                    'code' => 'Get_OTP_API',
-                    'data' => $manager->otp,
-                ], 200);
+                return $this->respondWithSuccess($manager->otp, 'Otp Sent Successfully', 'API_GET_CODE');
             } else {
-                return response()->json([
-                    'success' => false,
-                    'message' => ['Error Occured while sending otp']
-                ], 401);
+                return $this->respondWithError('Error Occured while sending otp');
             }
         } else {
-            return response()->json([
-                'success' => false,
-                'message' => ['Invalid Phone number provided']
-            ], 200);
+            return $this->respondWithError('Invalid Phone number provided');
         }
     }
 
@@ -247,11 +200,7 @@ class AuthController extends BaseController
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Please fill the form correctly',
-                // 'message' => $validator->errors()->all(),
-            ], 401);
+            return $this->respondWithError('Please fill the forn correctly');
         }
 
         $manager = Manager::where('phone', $request->phone)
@@ -259,47 +208,17 @@ class AuthController extends BaseController
             ->first();
 
         if (!$manager) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Invalid phone or verification code'
-            ], 401);
+            return $this->respondWithError('invalid phone or verification code');
         }
-
-        // if (!empty($manager->password)) {
-        //     return response()->json([
-        //         'success' => false,
-        //         'message' => 'Password already set for this account',
-        //     ], 401);
-        // }
 
         Manager::where('phone', $request->phone)
             ->where('otp', $request->otp)
             ->update([
                 'password' => Hash::make($request->password),
             ]);
-            $manager->makeHidden('password');
+        $manager->makeHidden('password');
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Password updated successfully',
-            'code' => 'PASSWORD_UPDATE',
-            'data' => $manager,
-        ], 200);
-    }
-
-    /**
-     * Get the token array structure.
-     *
-     * @param  string $token
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    protected function respondWithToken($token)
-    {
-        return response()->json([
-            'access_token' => $token,
-            'token_type' => 'bearer',
-        ]);
+        return $this->respondWithSuccess($manager, 'Password Updated Successfully', 'PASSWORD_UPDATE');
     }
 }
 

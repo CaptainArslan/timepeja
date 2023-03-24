@@ -177,8 +177,8 @@ class ScheduleController extends Controller
             } elseif ($request->has('print')) {
                 $schedules = $this->filterSchedule($request);
                 // dd($schedules->toArray());
-                return view('manager.schedule.report.publish_schedule', compact('schedules'));
-                $this->generatePdf('manager.schedule.report.publish_schedule', $schedules);
+                return view('manager.schedule.report.index', compact('schedules'));
+                $this->generatePdf('manager.schedule.report.index', $schedules);
                 // $pdf = PDF::loadView('manager.schedule.report.publish_schedule', [
                 //     'schedules' => $schedules->toArray()
                 // ]);
