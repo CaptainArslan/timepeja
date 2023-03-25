@@ -17,8 +17,8 @@ class VehicleFactory extends Factory
     public function definition()
     {
         return [
-            'u_id' => 1 ,
-            'v_type_id'=> VehicleType::inRandomOrder()->first()->id ,
+            'u_id' => 1,
+            'v_type_id' => VehicleType::inRandomOrder()->first()->id,
             'number' => $this->faker->regexify('[A-Z]{2}[0-9]{2}[A-Z]{2}[0-9]{4}'),
             'o_id' =>  Organization::inRandomOrder()->first()->id,
             'no_of_seat' => rand(0, 72),
@@ -26,7 +26,7 @@ class VehicleFactory extends Factory
             'back_pic' => $this->faker->imageUrl($width = 640, $height = 480, 'vehicle'),
             'number_pic' => $this->faker->imageUrl($width = 640, $height = 480, 'number plates'),
             'status' => 1,
-            'created_at'=> Carbon::now(),
+            'created_at' => Carbon::now(),
         ];
     }
 }

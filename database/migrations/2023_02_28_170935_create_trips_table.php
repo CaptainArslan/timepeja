@@ -20,7 +20,7 @@ class CreateTripsTable extends Migration
             // $table->unsignedBigInteger('o_id')->index('o_id')->nullable();
             // $table->foreign('u_id')->references('id')->on('users')->onUpdate('cascade');
             $table->unsignedBigInteger('sch_id')->index('sch_id')->nullable();
-            $table->time('actual_start_time ')->nullable();
+            $table->time('actual_start_time')->nullable();
             $table->string('start_time')->nullable();
             $table->string('end_time')->nullable();
             $table->boolean('delayed')->default(0);

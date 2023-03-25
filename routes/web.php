@@ -73,6 +73,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/store', [VehicleController::class, 'store'])->name('store');
         Route::post('/edit', [VehicleController::class, 'edit'])->name('edit');
         Route::post('/delete', [VehicleController::class, 'destroy'])->name('delete');
+        Route::post('multi-delete', [VehicleController::class, 'multiDelete'])->name('multiDelete');
     });
 
     /**

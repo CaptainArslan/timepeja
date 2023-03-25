@@ -6,11 +6,11 @@ use App\Models\Vehicle;
 use App\Models\VehicleType;
 use App\Models\Organization;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
 class VehicleController extends Controller
 {
-
     /**
      * roles and permission middleware
      *
@@ -25,27 +25,84 @@ class VehicleController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * Undocumented function
      *
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return void
      */
-    public function index()
+    public function index(Request $request)
     {
         $organizations = Organization::get();
         $vehicle_types = VehicleType::get();
-        $vehicles = Vehicle::with('organizations', 'vehiclesTypes')
+        $vehicles = Vehicle::with(['organizations' => function ($query) {
+            $query->select('id', 'name'); // Select the id and name columns from the organizations table
+        }])
+            ->with(['vehiclesTypes' => function ($query) {
+                $query->select('id', 'name'); // Select the id and name columns from the vehicles_types table
+            }])
             ->orderBy('id', 'DESC')
             ->take(10)
-            ->get();
+            ->get(); // Select only the id and name columns from the vehicles table
+
+        // dd($vehicles->toArray());
+        if ($request->isMethod('post')) {
+            if ($request->has('filter')) {
+                $vehicles = $this->filter($request);
+            }
+        }
         return view('vehicle.index', [
             'organizations' => $organizations,
+            'vehicle_types' => $vehicle_types,
             'vehicles' => $vehicles,
-            'vehicle_types' => $vehicle_types
         ]);
-        // $vehicles = Vehicle::with('organizations', 'vehiclesTypes')
-        // ->get();
-        // return view('vehicle.index', ['vehivles' => $vehicles]);
     }
+
+    /**
+     * Undocumented function
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function filter(Request $request)
+    {
+        $request->validate([
+            'o_id' => 'nullable|numeric',
+            'from' => 'nullable|date',
+            'to' => 'nullable|date|after:from',
+        ], [
+            'to.after' => "The registration to date must be a date after registration from.",
+        ]);
+        // Get the input values from the request
+        $o_id = $request->input('o_id');
+        $from = $request->input('from');
+        $to = $request->input('to');
+
+        // Get the filtered records
+        $records = Vehicle::when($o_id, function ($query, $o_id) {
+            return $query->where('o_id', $o_id);
+        })
+            ->when($from && $to, function ($query) use ($from, $to) {
+                return $query->whereBetween('created_at', [$from, $to]);
+            })
+            ->when($from && !$to, function ($query) use ($from) {
+                return $query->whereDate('created_at', '>=', $from);
+            })
+            ->when($to && !$from, function ($query) use ($to) {
+                return $query->whereDate('created_at', '<=', $to);
+            })
+            ->with('organizations', function ($query) {
+                $query->select('id', 'name'); // Select the id and name columns from the organizations table
+            })
+            ->with('vehiclesTypes', function ($query) {
+                $query->select('id', 'name'); // Select the id and name columns from the vehicles_types table
+            })
+            ->get();
+
+        // Return the filtered records to the view
+        return $records;
+    }
+
+
 
     /**
      * Show the form for creating a new resource.
@@ -92,8 +149,13 @@ class VehicleController extends Controller
             'veh_license_plate.mimes' => 'The image must be a JPEG or PNG file',
         ]);
 
-        $imageFront = $request->file('veh_front_pic');
-        $imageNumber = $request->file('veh_license_plate');
+        if ($request->hasFile('veh_front_pic')) {
+            $imageFront = $request->file('veh_front_pic');
+        }
+
+        if ($request->hasFile('veh_license_plate')) {
+            $imageNumber = $request->file('veh_license_plate');
+        }
 
         $user = Auth::user();
         $vehicle = new Vehicle();
@@ -101,8 +163,8 @@ class VehicleController extends Controller
         $vehicle->o_id   = $request->o_id;
         $vehicle->v_type_id    = $request->v_type_id;
         $vehicle->number   = $request->number;
-        $vehicle->front_pic   = uploadImage($imageFront, 'vehicles');
-        $vehicle->number_pic   = uploadImage($imageNumber, 'vehicles');
+        $vehicle->front_pic   = ($imageFront) ? uploadImage($imageFront, 'vehicles') : null;
+        $vehicle->number_pic   = ($imageNumber) ?  uploadImage($imageNumber, 'vehicles') : null;
         if ($vehicle->save()) {
             return redirect()->route('vehicle.index')
                 ->with('success', 'Vehicle created successfully.');
@@ -152,8 +214,15 @@ class VehicleController extends Controller
         $vehicle = Vehicle::find($request->id);
         $user = Auth::user();
 
-        removeImage($vehicle->front_pic_name, 'vehicles');
-        removeImage($vehicle->number_pic_name, 'vehicles');
+        if ($request->hasFile('veh_front_pic')) {
+            removeImage($vehicle->front_pic_name, 'vehicles');
+            $imageFront = $request->file('veh_front_pic');
+        }
+
+        if ($request->hasFile('veh_license_plate')) {
+            removeImage($vehicle->number_pic_name, 'vehicles');
+            $imageNumber = $request->file('veh_license_plate');
+        }
 
         $imageFront = $request->file('veh_front_pic');
         $imageNumber = $request->file('veh_license_plate');
@@ -162,8 +231,8 @@ class VehicleController extends Controller
         $vehicle->o_id   = $request->o_id;
         $vehicle->v_type_id    = $request->v_type_id;
         $vehicle->number   = $request->number;
-        $vehicle->front_pic   = uploadImage($imageFront, 'vehicles');
-        $vehicle->number_pic   = uploadImage($imageNumber, 'vehicles');
+        $vehicle->front_pic   = ($imageFront) ? uploadImage($imageFront, 'vehicles') : $vehicle->front_pic;
+        $vehicle->number_pic   = ($imageNumber) ?  uploadImage($imageNumber, 'vehicles') : $vehicle->number_pic;
 
         if ($vehicle->save()) {
             return redirect()->route('vehicle.index')
@@ -204,5 +273,38 @@ class VehicleController extends Controller
                 'status' => 'error'
             ]);
         }
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function multiDelete(Request $request)
+    {
+        try {
+            DB::transaction(function () use ($request) {
+                foreach ($request->vehicle_ids as $vehicle_id) {
+                    $delete = Vehicle::where('id', $vehicle_id)->delete();
+                    if (!$delete) {
+                        throw new \Exception('Error updating schedule.');
+                    }
+                }
+            });
+            return redirect()->route('vehicle.index')
+                ->with('success', 'Vehicles deleted successfully.');
+        } catch (\Exception $e) {
+            return redirect()->route('vehicle.index')
+                ->with('error', 'Error occured while Vehicle deletion.');
+        }
+        // $delete = Vehicle::whereIn($request->vehicle_ids)->delete();
+        // if ($delete) {
+        //     return redirect()->route('vehicle.index')
+        //     ->with('success', 'Vehicles deleted successfully.');
+        // } else {
+        //     return redirect()->route('vehicle.index')
+        //     ->with('error', 'Error occured while Vehicle deletion.');
+        // }
     }
 }

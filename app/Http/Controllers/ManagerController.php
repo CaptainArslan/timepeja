@@ -195,7 +195,7 @@ class ManagerController extends Controller
             $manager->phone         = $request->input('man_phone');
             $manager->address       = $request->input('man_address');
             $manager->otp           = substr(uniqid(), -4);
-            $manager->picture       = saveImageGetName($request, 'man_pic', 'managers/');
+            $manager->picture       = uploadImage($request->file('man_pic'), 'managers/');
             $manager_save = $manager->save();
             if ($manager_save) {
                 $financials = new Financials();
@@ -346,7 +346,6 @@ class ManagerController extends Controller
     protected function filterReport($request)
     {
         $query = Trip::query();
-
         // Add date range constraint if both dates are provided
         $query->when($request->input('from') && $request->input('to'), function ($query) use ($request) {
             $query->whereBetween('created_at', [$request->input('from'), $request->input('to')]);

@@ -16,6 +16,9 @@ class Trip extends Model
     const STATUS_COMPLETED = 'completed';
     const STATUS_DELAY = 'delay';
 
+    const IS_DELAYED = 0;
+    const IS_NOT_DELAYED = 1;
+
 
     protected $fillable = [
         'o_id',

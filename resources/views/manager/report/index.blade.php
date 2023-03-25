@@ -45,12 +45,13 @@
                         </div>
                         <div class="col-md-2">
                             <label for="selecttype">Select</label>
-                            <select class="form-control" data-toggle="select2" name="type" data-width="100%" id="type" required onchange="get_option()">
-                                <option value="" selected>Select</option>
-                                <option value="driver">Driver</option>
-                                <option value="vehicle">Vehicle</option>
-                                <option value="route">Route</option>
+                            <select class="form-control" data-toggle="select2" name="type" data-width="100%" id="type" onchange="get_option()" required>
+                                <option value="" @if(!request()->input('type')) selected @endif>Select</option>
+                                <option value="driver" @if(request()->input('type') == 'driver') selected @endif>Driver</option>
+                                <option value="vehicle" @if(request()->input('type') == 'vehicle') selected @endif>Vehicle</option>
+                                <option value="route" @if(request()->input('type') == 'route') selected @endif>Route</option>
                             </select>
+
                         </div>
                         <div class="col-md-3">
                             <label for="date-1">From</label>
@@ -86,19 +87,19 @@
                 <div class="col-2">
                     <h4 class="header-title">Driver</h4>
                 </div>
-                <div class="col-7">
+                {{-- <div class="col-7">
                     <div class="row">
                         <div class="col-md-6">
                             <input class="form-control" id="" type="text" value="123456 - branch - Punjab University" name="organization" style="font-weight: bold;" readonly>
                         </div>
-                        <!-- <div class="col-md-3">
+                        <div class="col-md-3">
                             <input class="form-control" id="example-date-1" type="date" name="date">
                         </div>
                         <div class="col-md-3">
                             <input class="form-control" id="example-date" type="date" name="date">
-                        </div> -->
+                        </div> 
                     </div>
-                </div>
+                </div> --}}
             </div>
             <div class="card-body">
                 <table id="datatable-buttons" class="table table-striped dt-responsive nowrap w-100">
@@ -143,22 +144,22 @@
                 <div class="col-2">
                     <h4 class="header-title">Vehicles</h4>
                 </div>
-                <div class="col-7">
+                {{-- <div class="col-7">
                     <div class="row">
                         <div class="col-md-6">
                             <input class="form-control" id="" type="text" value="123456 - branch - Punjab University" name="organization" style="font-weight: bold;" readonly>
                         </div>
-                        <!-- <div class="col-md-3">
+                        <div class="col-md-3">
                             <input class="form-control" id="example-date-1" type="date" name="date">
                         </div>
                         <div class="col-md-3">
                             <input class="form-control" id="example-date" type="date" name="date">
-                        </div> -->
+                        </div>
                     </div>
-                </div>
+                </div> --}}
             </div>
             <div class="card-body">
-                <table id="basic-datatable" class="table table-striped dt-responsive nowrap w-100">
+                <table id="datatable-buttons" class="table table-striped dt-responsive nowrap w-100">
                     <thead>
                         <tr>
                             <th>Date</th>
@@ -208,19 +209,19 @@
                 <div class="col-2">
                     <h4 class="header-title">Routes</h4>
                 </div>
-                <div class="col-7">
+                {{-- <div class="col-7">
                     <div class="row">
                         <div class="col-md-6">
                             <input class="form-control" id="" type="text" value="123456 - branch - Punjab University" name="organization" style="font-weight: bold;" readonly>
                         </div>
-                        <!-- <div class="col-md-3">
+                        <div class="col-md-3">
                             <input class="form-control" id="example-date-1" type="date" name="date">
                         </div>
                         <div class="col-md-3">
                             <input class="form-control" id="example-date" type="date" name="date">
-                        </div> -->
+                        </div>
                     </div>
-                </div>
+                </div> --}}
             </div>
             <div class="card-body">
                 <table id="datatable-buttons" class="table table-striped dt-responsive nowrap w-100">
@@ -256,6 +257,11 @@
 <script src="{{ asset('/libs/select2/js/select2.min.js') }}"></script>
 @include('partials.datatable_js')
 <script>
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
     function get_option() {
         // $('#selection').empty();
         let type = $('#type').val();
@@ -284,6 +290,7 @@
         }
     }
 
+    /**@abstract */
     function getOption(res, type) {
         let html = '<option value="">All</option>';
         res.map((item) => {
@@ -292,6 +299,8 @@
         // console.log(html);
         return html
     }
+
+    get_option()
 </script>
 
 <!-- Init js-->
