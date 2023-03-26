@@ -26,11 +26,12 @@
         </div>
     </div>
 </div>
+<!-- Filters -->
 <div class="row">
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <form action="" method="post" id="filter_form">
+                <form action="{{ route('vehicle.index') }}" method="post" id="filter_form">
                     @csrf
                     <div class="row">
                         <div class="col-md-5">
@@ -38,11 +39,7 @@
                             <select class="form-select select2_filter" id="o_id" name="o_id" required>
                                 <option value="">Select</option>
                                 @forelse ($organizations as $organization)
-                                @if (request()->input('o_id'))
-                                <option value="{{ $organization->id }}" selected>{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
-                                @else
-                                <option value="{{ $organization->id }}">{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
-                                @endif
+                                <option value="{{ $organization->id }}" {{ $organization->id == request()->input('o_id') ? 'selected' : '' }}>{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
                                 @empty
                                 <option value="">Please select</option>
                                 @endforelse

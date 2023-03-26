@@ -36,7 +36,7 @@
                             <select class="form-control" data-toggle="select2" name="o_id" data-width="100%" id="organization">
                                 <option value="" selected>Select</option>
                                 @forelse ($organizations as $organization)
-                                <option value="{{ $organization->id }}" {{ in_array($organization->id, old('dropdown', [])) ? 'selected' : '' }}>
+                                <option value="{{ $organization->id }}" {{ $organization->id == request()->input('o_id') ? 'selected' : '' }}>
                                     {{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}
                                 </option>
                                 @empty

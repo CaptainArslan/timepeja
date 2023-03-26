@@ -26,18 +26,21 @@
         </div>
     </div>
 </div>
+
+<!-- Filters -->
 <div class="row">
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <form action="#" id="filterselect2" method="GET">
+                <form action="{{ route('driver.index') }}" id="filterselect2" method="post" >
+                    @csrf
                     <div class="row">
                         <div class="col-md-5">
                             <label for="organization">Select Oganization</label>
-                            <select class="form-control filterselect2" id="organization" data-toggle="select2" data-width="100%">
+                            <select class="form-control filterselect2" id="organization" name="o_id" data-toggle="select2" data-width="100%">
                                 <option value="">Select</option>
                                 @forelse ($organizations as $organization)
-                                <option value="{{ $organization->id }}">{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
+                                <option value="{{ $organization->id }}" {{ $organization->id == request()->input('o_id') ? 'selected' : '' }}>{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
                                 @empty
                                 <option value="">Please select</option>
                                 @endforelse
@@ -63,7 +66,7 @@
                         </div>
                         <div class="col-md-1">
                             <label for="publish_schedule">.</label>
-                            <button type="button" class="btn btn-success" name="submit" value="filter" id="publish_schedule"> Submit
+                            <button type="submit" class="btn btn-success" name="filter" value="filter" id="publish_schedule"> Submit
                             </button>
                         </div>
                     </div>
@@ -138,7 +141,8 @@
                                 <td>{{ $driver->otp }}</td>
                                 <td>
                                     <span class="badge  @if($driver->status) bg-success @else bg-danger @endif ">
-                                        @if($driver->status) Active @else Deactive @endif</span></td>
+                                        @if($driver->status) Active @else Deactive @endif</span>
+                                </td>
                                 <td>
                                     <input type="hidden" class="db_org_name" value="{{ $driver->organization['id'] }}">
                                     <input type="hidden" class="db_name" value="{{ $driver->name }}">
@@ -226,13 +230,13 @@
                                         <div class="d-flex">
                                             <div class="col-6">
                                                 <div class="mt-1 px-1">
-                                                    <input type="file" data-plugins="dropify" data-default-file="" name="cnic_front" id="cnic_front" data-allowed-file-extensions='png jpg jpeg' required />
+                                                    <input type="file" accept="image/*" data-plugins="dropify" data-default-file="" name="cnic_front" id="cnic_front" data-allowed-file-extensions='png jpg jpeg' required />
                                                     <p class="text-muted text-center mt-2 mb-0">Cnic Front</p>
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="mt-1 px-1">
-                                                    <input type="file" data-plugins="dropify" data-default-file="" name="cnic_back" id="cnic_back" data-allowed-file-extensions='png jpg jpeg' required />
+                                                    <input type="file" accept="image/*" data-plugins="dropify" data-default-file="" name="cnic_back" id="cnic_back" data-allowed-file-extensions='png jpg jpeg' required />
                                                     <p class="text-muted text-center mt-2 mb-0">Cnic Back</p>
                                                 </div>
                                             </div>
@@ -257,13 +261,13 @@
                                         <div class="d-flex">
                                             <div class="col-6">
                                                 <div class="mt-1 px-1">
-                                                    <input type="file" data-plugins="dropify" data-default-file="" name="license_front" id="license_front" data-allowed-file-extensions='png jpg jpeg' required />
+                                                    <input type="file" accept="image/*" data-plugins="dropify" data-default-file="" name="license_front" id="license_front" data-allowed-file-extensions='png jpg jpeg' required />
                                                     <p class="text-muted text-center mt-2 mb-0">License Front</p>
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="mt-1 px-1">
-                                                    <input type="file" data-plugins="dropify" data-default-file="" name="license_back" id="license_back" data-allowed-file-extensions='png jpg jpeg' required />
+                                                    <input type="file" accept="image/*" data-plugins="dropify" data-default-file="" name="license_back" id="license_back" data-allowed-file-extensions='png jpg jpeg' required />
                                                     <p class="text-muted text-center mt-2 mb-0">License Back</p>
                                                 </div>
                                             </div>
@@ -301,7 +305,7 @@
                             <form action="{{ route('driver.edit') }}" id="edit_driver_form" method="post" enctype="multipart/form-data">
                                 @csrf
                                 {{-- @method('PUT') --}}
-                                <input type="hidden" name="edit_id" class="edit_id" id="edit_id">
+                                <input type="hidden" class="form-control" name="id" class="edit_id" id="edit_id">
                                 <div class="row">
                                     <div class="col-lg-6">
                                         <div class="mb-3">
@@ -353,13 +357,13 @@
                                         <div class="d-flex">
                                             <div class="col-6">
                                                 <div class="mt-1 px-1">
-                                                    <input type="file" data-plugins="dropify" data-default-file="" name="cnic_front" id="edit_cnic_front" data-allowed-file-extensions='png jpg jpeg' />
+                                                    <input type="file" accept="image/*" data-plugins="dropify" data-default-file="" name="cnic_front" id="edit_cnic_front" data-allowed-file-extensions='png jpg jpeg' />
                                                     <p class="text-muted text-center mt-2 mb-0">Cnic Front</p>
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="mt-1 px-1">
-                                                    <input type="file" data-plugins="dropify" data-default-file="" name="edit_cnic_back" id="cnic_back" data-allowed-file-extensions='png jpg jpeg' />
+                                                    <input type="file" accept="image/*" data-plugins="dropify" data-default-file="" name="cnic_back" id="edit_cnic_back" data-allowed-file-extensions='png jpg jpeg' />
                                                     <p class="text-muted text-center mt-2 mb-0">Cnic Back</p>
                                                 </div>
                                             </div>
@@ -370,13 +374,13 @@
                                         <div class="d-flex">
                                             <div class="col-6">
                                                 <div class="mt-1 px-1">
-                                                    <input type="file" data-plugins="dropify" data-default-file="" name="license_front" id="edit_license_front" data-allowed-file-extensions='png jpg jpeg' />
+                                                    <input type="file" accept="image/*" data-plugins="dropify" data-default-file="" name="license_front" id="edit_license_front" data-allowed-file-extensions='png jpg jpeg' />
                                                     <p class="text-muted text-center mt-2 mb-0">License Front</p>
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="mt-1 px-1">
-                                                    <input type="file" data-plugins="dropify" data-default-file="" name="license_back" id="edit_license_back" data-allowed-file-extensions='png jpg jpeg' />
+                                                    <input type="file" accept="image/*" data-plugins="dropify" data-default-file="" name="license_back" id="edit_license_back" data-allowed-file-extensions='png jpg jpeg' />
                                                     <p class="text-muted text-center mt-2 mb-0">License Back</p>
                                                 </div>
                                             </div>
@@ -412,7 +416,7 @@
         /**
          * this will handle multiple form delete
          */
-        $('#driverForm').on('submit', function(e) {
+        $('#driverForm, #edit_driver_form').on('submit', function(e) {
             e.preventDefault(); // Prevent the form from submitting normally
             const form = this; // Store the form element in a variable
             // Display a SweetAlert confirmation dialog

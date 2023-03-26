@@ -136,7 +136,7 @@ class Manager extends Authenticatable implements JWTSubject
      */
     public function getPhoneAttribute($value)
     {
-        return substr($value, 0, 4) . '-' . substr($value, 8);
+        return substr($value, 0, 4) . '-' . substr($value, 4, 8);
     }
 
     /**

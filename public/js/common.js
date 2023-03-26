@@ -3,6 +3,7 @@ $(document).ready(function () {
     $("input[required], select[required], textarea[required]")
         .prev("label")
         .append('<span class="required-asterisk text-danger"> * </span>');
+    
 
     // this for to select today date
     var today = new Date();

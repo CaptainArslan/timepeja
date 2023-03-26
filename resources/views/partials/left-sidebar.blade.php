@@ -198,7 +198,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="{{ route('driver.trip') }}">Upcoming Trips</a>
+                                <a href="{{ route('driver.upcomingTrips') }}">Upcoming Trips</a>
                             </li>
                         </ul>
                     </div>
