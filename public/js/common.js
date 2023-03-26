@@ -164,3 +164,19 @@ function formatTime(timeString) {
     const hour = + hourString % 24;
     return (hour % 12 || 12) + " : " + minute + (hour < 12 ? " AM " : " PM ");
 }
+
+
+/**
+ * 
+ * @param {*} select2class 
+ * @param {*} formid 
+ */
+function initializeSelect2(select2class, formid){
+    $(select2class).select2({
+        dropdownParent: $(formid), // modal : id modal
+        placeholder: "Select",
+        allowClear: true,
+        width: "100%",
+        height: "30px",
+    });
+}

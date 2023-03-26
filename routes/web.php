@@ -59,9 +59,16 @@ Route::group(['middleware' => 'auth'], function () {
     /**
      * [driver]
      */
-    Route::resource('/driver', DriverController::class);
+    // Route::resource('/driver', DriverController::class);
     Route::prefix('driver')->name('driver.')->group(function () {
+        Route::match(['get', 'post'], '/', [DriverController::class, 'index'])->name('index');
+        Route::match(['get', 'post'], '/create', [DriverController::class, 'create'])->name('create');
+        Route::post('/store', [DriverController::class, 'store'])->name('store');
+        Route::post('/edit', [DriverController::class, 'edit'])->name('edit');
+        Route::post('/delete/{id}', [DriverController::class, 'destroy'])->name('delete');
+        Route::post('multidelete', [DriverController::class, 'multiDelete'])->name('multiDelete');
     });
+
     Route::match(['get', 'post'], 'upcoming-trips', [DriverController::class, 'upcomingTrips'])->name('driver.trip');
 
     /**
@@ -120,6 +127,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/profile', function () {
         return view('auth.profile');
     })->name('profile');
+
     // Route::get('/transpot/schedule', function () { return view('manager.transport_scheduled'); })->name('transpot.schedule');
     // Route::get('/awaiting/approval', function () {
     //     return view('manager.approval.awaiting_approved_form');

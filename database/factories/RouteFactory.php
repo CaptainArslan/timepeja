@@ -20,7 +20,7 @@ class RouteFactory extends Factory
             'o_id' => Organization::inRandomOrder()->first()->id,
             'u_id' => 1,
             'name' => $this->faker->name,
-            'number' => substr(uniqid(), -4),
+            'number' => rand(1000, 9999),
             'from' => $this->faker->city(),
             'from_longitude' => $this->faker->longitude,
             'from_latitude' => $this->faker->latitude,

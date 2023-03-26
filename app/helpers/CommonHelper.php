@@ -90,8 +90,10 @@ function uploadImage($image, $folderName)
         throw new \Exception('Invalid image.');
     }
 
+    $extension = $image->getClientOriginalExtension();
+
     // Generate a unique filename for the image
-    $filename = time() . '_' . $image->getClientOriginalName();
+    $filename = uniqid() . '_' . time() . '.' . $extension;
 
     if (!is_dir(public_path('uploads/' . $folderName))) {
         // create the directory if it does not exist

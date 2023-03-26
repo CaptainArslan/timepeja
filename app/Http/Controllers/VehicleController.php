@@ -298,13 +298,5 @@ class VehicleController extends Controller
             return redirect()->route('vehicle.index')
                 ->with('error', 'Error occured while Vehicle deletion.');
         }
-        // $delete = Vehicle::whereIn($request->vehicle_ids)->delete();
-        // if ($delete) {
-        //     return redirect()->route('vehicle.index')
-        //     ->with('success', 'Vehicles deleted successfully.');
-        // } else {
-        //     return redirect()->route('vehicle.index')
-        //     ->with('error', 'Error occured while Vehicle deletion.');
-        // }
     }
 }

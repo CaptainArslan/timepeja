@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Driver extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
         'o_id',
@@ -31,8 +32,56 @@ class Driver extends Model
         'online_status',
     ];
 
-    public function organizations()
+    public function organization()
     {
         return $this->belongsTo(Organization::class, 'o_id', 'id');
+    }
+
+    // ----------------------------------------------------------------
+    // ------------------ Accessors & Mutator -------------------------
+    // ----------------------------------------------------------------
+
+    /**
+     * Get the front picture of the cnic.
+     *
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getCnicFrontPicAttribute()
+    {
+        return $this->attributes['cnic_front_pic'] ? asset('uploads/drivers/cnic/' . $this->attributes['cnic_front_pic']) : null;
+    }
+
+    /**
+     * Get the back picture of the cnic.
+     *
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getCnicBackPicAttribute()
+    {
+        return $this->attributes['cnic_back_pic'] ? asset('uploads/drivers/cnic/' . $this->attributes['cnic_back_pic']) : null;
+    }
+
+    /**
+     * Get the front picture of the cnic.
+     *
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getLicenseNoFrontPicAttribute()
+    {
+        return $this->attributes['license_no_front_pic'] ? asset('uploads/drivers/license/' . $this->attributes['license_no_front_pic']) : null;
+    }
+
+    /**
+     * Get the back picture of the cnic.
+     *
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getLicenseNoBackPicAttribute()
+    {
+        return $this->attributes['license_no_back_pic'] ? asset('uploads/drivers/license/' . $this->attributes['license_no_back_pic']) : null;
     }
 }

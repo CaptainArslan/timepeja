@@ -191,7 +191,7 @@
                                         </div>
                                         <div class="col-12">
                                             <div class="mt-1">
-                                                <input type="file" accept="image/*" data-allowed-file-extensions="jpg jpeg png" data-plugins="dropify" name="veh_front_pic" data-default-file="/images/small/img-2.jpg" />
+                                                <input type="file" accept="image/*" data-allowed-file-extensions="jpg jpeg png" data-plugins="dropify" name="veh_front_pic" data-default-file="" />
                                                 <p class="text-muted text-center mt-2 mb-0">Vehicle Picture from front
                                                 </p>
                                             </div>
@@ -204,7 +204,7 @@
                                         </div>
                                         <div class="col-12">
                                             <div class="mt-1">
-                                                <input type="file" accept="image/*" data-allowed-file-extensions="jpg jpeg png" data-plugins="dropify" name="veh_license_plate" data-default-file="/images/small/img-2.jpg" />
+                                                <input type="file" accept="image/*" data-allowed-file-extensions="jpg jpeg png" data-plugins="dropify" name="veh_license_plate" data-default-file="" />
                                                 <p class="text-muted text-center mt-2 mb-0">Vehicle license plate
                                                     picture</p>
                                             </div>
@@ -265,7 +265,7 @@
                                         </div>
                                         <div class="col-12">
                                             <div class="mt-1">
-                                                <input type="file" data-plugins="dropify" accept="image/*" data-allowed-file-extensions="jpg jpeg png" name="veh_front_pic" id="edit_front_pic" data-default-file="{{ asset('/images/small/img-2.jpg')}}" />
+                                                <input type="file" data-plugins="dropify" accept="image/*" data-allowed-file-extensions="jpg jpeg png" name="veh_front_pic" id="edit_front_pic" data-default-file="" />
                                                 <p class="text-muted text-center mt-2 mb-0">Vehicle Picture from front
                                                 </p>
                                             </div>
@@ -278,7 +278,7 @@
                                         </div>
                                         <div class="col-12">
                                             <div class="mt-1">
-                                                <input type="file" data-plugins="dropify" accept="image/*" data-allowed-file-extensions="jpg jpeg png" name="veh_license_plate" id="edit_number_pic" data-default-file="{{ asset('/images/small/img-2.jpg')}}" />
+                                                <input type="file" data-plugins="dropify" accept="image/*" data-allowed-file-extensions="jpg jpeg png" name="veh_license_plate" id="edit_number_pic" data-default-file="" />
                                                 <p class="text-muted text-center mt-2 mb-0">Vehicle license plate
                                                     picture</p>
                                             </div>

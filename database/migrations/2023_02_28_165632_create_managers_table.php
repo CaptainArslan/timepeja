@@ -21,7 +21,7 @@ class CreateManagersTable extends Migration
             $table->string('email')->unique()->nullable();
             $table->string('phone')->unique();
             $table->string('password');
-            $table->string('otp')->unique();
+            $table->string('otp');
             $table->string('token')->unique()->nullable();
             $table->longText('picture')->nullable();
             $table->longText('address')->nullable();

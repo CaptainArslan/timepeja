@@ -15,7 +15,7 @@
         <div class="page-title-box d-flex justify-content-between">
             <h4 class="page-title">Organizations {{ old('o_id') }}</h4>
             <div class="page-title">
-                <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#create_modal"> Add Organization </button>
+                <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#createModal"> Add Organization </button>
             </div>
         </div>
     </div>
@@ -31,7 +31,7 @@
                     <div class="row">
                         <div class="col-md-4">
                             <label for="organization">Select Oganization</label>
-                            <select class="form-control select2_filter" id="organization_filter" name="o_id" required>
+                            <select class="form-control select2_filter" id="organization_filter" name="o_id">
                             @include('partials/organization_dropdown_option')
                             </select>
                         </div>
@@ -54,7 +54,7 @@
     </div> <!-- end col-->
 </div>
 
-<!-- end page title -->
+<!-- Table -->
 <div class="row">
     <div class="col-12">
         <div class="card">
@@ -120,7 +120,7 @@
                             <td> {{ $organization->manager['phone'] ?? ''}} </td>
                             <td> {{ $organization->manager['email'] ?? ''}} </td>
                             <td> {{ $organization->manager['address'] ?? ''}} </td>
-                            <td> {{ $organization->manager['picture'] ?? ''}} </td>
+                            <td> <img src="{{ $organization->manager['picture'] }}" alt="">  </td>
                             <td> {{ $organization->head_name}} </td>
                             <td> {{ $organization->head_email}} </td>
                             <td> {{ $organization->head_phone}} </td>
@@ -147,7 +147,7 @@
                                 <input type="hidden" name="" id="" value="{{ $organization->head_phone}}" class="db_head_phone">
                                 <input type="hidden" name="" id="" value="{{ $organization->head_address}}" class="db_head_address">
                                 <!-- <div class="btn-group btn-group-sm" style="float: none;">
-                                    <button type="button" class="tabledit-edit-button btn btn-success" style="float: none;" data-bs-toggle="modal" data-bs-target="#create_modal">
+                                    <button type="button" class="tabledit-edit-button btn btn-success" style="float: none;" data-bs-toggle="modal" data-bs-target="#createModal">
                                         <span class="mdi mdi-pencil"></span>
                                     </button>
                                 </div> -->
@@ -169,11 +169,11 @@
 </div>
 <!-- end row-->
 <!-- Modal -->
-<div class="modal fade" id="create_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="create_modalLabel" aria-hidden="true">
+<div class="modal fade" id="createModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
             <div class="modal-header bg-light">
-                <h5 class="modal-title" id="create_modalLabel">Add Organization</h5>
+                <h5 class="modal-title" id="createModalLabel">Add Organization</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -504,21 +504,13 @@
             $('#organization_creation')[0].reset();
         });
 
-        $(".select2").select2({
-            placeholder: "Select",
-            allowClear: true,
-            dropdownParent: $("#create_modal "), // modal : id modal
-            width: "100%",
-            height: "30px",
+        // this function is call when add route modal open
+        $('#createModal').on('shown.bs.modal', function() {
+            initializeSelect2(".select2", "#createModal")
         });
 
-        $(".select2_filter").select2({
-            placeholder: "Select",
-            allowClear: true,
-            dropdownParent: $("#filter_form "), // modal : id modal
-            width: "100%",
-            height: "30px",
-        });
+        initializeSelect2(".select2_filter", "#filter_form");
+
     });
 
     function deleteOrganization(param) {

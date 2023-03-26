@@ -57,8 +57,7 @@ class ManagerController extends Controller
                 'o_id'           => 'nullable|numeric',
                 'from'           => 'nullable|date',
                 'to'             => 'nullable|date|after:from',
-            ],
-            [
+            ], [
                 'to.after' => "The registration to date must be a date after registration from.",
             ]
         );
@@ -68,28 +67,36 @@ class ManagerController extends Controller
         $to = $request->input('to');
 
         // Start with base query
-        $query = Organization::query();
-
-        // Add organization ID constraint if provided
-        if ($oId) {
-            $query->where('id', $oId);
-        }
-        // Add date range constraint if both dates are provided
-        if ($from && $to) {
-            $query->whereBetween('created_at', [$from, $to]);
-        } else {
-            // If only one date is provided, add an equal constraint
-            if ($from) {
-                $query->where('created_at', '>=', $from);
-            } elseif ($to) {
-                $query->where('created_at', '<=', $to);
-            }
-        }
-        // Execute the query
-        $organizations = $query->with('manager', 'city', 'state', 'organizationType')
+        $result = Organization::when($oId, function ($query, $oId) {
+            return $query->where('id', $oId);
+        })
+            ->when($from && $to, function ($query) use ($from, $to) {
+                return $query->whereBetween('created_at', [$from, $to]);
+            })
+            ->when($from && !$to, function ($query) use ($from) {
+                return $query->whereDate('created_at', '>=', $from);
+            })
+            ->when($to && !$from, function ($query) use ($to) {
+                return $query->whereDate('created_at', '<=', $to);
+            })
+            // ->with('organizations', function ($query) {
+            //     $query->select('id', 'name');
+            // })
+            ->with('manager', function ($query) {
+                $query->select('id', 'o_id', 'name', 'email', 'phone', 'otp', 'picture', 'address', 'about', 'status', 'created_at');
+            })
+            ->with('city', function ($query) {
+                $query->select('id', 'name');
+            })
+            ->with('state', function ($query) {
+                $query->select('id', 'name');
+            })
+            ->with('organizationType', function ($query) {
+                $query->select('id', 'name');
+            })
             ->get();
-        // dd($organizations->toArray());
-        return $organizations;
+            // dd($result->toArray());
+        return $result;
     }
 
     /**
