@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Manager;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,7 +16,7 @@ class CreateManagersTable extends Migration
     {
         Schema::create('managers', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('o_id')->index('o_id') ;
+            $table->unsignedBigInteger('o_id')->index('o_id');
             $table->string('uid');
             $table->string('name');
             $table->string('email')->unique()->nullable();
@@ -24,11 +25,11 @@ class CreateManagersTable extends Migration
             $table->string('otp');
             $table->string('token')->unique()->nullable();
             $table->longText('picture')->nullable();
-            $table->longText('address')->nullable();
             $table->longText('about')->nullable();
-            $table->integer('status');
+            $table->tinyInteger('status')->default(Manager::STATUS_ACTIVE);
             $table->timestamps();
             $table->softDeletes();
+            $table->longText('address')->nullable();
             $table->foreign('o_id')->references('id')->on('organizations')->onDelete('cascade')->onUpdate('cascade');
         });
     }

@@ -26,7 +26,7 @@ class VehicleFactory extends Factory
             'back_pic' => $this->faker->imageUrl($width = 640, $height = 480, 'vehicle'),
             'number_pic' => $this->faker->imageUrl($width = 640, $height = 480, 'number plates'),
             'status' => 1,
-            'created_at' => Carbon::now(),
+            'created_at' => $this->faker->time(),
         ];
     }
 }

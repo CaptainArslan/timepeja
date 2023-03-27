@@ -88,7 +88,7 @@
                 <div class="card-header">
                     <div class="d-flex justify-content-around">
                         <div class="col-2">
-                            <h4 class="header-title">Vehicle</h4>
+                            <h4 class="header-title">Drivers</h4>
                         </div>
                         <div class="col-8">
                             <!-- selection show here -->
@@ -107,6 +107,7 @@
                                     <input type="checkbox" class="parent_checkbox">
                                 </th>
                                 <th>Date</th>
+                                <th>Otp</th>
                                 <th>Organization Name</th>
                                 <th>Name</th>
                                 <th>Phone No</th>
@@ -116,7 +117,6 @@
                                 <th>CNIC Back</th>
                                 <th>License Front</th>
                                 <th>License Back</th>
-                                <th>OTP</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
@@ -129,6 +129,7 @@
                                     <input type="checkbox" class="child_checkbox" name="driver_ids[]" value="{{ $driver->id }}">
                                 </td>
                                 <td> {{ formatDate($driver->created_at) }} </td>
+                                <td>{{ $driver->otp }}</td>
                                 <td> {{ $driver->organization['name'] }} </td>
                                 <td> {{ $driver->id }} {{ $driver->name }} </td>
                                 <td> {{ $driver->phone }} </td>
@@ -138,7 +139,6 @@
                                 <td> <img src="{{ $driver->cnic_back_pic }}" alt="cnic back" height="50" width="50"> </td>
                                 <td> <img src="{{ $driver->license_no_front_pic }}" alt="licsence front" height="50" width="50"> </td>
                                 <td> <img src="{{ $driver->license_no_back_pic }}" alt="License Back" height="50" width="50"> </td>
-                                <td>{{ $driver->otp }}</td>
                                 <td>
                                     <span class="badge  @if($driver->status) bg-success @else bg-danger @endif ">
                                         @if($driver->status) Active @else Deactive @endif</span>

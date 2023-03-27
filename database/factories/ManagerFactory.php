@@ -20,7 +20,7 @@ class ManagerFactory extends Factory
             'o_id' => Organization::inRandomOrder()->first()->id,
             'name' => $this->faker->name(),
             'email' => $this->faker->safeEmail(),
-            'phone' => $this->faker->phoneNumber(),
+            'phone' => '03' . $this->faker->regexify('/^[0-9+]{2}-[0-9+]{7}$/'),
             'password' => Hash::make('12345678'),
             'token' => Str::random(60),
             'otp' => rand(1000, 9999),

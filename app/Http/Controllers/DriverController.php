@@ -128,6 +128,8 @@ class DriverController extends Controller
         $driver->license_no = $request->input('license');
         $driver->otp = substr(uniqid(), -4);
         $driver->status = $request->input('status');
+        $driver->profile_picture = null;
+        $driver->address = null;
 
         $driver->cnic_front_pic = ($request->file('cnic_front')) ?
             uploadImage($request->file('cnic_front'), 'drivers/cnic')
@@ -169,21 +171,20 @@ class DriverController extends Controller
      * @param  \App\Models\Driver  $driver
      * @return \Illuminate\Http\Response
      */
-    public function edit(Request $request, Driver $driver)
+    public function edit(Request $request)
     {
-        // dd($request->all());
         $request->validate([
-            'id' => 'required|numeric',
-            'o_id' => 'required|numeric',
-            'name' => 'required|string',
+            'id' => 'required|numeric|trim',
+            'o_id' => 'required|numeric|trim',
+            'name' => 'required|string|trim',
             'phone' => 'required|string|unique:drivers,phone,' . $request->id,
             'cnic' => 'required|string|unique:drivers,cnic,' . $request->id,
             'license' => 'required|string|unique:drivers,license_no,' . $request->id,
-            'status' => 'required|numeric',
-            'cnic_front' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'cnic_back' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'license_front' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'license_back' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'status' => 'required|numeric|trim',
+            'cnic_front' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048|trim',
+            'cnic_back' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048|trim',
+            'license_front' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048|trim',
+            'license_back' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048|trim',
         ], [
             'o_id.required' => 'Organization required'
         ]);
@@ -199,27 +200,38 @@ class DriverController extends Controller
         $driver->otp = substr(uniqid(), -4);
         $driver->status = $request->input('status');
         // dd($driver->cnic_front_pic_name);
+
+        // ----- these function are to remove old picture from the folder
         if ($request->hasFile('cnic_front')) {
-            removeImage($driver->cnic_front_pic_name, 'drivers/cnic/');
+            removeImage($driver->cnic_front_pic_name, 'drivers/cnic');
         }
 
         if ($request->hasFile('cnic_back')) {
-            removeImage($driver->cnic_back_pic_name, 'drivers/cnic/');
+            removeImage($driver->cnic_back_pic_name, 'drivers/cnic');
         }
 
+        if ($request->hasFile('license_front')) {
+            removeImage($driver->license_no_front_pic_name, 'drivers/license');
+        }
+
+        if ($request->hasFile('license_back')) {
+            removeImage($driver->license_no_back_pic_name, 'drivers/license');
+        }
+
+        //  Updating image here if user add new it will update the image otherwise same image
         $driver->cnic_front_pic = ($request->file('cnic_front')) ?
             uploadImage($request->file('cnic_front'), 'drivers/cnic')
-            : null;
+            : $driver->cnic_front_pic_name;
         $driver->cnic_back_pic =  ($request->file('cnic_back')) ?
             uploadImage($request->file('cnic_back'), 'drivers/cnic') :
-            null;
+            $driver->cnic_back_pic_name;
 
         $driver->license_no_front_pic =  ($request->file('license_front')) ?
             uploadImage($request->file('license_front'), 'drivers/license') :
-            null;
+            $driver->license_no_front_pic_name;
         $driver->license_no_back_pic = ($request->file('license_back')) ?
             uploadImage($request->file('license_back'), 'drivers/license') :
-            null;
+            $driver->license_no_back_pic_name;
 
         if ($driver->save()) {
             return redirect()->route('driver.index')

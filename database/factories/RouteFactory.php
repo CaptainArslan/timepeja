@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Organization;
+use App\Models\Route;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Faker\Generator as Faker;
@@ -27,7 +28,7 @@ class RouteFactory extends Factory
             'to' => $this->faker->city(),
             'to_longitude' => $this->faker->longitude,
             'to_latitude' => $this->faker->latitude,
-            'status' => 1,
+            'status' => Route::STATUS_ACTIVE,
             'created_at' => Carbon::now(),
         ];
     }

@@ -2,14 +2,20 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Driver extends Model
+class Driver extends Authenticatable implements JWTSubject
 {
     use HasFactory;
     use SoftDeletes;
+    use Notifiable;
+
+    const STATUS_ONLINE = 1;
+    const STATUS_OFFLINE = 0;
 
     protected $fillable = [
         'o_id',
@@ -19,6 +25,7 @@ class Driver extends Model
         'password',
         'phone',
         'cnic',
+        'profile_picture',
         'cnic_front_pic',
         'cnic_back_pic',
         'cnic_expiry_date',
@@ -30,16 +37,51 @@ class Driver extends Model
         'token',
         'status',
         'online_status',
+        'address',
     ];
 
+
+    // ----------------------------------------------------------------
+    // ------------------ Jwt Auth  -----------------------------------
+    // ----------------------------------------------------------------
+
+    // Rest omitted for brevity
+    /**
+     * Get the identifier that will be stored in the subject claim of the JWT.
+     *
+     * @return mixed
+     */
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    /**
+     * Return a key value array, containing any custom claims to be added to the JWT.
+     *
+     * @return array
+     */
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
+
+
+
+    // ----------------------------------------------------------------
+    // ------------------ Relations -----------------------------------
+    // ----------------------------------------------------------------
+
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
     public function organization()
     {
         return $this->belongsTo(Organization::class, 'o_id', 'id');
     }
 
-
-
-    
 
     // ----------------------------------------------------------------
     // ------------------ Accessors & Mutator -------------------------

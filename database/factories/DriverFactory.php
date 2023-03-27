@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Driver;
 use Illuminate\Support\Str;
 use App\Models\Organization;
 use Illuminate\Support\Carbon;
@@ -23,7 +24,7 @@ class DriverFactory extends Factory
             'name' =>  $this->faker->name(),
             'email' => $this->faker->safeEmail(),
             'password' => Hash::make('12345678'),
-            'phone' => $this->faker->phoneNumber(),
+            'phone' => '03' . $this->faker->regexify('/^[0-9+]{2}-[0-9+]{7}$/'),
             'cnic' => $this->faker->regexify('/^[0-9+]{5}-[0-9+]{7}-[0-9]{1}$/'),
             'cnic_front_pic' => $this->faker->imageUrl($width = 640, $height = 480, 'number plates'),
             'cnic_back_pic' => $this->faker->imageUrl($width = 640, $height = 480, 'number plates'),
@@ -35,7 +36,10 @@ class DriverFactory extends Factory
             'otp' => rand(1000, 9999),
             'token' => Str::random(10),
             'status' => 1,
-            'online_status' => 1,
+            'online_status' => $this->faker->randomElement([
+                Driver::STATUS_ONLINE,
+                Driver::STATUS_OFFLINE
+            ]),
         ];
     }
 }

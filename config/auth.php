@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Driver;
 use App\Models\User;
 use App\Models\Manager;
 
@@ -43,9 +44,13 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
-        'api' => [
+        'manager' => [
             'driver' => 'jwt',
             'provider' => 'manager',
+        ],
+        'driver' => [
+            'driver' => 'jwt',
+            'provider' => 'driversuser',
         ],
     ],
 
@@ -75,6 +80,12 @@ return [
             'driver' => 'eloquent',
             'model' => Manager::class,
         ],
+        'driversuser' => [
+            'driver' => 'eloquent',
+            'model' => Driver::class,
+        ],
+
+        // Default laravel provider
         // 'users' => [
         //     'driver' => 'database',
         //     'table' => 'users',

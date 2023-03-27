@@ -1,15 +1,16 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1;
+namespace App\Http\Controllers\Api\V1\Auth;
 
-use App\Models\Manager;
+use App\Models\Driver;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Http\JsonResponse;
+use App\Http\Controllers\Api\V1\BaseController;
 
-class AuthController extends BaseController
+class DriverAuthController extends BaseController
 {
     /**
      * Create a new AuthController instance.
@@ -22,11 +23,11 @@ class AuthController extends BaseController
     }
 
     /**
-     * [register description]
+     * Driver registration
      *
-     * @param   Request       $request  [$request description]
+     * @param   Request       driver registration request
      *
-     * @return  JsonResponse            [return description]
+     * @return  JsonResponse            return object of driver after registration
      */
     public function register(Request $request): JsonResponse
     {
@@ -62,32 +63,34 @@ class AuthController extends BaseController
             return $this->respondWithError("Please fill the form correctly");
         }
 
-        $manager = Manager::where('phone', $request->phone)
+        $driver = Driver::where('phone', $request->phone)
             ->where('otp', $request->otp)
             ->first();
 
-        if (!$manager) {
+        if (!$driver) {
             return $this->respondWithError("Invalid phone number or verification code");
+        } elseif ($driver->status == 0) {
+            return $this->respondWithError("This driver is blocked. Please contact your manager");
         }
 
-        if (empty($manager->token) && empty($manager->password)) {
-            Manager::where('phone', $request->phone)->update([
+        if (empty($driver->password)) {
+            $driver->where('phone', $request->phone)->update([
                 'password' => Hash::make($request->password),
                 'token' => Str::random(60),
             ]);
-            $manager->makeHidden(['password']);
-            return $this->respondWithSuccess($manager, 'Manager registered successfully', 'REGISTER_API_SUCCESS');
+            $driver->makeHidden(['password']);
+            return $this->respondWithSuccess($driver, 'Driver registered successfully', 'REGISTER_API_SUCCESS');
         } else {
-            return $this->respondWithError('Manager alreasy exist. Please login ');
+            return $this->respondWithError('Driver alreasy exist. Please login ');
         }
     }
 
     /**
-     * [login description]
+     * Driver login api function
      *
-     * @param   Request       $request  [$request description]
+     * @param   Request       $request  Driver login request
      *
-     * @return  JsonResponse            [return description]
+     * @return  JsonResponse            Driver object after successfull login
      */
     public function login(Request $request): JsonResponse
     {
@@ -119,11 +122,11 @@ class AuthController extends BaseController
 
         $credentials = $request->only(['phone', 'password']);
 
-        if (!$token = auth('api')->attempt($credentials)) {
-            return $this->respondWithError('Invalida phone number or password');
+        if (!$token = auth('driver')->attempt($credentials)) {
+            return $this->respondWithError('Invalid phone number or password');
         }
 
-        $user = auth('api')->user();
+        $user = auth('driver')->user();
         if (!$user) {
             return $this->respondWithError('User not Found');
         }
@@ -159,13 +162,13 @@ class AuthController extends BaseController
             return $this->respondWithError('Please fill the form correctly');
         }
 
-        $manager = Manager::where('phone', $fields['phone'])->first();
-        if (!empty($manager)) {
-            $manager = Manager::find($manager->id);
-            $manager->otp = substr(uniqid(), -4);
-            $save = $manager->save();
+        $driver = Driver::where('phone', $fields['phone'])->first();
+        if (!empty($driver)) {
+            $driver = Driver::find($driver->id);
+            $driver->otp = rand(1000, 9999);
+            $save = $driver->save();
             if ($save) {
-                return $this->respondWithSuccess($manager->otp, 'Otp Sent Successfully', 'API_GET_CODE');
+                return $this->respondWithSuccess($driver->otp, 'Otp Sent Successfully', 'API_GET_CODE');
             } else {
                 return $this->respondWithError('Error Occured while sending otp');
             }
@@ -203,29 +206,21 @@ class AuthController extends BaseController
             return $this->respondWithError('Please fill the forn correctly');
         }
 
-        $manager = Manager::where('phone', $request->phone)
+        $driver = Driver::where('phone', $request->phone)
             ->where('otp', $request->otp)
             ->first();
 
-        if (!$manager) {
+        if (!$driver) {
             return $this->respondWithError('invalid phone or verification code');
         }
 
-        Manager::where('phone', $request->phone)
+        $driver->where('phone', $request->phone)
             ->where('otp', $request->otp)
             ->update([
                 'password' => Hash::make($request->password),
             ]);
-        $manager->makeHidden('password');
+        $driver->makeHidden('password');
 
-        return $this->respondWithSuccess($manager, 'Password Updated Successfully', 'PASSWORD_UPDATE');
+        return $this->respondWithSuccess($driver, 'Password Updated Successfully', 'PASSWORD_UPDATE');
     }
 }
-
-// this query is for to load load data from organization with its type
-// $user = auth('api')->user()->load(['organization' => function ($query) {
-//     $query->select('id', 'name', 'branch_name', 'branch_code', 'email', 'phone', 'address', 'o_type_id');
-//     $query->with(['organizationType' => function ($query) {
-//         $query->select('id', 'name', 'desc');
-//     }]);
-// }]);

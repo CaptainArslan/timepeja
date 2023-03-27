@@ -121,6 +121,7 @@ function uploadImage($image, $folderName)
 function removeImage($imageName, $folderName)
 {
     $imagePath = public_path('uploads/' . $folderName . '/' . $imageName);
+    // dd($imagePath);
     if (file_exists($imagePath)) {
         unlink($imagePath);
     }

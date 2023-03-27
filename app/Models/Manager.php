@@ -17,6 +17,9 @@ class Manager extends Authenticatable implements JWTSubject
     protected $table = 'managers';
     protected $appends = ['picture'];
 
+    const STATUS_ACTIVE = 0;
+    const STATUS_INACTIVE = 1;
+
     protected $fillable = [
         'id',
         'u_id',
@@ -24,7 +27,7 @@ class Manager extends Authenticatable implements JWTSubject
         'name',
         'email',
         'phone',
-        'pic',
+        'picture',
         'address',
         'created_at',
         'updated_at',
