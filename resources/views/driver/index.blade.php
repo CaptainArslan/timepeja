@@ -485,7 +485,7 @@
 
     function fillEditForm(param) {
         let id = $(param).data('id');
-        let _this = $(param).parents('tr');
+        let _this = $(param).parent('tr');
         // $('#edit_driver_form').attr('action', '/driver/' + id);
         $('#edit_id').val(id);
         $('#edit_org_name').val(_this.find('.db_org_name').val()).trigger('change');

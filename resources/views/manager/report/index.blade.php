@@ -65,7 +65,7 @@
                     <div class="row mt-2">
                         <div class="col-md-4">
                             <label for="selecttype" class="text-capitalize" id="select_label">Select</label>
-                            <select class="form-control" id="selection" multiple="multiple" data-placeholder="Please Select" multiple required>
+                            <select class="form-control" id="selection" multiple="multiple" name="selection" data-placeholder="Please Select" multiple required>
                             </select>
                         </div>
                         <div class="col-md-1">

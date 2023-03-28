@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\OrganizationType;
 use App\Models\State;
 use App\Models\Manager;
+use App\Models\Schedule;
 use App\Models\Trip;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -352,7 +353,7 @@ class ManagerController extends Controller
 
     protected function filterReport($request)
     {
-        $query = Trip::query();
+        $query = Schedule::query();
         // Add date range constraint if both dates are provided
         $query->when($request->input('from') && $request->input('to'), function ($query) use ($request) {
             $query->whereBetween('created_at', [$request->input('from'), $request->input('to')]);
@@ -360,16 +361,19 @@ class ManagerController extends Controller
             $query->where('created_at', '>=', $request->input('from'));
         })->when(!$request->input('from') && $request->input('to'), function ($query) use ($request) {
             $query->where('created_at', '<=', $request->input('to'));
+        })->when(!$request->input('from') && $request->input('to'), function ($query) use ($request) {
+            $query->where('created_at', '<=', $request->input('to'));
         });
 
-        $trpis = $query->where('o_id', $request->o_id)
+        $result = $query->where('o_id', $request->o_id)
+            ->where('type', )
             ->with('organizations:id,name')
             ->with('routes:id,name,number,from,to')
             ->with('vehicles:id,number')
             ->with('drivers:id,name')
             ->get();
-        // dd($trpis->toArray());
-        return $trpis;
+        // dd($result->toArray());
+        return $result;
     }
 
     /**

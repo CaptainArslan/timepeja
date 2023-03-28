@@ -54,20 +54,33 @@ class ScheduleController extends Controller
     public function store(Request $request)
     {
         $user = Auth::user();
-        $schedule               = new Schedule();
-        $schedule->o_id         = $request->organization;
-        $schedule->u_id         = $user->id;
-        $schedule->route_id     = isset($request->route_no) ? $request->route_no : 1;
-        $schedule->v_id         = isset($request->vehicle) ? $request->vehicle : 1;
-        $schedule->d_id         = isset($request->driver) ? $request->driver : 1;
-        $schedule->date         = $request->date;
-        $schedule->time         = $request->time;
-        $schedule->status       = 'draft';
-        $save = $schedule->save();
+        $data = [
+            'o_id'         => $request->organization,
+            'u_id'         => $user->id,
+            'route_id'     => $request->route_no ?? 1,
+            'v_id'         => $request->vehicle ?? 1,
+            'd_id'         => $request->driver ?? 1,
+            'date'         => $request->date,
+            'time'         => $request->time,
+            'status'       => Schedule::STATUS_DRAFT,
+        ];
+
+        $save = Schedule::updateOrCreate([
+            'id' => $request->id
+        ], $data);
+
         if ($save) {
-            $data = Schedule::where('id', $schedule->id)->with('organizations', 'routes', 'vehicles', 'drivers')->get();
+            $data = Schedule::where('id', $save->id)
+                ->with('organizations:id,name')
+                ->with('routes:id,name,number,from,to')
+                ->with('vehicles:id,number')
+                ->with('drivers:id,name')
+                ->where('status', Schedule::STATUS_DRAFT)
+                ->get();
+            $status = $save->wasRecentlyCreated ? 'created' : 'updated';
             return response()->json([
                 'status' => 'success',
+                'message' => $status,
                 'data' => $data
             ]);
         } else {
@@ -76,6 +89,7 @@ class ScheduleController extends Controller
             ]);
         }
     }
+
 
     /**
      * Display the specified resource.

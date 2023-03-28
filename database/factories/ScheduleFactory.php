@@ -25,7 +25,7 @@ class ScheduleFactory extends Factory
             'route_id' =>  Route::inRandomOrder()->first()->id,
             'v_id' => Vehicle::inRandomOrder()->first()->id,
             'd_id' => Driver::inRandomOrder()->first()->id,
-            'date' => $this->faker->date(),
+            'date' => Carbon::now(),
             'time' => $this->faker->time(),
             'status' => Schedule::STATUS_DRAFT
         ];

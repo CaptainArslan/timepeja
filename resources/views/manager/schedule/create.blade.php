@@ -27,6 +27,8 @@
                 <!-- <h4 class="header-title">Select Organization</h4> -->
                 <form action="{{ route('schedule.store') }}" method="post" id="create_schedule">
                     @csrf
+                    <input type="hidden" class="form-control" id="edit_id" value="" name="id">
+
                     <div class="row">
                         <div class="col-md-3">
                             <label for="organization">Select Oganization</label>
@@ -70,7 +72,7 @@
                         </div>
                         <div class="col-md-2">
                             <label for="add_schedule"></label>
-                            <button type="submit" type="button" class="btn btn-success form-control" id="add_schedule"> Add </button>
+                            <button type="submit" type="button" class="btn btn-success form-control" id="add_schedule"> Submit </button>
                         </div>
                     </div> <!-- end row -->
                 </form>
@@ -79,6 +81,7 @@
     </div> <!-- end col-->
 </div>
 
+<!-- Table -->
 <div class="row">
     <div class="col-12">
         <form action="{{ route('schedule.publish', 'published') }}" method="post">
@@ -121,7 +124,7 @@
         </form>
     </div><!-- end col-->
 </div>
-<!-- Modal -->
+<!-- End Table -->
 
 <!-- End Content  -->
 @endsection
@@ -134,7 +137,9 @@
 @include('partials.datatable_js')
 <script>
     var table = $('#schedule-table').DataTable();
+
     $(document).ready(function() {
+
         $('#organization').change(function(e) {
             e.preventDefault();
             let id = $(this).val();
@@ -150,6 +155,7 @@
                         $('#route_no').empty();
                         $('#vehicle').empty();
                         $('#driver').empty();
+                        $('#edit_id').empty();
                         let routesOption = makeOptions(response.data['routes']);
                         let vehiclesOption = makeOptions(response.data['vehicles']);
                         let driversOption = makeOptions(response.data['drivers']);
@@ -167,6 +173,8 @@
         $('#create_schedule').submit(function(e) {
             e.preventDefault();
             if (checkOrganizationValidate()) {
+                $('#add_schedule').prop('disabled', true);
+                $('#add_schedule').text('...Loading');
                 var form_data = $(this).serialize();
                 $.ajax({
                     type: "POST",
@@ -174,11 +182,18 @@
                     data: $(this).serialize(),
                     success: function(response) {
                         if (response.status == 'success') {
-                            addRow(table, response.data);
+                            if (response.message == 'created') {
+                                addRow(table, response.data);
+                            } else {
+                                addScheduleToTable();
+                            }
+                            $('#edit_id').val('');
                             $('#route_no').val(null).trigger('change');
                             $('#vehicle').val(null).trigger('change');
                             $('#driver').val(null).trigger('change');
                             $('#time').val('');
+                            $('#add_schedule').text('Submit');
+                            $('#add_schedule').prop('disabled', false);
                         }
                     }
                 });
@@ -186,8 +201,6 @@
                 alert('validation Error')
             }
         });
-
-
     });
 
     function addScheduleToTable() {
@@ -224,32 +237,51 @@
     }
 
     function addRow(tableInstance, res) {
+        console.log(res);
         res.map((item) => {
+            console.log(item);
             tableInstance.row.add([
                 `<td> 
                     <input type="checkbox" class="child_checkbox" value="${item.id}" name="schedule_ids[]" >
-                    <input type="hidden" value="${item.organizations.id}" name="o_id" >
+                    <input type="hidden" value="${item.organizations.id}" name="o_id">
                 </td>`,
                 `<td>${item.date}</td>`,
-                `<td><b>${item.organizations.name}</b></td>`,
+                `<td>${item.organizations.name}</td>`,
                 `<td>${item.drivers.name}</td>`,
                 `<td><span class=" text-danger">${item.routes.number}</span> - ${item.routes.from} <span class="text-success"> TO </span> ${item.routes.to}</td>`,
                 `<td>${item.vehicles.number}</td>`,
                 `<td>${ formatTime(item.time) }</td>`,
                 `<td>
-                    <div class="btn-group btn-group-sm" style="float: none;">
-                        <button type="button" class="tabledit-edit-button btn btn-success edit_btn" style="float: none;" data-bs-toggle="modal" data-bs-target="#edit_modal">
+                    <input type="hidden" value="${item.organizations.id}" class="db_o_id">
+                    <input type="hidden" value="${item.routes.id}" class="db_route_id">
+                    <input type="hidden" value="${item.vehicles.id}" class="db_vehicle_id">
+                    <input type="hidden" value="${item.drivers.id}" class="db_driver_id">
+                    <input type="hidden" value="${item.date}" class="db_date">
+                    <input type="hidden" value="${item.time}" class="db_time">
+                    <div class="btn-group btn-group-sm edit_schedule" style="float: none;">
+                        <button type="button" class="tabledit-edit-button btn btn-success edit_btn" style="float: none;" data-bs-toggle="modal" data-bs-target="#edit_modal" data-id="${item.id}" onclick="editScedule(this, '{{ csrf_token() }}')">
                             <span class="mdi mdi-pencil"></span>
                         </button>
                     </div>
-                    <div class="btn-group btn-group-sm delete_schedule" data-id="${item.id}" style="float: none;" onclick="deleteScedule(this, '{{ csrf_token() }}')">
-                        <button type="button" class="tabledit-edit-button btn btn-danger delete" style="float: none;">
+                    <div class="btn-group btn-group-sm delete_schedule" style="float: none;" >
+                        <button type="button" class="tabledit-edit-button btn btn-danger delete" style="float: none;" data-id="${item.id}"  onclick="deleteScedule(this, '{{ csrf_token() }}')">
                             <span class="mdi mdi-delete"></span>
                         </button>
                     </div>
                 </td>`
             ]).draw(false);
         });
+    }
+
+    function editScedule(param, csrf_token) {
+        let id = $(param).data('id');
+        $('#edit_id').val(id);
+        let _this = $(param).closest('tr');
+        $('#route_no').val(_this.find('.db_route_id').val()).trigger('change');
+        $('#vehicle').val(_this.find('.db_vehicle_id').val()).trigger('change');
+        $('#driver').val(_this.find('.db_driver_id').val()).trigger('change');
+        $('#time').val(_this.find('.db_time').val());
+        // $('#add_schedule').html('Update');
     }
 
     function deleteScedule(param, csrf_token) {
