@@ -16,3 +16,6 @@ yarn-error.log
 /backup-files
 vendor/phpunit/phpunit
 /public/images/*
+/database/migrations-backup
+/database/seeders-backup
+/public/uploads/

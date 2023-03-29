@@ -26,11 +26,12 @@
         </div>
     </div>
 </div>
+<!-- Filters -->
 <div class="row">
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <form action="" method="post" id="filter_form">
+                <form action="{{ route('vehicle.index') }}" method="post" id="filter_form">
                     @csrf
                     <div class="row">
                         <div class="col-md-5">
@@ -38,7 +39,7 @@
                             <select class="form-select select2_filter" id="o_id" name="o_id" required>
                                 <option value="">Select</option>
                                 @forelse ($organizations as $organization)
-                                <option value="{{ $organization->id }}">{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
+                                <option value="{{ $organization->id }}" {{ $organization->id == request()->input('o_id') ? 'selected' : '' }}>{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
                                 @empty
                                 <option value="">Please select</option>
                                 @endforelse
@@ -56,11 +57,11 @@
                         </div> -->
                         <div class="col-md-3">
                             <label for="from">From</label>
-                            <input class="form-control today-date" type="date" name="from_date" value="{{ old('from_date') }}" required>
+                            <input class="form-control" type="date" name="from" value="{{ request()->input('from', old('from')) }}" required>
                         </div>
                         <div class="col-md-3">
                             <label for="to">To</label>
-                            <input class="form-control today-date" type="date" name="to_date" value="{{ old('to_date') }}" required>
+                            <input class="form-control" type="date" name="to" value="{{ request()->input('to', old('to')) }}" required>
                         </div>
                         <div class="col-md-1">
                             <label for="publish_schedule">.</label>
@@ -75,73 +76,76 @@
 </div>
 <!-- end page title -->
 <div class="row">
-    <div class="col-lg-12 table-responsive">
-        <div class="card">
-            <div class="card-header">
-                <div class="d-flex justify-content-between">
-                    <h4 class="header-title">Vehicle List</h4>
-                    <button class="btn btn-danger">Delete</button>
+    <form action="{{ route('vehicle.multiDelete') }}" id="vehicleForm" method="post" enctype="multipart/form-data">
+        @csrf
+        <div class="col-lg-12 table-responsive">
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between">
+                        <h4 class="header-title">Vehicle List</h4>
+                        <button type="submit" id="btnMultilDelete" class="btn btn-danger delete_multiple" disabled>Delete</button>
+                    </div>
                 </div>
-            </div>
-            <div class="card-body">
-                <table id="basic-datatable" class="table table-striped dt-responsive nowrap w-100">
-                    <thead>
-                        <tr>
-                            <th>
-                                <input type="checkbox" class="parent_checkbox">
-                            </th>
-                            <th>Date</th>
-                            <th>Time</th>
-                            <th>Organization Name</th>
-                            <th>Type</th>
-                            <th>Number</th>
-                            <th>Front picture</th>
-                            <th>Number picture</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($vehicles as $vehicle)
-                        <tr>
-                            <th>
-                                <input type="checkbox" class="child_checkbox">
-                                <input type="hidden" value="{{$vehicle->id}}" class="db_id" name="id">
-                                <input type="hidden" value="{{$vehicle->reg_date}}" class="reg_date" name="reg_date">
-                                <input type="hidden" value="{{$vehicle->o_id}}" class="db_o_id" name="o_id">
-                                <input type="hidden" value="{{$vehicle->v_type_id}}" class="db_v_type_id" name="v_type_id">
-                                <input type="hidden" value="{{$vehicle->front_pic}}" class="db_front_pic" name="front_pic">
-                                <input type="hidden" value="{{$vehicle->back_pic}}" class="db_back_pic" name="back_pic">
-                                <input type="hidden" value="{{$vehicle->number}}" class="db_number" name="number">
-                                <input type="hidden" value="{{$vehicle->number_pic}}" class="db_number_pic" name="number_pic">
-                                <input type="hidden" value="{{$vehicle->created_at}}" class="db_created_at" name="created_at">
-                            </th>
-                            <th>{{ date("Y-m-d",strtotime($vehicle->created_at)) }}</th>
-                            <th>{{ date("H:m:s",strtotime($vehicle->created_at)) }}</th>
-                            <td>{{$vehicle->organizations['name'] ?? '' }}</td>
-                            <td>{{$vehicle->vehiclesTypes['name'] ?? ''}}</td>
-                            <td>{{$vehicle->number}}</td>
-                            <td><img src="{{ asset('/uploads/vehicles/').'/'.$vehicle->front_pic }}" alt="" width="50px" height="50px"></td>
-                            <td><img src="{{ asset('/uploads/vehicles/').'/'.$vehicle->number_pic }}" alt="" width="50px" height="50px"></td>
-                            <td>
-                                <div class="btn-group btn-group-sm" style="float: none;">
-                                    <button type="button" class="tabledit-edit-button btn btn-success edit_btn" style="float: none;" data-bs-toggle="modal" data-bs-target="#edit_modal">
-                                        <span class="mdi mdi-pencil"></span>
-                                    </button>
-                                </div>
-                                <div class="btn-group btn-group-sm" style="float: none;">
-                                    <button type="button" class="tabledit-edit-button btn btn-danger delete" style="float: none;">
-                                        <span class="mdi mdi-delete"></span>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        @empty
-                        @endforelse
-                    </tbody>
-                </table>
-            </div> <!-- end card body-->
-        </div> <!-- end card -->
-    </div><!-- end col-->
+                <div class="card-body">
+                    <table id="basic-datatable" class="table table-striped dt-responsive nowrap w-100">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <input type="checkbox" class="parent_checkbox" onclick="countCheckboxChecked()">
+                                </th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Organization Name</th>
+                                <th>Type</th>
+                                <th>Number</th>
+                                <th>Front picture</th>
+                                <th>Number picture</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($vehicles as $vehicle)
+                            <tr>
+                                <td>
+                                    <input type="checkbox" class="child_checkbox" name="vehicle_ids[]" value="{{ $vehicle->id }}" onclick="countCheckboxChecked()">
+                                </td>
+                                <td>{{ formatDate($vehicle->created_at) }}</td>
+                                <td>{{ formatTime($vehicle->created_at)  }}</td>
+                                <td>{{$vehicle->organizations['name'] ?? '' }}</td>
+                                <td>{{$vehicle->vehiclesTypes['name'] ?? ''}}</td>
+                                <td>{{$vehicle->number}}</td>
+                                <td><img src="{{ $vehicle->front_pic }}" alt="" width="50px" height="50px"></td>
+                                <td><img src="{{ $vehicle->number_pic }}" alt="" width="50px" height="50px"></td>
+                                <td>
+                                    <input type="hidden" value="{{ $vehicle->id }}" class="db_id" name="id">
+                                    <input type="hidden" value="{{ $vehicle->reg_date }}" class="reg_date" name="reg_date">
+                                    <input type="hidden" value="{{ $vehicle->o_id }}" class="db_o_id" name="o_id">
+                                    <input type="hidden" value="{{ $vehicle->v_type_id }}" class="db_v_type_id" name="v_type_id">
+                                    <input type="hidden" value="{{ $vehicle->front_pic }}" class="db_front_pic" name="front_pic">
+                                    <input type="hidden" value="{{ $vehicle->back_pic }}" class="db_back_pic" name="back_pic">
+                                    <input type="hidden" value="{{ $vehicle->number }}" class="db_number" name="number">
+                                    <input type="hidden" value="{{ $vehicle->number_pic }}" class="db_number_pic" name="number_pic">
+                                    <input type="hidden" value="{{$vehicle->created_at }}" class="db_created_at" name="created_at">
+                                    <div class="btn-group btn-group-sm" style="float: none;" data-id="{{ $vehicle->id  }}">
+                                        <button type="button" class="tabledit-edit-button btn btn-success edit_btn" style="float: none;" data-bs-toggle="modal" data-bs-target="#edit_modal">
+                                            <span class="mdi mdi-pencil"></span>
+                                        </button>
+                                    </div>
+                                    <div class="btn-group btn-group-sm" style="float: none;">
+                                        <button type="button" class="tabledit-edit-button btn btn-danger delete" style="float: none;">
+                                            <span class="mdi mdi-delete"></span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            @empty
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div> <!-- end card body-->
+            </div> <!-- end card -->
+        </div><!-- end col-->
+    </form>
 </div>
 <!-- end row-->
 <!-- Modal -->
@@ -161,7 +165,7 @@
                                 <div class="row">
                                     <div class="mb-3">
                                         <label for="veh_type" class="form-label">Select Organization</label>
-                                        <select class="form-select select2" id="o_id" name="o_id" required>
+                                        <select class="form-select select2_modal" id="o_id" name="o_id" required>
                                             <option value="">Select</option>
                                             @forelse ($organizations as $organization)
                                             <option value="{{ $organization->id }}">{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
@@ -173,7 +177,7 @@
                                     <div class="col-lg-6">
                                         <div class="mb-3">
                                             <label for="veh_type" class="form-label">Vehicle Type</label>
-                                            <select class="form-select select2" id="veh_type" name="v_type_id" required>
+                                            <select class="form-select select2_modal" id="veh_type" name="v_type_id" required>
                                                 <option value="" selected>Please select</option>
                                                 @forelse ($vehicle_types as $vehicle_type)
                                                 <option value="{{$vehicle_type->id}}"> {{ucfirst($vehicle_type->name)}}
@@ -184,7 +188,7 @@
                                         </div>
                                         <div class="col-12">
                                             <div class="mt-1">
-                                                <input type="file" accept="image/*" data-plugins="dropify" name="veh_front_pic" data-default-file="/images/small/img-2.jpg" />
+                                                <input type="file" accept="image/*" data-allowed-file-extensions="jpg jpeg png" data-plugins="dropify" name="veh_front_pic" data-default-file="" />
                                                 <p class="text-muted text-center mt-2 mb-0">Vehicle Picture from front
                                                 </p>
                                             </div>
@@ -195,10 +199,9 @@
                                             <label for="simpleinput" class="form-label">Vehicle's Number</label>
                                             <input type="text" id="simpleinput" name="number" class="form-control" required>
                                         </div>
-
                                         <div class="col-12">
                                             <div class="mt-1">
-                                                <input type="file" accept="image/*" data-plugins="dropify" name="veh_license_plate" data-default-file="/images/small/img-2.jpg" />
+                                                <input type="file" accept="image/*" data-allowed-file-extensions="jpg jpeg png" data-plugins="dropify" name="veh_license_plate" data-default-file="" />
                                                 <p class="text-muted text-center mt-2 mb-0">Vehicle license plate
                                                     picture</p>
                                             </div>
@@ -227,7 +230,7 @@
             <div class="modal-body">
                 <form action="{{ route('vehicle.edit') }}" method="POST" enctype="multipart/form-data" id="edit_modal_form">
                     @csrf
-                    <input type="hidden" name="id" id="edit_id">
+                    <input type="hidden" class="form-control" name="id" id="edit_id">
                     <div class="col-xl-12">
                         <div class="card shadow-none">
                             <div class="card-body">
@@ -259,7 +262,7 @@
                                         </div>
                                         <div class="col-12">
                                             <div class="mt-1">
-                                                <input type="file" data-plugins="dropify" name="veh_front_pic" data-default-file="/images/small/img-2.jpg" />
+                                                <input type="file" data-plugins="dropify" accept="image/*" data-allowed-file-extensions="jpg jpeg png" name="veh_front_pic" id="edit_front_pic" data-default-file="" />
                                                 <p class="text-muted text-center mt-2 mb-0">Vehicle Picture from front
                                                 </p>
                                             </div>
@@ -272,7 +275,7 @@
                                         </div>
                                         <div class="col-12">
                                             <div class="mt-1">
-                                                <input type="file" data-plugins="dropify" name="edit_number_pic" data-default-file="/images/small/img-2.jpg" />
+                                                <input type="file" data-plugins="dropify" accept="image/*" data-allowed-file-extensions="jpg jpeg png" name="veh_license_plate" id="edit_number_pic" data-default-file="" />
                                                 <p class="text-muted text-center mt-2 mb-0">Vehicle license plate
                                                     picture</p>
                                             </div>
@@ -313,13 +316,14 @@
 
 <script>
     $(document).ready(function() {
-        $(".select2").select2({
+        $(".select2_modal").select2({
             placeholder: "Select",
             allowClear: true,
             dropdownParent: $("#create_modal"), // modal : id modal
             width: "100%",
             height: "30px",
         });
+
         $(".select2_filter").select2({
             placeholder: "Select",
             allowClear: true,
@@ -327,93 +331,28 @@
             width: "100%",
             height: "30px",
         });
-    });
 
-    $('.edit_btn').on('click', function() {
-        var _this = $(this).parents('tr');
-        $('#edit_id').val(_this.find('.db_id').val());
-        $('#edit_number').val(_this.find('.db_number').val());
-        $('#edit_o_id').val(_this.find('.db_o_id').val()).trigger('change'); // Select the option with a value of ''1
-        $('#edit_v_type_id').val(_this.find('.db_v_type_id').val()).trigger('change'); // Select the option with a value of '1'
-        $('#edit_front_pic').attr('src', _this.find('.db_front_pic').val());
-        $('#edit_number_pic').attr('src', _this.find('.db_number_pic').val());
-
-    });
-
-    $(document).ready(function() {
-        // $('#create_modal_form').submit(function(e) {
-        //     e.preventDefault();
-        //     $.ajaxSetup({
-        //         headers: {
-        //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        //         }
-        //     });
-        //     $.ajax({
-        //         type: "post",
-        //         url: $(this).attr('action'),
-        //         data: $(this).serialize(),
-        //         success: function(response) {
-        //             Swal.fire(
-        //                 'Done!',
-        //                 'Inserted Successfully!',
-        //                 'success'
-        //             ).then((result) => {
-        //                 location.reload();
-        //             });
-        //         },
-        //         error: (error) => {
-        //             console.log(JSON.stringify(error));
-        //         }
-        //     });
-        // });
-
-        $('#edit_modal_form').submit(function(e) {
-            e.preventDefault();
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-            Swal.fire({
-                title: 'Are you sure?',
-                icon: 'warning',
-                confirmButtonColor: '#e64942',
-                showCancelButton: true,
-                confirmButtonText: 'Yes',
-                cancelButtonText: `No`,
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        type: "post",
-                        url: $(this).attr('action'),
-                        data: $(this).serialize(),
-                        success: function(response) {
-                            Swal.fire(
-                                'Updated!',
-                                'Data Successfully Updated.!',
-                                'success'
-                            ).then((result) => {
-                                location.reload();
-                            });
-                        },
-                        error: (error) => {
-                            console.log(JSON.stringify(error));
-                        }
-                    });
-                }
-            });
+        /**
+         * this function will popup the edit modal of the driver
+         */
+        $('.edit_btn').on('click', function() {
+            var _this = $(this).parents('tr');
+            $('#edit_id').val(_this.find('.db_id').val());
+            $('#edit_number').val(_this.find('.db_number').val());
+            $('#edit_o_id').val(_this.find('.db_o_id').val()).trigger('change');
+            $('#edit_v_type_id').val(_this.find('.db_v_type_id').val()).trigger('change');
+            $('#edit_front_pic').attr('data-default-file', _this.find('.db_front_pic').val()).dropify();
+            $('#edit_number_pic').attr('data-default-file', _this.find('.db_number_pic').val()).dropify();
         });
 
+        /**
+         * delete single record of vehicle
+         */
         $('.delete').click(function(e) {
             e.preventDefault();
             var el = this;
             var id = $(this).closest("tr").find('.db_id').val();
             console.log(id);
-            // $.ajaxSetup({
-            //     headers: {
-            //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            //     }
-            // });
             Swal.fire({
                 title: 'Are you sure?',
                 text: "Once Deleted, you will not be able to recover this record!!",
@@ -451,6 +390,42 @@
                 }
             });
         });
+
+        /**
+         * this will handle multiple form delete
+         */
+        $('#vehicleForm').on('submit', function(e) {
+            e.preventDefault(); // Prevent the form from submitting normally
+            const form = this; // Store the form element in a variable
+
+            // Display a SweetAlert confirmation dialog
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'You will not be able to undo this action.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, submit it!',
+                cancelButtonText: 'No, cancel it'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // If the user confirms, submit the form
+                    form.submit();
+                }
+            })
+        });
     });
+
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
+    function countCheckboxChecked() {
+        if ($('.child_checkbox:checked, .parent_checkbox:checked').length > 0) {
+            $('#btnMultilDelete').prop('disabled', false);
+        } else {
+            $('#btnMultilDelete').prop('disabled', true);
+        }
+    }
 </script>
 @endsection

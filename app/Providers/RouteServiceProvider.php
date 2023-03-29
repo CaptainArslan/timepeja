@@ -59,5 +59,14 @@ class RouteServiceProvider extends ServiceProvider
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(60)->by(optional($request->user())->id ?: $request->ip());
         });
+
+        RateLimiter::for('ratelimit', function (Request $request) {
+            return Limit::perMinute(env('OTP_RATE_LIMIT'))->response(function () {
+                return response([
+                    'success' => false,
+                    'message' => 'To Many Request. Please try again after 1 second'
+                ], 400);
+            });
+        });
     }
 }

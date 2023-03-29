@@ -1,7 +1,8 @@
 <?php
 
-use App\Http\Controllers\Api\V1\AuthController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\V1\Auth\ManagerAuthController;
+use App\Http\Controllers\Api\V1\Auth\DriverAuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,9 +18,30 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => 'api'], function () {
     Route::prefix('v1/manager')->name('manager.')->group(function () {
-        Route::post('/register', [AuthController::class, 'register']);
-        Route::post('/login', [AuthController::class, 'login']);
-        Route::post('/get-code', [AuthController::class, 'getCode']);
-        Route::post('/forget-password', [AuthController::class, 'forgetPassword']);
+        // Manager Auth
+        Route::post('/register', [ManagerAuthController::class, 'register']);
+        Route::post('/login', [ManagerAuthController::class, 'login']);
+        Route::post('/get-code', [ManagerAuthController::class, 'getVerificationCode'])
+        ->middleware('throttle:ratelimit');
+        Route::post('/forget-password', [ManagerAuthController::class, 'forgetPassword']);
+    });
+
+    Route::prefix('v1/driver')->name('driver.')->group(function () {
+        // Driver Auth
+        Route::post('/register', [DriverAuthController::class, 'register']);
+        Route::post('/login', [DriverAuthController::class, 'login']);
+        Route::post('/get-code', [DriverAuthController::class, 'getVerificationCode'])
+        ->middleware('throttle:ratelimit');
+        Route::post('/forget-password', [DriverAuthController::class, 'forgetPassword']);
+    });
+
+
+
+
+    Route::group(['middleware' => ['jwt.verify']], function () {
+        // Protected routes
+    });
+    Route::group(['middleware' => ['veify.header']], function () {
+        // Protected routes
     });
 });

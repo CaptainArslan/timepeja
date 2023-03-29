@@ -2,13 +2,20 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Driver extends Model
+class Driver extends Authenticatable implements JWTSubject
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+    use SoftDeletes;
+    use Notifiable;
+
+    public const STATUS_ONLINE = 1;
+    public const STATUS_OFFLINE = 0;
 
     protected $fillable = [
         'o_id',
@@ -18,6 +25,7 @@ class Driver extends Model
         'password',
         'phone',
         'cnic',
+        'profile_picture',
         'cnic_front_pic',
         'cnic_back_pic',
         'cnic_expiry_date',
@@ -29,10 +37,208 @@ class Driver extends Model
         'token',
         'status',
         'online_status',
+        'address',
     ];
 
-    public function organizations()
+
+    // ----------------------------------------------------------------
+    // ------------------ Jwt Auth  -----------------------------------
+    // ----------------------------------------------------------------
+
+    // Rest omitted for brevity
+    /**
+     * Get the identifier that will be stored in the subject claim of the JWT.
+     *
+     * @return mixed
+     */
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    /**
+     * Return a key value array, containing any custom claims to be added to the JWT.
+     *
+     * @return array
+     */
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
+
+
+
+    // ----------------------------------------------------------------
+    // ------------------ Relations -----------------------------------
+    // ----------------------------------------------------------------
+
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
+    public function organization()
     {
         return $this->belongsTo(Organization::class, 'o_id', 'id');
+    }
+
+
+    // ----------------------------------------------------------------
+    // ------------------ Accessors & Mutator -------------------------
+    // ----------------------------------------------------------------
+
+    /**
+     * Set the name attribute.
+     *
+     * @param  string  $value
+     * @return void
+     */
+    public function setNameAttribute($value)
+    {
+        $this->attributes['name'] = ucwords(strtolower($value));
+    }
+
+    /**
+     * Get the name attribute.
+     *
+     * @param  string  $value
+     * @return string
+     */
+    public function getNameAttribute($value)
+    {
+        return ucwords(strtolower($value));
+    }
+
+    /**
+     * Set the phone number attribute.
+     *
+     * @param  string  $value
+     * @return void
+     */
+    public function setPhoneAttribute($value)
+    {
+        $this->attributes['phone'] = str_replace('-', '', $value);
+    }
+
+    /**
+     * Get the phone number attribute.
+     *
+     * @param  string  $value
+     * @return string
+     */
+    public function getPhoneAttribute($value)
+    {
+        return substr($value, 0, 4) . '-' . substr($value, 4, 8);
+    }
+
+    /**
+     * Set the phone number attribute.
+     *
+     * @param  string  $value
+     * @return void
+     */
+    public function setCnicAttribute($value)
+    {
+        $this->attributes['cnic'] = str_replace('-', '', $value);
+    }
+
+    /**
+     * Get the phone number attribute.
+     *
+     * @param  string  $value
+     * @return string
+     */
+    public function getCnicAttribute($value)
+    {
+        return substr($value, 0, 5) . '-' . substr($value, 5, 7) . '-' . substr($value, 12);
+    }
+
+
+    /**
+     * Get the front picture of the cnic.
+     *
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getCnicFrontPicAttribute()
+    {
+        return $this->attributes['cnic_front_pic'] ? asset('uploads/drivers/cnic/' . $this->attributes['cnic_front_pic']) : null;
+    }
+
+    /**
+     * Get the front picture name of the vehicle.
+     *
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getCnicFrontPicNameAttribute()
+    {
+        return $this->attributes['cnic_front_pic'];
+    }
+
+    /**
+     * Get the back picture of the cnic.
+     *
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getCnicBackPicAttribute()
+    {
+        return $this->attributes['cnic_back_pic'] ? asset('uploads/drivers/cnic/' . $this->attributes['cnic_back_pic']) : null;
+    }
+
+    /**
+     * Get the front picture name of the vehicle.
+     *
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getCnicBackPicNameAttribute()
+    {
+        return $this->attributes['cnic_back_pic'];
+    }
+
+    /**
+     * Get the front picture of the cnic.
+     *
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getLicenseNoFrontPicAttribute()
+    {
+        return $this->attributes['license_no_front_pic'] ? asset('uploads/drivers/license/' . $this->attributes['license_no_front_pic']) : null;
+    }
+
+    /**
+     * Get the front picture name of the vehicle.
+     *
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getLicenseNoFrontPicNameAttribute()
+    {
+        return $this->attributes['license_no_front_pic'];
+    }
+
+    /**
+     * Get the back picture of the cnic.
+     *
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getLicenseNoBackPicAttribute()
+    {
+        return $this->attributes['license_no_back_pic'] ? asset('uploads/drivers/license/' . $this->attributes['license_no_back_pic']) : null;
+    }
+
+    /**
+     * Get the front picture name of the vehicle.
+     *
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getLicenseNoBackPicNameAttribute()
+    {
+        return $this->attributes['license_no_back_pic'];
     }
 }

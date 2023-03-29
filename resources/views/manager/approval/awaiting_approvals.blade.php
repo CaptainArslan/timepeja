@@ -25,15 +25,19 @@
         <div class="card">
             <div class="card-body">
                 <!-- <h4 class="header-title">Select Organization</h4> -->
-                <form action="" id="awaiting_approval_form">
+                <form action="{{ route('user.awaiting') }}" id="awaiting_approval_form" method="post">
                     @csrf
                     <div class="row">
                         <div class="col-md-4">
                             <label for="organization">Select Oganization</label>
                             <select class="form-control select2" id="organization_filter" name="o_id" required>
-                                <option value="">Select</option>
-                                @forelse ($organizations as $organization)
+                                <option value="">Select</option>                                
+                                @forelse ($org_dropdowns as $organization)
+                                @if (request()->input('o_id'))
+                                <option value="{{ $organization->id }}" selected>{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
+                                @else
                                 <option value="{{ $organization->id }}">{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
+                                @endif
                                 @empty
                                 <option value="">Please select</option>
                                 @endforelse
@@ -50,17 +54,17 @@
                         </div>
                         <div class="col-md-3">
                             <label for="date-1">Registration From</label>
-                            <input class="form-control today-date" id="" type="date" name="date">
+                            <input class="form-control today-date" type="date" name="date">
                         </div>
                     </div>
                     <div class="row mt-2">
                         <div class="col-md-3">
                             <label for="date">Reistration To</label>
-                            <input class="form-control today-date" id="" type="date" name="date">
+                            <input class="form-control today-date" type="date" name="date">
                         </div>
                         <div class="col-md-1">
-                            <label for="publish_schedule"></label>
-                            <button type="submit" class="btn btn-success" id="publish_schedule" name="submit"> Submit </button>
+                            <label for="filter"></label>
+                            <button type="submit" class="btn btn-success" id="filter" name="filter"> Submit </button>
                         </div>
                     </div> <!-- end row -->
                 </form>
@@ -69,7 +73,7 @@
     </div> <!-- end col-->
 </div>
 
-@if(isset($_POST['submit']))
+
 <div class="row">
     <div class="col-12">
         <div class="card">
@@ -80,7 +84,7 @@
                 <div class="col-7">
                     <div class="row">
                         <div class="col-md-6">
-                            <input class="form-control" id="" type="text" value="123456 - branch - Punjab University" name="organization" style="font-weight: bold;" readonly>
+                            <input class="form-control" type="text" value="123456 - branch - Punjab University" name="organization" style="font-weight: bold;" readonly>
                         </div>
                         <div class="col-md-3">
                             <input class="form-control today-date" id="" type="date" name="date">
@@ -129,7 +133,7 @@
         </div> <!-- end card -->
     </div><!-- end col-->
 </div>
-@endif
+
 
 <!-- Modal -->
 <div class="modal fade" id="modal_organization" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="organizationLabel" aria-hidden="true">
@@ -197,7 +201,7 @@
 
         $('.show_request').click(function(e) {
             e.preventDefault();
-            var url = "{{ route('awaiting.approvals') }}";
+            var url = window.location.origin + "/user/approval";
             var w1 = window.open(
                 url,
                 "_blank",

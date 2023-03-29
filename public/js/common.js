@@ -54,6 +54,7 @@ $(document).ready(function () {
         }
     });
 });
+
 //Name Validation for character and whitespaces
 const isName = (nameval) => {
     var namepattern = /^[a-zA-Z ]{2,30}$/;
@@ -62,6 +63,11 @@ const isName = (nameval) => {
 };
 
 //Email validate function
+/**
+ *
+ * @param {*} emailval
+ * @returns
+ */
 const isEmail = (emailval) => {
     var atSymbol = emailval.indexOf("@");
     var emailpattern =
@@ -74,16 +80,24 @@ const isEmail = (emailval) => {
     return true;
 };
 
-//validate phone number
+/**
+ *
+ * @param {*} phoneval
+ * @returns
+ */
 const isPhone = (phoneval) => {
-    var phonePattern = /^[0-9]{11}$/;
+    var phonePattern = /^[0-9]{4}-[0-9]{7}$/;
     var onlyNumbers = /^[0-9]+$/;
     if (!phonePattern.test(phoneval)) return false;
     else if (!onlyNumbers.test(phoneval)) return false;
     return true;
 };
 
-//validate cnic number
+/**
+ *
+ * @param {*} cnicval
+ * @returns
+ */
 const isCnic = (cnicval) => {
     var cnicPattern = /^[0-9]{13}$/;
     var onlyNumbers = /^[0-9]+$/;
@@ -92,7 +106,11 @@ const isCnic = (cnicval) => {
     return true;
 };
 
-//validate license number
+/**
+ *
+ * @param {*} licenseval
+ * @returns
+ */
 const isLicense = (licenseval) => {
     var licensePattern = /^[A-Z]{2,3}[-\s][0-9]{2}[-\s][A-Z0-9]{1,4}$/;
     // var onlyNumbers = /^[0-9]+$/;
@@ -101,13 +119,20 @@ const isLicense = (licenseval) => {
     return true;
 };
 
-//set error message function
+/**
+ *
+ * @param {*} input
+ * @param {*} errormsgs
+ */
 function setErrorMsg(input, errormsgs) {
     $(input).addClass("is-invalid");
     $(input + "_error").html(errormsgs);
 }
 
-//set Success Message
+/**
+ *
+ * @param {*} input
+ */
 function setSuccessMsg(input) {
     $(input).removeClass("is-invalid");
     $(input + "_error").html("");
@@ -151,7 +176,6 @@ function preventPreviousDate(pramaid) {
     document.getElementById(pramaid).setAttribute("min", today_formatted);
 }
 
-
 /**
  * [formatTime description]
  *
@@ -161,6 +185,43 @@ function preventPreviousDate(pramaid) {
  */
 function formatTime(timeString) {
     const [hourString, minute] = timeString.split(":");
-    const hour = + hourString % 24;
-    return (hour % 12 || 12) + " : " + minute + (hour < 12 ? " AM " : " PM ");
+    const hour = +hourString % 24;
+    return (hour % 12 || 12) + " : " + minute + (hour < 12 ? " AM" : " PM");
+}
+
+/**
+ *
+ * @param {*} select2class
+ * @param {*} formid
+ */
+function initializeSelect2(select2class, formid) {
+    $(select2class).select2({
+        dropdownParent: $(formid), // modal : id modal
+        placeholder: "Select",
+        allowClear: true,
+        width: "100%",
+        height: "30px",
+    });
+}
+
+
+function formSubmitConfirmation(formIds){
+    $(formIds).on('submit', function(e) {
+        e.preventDefault(); // Prevent the form from submitting normally
+        const form = this; // Store the form element in a variable
+        // Display a SweetAlert confirmation dialog
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'You will not be able to undo this action.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, submit it!',
+            cancelButtonText: 'No, cancel it'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // If the user confirms, submit the form
+                form.submit();
+            }
+        })
+    });
 }

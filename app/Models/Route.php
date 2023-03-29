@@ -8,7 +8,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Route extends Model
 {
-    use HasFactory , SoftDeletes;
+    use HasFactory;
+    use SoftDeletes;
+
+    const STATUS_ACTIVE = 0;
+    const STATUS_INACTIVE = 0;
+
     protected $fillable = [
         'o_id',
         'u_id',

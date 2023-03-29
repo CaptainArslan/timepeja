@@ -11,6 +11,9 @@ class Schedule extends Model
     use HasFactory;
     use SoftDeletes;
 
+    const STATUS_PUBLISHED = 'published';
+    const STATUS_DRAFT = 'draft';
+
     protected $table = 'schedules';
 
     protected $fillable = [
