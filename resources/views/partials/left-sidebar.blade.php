@@ -284,8 +284,8 @@
                             </li>
                         </ul>
                     </div>
-                </li> 
-                <li>
+                </li> -->
+                <!--<li>
                     <a href="{{ route('wallet') }}">
                         <i class="fas fa-wallet"></i>
                         <span> Wallets </span>

@@ -204,6 +204,26 @@ class ScheduleController extends Controller
             } elseif ($request->has('replicate')) {
                 $this->replicateSchedule($request);
             }
+        if (isset($_POST['submit'])) {
+            $request->validate(
+                [
+                    'o_id'  =>  'required|numeric',
+                    'from'  => 'required|date',
+                    'to'    => 'required|date|after:from'
+                ],
+                [
+                    'o_id.required' => 'Organization is required',
+                    'from.required' => "From date is required",
+                    'to.required' => "To date Number is required",
+                    'to.after' => "The registration to date must be a date after registration from.",
+                ]
+            );
+            $schedules = Schedule::where('o_id', $request->o_id)
+                ->where('status', 'published')
+                ->whereBetween('date', [$request->from, $request->to])
+                ->with('organizations', 'routes', 'vehicles', 'drivers')
+                ->get();
+            // dd($schedules->toArray());
         }
         $organizations = Organization::get();
         $org_dropdowns = $organizations;
