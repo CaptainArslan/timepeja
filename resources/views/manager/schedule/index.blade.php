@@ -33,11 +33,7 @@
                             <select class="form-control" data-toggle="select2" name="o_id" data-width="100%" id="organization" required>
                                 <option value="" selected>Select</option>
                                 @forelse ($org_dropdowns as $organization)
-                                @if (request()->input('o_id'))
-                                <option value="{{ $organization->id }}" selected>{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
-                                @else
-                                <option value="{{ $organization->id }}">{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
-                                @endif
+                                <option value="{{ $organization->id }}" {{ $organization->id == request()->input('o_id') ? 'selected' : '' }}>{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
                                 @empty
                                 <option value="">Please select</option>
                                 @endforelse
@@ -90,7 +86,7 @@
                     </div>
                     <div class="col-3 d-flex justify-content-around mx-1">
                         <button type="submit" class="btn btn-success" id="btn_modify" name="modify" value="modify" disabled>Modify</button>
-                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#staticBackdrop" id="btn_replicate" disabled>Replicate</button>
+                        <button type="button" class="btn btn-danger" id="btn_replicate" disabled>Replicate</button>
                         <button type="submit" class="btn btn-primary" name="print" value="print">Export</button>
                     </div>
                 </div>
@@ -113,8 +109,8 @@
                             @forelse($schedules as $schedule)
                             <tr>
                                 <td>
-                                    <input type="checkbox" class="child_checkbox" value="{{ $schedule->id }}" name="" onchange="countCheckboxChecked()">
-                                    <input type="hidden" name="schedule_ids[]" value="{{ $schedule->id }}">
+                                    <input type="checkbox" class="child_checkbox" value="{{ $schedule->id }}" name="schedule_ids[]" onchange="countCheckboxChecked()">
+                                    <!-- <input type="hidden" name="schedule_ids[]" value="{{ $schedule->id }}"> -->
                                 </td>
                                 <td>{{ $schedule->date }}</td>
                                 <td>{{ formatTime($schedule->time) }}</td>
@@ -137,27 +133,29 @@
 </div>
 @endif
 
-<!-- Modal -->
-<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fade" id="replicateModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="replicateModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header bg-light">
-                <h4 class="modal-title" id="myCenterModalLabel">Replicate Schedule</h4>
-                <button type="button" type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
-            </div>
-            <div class="modal-body p-4">
-                <form action="#" method="post">
+        <form action="{{ route('schedule.published') }}" method="post" enctype="multipart/form-data" id="replicateForm">
+            <div class="modal-content modal-lg">
+                <div class="modal-header bg-light">
+                    <h4 class="modal-title" id="myCenterModalLabel">Replicate Schedule</h4>
+                    <button type="button" type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+                </div>
+                <div class="modal-body p-4">
                     @csrf
                     <div class="mb-3">
-                        <label for="role_name" class="form-label">Select Date, when you want to replicate </label>
-                        <input type="date" id="role_name" class="form-control" required>
+                        <label for="replicate_date" class="form-label">Select Date, when you want to replicate </label>
+                        <input type="date" id="replicate_date" class="form-control today-date" name="date" required>
+                    </div>
+                    <div class="mb-3">
+                        <input type="hidden" id="ids" class="form-control" name="schedule_ids">
                     </div>
                     <div class="text-end">
-                        <button type="submit" class="btn btn-success waves-effect waves-light">Replicate</button>
+                        <button type="submit" class="btn btn-success waves-effect waves-light" name="replicate" value="replicate" id="replicate" data-selected_ids="" >Replicate</button>
                     </div>
-                </form>
-            </div>
-        </div><!-- /.modal-content -->
+                </div>
+            </div><!-- /.modal-content -->
+        </form>
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
@@ -171,7 +169,26 @@
 
 @include('partials.datatable_js')
 <script>
-    $(document).ready(function() {});
+    /**
+     * this will prevent the previous date from callendar
+     */
+    preventPreviousDate('replicate_date');
+
+    $(document).ready(function() {
+        $('#btn_replicate').click(function(e) {
+            e.preventDefault();
+            let selectedIds = [];
+            selectedIds = $('input[name="schedule_ids[]"]:checked').map(function() {
+                return $(this).val();
+            }).get();
+
+            console.log(selectedIds);
+            $('#ids').val(selectedIds);
+            $('#replicate').data('selected_ids', selectedIds);
+
+            $('#replicateModal').modal('show');
+        });
+    });
 
     function countCheckboxChecked() {
         if ($('.child_checkbox:checked, .parent_checkbox:checked').length > 0) {

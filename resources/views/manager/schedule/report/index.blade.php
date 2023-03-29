@@ -177,7 +177,7 @@
                     @forelse($schedules as $schedule)
                     <tr>
                         <td>{{ formatDate($schedule->date) }}</td>
-                        <td>{{ formatTime($schedule->time, 'h:i:s A') }}</td>
+                        <td>{{ formatTime($schedule->time) }}</td>
                         <td><span class=" text-danger">{{ $schedule->routes['number'] }}</span> -{{ $schedule->routes['from'] }} <span class="text-success"> To </span> {{ $schedule->routes['to'] }}</td>
                         <td>{{ $schedule->vehicles['number'] }}</td>
                         <td>{{ $schedule->drivers['name'] }}</td>

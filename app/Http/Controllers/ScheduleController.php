@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Dompdf\Dompdf;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\View;
 
 class ScheduleController extends Controller
@@ -21,7 +22,7 @@ class ScheduleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         return $this->create();
         // $organizations = Organization::get();
@@ -192,13 +193,16 @@ class ScheduleController extends Controller
                 $schedules = $this->filterSchedule($request);
                 // dd($schedules->toArray());
                 return view('manager.schedule.report.index', compact('schedules'));
-                $this->generatePdf('manager.schedule.report.index', $schedules);
-                // $pdf = PDF::loadView('manager.schedule.report.publish_schedule', [
-                //     'schedules' => $schedules->toArray()
-                // ]);
+                // $this->generatePdf('manager.schedule.report.index', $schedules);
+                // $pdf = PDF::loadView(
+                //     'manager.schedule.report.publish_schedule',
+                //     $schedules->toArray()
+                // );
                 // return $pdf->download('report.pdf');
             } elseif ($request->has('modify')) {
                 $this->publishDraftSchedule($request, Schedule::STATUS_DRAFT);
+            } elseif ($request->has('replicate')) {
+                $this->replicateSchedule($request);
             }
         }
         $organizations = Organization::get();
@@ -262,7 +266,9 @@ class ScheduleController extends Controller
             DB::transaction(function () use ($request, $status) {
                 foreach ($request->schedule_ids as $schedule_id) {
                     $update = Schedule::where('id', $schedule_id)->update([
-                        'status' => $status == Schedule::STATUS_DRAFT ? Schedule::STATUS_DRAFT : Schedule::STATUS_PUBLISHED
+                        'status' => $status == Schedule::STATUS_DRAFT
+                            ? Schedule::STATUS_DRAFT
+                            : Schedule::STATUS_PUBLISHED
                     ]);
                     if (!$update) {
                         throw new \Exception('Error updating schedule.');
@@ -315,6 +321,13 @@ class ScheduleController extends Controller
         ]);
     }
 
+    /**
+     * Undocumented function
+     *
+     * @param [type] $view
+     * @param [type] $data
+     * @return void
+     */
     public function generatePdf($view, $data)
     {
         // Load the view and pass the data
@@ -328,5 +341,92 @@ class ScheduleController extends Controller
         $pdf->render();
         // Output the generated PDF to the browser
         return $pdf->stream();
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
+    // public function replicateSchedule($request)
+    // {
+    //     $schedule_ids = explode(",", $request->schedule_ids);
+    //     $schedules = Schedule::whereIn('id', $schedule_ids)->get();
+    //     $user = Auth::user();
+    //     try {
+    //         DB::transaction(function () use ($request, $schedules, $user) {
+    //             foreach ($schedules as $schedule) {
+    //                 // print_data($schedule['d_id']);
+    //                 $newSchedule = Schedule::create([
+    //                     'u_id' => $user->id,
+    //                     'date' => $request->date,
+    //                     'o_id' => $schedule['o_id'],
+    //                     'v_id' => $schedule['v_id'],
+    //                     'd_id' => $schedule['d_id'],
+    //                     'time' => $schedule['time'],
+    //                     'route_id' => $schedule['route_id'],
+    //                     'status' => Schedule::STATUS_DRAFT
+    //                 ]);
+    //                 throw_if(
+    //                     !$newSchedule,
+    //                     new \Exception('Error occured while replicating schedule.')
+    //                 );
+    //             }
+    //             // exit;
+    //         });
+    //         return redirect()->route('schedule.index')
+    //             ->with('success', 'Schedule replicated Successfully');
+    //     } catch (\Exception $e) {
+    //         return redirect()->route('schedule.index')
+    //             ->with('error', 'Error occurred while replicating schedule.');
+    //     }
+    // }
+
+
+    /**
+     * Undocumented function
+     *
+     * @param [object] $schedule
+     * @param [object] $user
+     * @param [var] $date
+     * @return void
+     */
+    private function replicateSingleSchedule($schedule, $user, $date)
+    {
+        $newSchedule = Schedule::create([
+            'u_id' => $user->id,
+            'date' => $date,
+            'o_id' => $schedule->o_id,
+            'v_id' => $schedule->v_id,
+            'd_id' => $schedule->d_id,
+            'time' => $schedule->time,
+            'route_id' => $schedule->route_id,
+            'status' => Schedule::STATUS_DRAFT
+        ]);
+
+        if (!$newSchedule) {
+            throw new \Exception('Error occurred while replicating schedule.');
+        }
+    }
+
+    public function replicateSchedule($request)
+    {
+        $schedule_ids = explode(",", $request->schedule_ids);
+        $user = Auth::user();
+        $schedules = Schedule::whereIn('id', $schedule_ids)->get();
+        $date = $request->date;
+
+        try {
+            DB::transaction(function () use ($schedules, $user, $date) {
+                foreach ($schedules as $schedule) {
+                    $this->replicateSingleSchedule($schedule, $user, $date);
+                }
+            });
+            return redirect()->route('schedule.index')
+                ->with('success', 'Schedule replicated Successfully');
+        } catch (\Exception $e) {
+            return redirect()->route('schedule.index')
+                ->with('error', 'Error occurred while replicating schedule.');
+        }
     }
 }
