@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Vehicle extends Model
 {
-    use HasFactory , SoftDeletes;
+    use HasFactory;
+    use SoftDeletes;
+
     protected $fillable = [
         'o_id',
         'u_id',
@@ -26,10 +28,7 @@ class Vehicle extends Model
         'chassis_no',
         'engine_no',
         'car_accessories',
-        'status',
-        'created_at',
-        'updated_at',
-        'deleted_at'
+        'status'
     ];
     protected $table = 'vehicles';
 
@@ -41,5 +40,76 @@ class Vehicle extends Model
     public function vehiclesTypes()
     {
         return $this->belongsTo(VehicleType::class, 'v_type_id', 'id');
+    }
+
+
+    // ----------------------------------------------------------------
+    // ------------------ Accessors & Mutator -------------------------
+    // ----------------------------------------------------------------
+
+    /**
+     * Get the front picture of the vehicle.
+     *
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getFrontPicAttribute()
+    {
+        return $this->attributes['front_pic'] ? asset('uploads/vehicles/' . $this->attributes['front_pic']) : null;
+    }
+
+    /**
+     * Get the front picture name of the vehicle.
+     *
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getFrontPicNameAttribute()
+    {
+        return $this->attributes['front_pic'] ;
+    }
+
+    /**
+     * Get the back picture of the vehicle.
+     *
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getBackPicAttribute()
+    {
+        return $this->attributes['back_pic'] ? asset('uploads/vehicles/' . $this->attributes['back_pic']) : null;
+    }
+
+    /**
+     * Get the back picture of the vehicle.
+     *
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getBackPicNameAttribute()
+    {
+        return $this->attributes['back_pic'] ;
+    }
+
+    /**
+     * Get the number plate picture of the vehicle.
+     *
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getNumberPicAttribute()
+    {
+        return $this->attributes['number_pic'] ? asset('uploads/vehicles/' . $this->attributes['number_pic']) : null;
+    }
+
+    /**
+     * Get the number plate picture of the vehicle.
+     *
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getNumberPicNameAttribute()
+    {
+        return $this->attributes['number_pic'] ;
     }
 }

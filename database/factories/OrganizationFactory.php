@@ -24,13 +24,13 @@ class OrganizationFactory extends Factory
             'branch_code' => substr(uniqid(), -4),
             'o_type_id' =>  OrganizationType::inRandomOrder()->first()->id,
             'email' => $this->faker->safeEmail(),
-            'phone' => $this->faker->phoneNumber(),
+            'phone' => '03' . $this->faker->regexify('/^[0-9+]{2}-[0-9+]{7}$/'),
             'address' => Str::random(5),
             's_id' => State::inRandomOrder()->first()->id,
             'c_id' => City::inRandomOrder()->first()->id,
             'head_name' => 'Test 1',
             'head_email' => $this->faker->safeEmail(),
-            'head_phone' => $this->faker->phoneNumber(),
+            'head_phone' => '03' . $this->faker->regexify('/^[0-9+]{2}-[0-9+]{7}$/'),
             'status' => 1,
         ];
     }

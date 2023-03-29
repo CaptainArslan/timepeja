@@ -22,20 +22,21 @@
     </div>
 </div>
 <!-- end page title -->
+<!-- Filters -->
 <div class="row">
     <div class="col-12">
         <div class="card">
             <div class="card-body">
                 <!-- <h4 class="header-title">Select Organization</h4> -->
-                <form action="" method="post" id="addRouteForm">
+                <form action="{{ route('routes.index') }}" method="post" enctype="multipart/form-data">
                     @csrf
                     <div class="row">
                         <div class="col-md-4">
                             <label for="organization">Select Oganization</label>
-                            <select class="form-control" data-toggle="select2" name="o_id" data-width="100%" id="organization" required>
+                            <select class="form-control" data-toggle="select2" name="o_id" data-width="100%" id="organization">
                                 <option value="" selected>Select</option>
                                 @forelse ($organizations as $organization)
-                                <option value="{{ $organization->id }}" {{ in_array($organization->id, old('dropdown', [])) ? 'selected' : '' }}>
+                                <option value="{{ $organization->id }}" {{ $organization->id == request()->input('o_id') ? 'selected' : '' }}>
                                     {{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}
                                 </option>
                                 @empty
@@ -55,11 +56,11 @@
                         </div> -->
                         <div class="col-md-3">
                             <label for="date-1">From</label>
-                            <input class="form-control today-date" type="date" name="from" required>
+                            <input class="form-control" type="date" name="from">
                         </div>
                         <div class="col-md-3">
                             <label for="date">To</label>
-                            <input class="form-control today-date" type="date" name="to" required>
+                            <input class="form-control" type="date" name="to">
                         </div>
                         <div class="col-md-1">
                             <label for="route_list"></label>
@@ -72,6 +73,7 @@
     </div> <!-- end col-->
 </div>
 
+<!-- Table -->
 <div class="row">
     <div class="col-lg-12 table-responsive">
         <div class="card">
@@ -98,9 +100,9 @@
                     <tbody>
                         @forelse ($routes as $route)
                         <tr>
-                            <td>{{ date("Y-m-d",strtotime($route->created_at)) }}</td>
-                            <td>{{ date("H:m:s",strtotime($route->created_at)) }}</td>
-                            <td><b>{{ ($route->organizations['name']) ?? '' }}</b></td>
+                            <td>{{ formatDate($route->created_at) }}</td>
+                            <td>{{ formatTime($route->created_at) }}</td>
+                            <td>{{ ($route->organizations['name']) ?? '' }} </td>
                             <td>{{ $route->name }}</td>
                             <td>{{ $route->number  }}</td>
                             <td>{{ $route->to }}</td>
@@ -110,7 +112,7 @@
                                 <input type="hidden" class="form-control db_org_id" name="" value="{{ ($route->organizations['id']) ?? '' }}">
                                 <input type="hidden" class="form-control db_route_name" name="" value="{{ $route->name }}">
                                 <input type="hidden" class="form-control db_route_number" name="" value="{{ $route->number  }}">
-                                <input type="hidden" class="form-control db_route_from" name="" value="{{ $route->from }}">``
+                                <input type="hidden" class="form-control db_route_from" name="" value="{{ $route->from }}">
                                 <input type="hidden" class="form-control db_route_from_lat" name="" value="{{ $route->from_latitude }}">
                                 <input type="hidden" class="form-control db_route_from_long" name="" value="{{ $route->from_longitude }}">
                                 <input type="hidden" class="form-control db_route_to" name="" value="{{ $route->to }}">
@@ -137,10 +139,11 @@
         </div> <!-- end card -->
     </div><!-- end col-->
 </div>
-<!-- end row-->
+<!-- end Table-->
+
 <!-- Modal -->
-<div class="modal fade" id="addRouteModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="addRouteModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+<div class="modal fade" id="addRouteModal" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="addRouteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-light">
                 <h4 class="modal-title" id="myCenterModalLabel">Add Route</h4>
@@ -162,7 +165,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="route_no" class="form-label">Route No</label>
-                        <input type="number" name="route_no" class="form-control" onchange="setRouteName()" required>
+                        <input type="text" name="route_no" data-toggle="input-mask" data-mask-format="00000000000" class="form-control" onchange="setRouteName()" required>
                     </div>
                     <div class="mb-3">
                         <label for="from" class="form-label">From</label>
@@ -192,22 +195,24 @@
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+</div>
+<!-- /.modal -->
+
 <!-- Edit modal -->
-<div class="modal fade" id="editRouteModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="editRouteModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+<div class="modal fade" id="editRouteModal" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="editRouteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-light">
                 <h4 class="modal-title" id="editRouteModalLabel">Edit Route</h4>
                 <button type="button" type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
             </div>
             <div class="modal-body p-4">
-                <form action="{{ route('routes.edit') }}" method="POST" id="edit_modal_form">
+                <form action="{{ route('routes.edit') }}" method="POST" id="editModalform">
                     @csrf
                     <input type="hidden" id="edit_id" name="edit_id">
                     <div class="mb-3">
                         <label for="org_name" class="form-label">Organization Name</label>
-                        <select class="form-select select2_form" id="edit_org_id" name="org_id" required>
+                        <select class="form-select select2" id="edit_org_id" name="org_id" required>
                             <option value="">Select</option>
                             @forelse ($organizations as $organization)
                             <option value="{{ $organization->id }}">{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
@@ -218,7 +223,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="route_no" class="form-label">Route No</label>
-                        <input type="number" id="edit_route_no" name="route_no" class="form-control" onchange="setEditRouteName()" required>
+                        <input type="text" id="edit_route_no" data-toggle="input-mask" data-mask-format="00000000000" name="route_no" class="form-control" onchange="setEditRouteName()" required>
                     </div>
                     <div class="mb-3">
                         <label for="from" class="form-label">From</label>
@@ -248,7 +253,8 @@
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+</div>
+<!-- /.modal -->
 @endsection
 
 @section('page_js')
@@ -260,21 +266,19 @@
 
 <script>
     $(document).ready(function() {
-        // $(".select2_form").select2({
-        //     placeholder: "Select",
-        //     allowClear: true,
-        //     dropdownParent: $("#addRouteForm"), // modal : id modal
-        //     width: "100%",
-        //     height: "30px",
-        // });
-        // $('#route_no, #to,  #from').change(function(e) {
-        //     e.preventDefault();
 
-        // });
+        // this function is call when add route modal open
+        $('#addRouteModal').on('shown.bs.modal', function() {
+            initializeSelect2(".select2_form", "#addRouteForm")
+        });
+
+         // this function is call when edit route modal open
+        $('#editRouteModal').on('shown.bs.modal', function() {
+            initializeSelect2(".select2", "#editModalform")
+        });
 
         $('.edit_route').click(function(e) {
             e.preventDefault();
-            let el = this;
             $('#edit_id').val($(this).closest('tr').find('.db_edit_id').val());
             $('#edit_org_id').val($(this).closest('tr').find('.db_org_id').val()).trigger('change');
             $('#edit_route_no').val($(this).closest('tr').find('.db_route_number').val());
@@ -283,61 +287,10 @@
             $('#edit_route_name').val($(this).closest('tr').find('.db_route_name').val());
         });
 
-
-        $('#edit_modal_form').submit(function(e) {
-            e.preventDefault();
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-            Swal.fire({
-                title: 'Are you sure?',
-                icon: 'warning',
-                confirmButtonColor: '#e64942',
-                showCancelButton: true,
-                confirmButtonText: 'Yes',
-                cancelButtonText: `No`,
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        type: "post",
-                        url: $(this).attr('action'),
-                        data: $(this).serialize(),
-                        success: function(response) {
-                            if (response.status == 'success') {
-                                Swal.fire(
-                                    'Updated!',
-                                    'Data Successfully Updated.!',
-                                    'success'
-                                ).then((result) => {
-                                    location.reload();
-                                });
-                            } else {
-                                Swal.fire(
-                                    'Error!',
-                                    'Error Occured while updating.!',
-                                    'warning'
-                                )
-                            }
-                        },
-                        error: (error) => {
-                            console.log(JSON.stringify(error));
-                        }
-                    });
-                }
-            });
-        });
-
         $('.delete_route').click(function(e) {
             e.preventDefault();
             var id = $(this).data('id');
             var el = this;
-            // $.ajaxSetup({
-            //     headers: {
-            //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            //     }
-            // });
             Swal.fire({
                 title: 'Are you sure?',
                 icon: 'warning',
@@ -382,8 +335,6 @@
                 }
             });
         });
-
-
     });
 
     function setRouteName() {

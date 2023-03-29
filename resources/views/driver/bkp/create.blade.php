@@ -83,7 +83,7 @@
             <div class="card-header">
                 <div class="d-flex justify-content-around">
                     <div class="col-2">
-                        <h4 class="header-title">Lates Vehicle</h4>
+                        <h4 class="header-title">Vehicle</h4>
                     </div>
                     <div class="col-8 bg-dark">
                         <!-- selection show here -->
@@ -617,13 +617,6 @@
 
 <!-- Init js-->
 <script src="/js/pages/form-fileuploads.init.js"></script>
-
-<!-- Plugins js -->
-<script src="/libs/jquery-mask-plugin/jquery.mask.min.js"></script>
-<script src="/libs/autonumeric/autoNumeric.min.js"></script>
-
-<!-- Init js-->
-<script src="/js/pages/form-masks.init.js"></script>
 
 <!-- Init js-->
 <script src="/js/pages/form-wizard.init.js"></script>

@@ -2,8 +2,9 @@
 
 namespace Database\Factories;
 
-use App\Models\Organization;
+use App\Models\Trip;
 use App\Models\Schedule;
+use App\Models\Organization;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class TripFactory extends Factory
@@ -16,12 +17,22 @@ class TripFactory extends Factory
     public function definition()
     {
         return [
-            'o_id' => Organization::inRandomOrder()->first()->id,
-            'u_id'=> 1,
-            'sch_id'=> Schedule::inRandomOrder()->first()->id,
-            'delay_reason'=> $this->faker->sentence(),
-            'delay_time'=> $this->faker->time(),
-            'status'=> $this->faker->randomElement(['pending', 'in-progress', 'completed', 'delay']),
+            'u_id' => 1,
+            'sch_id' => Schedule::inRandomOrder()->first()->id,
+            'actual_start_time' => $this->faker->time(),
+            'start_time' => $this->faker->time(),
+            'end_time' => $this->faker->time(),
+            'delayed' => $this->faker->randomElement([
+                Trip::IS_DELAYED,
+                Trip::IS_NOT_DELAYED
+            ]),
+            'delay_reason' => $this->faker->sentence(),
+            'status' => $this->faker->randomElement([
+                Trip::STATUS_PENDING,
+                Trip::STATUS_INPROGRESS,
+                Trip::STATUS_COMPLETED,
+                Trip::STATUS_DELAY
+            ]),
             'created_at' => $this->faker->date()
         ];
     }
