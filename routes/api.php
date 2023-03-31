@@ -22,8 +22,14 @@ Route::group(['middleware' => 'api'], function () {
         Route::post('/register', [ManagerAuthController::class, 'register']);
         Route::post('/login', [ManagerAuthController::class, 'login']);
         Route::post('/get-code', [ManagerAuthController::class, 'getVerificationCode'])
-        ->middleware('throttle:ratelimit');
+            ->middleware('throttle:ratelimit');
+        Route::post('/refresh', [ManagerAuthController::class, 'refresh']);
+        Route::post('/logout', [ManagerAuthController::class, 'logout']);
         Route::post('/forget-password', [ManagerAuthController::class, 'forgetPassword']);
+
+        Route::middleware(['verify.headers', 'jwt.verify'])->group(function () {
+            Route::get('/profile', [ManagerAuthController::class, 'profile']);
+        });
     });
 
     Route::prefix('v1/driver')->name('driver.')->group(function () {
@@ -31,17 +37,14 @@ Route::group(['middleware' => 'api'], function () {
         Route::post('/register', [DriverAuthController::class, 'register']);
         Route::post('/login', [DriverAuthController::class, 'login']);
         Route::post('/get-code', [DriverAuthController::class, 'getVerificationCode'])
-        ->middleware('throttle:ratelimit');
+            ->middleware('throttle:ratelimit');
+        Route::post('/refresh', [DriverAuthController::class, 'refresh']);
+        Route::post('/logout', [DriverAuthController::class, 'logout']);
         Route::post('/forget-password', [DriverAuthController::class, 'forgetPassword']);
+        Route::get('profile', [DriverAuthController::class, 'profile']);
     });
-
-
-
 
     Route::group(['middleware' => ['jwt.verify']], function () {
-        // Protected routes
-    });
-    Route::group(['middleware' => ['veify.header']], function () {
         // Protected routes
     });
 });

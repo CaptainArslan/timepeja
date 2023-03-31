@@ -120,7 +120,7 @@
                             <td> {{ $organization->manager['phone'] }} </td>
                             <td> {{ $organization->manager['email'] }} </td>
                             <td> {{ $organization->manager['address'] }} </td>
-                            <td> <img src="{{ $organization->manager['picture'] }}" alt="">  </td>
+                            <td> <img src="{{ $organization->manager['picture'] }}" alt="" style="height: 50px; width: 50px; object-fit: contain;">  </td>
                             <td> {{ $organization->head_name}} </td>
                             <td> {{ $organization->head_email}} </td>
                             <td> {{ $organization->head_phone}} </td>
@@ -339,10 +339,10 @@
                                                         <label for="man_email" class="form-label">Email</label>
                                                         <input type="email" id="man_email" name="man_email" value="{{ old('man_email') }}" aria-placeholder="text@gmail.com" class="form-control" placeholder="Email" required>
                                                     </div>
-                                                    <!-- <div class="mb-3">
+                                                    <div class="mb-3">
                                                         <label for="man_pic" class="form-label">Manager Picture</label>
                                                         <input type="file" id="man_pic" name="man_pic" value="{{ old('man_pic') }}" class="form-control">
-                                                    </div> -->
+                                                    </div>
                                                     <!-- <div class="mb-3">
                                                         <label for="password_confirmation" class="form-label">Confirm Password</label>
                                                         <div class="input-group input-group-merge">
@@ -352,13 +352,13 @@
                                                             </div>
                                                         </div>
                                                     </div> -->
+                                                </div> 
+                                                <div class="col-lg-12">
                                                     <div class="mb-3">
                                                         <label for="man_address" class="form-label">Address</label>
                                                         <textarea class="form-control" name="man_address" id="man_address" value="{{ old('man_address') }}" cols="30" rows="2" placeholder="123 Street lahore, Pakistan"></textarea>
                                                     </div>
-                                                </div> 
-                                                <!-- <div class="col-lg-12">
-                                                </div> -->
+                                                </div>
                                             </div> 
                                         </div>
 

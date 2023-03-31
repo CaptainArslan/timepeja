@@ -76,7 +76,7 @@ class DriverAuthController extends BaseController
         if (empty($driver->password)) {
             $driver->where('phone', $request->phone)->update([
                 'password' => Hash::make($request->password),
-                'token' => Str::random(60),
+                // ,
             ]);
             $driver->makeHidden(['password']);
             return $this->respondWithSuccess($driver, 'Driver registered successfully', 'REGISTER_API_SUCCESS');
@@ -136,7 +136,7 @@ class DriverAuthController extends BaseController
             'content-type' => 'application/json',
             'uid' => $user->email,
             // 'access-token' => $user->token,
-            'Authorization' => 'Bearer ' . $token
+            'access-token' => $token
         ]);
     }
 
@@ -222,5 +222,36 @@ class DriverAuthController extends BaseController
         $driver->makeHidden('password');
 
         return $this->respondWithSuccess($driver, 'Password Updated Successfully', 'PASSWORD_UPDATE');
+    }
+
+    /**
+     * Get the authenticated User.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function profile()
+    {
+        return response()->json(auth('driver')->user());
+    }
+
+    /**
+     * Log the user out (Invalidate the token).
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function logout()
+    {
+        auth('driver')->logout();
+        return response()->json(['message' => 'Successfully logged out']);
+    }
+
+    /**
+     * Refresh a token.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function refresh()
+    {
+        return $this->respondWithToken(auth('driver')->refresh());
     }
 }

@@ -53,7 +53,9 @@ class Manager extends Authenticatable implements JWTSubject
      */
     public function getJWTCustomClaims()
     {
-        return [];
+        return [
+            'exp' => now()->addMonth(1)->timestamp, // Set token expiration to 7 days from now
+        ];
     }
 
     /**

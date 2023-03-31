@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Trip;
 use App\Models\User;
-use App\Models\Financials;
-use App\Models\Organization;
-use Illuminate\Http\Request;
-use App\Models\OrganizationType;
 use App\Models\State;
 use App\Models\Manager;
 use App\Models\Schedule;
-use App\Models\Trip;
+use App\Models\Financials;
+use Illuminate\Support\Str;
+use App\Models\Organization;
+use Illuminate\Http\Request;
+use App\Models\OrganizationType;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
@@ -198,16 +199,20 @@ class ManagerController extends Controller
         if ($org_save) {
             $manager = new Manager();
             $manager->o_id          = $org->id;
+            $manager->uid           = Str::random(60); //substr(uniqid(), 4);
             $manager->name          = $request->input('man_name');
             $manager->email         = $request->input('man_email');
             $manager->phone         = $request->input('man_phone');
             $manager->address       = $request->input('man_address');
-            $manager->otp           = substr(uniqid(), -4);
-            // $manager->picture       = uploadImage($request->file('man_pic'), 'managers/');
+            $manager->otp           = rand(1000, 9999);
+            $manager->picture       = ($request->file('man_pic'))
+                ? uploadImage($request->file('man_pic'), 'managers/')
+                : null;
             $manager_save = $manager->save();
             if ($manager_save) {
                 $financials = new Financials();
                 $financials->u_id                       = $user->id;
+                $financials->o_id                       = $org->id;
                 $financials->o_id                       = $org->id;
 
                 $financials->org_wallet                 = isset($request->wallet[0]) ? 1 : 0;
