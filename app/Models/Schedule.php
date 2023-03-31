@@ -11,8 +11,15 @@ class Schedule extends Model
     use HasFactory;
     use SoftDeletes;
 
-    const STATUS_PUBLISHED = 'published';
-    const STATUS_DRAFT = 'draft';
+    public const STATUS_PUBLISHED = 'published';
+    public const STATUS_DRAFT = 'draft';
+
+    public const TRIP_STATUS_UPCOMING = 'upcoming';
+    public const TRIP_STATUS_INPROGRESS = 'in-progress';
+    public const TRIP_STATUS_COMPLETED = 'completed';
+
+    public const TRIP_NOTDELAYED = 0;
+    public const TRIP_ISDELAYED = 1;
 
     protected $table = 'schedules';
 

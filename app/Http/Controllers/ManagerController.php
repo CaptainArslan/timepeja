@@ -59,7 +59,8 @@ class ManagerController extends Controller
                 'o_id'           => 'nullable|numeric',
                 'from'           => 'nullable|date',
                 'to'             => 'nullable|date|after:from',
-            ], [
+            ],
+            [
                 'to.after' => "The registration to date must be a date after registration from.",
             ]
         );
@@ -97,7 +98,7 @@ class ManagerController extends Controller
                 $query->select('id', 'name');
             })
             ->get();
-            // dd($result->toArray());
+        // dd($result->toArray());
         return $result;
     }
 
@@ -341,10 +342,11 @@ class ManagerController extends Controller
             'to.after' => "The registration to date must be a date after registration from.",
         ]);
 
-        $data = [];
+        $reports = [];
         if ($request->isMethod('post')) {
             if ($request->has('filter')) {
-                $data = $this->filterReport($request);
+                $reports = $this->filterReport($request);
+                // dd($reports->toArray());
             }
         }
         $organizations = Organization::get();
@@ -352,34 +354,124 @@ class ManagerController extends Controller
         return view('manager.report.index', [
             'organizations' => $organizations,
             'org_dropdowns' => $org_dropdowns,
-            'report_date' => $data
+            'reports' => $reports
         ]);
     }
+
 
     protected function filterReport($request)
     {
         $query = Schedule::query();
-        // Add date range constraint if both dates are provided
-        $query->when($request->input('from') && $request->input('to'), function ($query) use ($request) {
-            $query->whereBetween('created_at', [$request->input('from'), $request->input('to')]);
-        })->when($request->input('from') && !$request->input('to'), function ($query) use ($request) {
-            $query->where('created_at', '>=', $request->input('from'));
-        })->when(!$request->input('from') && $request->input('to'), function ($query) use ($request) {
-            $query->where('created_at', '<=', $request->input('to'));
-        })->when(!$request->input('from') && $request->input('to'), function ($query) use ($request) {
-            $query->where('created_at', '<=', $request->input('to'));
+        $selection = $request->input('selection');
+
+        switch ($request->type) {
+            case 'driver':
+                if ($request->selection[0] == 'all') {
+                    $query->whereNotNull('d_id');
+                } else {
+                    $query->whereIn('d_id', $selection);
+                }
+                break;
+            case 'vehicle':
+                if ($request->selection[0] == 'all') {
+                    $query->whereNotNull('v_id');
+                } else {
+                    $query->whereIn('v_id', $selection);
+                }
+                break;
+            case 'route':
+                if ($request->selection[0] == 'all') {
+                    $query->whereNotNull('route_id');
+                } else {
+                    $query->whereIn('route_id', $selection);
+                }
+                break;
+            default:
+                break;
+        }
+
+        $query->when($request->filled('from') && $request->filled('to'), function ($query) use ($request) {
+            $query->whereBetween('date', [$request->input('from'), $request->input('to')]);
+        });
+
+        $query->when($request->filled('from'), function ($query) use ($request) {
+            $query->where('date', '>=', $request->input('from'));
+        });
+
+        $query->when($request->filled('to'), function ($query) use ($request) {
+            $query->where('date', '<=', $request->input('to'));
         });
 
         $result = $query->where('o_id', $request->o_id)
-            ->where('type', )
             ->with('organizations:id,name')
             ->with('routes:id,name,number,from,to')
             ->with('vehicles:id,number')
             ->with('drivers:id,name')
             ->get();
-        // dd($result->toArray());
+
         return $result;
     }
+
+    // protected function filterReport($request)
+    // {
+    //     // dd($request->all());
+    //     // dd($request->selection[0]);
+    //     $query = Schedule::query();
+    //     if ($request->type == 'driver') {
+    //         if ($request->selection[0] == 'all') {
+    //             // return 'all';
+    //             $query->when($request->input('selection'), function ($query) use ($request) {
+    //                 $query->whereNotNull('d_id');
+    //             });
+    //         } else {
+    //             // return 'selection';
+    //             $query->when($request->input('selection'), function ($query) use ($request) {
+    //                 $query->whereIn('d_id', $request->input('selection'));
+    //             });
+    //         }
+    //     } elseif ($request->type == 'vehicle') {
+    //         if ($request->selection[0] == 'all') {
+    //             // return 'all';
+    //             $query->when($request->input('selection'), function ($query) use ($request) {
+    //                 $query->whereNotNull('v_id');
+    //             });
+    //         } else {
+    //             // return 'selection';
+    //             $query->when($request->input('selection'), function ($query) use ($request) {
+    //                 $query->whereIn('v_id', $request->input('selection'));
+    //             });
+    //         }
+    //     } elseif ($request->type == 'route') {
+    //         if ($request->selection[0] == 'all') {
+    //             // return 'all';
+    //             $query->when($request->input('selection'), function ($query) use ($request) {
+    //                 $query->whereNotNull('route_id');
+    //             });
+    //         } else {
+    //             // return 'selection';
+    //             $query->when($request->input('selection'), function ($query) use ($request) {
+    //                 $query->whereIn('route_id', $request->input('selection'));
+    //             });
+    //         }
+    //     }
+    //     // Add date range constraint if both dates are provided
+    //     $query->when($request->input('from') && $request->input('to'), function ($query) use ($request) {
+    //         $query->whereBetween('date', [$request->input('from'), $request->input('to')]);
+    //     })->when($request->input('from') && !$request->input('to'), function ($query) use ($request) {
+    //         $query->where('date', $request->input('from'));
+    //     })->when(!$request->input('from') && $request->input('to'), function ($query) use ($request) {
+    //         $query->where('date', $request->input('to'));
+    //     });
+
+    //     $result = $query->where('o_id', $request->o_id)
+    //         ->with('organizations:id,name')
+    //         ->with('routes:id,name,number,from,to')
+    //         ->with('vehicles:id,number')
+    //         ->with('drivers:id,name')
+    //         ->get();
+    //     // dd($result->toArray());
+    //     return $result;
+    // }
 
     /**
      * [awaitingApproval description]

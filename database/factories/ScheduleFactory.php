@@ -20,14 +20,26 @@ class ScheduleFactory extends Factory
     public function definition()
     {
         return [
-            'o_id' => Organization::inRandomOrder()->first()->id,
             'u_id' => 1,
+            'o_id' => Organization::inRandomOrder()->first()->id,
             'route_id' =>  Route::inRandomOrder()->first()->id,
             'v_id' => Vehicle::inRandomOrder()->first()->id,
             'd_id' => Driver::inRandomOrder()->first()->id,
             'date' => Carbon::now(),
             'time' => $this->faker->time(),
-            'status' => Schedule::STATUS_DRAFT
+            'status' => Schedule::STATUS_DRAFT,
+            'start_time' => $this->faker->time(),
+            'end_time' => $this->faker->time(),
+            'delayed_reason' => $this->faker->sentence(),
+            'trip_status' => $this->faker->randomElement([
+                Schedule::TRIP_STATUS_UPCOMING,
+                Schedule::TRIP_STATUS_INPROGRESS,
+                Schedule::TRIP_STATUS_COMPLETED
+            ]),
+            'is_delay' => $this->faker->randomElement([
+                Schedule::TRIP_ISDELAYED,
+                Schedule::TRIP_NOTDELAYED
+            ]),
         ];
     }
 }
