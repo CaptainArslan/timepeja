@@ -23,7 +23,7 @@
                     </div>
                     <div class="col-6">
                         <div class="text-end">
-                            <h3 class="text-dark mt-1"><span data-plugin="counterup">58,947</span></h3>
+                            <h3 class="text-dark mt-1"><span data-plugin="counterup">{{ $tripCount }}</span></h3>
                             <p class="text-muted mb-1 text-truncate">Total Trips Completed</p>
                         </div>
                     </div>
@@ -43,7 +43,7 @@
                     </div>
                     <div class="col-6">
                         <div class="text-end">
-                            <h3 class="text-dark mt-1"><span data-plugin="counterup">127</span></h3>
+                            <h3 class="text-dark mt-1"><span data-plugin="counterup">{{ $vehicleCount }}</span></h3>
                             <p class="text-muted mb-1 text-truncate">Total Active Vehicles</p>
                         </div>
                     </div>
@@ -63,7 +63,7 @@
                     </div>
                     <div class="col-6">
                         <div class="text-end">
-                            <h3 class="text-dark mt-1"><span data-plugin="counterup">58</span></h3>
+                            <h3 class="text-dark mt-1"><span data-plugin="counterup">{{ $passengerCount }}</span></h3>
                             <p class="text-muted mb-1 text-truncate">Total Passengers</p>
                         </div>
                     </div>
