@@ -47,7 +47,7 @@
                             <!-- <label for="route_list"></label> -->
                             <button type="submit" class="btn btn-success" id="route_list" value="filter" name="filter" style="margin-top: 20px;"> Submit </button>
                         </div>
-                    </div> <!-- end row -->
+                    </div> 
                 </form>
             </div> <!-- end card-body-->
         </div> <!-- end card-->
@@ -116,11 +116,11 @@
                             <td> {{ $organization->email }} </td>
                             <td> {{ $organization->phone }} </td>
                             <td> {{ $organization->address }} </td>
-                            <td> {{ $organization->manager['name'] ?? '' }} </td>
-                            <td> {{ $organization->manager['phone'] ?? ''}} </td>
-                            <td> {{ $organization->manager['email'] ?? ''}} </td>
-                            <td> {{ $organization->manager['address'] ?? ''}} </td>
-                            <td> <img src="{{ $organization->manager['picture'] }}" alt="">  </td>
+                            <td> {{ $organization->manager['name']  }} </td>
+                            <td> {{ $organization->manager['phone'] }} </td>
+                            <td> {{ $organization->manager['email'] }} </td>
+                            <td> {{ $organization->manager['address'] }} </td>
+                            <td> <img src="{{ $organization->manager['picture'] }}" alt="" style="height: 50px; width: 50px; object-fit: contain;">  </td>
                             <td> {{ $organization->head_name}} </td>
                             <td> {{ $organization->head_email}} </td>
                             <td> {{ $organization->head_phone}} </td>
@@ -128,7 +128,7 @@
                             <td>
                                 <input type="hidden" name="" id="" value="{{ formatDate($organization->create_at) }}" class="db_date">
                                 <input type="hidden" name="" id="" value="{{ formatTime($organization->create_at) }}" class="db_time">
-                                <input type="hidden" name="" id="" value="{{ ($organization->manager['otp']) ?? '' }}" class="db_otp">
+                                <input type="hidden" name="" id="" value="{{ ($organization->manager['otp'])  }}" class="db_otp">
                                 <input type="hidden" name="" id="" value="{{ $organization->name }}" class="db_org_name">
                                 <input type="hidden" name="" id="" value="{{ $organization->id }}" class="db_org_id">
                                 <input type="hidden" name="" id="" value="{{ $organization->branch_name }}" class="db_branch_name">
@@ -137,11 +137,11 @@
                                 <input type="hidden" name="" id="" value="{{ $organization->email }}" class="db_org_email">
                                 <input type="hidden" name="" id="" value="{{ $organization->phone }}" class="db_org_phone">
                                 <input type="hidden" name="" id="" value="{{ $organization->address }}" class="db_org_address">
-                                <input type="hidden" name="" id="" value="{{ $organization->manager['name'] ?? '' }}" class="db_man_name">
-                                <input type="hidden" name="" id="" value="{{ $organization->manager['email'] ?? ''}}" class="db_man_email">
-                                <input type="hidden" name="" id="" value="{{ $organization->manager['phone'] ?? ''}}" class="db_man_phone">
-                                <input type="hidden" name="" id="" value="{{ $organization->manager['address'] ?? ''}}" class="db_man_manager_address">
-                                <input type="hidden" name="" id="" value="{{ $organization->manager['picture'] ?? ''}}" class="db_man_picture">
+                                <input type="hidden" name="" id="" value="{{ $organization->manager['name']  }}" class="db_man_name">
+                                <input type="hidden" name="" id="" value="{{ $organization->manager['email'] }}" class="db_man_email">
+                                <input type="hidden" name="" id="" value="{{ $organization->manager['phone'] }}" class="db_man_phone">
+                                <input type="hidden" name="" id="" value="{{ $organization->manager['address'] }}" class="db_man_manager_address">
+                                <input type="hidden" name="" id="" value="{{ $organization->manager['picture'] }}" class="db_man_picture">
                                 <input type="hidden" name="" id="" value="{{ $organization->head_name}}" class="db_head_name">
                                 <input type="hidden" name="" id="" value="{{ $organization->head_email}}" class="db_head_email">
                                 <input type="hidden" name="" id="" value="{{ $organization->head_phone}}" class="db_head_phone">
@@ -237,7 +237,7 @@
                                                         <span class="text-danger" id="org_branch_name_error"></span>
                                                     </div>
                                                     <div class="mb-3">
-                                                        <label for="org_type" class="form-label">Types</label>
+                                                        <label for="org_type" class="form-label">Company Title</label>
                                                         <select class="form-select select2" id="org_type" name="org_type" required>
                                                             <option value="" selected>Please Select Organization Type</option>
                                                             @forelse ($organization_types as $organizaton_type)
@@ -308,8 +308,8 @@
                                                         <label for="org_head_address" class="form-label">Address</label>
                                                         <input class="form-control" id="org_head_address" name="org_head_address"  value="{{ old('org_head_address') }}" rows="5"></input>
                                                     </div>
-                                                </div> <!-- end col -->
-                                            </div> <!-- end row -->
+                                                </div> 
+                                            </div> 
                                         </div>
 
                                         <!-- Company transport manager -->
@@ -352,14 +352,14 @@
                                                             </div>
                                                         </div>
                                                     </div> -->
-                                                </div> <!-- end col -->
+                                                </div> 
                                                 <div class="col-lg-12">
                                                     <div class="mb-3">
                                                         <label for="man_address" class="form-label">Address</label>
                                                         <textarea class="form-control" name="man_address" id="man_address" value="{{ old('man_address') }}" cols="30" rows="2" placeholder="123 Street lahore, Pakistan"></textarea>
                                                     </div>
                                                 </div>
-                                            </div> <!-- end row -->
+                                            </div> 
                                         </div>
 
                                         <!-- Company financials -->
@@ -448,7 +448,7 @@
                                             <div class="text-end mt-3">
                                                 <button type="submit" class="btn btn-success waves-effect waves-light">Save</button>
                                             </div>
-                                        </div> <!-- end row -->
+                                        </div> 
                                     </div>
                                 </div> <!-- tab-content -->
                             </form>

@@ -117,7 +117,7 @@ class Organization extends Model
      */
     public function getPhoneAttribute($value)
     {
-        return substr($value, 0, 4) . '-' . substr($value, 7);
+        return substr($value, 0, 4) . '-' . substr($value, 4, 8);
     }
 
     /**

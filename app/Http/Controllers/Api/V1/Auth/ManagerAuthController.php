@@ -39,10 +39,10 @@ class ManagerAuthController extends BaseController
                 'required',
                 'string',
                 'confirmed',
-                'between:8,255',
+                'between:8,25',
                 // 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'
             ],
-            'password_confirmation' => ['required', 'string', 'between:8,255'],
+            'password_confirmation' => ['required', 'string', 'between:8,25'],
             'email' => ['nullable', 'email', 'max:255'],
         ], [
             'name.required' => 'Name is required',
@@ -71,12 +71,13 @@ class ManagerAuthController extends BaseController
             return $this->respondWithError("Invalid phone number or verification code");
         }
 
-        if (empty($manager->token) && empty($manager->password)) {
+        if (empty($manager->password)) {
             Manager::where('phone', $request->phone)->update([
                 'password' => Hash::make($request->password),
-                'token' => Str::random(60),
+                // ,
             ]);
             $manager->makeHidden(['password']);
+            $manager->makeHidden(['token']);
             return $this->respondWithSuccess($manager, 'Manager registered successfully', 'REGISTER_API_SUCCESS');
         } else {
             return $this->respondWithError('Manager alreasy exist. Please login ');
@@ -97,7 +98,7 @@ class ManagerAuthController extends BaseController
             'password' => [
                 'required',
                 'string',
-                'between:8,255',
+                'between:8,25',
                 // 'regex:/^(?=.*[a-z])(?=.*[A- Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'
             ],
         ], [
@@ -134,7 +135,7 @@ class ManagerAuthController extends BaseController
             'content-type' => 'application/json',
             'uid' => $user->email,
             // 'access-token' => $user->token,
-            'Authorization' => 'Bearer ' . $token
+            'access-token' => $token
         ]);
     }
 
@@ -191,7 +192,7 @@ class ManagerAuthController extends BaseController
                 'required',
                 'string',
                 'confirmed',
-                'between:8,255',
+                'between:8,25',
                 // 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'
             ],
         ], [
@@ -212,7 +213,7 @@ class ManagerAuthController extends BaseController
             return $this->respondWithError('invalid phone or verification code');
         }
 
-        Manager::where('phone', $request->phone)
+        $manager->where('phone', $request->phone)
             ->where('otp', $request->otp)
             ->update([
                 'password' => Hash::make($request->password),
@@ -220,6 +221,37 @@ class ManagerAuthController extends BaseController
         $manager->makeHidden('password');
 
         return $this->respondWithSuccess($manager, 'Password Updated Successfully', 'PASSWORD_UPDATE');
+    }
+
+    /**
+     * Get the authenticated User.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function profile()
+    {
+        return response()->json(auth('manager')->user());
+    }
+
+    /**
+     * Log the user out (Invalidate the token).
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function logout()
+    {
+        auth('manager')->logout();
+        return response()->json(['message' => 'Successfully logged out']);
+    }
+
+    /**
+     * Refresh a token.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function refresh()
+    {
+        return $this->respondWithToken(auth('manager')->refresh());
     }
 }
 

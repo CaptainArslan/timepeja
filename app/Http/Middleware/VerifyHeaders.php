@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use ApiHelper;
 use Closure;
 use Illuminate\Http\Request;
 
@@ -18,10 +19,10 @@ class VerifyHeaders
     {
         $uid = $request->header('uid');
         $accessToken = $request->header('access-token');
-        $authorization = $request->header('authorization');
+        // $authorization = $request->header('authorization');
 
-        if (!$uid || !$accessToken || !$authorization) {
-            return response()->json(['message' => 'Required headers not present'], 400);
+        if (!$uid && !$accessToken) {
+            return ApiHelper::respondWithError('Required headers not present. uid or access-token is missing!');
         }
 
         // perform validation or decoding of the headers as required

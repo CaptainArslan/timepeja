@@ -71,7 +71,7 @@ class PassengerAuthController extends Controller
         if (empty($manager->token) && empty($manager->password)) {
             Manager::where('phone', $request->phone)->update([
                 'password' => Hash::make($request->password),
-                'token' => Str::random(60),
+                ,
             ]);
             $manager->makeHidden(['password']);
             return $this->respondWithSuccess($manager, 'Manager registered successfully', 'REGISTER_API_SUCCESS');
