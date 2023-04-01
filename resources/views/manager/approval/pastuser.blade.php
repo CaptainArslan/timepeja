@@ -96,7 +96,7 @@
                     <thead>
                         <tr>
                             <th>
-                                <input type="checkbox">
+                                <input type="checkbox" class="parent_checkbox">
                             </th>
                             <th>Student/Employee Name</th>
                             <th>Roll No/Employee ID</th>
@@ -109,7 +109,7 @@
                     <tbody>
                         <tr>
                             <td>
-                                <input type="checkbox">
+                                <input type="checkbox" class="child_checkboxsss">
                             </td>
                             <td>Ali</td>
                             <td>MSCS220444</td>
