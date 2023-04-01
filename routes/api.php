@@ -26,8 +26,7 @@ Route::group(['middleware' => 'api'], function () {
         Route::post('/refresh', [ManagerAuthController::class, 'refresh']);
         Route::post('/logout', [ManagerAuthController::class, 'logout']);
         Route::post('/forget-password', [ManagerAuthController::class, 'forgetPassword']);
-
-        Route::middleware(['verify.headers', 'jwt.verify'])->group(function () {
+        Route::middleware(['jwt.verify:manager'])->group(function () {
             Route::get('/profile', [ManagerAuthController::class, 'profile']);
         });
     });
@@ -41,10 +40,9 @@ Route::group(['middleware' => 'api'], function () {
         Route::post('/refresh', [DriverAuthController::class, 'refresh']);
         Route::post('/logout', [DriverAuthController::class, 'logout']);
         Route::post('/forget-password', [DriverAuthController::class, 'forgetPassword']);
-        Route::get('profile', [DriverAuthController::class, 'profile']);
+        Route::middleware(['jwt.verify:driver'])->group(function () {
+            Route::get('/profile', [DriverAuthController::class, 'profile']);
+        });
     });
 
-    Route::group(['middleware' => ['jwt.verify']], function () {
-        // Protected routes
-    });
 });

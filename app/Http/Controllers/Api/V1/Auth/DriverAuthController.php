@@ -19,7 +19,7 @@ class DriverAuthController extends BaseController
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register', 'getVerificationCode', 'forgetPassword']]);
+        // $this->middleware('auth:api', ['except' => ['login', 'register', 'getVerificationCode', 'forgetPassword']]);
     }
 
     /**
@@ -136,7 +136,7 @@ class DriverAuthController extends BaseController
             'content-type' => 'application/json',
             'uid' => $user->email,
             // 'access-token' => $user->token,
-            'access-token' => $token
+            'Authorization' => $token
         ]);
     }
 
@@ -231,7 +231,13 @@ class DriverAuthController extends BaseController
      */
     public function profile()
     {
-        return response()->json(auth('driver')->user());
+        return $this->respondWithSuccess(
+            auth('driver')->user(),
+            // ->load('organization')
+            'Driver profile',
+            'DRIVER_PROFILE'
+        );
+        // return response()->json(auth('driver')->user());
     }
 
     /**

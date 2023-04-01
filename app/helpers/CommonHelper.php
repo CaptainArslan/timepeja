@@ -125,3 +125,11 @@ function removeImage($imageName, $folderName)
         unlink($imagePath);
     }
 }
+
+// Helper function to encode data as base64url
+function base64url_encode($data)
+{
+    $base64 = base64_encode($data);
+    $base64url = strtr($base64, '+/', '-_');
+    return rtrim($base64url, '=');
+}

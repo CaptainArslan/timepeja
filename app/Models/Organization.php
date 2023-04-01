@@ -139,7 +139,8 @@ class Organization extends Model
      */
     public function getHeadPhoneAttribute($value)
     {
-        return substr($value, 0, 4) . '-' . substr($value, 7);
+        return substr($value, 0, 4) . '-' . substr($value, 4, 8);
+        // return substr($value, 0, 4) . '-' . substr($value, 7);
     }
 
     /**

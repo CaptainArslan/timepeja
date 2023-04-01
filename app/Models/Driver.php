@@ -40,6 +40,15 @@ class Driver extends Authenticatable implements JWTSubject
         'address',
     ];
 
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
 
     // ----------------------------------------------------------------
     // ------------------ Jwt Auth  -----------------------------------
