@@ -28,14 +28,20 @@ class Manager extends Authenticatable implements JWTSubject
         'email',
         'phone',
         'picture',
-        'address',
-        'created_at',
-        'updated_at',
-        'deleted_at'
+        'address'
+    ];
+
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
     ];
 
     // Rest omitted for brevity
-
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
      *

@@ -135,7 +135,7 @@ class ManagerAuthController extends BaseController
             'content-type' => 'application/json',
             'uid' => $user->email,
             // 'access-token' => $user->token,
-            'access-token' => $token
+            'Authorization' => $token
         ]);
     }
 
@@ -228,9 +228,17 @@ class ManagerAuthController extends BaseController
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function profile()
+    public function profile(Request $request)
     {
-        return response()->json(auth('manager')->user());
+        return $this->respondWithSuccess(
+            auth('manager')->user(),
+            // ->load('organization')
+            'Manager profile',
+            'MANAGER_PROFILE'
+        );
+        // return response()->json(
+        //     auth('manager')->user() // ->load('organization')
+        // );
     }
 
     /**

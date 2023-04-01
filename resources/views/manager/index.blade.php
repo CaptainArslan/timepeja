@@ -110,9 +110,9 @@
                             <td> {{ formatDate($organization->created_at) }} </td>
                             <td> {{ formatTime($organization->created_at) }} </td>
                             <td> {{ ($organization->manager['otp']) ?? '' }} </td>
-                            <td> {{ $organization->id }} - {{ $organization->name }} </td>
+                            <td> {{-- $organization->id --}} {{ $organization->name }} </td>
                             <td> {{ isset($organization->branch_code) ? $organization->branch_code . ' - ' : '' }} {{ $organization->branch_name }} </td>
-                            <td> {{ isset($organization->organizationType['id']) ? $organization->organizationType['id'] .' - ' : '' }} {{ ($organization->organizationType['name']) ?? '' }} </td>
+                            <td> {{-- isset($organization->organizationType['id']) ? $organization->organizationType['id'] .' - ' : '' --}} {{ ($organization->organizationType['name']) ?? '' }} </td>
                             <td> {{ $organization->email }} </td>
                             <td> {{ $organization->phone }} </td>
                             <td> {{ $organization->address }} </td>

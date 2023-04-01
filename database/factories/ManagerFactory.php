@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use Illuminate\Support\Str;
 use App\Models\Organization;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -17,6 +18,7 @@ class ManagerFactory extends Factory
     {
         return [
             'o_id' => Organization::inRandomOrder()->first()->id,
+            'uid' => Str::random(10),
             'name' => $this->faker->name(),
             'email' => $this->faker->safeEmail(),
             'phone' => '03' . $this->faker->regexify('/^[0-9+]{2}-[0-9+]{7}$/'),
