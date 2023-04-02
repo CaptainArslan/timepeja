@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\Auth\ManagerAuthController;
 use App\Http\Controllers\Api\V1\Auth\DriverAuthController;
+use App\Http\Controllers\Api\V1\ScheduleController as ApiScheduleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,6 +29,10 @@ Route::group(['middleware' => 'api'], function () {
         Route::post('/forget-password', [ManagerAuthController::class, 'forgetPassword']);
         Route::middleware(['jwt.verify:manager'])->group(function () {
             Route::get('/profile', [ManagerAuthController::class, 'profile']);
+            Route::get('/get-organization-data/{o_id}', [ApiScheduleController::class, 'getOrganizationData']);
+            // Route::post('/create-schedule', [ApiScheduleController::class, 'create']);
+
+            Route::apiResource('/schedule', ApiScheduleController::class);
         });
     });
 
@@ -44,5 +49,4 @@ Route::group(['middleware' => 'api'], function () {
             Route::get('/profile', [DriverAuthController::class, 'profile']);
         });
     });
-
 });

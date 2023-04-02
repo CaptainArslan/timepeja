@@ -164,7 +164,7 @@ class ManagerAuthController extends BaseController
         $manager = Manager::where('phone', $fields['phone'])->first();
         if (!empty($manager)) {
             $manager = Manager::find($manager->id);
-            $manager->otp = substr(uniqid(), -4);
+            $manager->otp = rand(1000, 9999);
             $save = $manager->save();
             if ($save) {
                 return $this->respondWithSuccess($manager->otp, 'Otp Sent Successfully', 'API_GET_CODE');
