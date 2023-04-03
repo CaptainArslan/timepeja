@@ -91,7 +91,6 @@ class ScheduleController extends Controller
         }
     }
 
-
     /**
      * Display the specified resource.
      *
@@ -185,14 +184,28 @@ class ScheduleController extends Controller
      */
     public function schedulePublished(Request $request)
     {
+
+        // $request->validate(
+        //     [
+        //         'o_id'  =>  'required|numeric',
+        //         'from'  => 'required|date',
+        //         'to'    => 'required|date|after:from'
+        //     ],
+        //     [
+        //         'o_id.required' => 'Organization is required',
+        //         'from.required' => "From date is required",
+        //         'to.required' => "To date Number is required",
+        //         'to.after' => "The registration to date must be a date after registration from.",
+        //     ]
+        // );
         $schedules = [];
         if ($request->isMethod('post')) {
             if ($request->has('filter')) {
                 $schedules = $this->filterSchedule($request);
             } elseif ($request->has('print')) {
                 $schedules = $this->filterSchedule($request);
-                // dd($schedules->toArray());
                 return view('manager.schedule.report.index', compact('schedules'));
+                // dd($schedules->toArray());
                 // $this->generatePdf('manager.schedule.report.index', $schedules);
                 // $pdf = PDF::loadView(
                 //     'manager.schedule.report.publish_schedule',
@@ -204,27 +217,28 @@ class ScheduleController extends Controller
             } elseif ($request->has('replicate')) {
                 $this->replicateSchedule($request);
             }
-        if (isset($_POST['submit'])) {
-            $request->validate(
-                [
-                    'o_id'  =>  'required|numeric',
-                    'from'  => 'required|date',
-                    'to'    => 'required|date|after:from'
-                ],
-                [
-                    'o_id.required' => 'Organization is required',
-                    'from.required' => "From date is required",
-                    'to.required' => "To date Number is required",
-                    'to.after' => "The registration to date must be a date after registration from.",
-                ]
-            );
-            $schedules = Schedule::where('o_id', $request->o_id)
-                ->where('status', 'published')
-                ->whereBetween('date', [$request->from, $request->to])
-                ->with('organizations', 'routes', 'vehicles', 'drivers')
-                ->get();
-            // dd($schedules->toArray());
         }
+        // if (isset($_POST['submit'])) {
+        //     $request->validate(
+        //         [
+        //             'o_id'  =>  'required|numeric',
+        //             'from'  => 'required|date',
+        //             'to'    => 'required|date|after:from'
+        //         ],
+        //         [
+        //             'o_id.required' => 'Organization is required',
+        //             'from.required' => "From date is required",
+        //             'to.required' => "To date Number is required",
+        //             'to.after' => "The registration to date must be a date after registration from.",
+        //         ]
+        //     );
+        //     $schedules = Schedule::where('o_id', $request->o_id)
+        //         ->where('status', 'published')
+        //         ->whereBetween('date', [$request->from, $request->to])
+        //         ->with('organizations', 'routes', 'vehicles', 'drivers')
+        //         ->get();
+        //     // dd($schedules->toArray());
+        // }
         $organizations = Organization::get();
         $org_dropdowns = $organizations;
         return view('manager.schedule.index', compact('org_dropdowns', 'organizations', 'schedules'));
@@ -235,7 +249,7 @@ class ScheduleController extends Controller
      *
      * @return  [type]  [return description]
      */
-    public function filterSchedule(Request $request)
+    public function filterSchedule($request)
     {
         $request->validate([
             'o_id' => 'nullable|numeric',
@@ -341,7 +355,7 @@ class ScheduleController extends Controller
         ]);
     }
 
-    /**
+     /**
      * Undocumented function
      *
      * @param [type] $view
@@ -362,46 +376,6 @@ class ScheduleController extends Controller
         // Output the generated PDF to the browser
         return $pdf->stream();
     }
-
-    /**
-     * Undocumented function
-     *
-     * @return void
-     */
-    // public function replicateSchedule($request)
-    // {
-    //     $schedule_ids = explode(",", $request->schedule_ids);
-    //     $schedules = Schedule::whereIn('id', $schedule_ids)->get();
-    //     $user = Auth::user();
-    //     try {
-    //         DB::transaction(function () use ($request, $schedules, $user) {
-    //             foreach ($schedules as $schedule) {
-    //                 // print_data($schedule['d_id']);
-    //                 $newSchedule = Schedule::create([
-    //                     'u_id' => $user->id,
-    //                     'date' => $request->date,
-    //                     'o_id' => $schedule['o_id'],
-    //                     'v_id' => $schedule['v_id'],
-    //                     'd_id' => $schedule['d_id'],
-    //                     'time' => $schedule['time'],
-    //                     'route_id' => $schedule['route_id'],
-    //                     'status' => Schedule::STATUS_DRAFT
-    //                 ]);
-    //                 throw_if(
-    //                     !$newSchedule,
-    //                     new \Exception('Error occured while replicating schedule.')
-    //                 );
-    //             }
-    //             // exit;
-    //         });
-    //         return redirect()->route('schedule.index')
-    //             ->with('success', 'Schedule replicated Successfully');
-    //     } catch (\Exception $e) {
-    //         return redirect()->route('schedule.index')
-    //             ->with('error', 'Error occurred while replicating schedule.');
-    //     }
-    // }
-
 
     /**
      * Undocumented function
@@ -429,6 +403,12 @@ class ScheduleController extends Controller
         }
     }
 
+    /**
+     * Undocumented function
+     *
+     * @param [type] $request
+     * @return void
+     */
     public function replicateSchedule($request)
     {
         $schedule_ids = explode(",", $request->schedule_ids);

@@ -18,11 +18,11 @@ class ManagerFactory extends Factory
     {
         return [
             'o_id' => Organization::inRandomOrder()->first()->id,
+            'uid' => Str::random(10),
             'name' => $this->faker->name(),
             'email' => $this->faker->safeEmail(),
             'phone' => '03' . $this->faker->regexify('/^[0-9+]{2}-[0-9+]{7}$/'),
             'password' => Hash::make('12345678'),
-            'token' => Str::random(60),
             'otp' => rand(1000, 9999),
             'address' => $this->faker->address(),
             'status' => 1,

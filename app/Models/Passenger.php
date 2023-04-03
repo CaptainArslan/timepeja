@@ -11,11 +11,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Passengers extends Authenticatable implements JWTSubject
+class Passenger extends Authenticatable implements JWTSubject
 {
     use HasFactory;
     use SoftDeletes;
     use Notifiable;
+
+    protected $table = 'passengers';
 
     public const STATUS_ACTIVE = 1;
     public const STATUS_DEACTIVE = 0;

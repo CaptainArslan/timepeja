@@ -31,36 +31,32 @@
                         <div class="col-md-4">
                             <label for="organization">Select Oganization</label>
                             <select class="form-control select2" id="organization_filter" name="o_id" required>
-                                <option value="">Select</option>                                
+                                <option value="">Select</option>
                                 @forelse ($org_dropdowns as $organization)
-                                @if (request()->input('o_id'))
-                                <option value="{{ $organization->id }}" selected>{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
-                                @else
-                                <option value="{{ $organization->id }}">{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
-                                @endif
+                                <option value="{{ $organization->id }}" {{ $organization->id == request()->input('o_id') ? 'selected' : '' }}>{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
                                 @empty
                                 <option value="">Please select</option>
                                 @endforelse
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <label for="user_type">User Type</label>
-                            <select class="form-control select2" data-toggle="select2" data-width="100%" id="user_type" required>
-                                <<option value="" selected="">Select</option>
-                                    <option value="student">Student</option>
-                                    <option value="employee">Employee</option>
-                                    <option value="guardian">Guardian</option>
+                            <label for="type">User Type</label>
+                            <select class="form-control select2" data-toggle="select2" data-width="100%" name="type" id="type" required>
+                                <option value="" @if(!request()->input('type')) selected @endif>Select</option>
+                                <option value="student" @if(request()->input('type') == 'student') selected @endif>Student</option>
+                                <option value="employee" @if(request()->input('type') == 'employee') selected @endif>Employee</option>
+                                <option value="guardian" @if(request()->input('type') == 'guardian') selected @endif>Guardian</option>
                             </select>
                         </div>
                         <div class="col-md-3">
                             <label for="date-1">Registration From</label>
-                            <input class="form-control today-date" type="date" name="date">
+                            <input class="form-control today-date" type="date" name="from" value="{{ request()->input('from', old('from')) }}">
                         </div>
                     </div>
                     <div class="row mt-2">
                         <div class="col-md-3">
                             <label for="date">Reistration To</label>
-                            <input class="form-control today-date" type="date" name="date">
+                            <input class="form-control today-date" type="date" name="to" value="{{ request()->input('to', old('to')) }}">
                         </div>
                         <div class="col-md-1">
                             <label for="filter"></label>
@@ -84,13 +80,13 @@
                 <div class="col-7">
                     <div class="row">
                         <div class="col-md-6">
-                            <input class="form-control" type="text" value="123456 - branch - Punjab University" name="organization" style="font-weight: bold;" readonly>
+                            <input class="form-control" type="hidden" value="" name="organization" style="font-weight: bold;" readonly>
                         </div>
                         <div class="col-md-3">
-                            <input class="form-control today-date" id="" type="date" name="date">
+                            <input class="form-control" id="" type="hidden" name="from">
                         </div>
                         <div class="col-md-3">
-                            <input class="form-control today-date" id="" type="date" name="date">
+                            <input class="form-control" id="" type="hidden" name="to">
                         </div>
                     </div>
                 </div>
@@ -100,7 +96,7 @@
                     <thead>
                         <tr>
                             <th>
-                                <input type="checkbox">
+                                <input type="checkbox" class="parent_checkbox">
                             </th>
                             <th>Student/Employee Name</th>
                             <th>Roll No/Employee ID</th>
@@ -114,7 +110,7 @@
                     <tbody>
                         <tr>
                             <td>
-                                <input type="checkbox">
+                                <input type="checkbox" class="child_checkbox">
                             </td>
                             <td>Ali</td>
                             <td>MSCS220444</td>

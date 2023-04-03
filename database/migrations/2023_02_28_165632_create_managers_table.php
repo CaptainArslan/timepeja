@@ -23,13 +23,13 @@ class CreateManagersTable extends Migration
             $table->string('phone')->unique();
             $table->string('password');
             $table->string('otp');
-            $table->string('token')->unique()->nullable();
+            // $table->string('token')->unique()->nullable();
             $table->longText('picture')->nullable();
             $table->longText('about')->nullable();
             $table->tinyInteger('status')->default(Manager::STATUS_ACTIVE);
+            $table->longText('address')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->longText('address')->nullable();
             $table->foreign('o_id')->references('id')->on('organizations')->onDelete('cascade')->onUpdate('cascade');
         });
     }

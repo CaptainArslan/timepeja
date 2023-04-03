@@ -17,6 +17,9 @@ class Driver extends Authenticatable implements JWTSubject
     public const STATUS_ONLINE = 1;
     public const STATUS_OFFLINE = 0;
 
+    public const STATUS_ACTIVE = 1;
+    public const STATUS_INACTIVE = 0;
+
     protected $fillable = [
         'o_id',
         'u_id',
@@ -40,6 +43,16 @@ class Driver extends Authenticatable implements JWTSubject
         'address',
     ];
 
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
+        'otp'
+    ];
 
     // ----------------------------------------------------------------
     // ------------------ Jwt Auth  -----------------------------------

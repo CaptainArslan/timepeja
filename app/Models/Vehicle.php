@@ -11,6 +11,10 @@ class Vehicle extends Model
     use HasFactory;
     use SoftDeletes;
 
+    public const STATUS_ACTIVE = 1;
+    public const STATUS_DEACTIVE = 0;
+
+
     protected $fillable = [
         'o_id',
         'u_id',
