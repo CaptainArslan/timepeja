@@ -32,7 +32,7 @@
                         <div class="col-md-4">
                             <label for="organization">Select Oganization</label>
                             <select class="form-control select2_filter" id="organization_filter" name="o_id">
-                            @include('partials/organization_dropdown_option')
+                                @include('partials/organization_dropdown_option')
                             </select>
                         </div>
                         <div class="col-md-3">
@@ -47,12 +47,13 @@
                             <!-- <label for="route_list"></label> -->
                             <button type="submit" class="btn btn-success" id="route_list" value="filter" name="filter" style="margin-top: 20px;"> Submit </button>
                         </div>
-                    </div> 
+                    </div>
                 </form>
             </div> <!-- end card-body-->
         </div> <!-- end card-->
     </div> <!-- end col-->
 </div>
+<!-- Filters Ends -->
 
 <!-- Table -->
 <div class="row">
@@ -87,20 +88,20 @@
                             <th>Time</th>
                             <th>OTP</th>
                             <th>Org Name</th>
-                            <th>Branch </th>
+                            <th>Org Branch </th>
                             <th>Org Types</th>
-                            <th>Email</th>
-                            <th>Phone No</th>
-                            <th>Address</th>
+                            <th>Org Email</th>
+                            <th>Org Phone No</th>
+                            <th>Org Address</th>
                             <th>Transport Manager</th>
-                            <th>Phone No</th>
-                            <th>Email</th>
-                            <th>Address</th>
+                            <th>Manager Phone No</th>
+                            <th>Manager Email</th>
+                            <th>Manager Address</th>
                             <th>Manager Picture</th>
                             <th>Head Name</th>
-                            <th>Email</th>
-                            <th>Phone No</th>
-                            <th>Address</th>
+                            <th>Head Email</th>
+                            <th>Head Phone No</th>
+                            <th>Head Address</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -120,7 +121,7 @@
                             <td> {{ $organization->manager['phone'] }} </td>
                             <td> {{ $organization->manager['email'] }} </td>
                             <td> {{ $organization->manager['address'] }} </td>
-                            <td> <img src="{{ $organization->manager['picture'] }}" alt="" style="height: 50px; width: 50px; object-fit: contain;">  </td>
+                            <td> <img src="{{ $organization->manager['picture'] }}" alt="" style="height: 50px; width: 50px; object-fit: contain;"> </td>
                             <td> {{ $organization->head_name}} </td>
                             <td> {{ $organization->head_email}} </td>
                             <td> {{ $organization->head_phone}} </td>
@@ -167,7 +168,8 @@
         </div> <!-- end card -->
     </div><!-- end col-->
 </div>
-<!-- end row-->
+<!-- Table Ends -->
+
 <!-- Modal -->
 <div class="modal fade" id="createModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl">
@@ -191,19 +193,22 @@
                                             </a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="#company_head" data-bs-toggle="tab" id="company_head_tab" data-toggle="tab" class="nav-link rounded-0 pt-2 pb-2" onclick="checkOrgDetailForm()" disabled="disabled">
+                                            <a href="#company_head" data-bs-toggle="tab" id="company_head_tab" data-toggle="tab" class="nav-link rounded-0 pt-2 pb-2">
+                                                <!-- onclick="checkOrgDetailForm()" disabled="disabled" -->
                                                 <i class="fas fa-user"></i>
                                                 <span class="d-none d-sm-inline">Company Head</span>
                                             </a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="#transport_manager" data-bs-toggle="tab" data-toggle="tab" id="transport_manager_tab" class="nav-link rounded-0 pt-2 pb-2" onclick="checkOrgHeadForm()" disabled="disabled">
+                                            <a href="#transport_manager" data-bs-toggle="tab" data-toggle="tab" id="transport_manager_tab" class="nav-link rounded-0 pt-2 pb-2">
+                                                <!-- onclick="checkOrgHeadForm()" disabled="disabled" -->
                                                 <i class="fas fa-bus-alt"></i>
                                                 <span class="d-none d-sm-inline">Transport Manager</span>
                                             </a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="#financials" id="financials_tabs" value="financials" data-bs-toggle="tab" data-toggle="tab" class="nav-link rounded-0 pt-2 pb-2" onclick="checkTransportManagerForm()" disabled="disabled">
+                                            <a href="#financials" id="financials_tabs" value="financials" data-bs-toggle="tab" data-toggle="tab" class="nav-link rounded-0 pt-2 pb-2">
+                                                <!-- onclick="checkTransportManagerForm()" disabled="disabled" -->
                                                 <i class=" fas fa-money-bill-wave"></i>
                                                 <span class="d-none d-sm-inline">Financial</span>
                                             </a>
@@ -233,7 +238,7 @@
                                                 <div class="col-lg-6">
                                                     <div class="mb-3">
                                                         <label for="org_branch_name" class="form-label">Branch Name</label>
-                                                        <input type="text" id="org_branch_name" name="org_branch_name" class="form-control" value="{{ old('org_branch_name') }}" placeholder="Lahore branch"    >
+                                                        <input type="text" id="org_branch_name" name="org_branch_name" class="form-control" value="{{ old('org_branch_name') }}" placeholder="Lahore branch">
                                                         <span class="text-danger" id="org_branch_name_error"></span>
                                                     </div>
                                                     <div class="mb-3">
@@ -294,7 +299,7 @@
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="org_head_phone" class="form-label">Phone No</label>
-                                                        <input type="text" id="org_head_phone" name="org_head_phone" data-toggle="input-mask" data-mask-format="0000-0000000"  value="{{ old('org_head_phone') }}" placeholder="0300-1234567" class="form-control" required>
+                                                        <input type="text" id="org_head_phone" name="org_head_phone" data-toggle="input-mask" data-mask-format="0000-0000000" value="{{ old('org_head_phone') }}" placeholder="0300-1234567" class="form-control" required>
                                                         <span class="text-danger" id="org_head_phone_error"></span>
                                                     </div>
                                                 </div>
@@ -306,10 +311,10 @@
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="org_head_address" class="form-label">Address</label>
-                                                        <input class="form-control" id="org_head_address" name="org_head_address"  value="{{ old('org_head_address') }}" rows="5"></input>
+                                                        <input class="form-control" id="org_head_address" name="org_head_address" value="{{ old('org_head_address') }}" rows="5"></input>
                                                     </div>
-                                                </div> 
-                                            </div> 
+                                                </div>
+                                            </div>
                                         </div>
 
                                         <!-- Company transport manager -->
@@ -322,7 +327,7 @@
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="phone" class="form-label">Phone No</label>
-                                                        <input type="text" id="man_phone" name="man_phone" data-toggle="input-mask" data-mask-format="0000-0000000"  value="{{ old('phone') }}" placeholder="0300-1234567" class="form-control" required>
+                                                        <input type="text" id="man_phone" name="man_phone" data-toggle="input-mask" data-mask-format="0000-0000000" value="{{ old('phone') }}" placeholder="0300-1234567" class="form-control" required>
                                                     </div>
                                                     <!-- <div class="mb-3">
                                                         <label for="man_password" class="form-label">Password</label>
@@ -352,14 +357,14 @@
                                                             </div>
                                                         </div>
                                                     </div> -->
-                                                </div> 
+                                                </div>
                                                 <div class="col-lg-12">
                                                     <div class="mb-3">
                                                         <label for="man_address" class="form-label">Address</label>
                                                         <textarea class="form-control" name="man_address" id="man_address" value="{{ old('man_address') }}" cols="30" rows="2" placeholder="123 Street lahore, Pakistan"></textarea>
                                                     </div>
                                                 </div>
-                                            </div> 
+                                            </div>
                                         </div>
 
                                         <!-- Company financials -->
@@ -372,12 +377,12 @@
                                                         <input class="form-check-input" type="checkbox" name="wallet[]" id="org_wallet" value="org_wallet" required>
                                                         <label class="form-check-label" for="org_wallet">Organization</label>
                                                     </div>
-                                                    <div class="form-check mb-2 form-check-success">
-                                                        <input class="form-check-input" type="checkbox" name="wallet[]" id="driver_wallet" value="driver_wallet" required>
+                                                    <div class="form-check mb-2 form-check-primary">
+                                                        <input class="form-check-input" type="checkbox" name="wallet[]" id="driver_wallet" value="driver_wallet" onclick="driverWallet(this)">
                                                         <label class="form-check-label" for="driver_wallet">Sub Contracting Driver</label>
                                                     </div>
-                                                    <div class="form-check mb-2 form-check-danger">
-                                                        <input class="form-check-input" type="checkbox" name="wallet[]" id="passenger_wallet" value="passenger_wallet" required>
+                                                    <div class="form-check mb-2 form-check-primary">
+                                                        <input class="form-check-input" type="checkbox" name="wallet[]" id="passenger_wallet" value="passenger_wallet" onclick="passengerWallet(this)">
                                                         <label class="form-check-label" for="passenger_wallet">Passengers</label>
                                                     </div>
                                                 </div>
@@ -387,7 +392,7 @@
                                                     <h4 class="header-title">Basis of payment calculation:</h4>
                                                     <div class="row">
                                                         <div class="col-3 d-flex align-items-center">
-                                                            <input class="form-check-input" type="checkbox" name="payment[]" id="org_payment" value="org_payment">
+                                                            <input class="form-check-input" type="checkbox" name="payment[]" id="org_payment" value="org_payment" onchange="driverPaymentCheck()">
                                                             <label class="form-check-label mx-1" for="org_payment">Organization</label>
                                                         </div>
                                                         <div class="col-2">
@@ -409,11 +414,11 @@
                                                     </div>
                                                     <div class="row mt-2">
                                                         <div class="col-3 d-flex align-items-center">
-                                                            <input class="form-check-input" type="checkbox" name="payment[]" id="driver_payment" value="driver_payment">
+                                                            <input class="form-check-input" type="checkbox" name="payment[]" id="driver_payment" value="driver_payment" onchange="driverPaymentCheck()">
                                                             <label class="form-check-label mx-1" for="driver_payment">Driver</label>
                                                         </div>
                                                         <div class="col-2 ">
-                                                            <input class="form-control" type="number" placeholder="Amount" name="driver_amount" value="{{ old('driver_amount') }}" id="">
+                                                            <input class="form-control" type="number" placeholder="Amount" name="driver_amount" value="{{ old('driver_amount') }}" id="driver_amount">
                                                         </div>
                                                         <div class="col-1 ">
                                                             <input class="form-control " type="number" name="driver_trial_days" id="driver_trial_days" value="{{ old('driver_trial_days') }}" onchange="setNextDate('#driver_trial_days', '#driver_trial_start_date', '#driver_trial_end_date')">
@@ -427,7 +432,7 @@
                                                     </div>
                                                     <div class="row mt-2">
                                                         <div class="col-3 d-flex align-items-center">
-                                                            <input class="form-check-input" type="checkbox" name="payment[]" id="passenger_payment" value="passenger_payment">
+                                                            <input class="form-check-input" type="checkbox" name="payment[]" id="passenger_payment" value="passenger_payment" onchange="driverPaymentCheck()">
                                                             <label class="form-check-label mx-1" for="passenger_payment">Passenger</label>
                                                         </div>
                                                         <div class="col-2 ">
@@ -448,7 +453,7 @@
                                             <div class="text-end mt-3">
                                                 <button type="submit" class="btn btn-success waves-effect waves-light">Save</button>
                                             </div>
-                                        </div> 
+                                        </div>
                                     </div>
                                 </div> <!-- tab-content -->
                             </form>
@@ -478,6 +483,8 @@
 <script src="/js/pages/form-wizard.init.js"></script>
 <script>
     $(document).ready(function() {
+        initializeSelect2(".select2_filter", "#filter_form");
+
         // alert("{{old('organzation_id')}}")
         $('#org_state').change(function(e) {
             e.preventDefault();
@@ -508,10 +515,28 @@
         $('#createModal').on('shown.bs.modal', function() {
             initializeSelect2(".select2", "#createModal")
         });
-
-        initializeSelect2(".select2_filter", "#filter_form");
-
     });
+
+
+    function driverPaymentCheck() {
+        alert('asdf');
+    }
+
+    function driverWallet(param) {
+        if ($(param).is(":checked")) {
+            $("#driver_payment").prop("checked", true);
+        } else {
+            $("#driver_payment").prop("checked", false);
+        }
+    }
+
+    function passengerWallet(param) {
+        if ($(param).is(":checked")) {
+            $("#passenger_payment").prop("checked", true);
+        } else {
+            $("#passenger_payment").prop("checked", false);
+        }
+    }
 
     function deleteOrganization(param) {
         Swal.fire({
@@ -598,7 +623,7 @@
         if (orgPhone === "") {
             setErrorMsg('#org_phone', "* Required!");
             orgPhoneErr = false;
-        } 
+        }
         // else if (!isPhone(orgPhone)) {
         //     setErrorMsg('#org_phone', "* Invalid format!");
         //     orgPhoneErr = false;
@@ -673,7 +698,7 @@
         if (orgHeadPhone === "") {
             setErrorMsg('#org_head_phone', "* Required!");
             orgHeadPhoneErr = false;
-        } 
+        }
         // else if (!isPhone(orgHeadPhone)) {
         //     setErrorMsg('#org_head_phone', "* Phone number length must be 11 digits and only numbers are allowed");
         //     orgHeadPhoneErr = false;
@@ -732,7 +757,7 @@
         if (manPhone === "") {
             setErrorMsg('#man_phone', "* Required!");
             manPhoneErr = false;
-        } 
+        }
         // else if (!isPhone(manPhone)) {
         //     setErrorMsg('#man_email', "* Phone number length must be 11 digits and only numbers are allowed");
         //     manPhoneErr = false;

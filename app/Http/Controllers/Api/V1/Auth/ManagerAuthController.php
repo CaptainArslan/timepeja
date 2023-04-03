@@ -76,8 +76,8 @@ class ManagerAuthController extends BaseController
                 'password' => Hash::make($request->password),
                 // ,
             ]);
-            $manager->makeHidden(['password']);
-            $manager->makeHidden(['token']);
+            // $manager->makeHidden(['password']);
+            // $manager->makeHidden(['token']);
             return $this->respondWithSuccess($manager, 'Manager registered successfully', 'REGISTER_API_SUCCESS');
         } else {
             return $this->respondWithError('Manager alreasy exist. Please login ');
@@ -133,7 +133,7 @@ class ManagerAuthController extends BaseController
 
         return $this->respondWithSuccess($user, 'Login successfully', 'LOGIN_API_SUCCESS', [
             'content-type' => 'application/json',
-            'uid' => $user->email,
+            // 'uid' => $user->email,
             // 'access-token' => $user->token,
             'Authorization' => $token
         ]);
@@ -164,7 +164,7 @@ class ManagerAuthController extends BaseController
         $manager = Manager::where('phone', $fields['phone'])->first();
         if (!empty($manager)) {
             $manager = Manager::find($manager->id);
-            $manager->otp = substr(uniqid(), -4);
+            $manager->otp = rand(1000, 9999);
             $save = $manager->save();
             if ($save) {
                 return $this->respondWithSuccess($manager->otp, 'Otp Sent Successfully', 'API_GET_CODE');
