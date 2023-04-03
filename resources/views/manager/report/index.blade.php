@@ -52,11 +52,11 @@
                         </div>
                         <div class="col-md-3">
                             <label for="date-1">From</label>
-                            <input class="form-control" type="date" name="from" value="{{ request()->input('from') }}">
+                            <input class="form-control today-date" type="date" name="from" value="{{ request()->input('from') }}">
                         </div>
                         <div class="col-md-3">
                             <label for="date">To</label>
-                            <input class="form-control" type="date" name="to" value="{{ request()->input('to')}}">
+                            <input class="form-control today-date" type="date" name="to" value="{{ request()->input('to')}}">
                         </div>
                     </div>
                     <div class="row mt-2">

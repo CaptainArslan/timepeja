@@ -352,7 +352,10 @@ class ManagerController extends Controller
                 // dd($reports->toArray());
                 $request = $request->all();
                 $user = Auth::user();
-                return view('manager.report.export.index', compact('reports', 'request', 'user'));
+                return view('manager.report.export.index', [
+                    'reports' => $reports,
+                    'request' => $request,
+                ]);
             }
         }
         $organizations = Organization::get();
