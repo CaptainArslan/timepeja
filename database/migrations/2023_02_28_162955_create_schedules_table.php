@@ -29,14 +29,16 @@ class CreateSchedulesTable extends Migration
                 ])->default('draft');
             $table->time('start_time')->nullable();
             $table->time('end_time')->nullable();
+
             $table->tinyInteger('is_delay')->nullable();
-            $table->text('delayed_reason')->nullable();
+
             $table->enum('trip_status', [
                 Schedule::TRIP_STATUS_UPCOMING,
                 Schedule::TRIP_STATUS_INPROGRESS,
                 Schedule::TRIP_STATUS_COMPLETED,
                 ]);
             $table->timestamps();
+            $table->text('delayed_reason')->nullable();
             $table->softDeletes();
             // $table->foreign('u_id')->references('id')->on('users')->onUpdate('cascade');
             $table->foreign('o_id')->references('id')->on('organizations')->onUpdate('cascade');

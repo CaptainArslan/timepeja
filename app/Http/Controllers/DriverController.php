@@ -104,16 +104,16 @@ class DriverController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'o_id' => 'required|string',
-            'name' => 'required|string',
-            'phone' => 'required|string|unique:drivers,phone',
-            'cnic' => 'required|string|unique:drivers,cnic',
-            'license' => 'required|string|unique:drivers,license_no',
-            'status' => 'required|numeric',
-            'cnic_front' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'cnic_back' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'license_front' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'license_back' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'o_id' => ['required', 'string'],
+            'name' => ['required', 'string'],
+            'phone' => ['required', 'strin', 'unique:drivers,phone'],
+            'cnic' => ['required', 'string', 'unique:drivers,cnic'],
+            'license' => ['required', 'string', 'unique:drivers,license_no'],
+            'status' => ['required', 'numeric'],
+            'cnic_front' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+            'cnic_back' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+            'license_front' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+            'license_back' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
         ], [
             'o_id.required' => 'Organization required'
         ]);
@@ -126,7 +126,7 @@ class DriverController extends Controller
         $driver->phone = $request->input('phone');
         $driver->cnic = $request->input('cnic');
         $driver->license_no = $request->input('license');
-        $driver->otp = substr(uniqid(), -4);
+        $driver->otp = rand(1000, 9999);
         $driver->status = $request->input('status');
         $driver->profile_picture = null;
         $driver->address = null;

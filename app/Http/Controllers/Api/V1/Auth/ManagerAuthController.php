@@ -76,8 +76,8 @@ class ManagerAuthController extends BaseController
                 'password' => Hash::make($request->password),
                 // ,
             ]);
-            $manager->makeHidden(['password']);
-            $manager->makeHidden(['token']);
+            // $manager->makeHidden(['password']);
+            // $manager->makeHidden(['token']);
             return $this->respondWithSuccess($manager, 'Manager registered successfully', 'REGISTER_API_SUCCESS');
         } else {
             return $this->respondWithError('Manager alreasy exist. Please login ');
@@ -133,7 +133,7 @@ class ManagerAuthController extends BaseController
 
         return $this->respondWithSuccess($user, 'Login successfully', 'LOGIN_API_SUCCESS', [
             'content-type' => 'application/json',
-            'uid' => $user->email,
+            // 'uid' => $user->email,
             // 'access-token' => $user->token,
             'Authorization' => $token
         ]);

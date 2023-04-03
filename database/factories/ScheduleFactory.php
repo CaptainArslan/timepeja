@@ -19,6 +19,12 @@ class ScheduleFactory extends Factory
      */
     public function definition()
     {
+        $isDelayed = $this->faker->randomElement([
+            Schedule::TRIP_ISDELAYED,
+            Schedule::TRIP_NOTDELAYED
+        ]);
+        $delayReason = $isDelayed == Schedule::TRIP_ISDELAYED ? $this->faker->sentence() : null;
+
         return [
             'u_id' => 1,
             'o_id' => Organization::inRandomOrder()->first()->id,
@@ -30,16 +36,13 @@ class ScheduleFactory extends Factory
             'status' => Schedule::STATUS_DRAFT,
             'start_time' => $this->faker->time(),
             'end_time' => $this->faker->time(),
-            'delayed_reason' => $this->faker->sentence(),
             'trip_status' => $this->faker->randomElement([
                 Schedule::TRIP_STATUS_UPCOMING,
                 Schedule::TRIP_STATUS_INPROGRESS,
                 Schedule::TRIP_STATUS_COMPLETED
             ]),
-            'is_delay' => $this->faker->randomElement([
-                Schedule::TRIP_ISDELAYED,
-                Schedule::TRIP_NOTDELAYED
-            ]),
+            'is_delay' => $isDelayed,
+            'delayed_reason' => $delayReason,
         ];
     }
 }

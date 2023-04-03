@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\Auth\ManagerAuthController;
 use App\Http\Controllers\Api\V1\Auth\DriverAuthController;
+use App\Http\Controllers\Api\V1\DriverController as ApiDriverController;
 use App\Http\Controllers\Api\V1\ScheduleController as ApiScheduleController;
 
 /*
@@ -32,7 +33,18 @@ Route::group(['middleware' => 'api'], function () {
             Route::get('/get-organization-data/{o_id}', [ApiScheduleController::class, 'getOrganizationData']);
             // Route::post('/create-schedule', [ApiScheduleController::class, 'create']);
 
+            /**
+             * Schedule Api
+             */
             Route::apiResource('/schedule', ApiScheduleController::class);
+            Route::put('schedules/publish', [ApiScheduleController::class, 'publish']);
+            Route::put('schedules/draft', [ApiScheduleController::class, 'draft']);
+            Route::get('schedules/{date}', [ApiScheduleController::class, 'getScheduleByDate']);
+
+            /**
+             * Driver api
+             */
+            Route::apiResource('/driver', ApiDriverController::class);
         });
     });
 
