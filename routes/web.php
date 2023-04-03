@@ -236,7 +236,7 @@ Route::group(['middleware' => 'auth'], function () {
         CommonController::class, 'getCities'
     ])->name('get_cities');
     Route::get('get-schedule-route-driver-vehicle/{org_id}', [
-        CommonController::class, 'getScheduleRouteDriverVehicle'
+        CommonController::class, 'getScheduleRouteDriveraVehicle'
     ])->name('get_schedule_route_driver_vehicle');
 
 
