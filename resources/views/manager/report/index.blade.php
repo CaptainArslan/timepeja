@@ -19,7 +19,8 @@
         </div>
     </div>
 </div>
-<!-- Start Content  -->
+
+<!-- Start Filters  -->
 <div class="row">
     <div class="col-12">
         <div class="card">
@@ -30,14 +31,10 @@
                     <div class="row">
                         <div class="col-md-4">
                             <label for="organization">Select Oganization</label>
-                            <select class="form-control" data-toggle="select2" data-width="100%" name="o_id" id="o_id" required onchange="get_option()">
+                            <select class="form-control" data-toggle="select2" data-width="100%" name="o_id" id="o_id" required onchange="getOrgOption()">
                                 <option value="">Select</option>
                                 @forelse ($org_dropdowns as $organization)
-                                @if (request()->input('o_id'))
-                                <option value="{{ $organization->id }}" selected>{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
-                                @else
-                                <option value="{{ $organization->id }}">{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
-                                @endif
+                                <option value="{{ $organization->id }}" {{ $organization->id == request()->input('o_id') ? 'selected' : '' }}>{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
                                 @empty
                                 <option value="">Please select</option>
                                 @endforelse
@@ -45,7 +42,7 @@
                         </div>
                         <div class="col-md-2">
                             <label for="selecttype">Select</label>
-                            <select class="form-control" data-toggle="select2" name="type" data-width="100%" id="type" onchange="get_option()" required>
+                            <select class="form-control" data-toggle="select2" name="type" data-width="100%" id="type" onchange="getOrgOption()" required>
                                 <option value="" @if(!request()->input('type')) selected @endif>Select</option>
                                 <option value="driver" @if(request()->input('type') == 'driver') selected @endif>Driver</option>
                                 <option value="vehicle" @if(request()->input('type') == 'vehicle') selected @endif>Vehicle</option>
@@ -55,11 +52,11 @@
                         </div>
                         <div class="col-md-3">
                             <label for="date-1">From</label>
-                            <input class="form-control" type="date" name="from" value="{{ request()->input('from') }}">
+                            <input class="form-control today-date" type="date" name="from" value="{{ request()->input('from') }}">
                         </div>
                         <div class="col-md-3">
                             <label for="date">To</label>
-                            <input class="form-control" type="date" name="to" value="{{ request()->input('to')}}">
+                            <input class="form-control today-date" type="date" name="to" value="{{ request()->input('to')}}">
                         </div>
                     </div>
                     <div class="row mt-2">
@@ -82,84 +79,114 @@
 @if(isset($_POST['filter']))
 <div class="row">
     <div class="col-12">
-        <div class="card">
-            <div class="card-header d-flex">
-                <div class="col-2">
-                    <h4 class="header-title">Driver</h4>
-                </div>
-                {{-- <div class="col-7">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <input class="form-control" id="" type="text" value="123456 - branch - Punjab University" name="organization" style="font-weight: bold;" readonly>
-                        </div>
-                        <div class="col-md-3">
-                            <input class="form-control" id="example-date-1" type="date" name="date">
-                        </div>
-                        <div class="col-md-3">
-                            <input class="form-control" id="example-date" type="date" name="date">
-                        </div> 
-                    </div>
-                </div> --}}
-            </div>
-            <div class="card-body">
-                <table id="datatable-buttons" class="table table-striped dt-responsive nowrap w-100">
-                    <thead>
-                        <tr>
-                            <td>Date</td>
-                            <td>Scheduled Time</td>
-                            <th>Driver</th>
-                            <th>Vehicle</th>
-                            <th>Route No</th>
-                            <th>Actual trip start/ End time</th>
-                            <th>Trip Status</th>
-                            <th>Delay</th>
-                            <th>Delay Reason</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($reports as $report)
-                        <tr>
-                            <td>{{ formatDate($report->date) }}</td>
-                            <td>{{ formatTime($report->time) }}</td>
+        <form action="{{ route('log.reports') }}" method="POST" id="" enctype="multipart/form-data">
+            @csrf
+            <div class="card">
+                <div class="card-header d-flex">
+                    <div class="col-1">
+                        <h4 class="header-title">
                             @if(request()->input('type') == 'driver')
-                            <td>{{ $report->drivers['name'] }}</td>
-                            <td>{{ $report->vehicles['number'] }}</td>
-                            <td>{{ $report->routes['number'] }} {{ $report->routes['from'] }} To {{ $report->routes['to'] }}</td>
+                            Drivers
                             @elseif(request()->input('type') == 'vehicle')
-                            <td>{{ $report->vehicles['number'] }}</td>
-                            <td>{{ $report->drivers['name'] }}</td>
-                            <td>{{ $report->routes['number'] }} {{ $report->routes['from'] }} To {{ $report->routes['to'] }}</td>
+                            Vehicles
                             @elseif(request()->input('type') == 'route')
-                            <td>{{ $report->routes['number'] }} {{ $report->routes['from'] }} To {{ $report->routes['to'] }}</td>
-                            <td>{{ $report->vehicles['number'] }}</td>
-                            <td>{{ $report->drivers['name'] }}</td>
+                            Routes
                             @endif
-                            <td>{{ formatTime($report->start_time) }} / {{ formatTime($report->end_time) }} </td>
-                            <td>{{ $report->trip_status }} </td>
-                            <td>@if($report->is_delay) Delay @else N/A @endif </td>
-                            <td>{{ $report->delayed_reason }}</td>
-                        </tr>
-                        @empty
-                        @endforelse
-                    </tbody>
-                </table>
-            </div> <!-- end card body-->
-        </div> <!-- end card -->
+                        </h4>
+                    </div>
+                    <div class="col-10">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <input class="form-control" type="hidden" name="o_id" style="font-weight: bold;" value="{{ request()->input('o_id') }}" readonly>
+                            </div>
+                            <div class="col-md-2">
+                                <input class="form-control" type="hidden" name="type" value="{{ request()->input('type') }}" readonly>
+                            </div>
+                            <div class="col-md-2">
+                                <input class="form-control" type="hidden" name="from" value="{{ request()->input('from') }}" readonly>
+                            </div>
+                            <div class="col-md-2">
+                                <input class="form-control" type="hidden" name="to" value="{{ request()->input('to')}}" readonly>
+                            </div>
+                            <div class="col-md-3">
+                                <input class="form-control" type="hidden" name="selection" value="{{ request()->input('selection') ? implode(',', request()->input('selection')) : '' }}" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <button type="submit" name="export" value="export" class="btn btn-primary">Export</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <table id="datatable-buttons" class="table table-striped dt-responsive nowrap w-100">
+                        <thead>
+                            <tr>
+                                <td>Date</td>
+                                <td>Scheduled Time</td>
+                                @if(request()->input('type') == 'driver')
+                                <th>Driver</th>
+                                <th>Vehicle</th>
+                                <th>Route No</th>
+                                @elseif(request()->input('type') == 'vehicle')
+                                <th>Vehicle</th>
+                                <th>Driver</th>
+                                <th>Route No</th>
+                                @elseif(request()->input('type') == 'route')
+                                <th>Route No</th>
+                                <th>Vehicle</th>
+                                <th>Driver</th>
+                                @endif
+                                <th>Actual trip start/ End time</th>
+                                <th>Trip Status</th>
+                                <th>Delay</th>
+                                <th>Delay Reason</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($reports as $report)
+                            <tr>
+                                <td>{{ formatDate($report->date) }}</td>
+                                <td>{{ formatTime($report->time) }}</td>
+                                @if(request()->input('type') == 'driver')
+                                <td>{{ $report->drivers['name'] }}</td>
+                                <td>{{ $report->vehicles['number'] }}</td>
+                                <td>{{ $report->routes['number'] }} {{ $report->routes['from'] }} To {{ $report->routes['to'] }}</td>
+                                @elseif(request()->input('type') == 'vehicle')
+                                <td>{{ $report->vehicles['number'] }}</td>
+                                <td>{{ $report->drivers['name'] }}</td>
+                                <td>{{ $report->routes['number'] }} {{ $report->routes['from'] }} To {{ $report->routes['to'] }}</td>
+                                @elseif(request()->input('type') == 'route')
+                                <td>{{ $report->routes['number'] }} {{ $report->routes['from'] }} To {{ $report->routes['to'] }}</td>
+                                <td>{{ $report->vehicles['number'] }}</td>
+                                <td>{{ $report->drivers['name'] }}</td>
+                                @endif
+                                <td>{{ formatTime($report->start_time) }} / {{ formatTime($report->end_time) }} </td>
+                                <td>{{ $report->trip_status }} </td>
+                                <td>@if($report->is_delay) Delay @else N/A @endif </td>
+                                <td>{{ $report->delayed_reason }}</td>
+                            </tr>
+                            @empty
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div> <!-- end card body-->
+            </div> <!-- end card -->
+        </form>
     </div><!-- end col-->
 </div>
 @endif
 @endsection
 
 @section('page_js')
-<script src="{{ asset('/libs/select2/js/select2.min.js') }}"></script>
-@include('partials.datatable_js')
+
 <script>
     /**
      * Undocumented function
      *
      * @return void
      */
-    function get_option() {
+    function getOrgOption() {
+        // alert('option');
         // $('#selection').empty();
         let type = $('#type').val();
         let o_id = $('#o_id').val();
@@ -187,19 +214,21 @@
         }
     }
 
+    getOrgOption();
+
     /**@abstract */
     function getOption(res, type) {
         let html = '<option value="all">All</option>';
         res.map((item) => {
-            html += `<option value="${item.id}"> ${item.id} - ${item.name}</option>`;
+            html += `<option value="${item.id}"> ${item.name}</option>`;
         });
         // console.log(html);
         return html
     }
-
-    get_option()
 </script>
 
+@include('partials.datatable_js')
+<script src="{{ asset('/libs/select2/js/select2.min.js') }}"></script>
 <!-- Init js-->
 <script src="{{ asset('/js/pages/form-advanced.init.js') }}"></script>
 @endsection

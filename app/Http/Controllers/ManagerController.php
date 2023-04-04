@@ -346,7 +346,16 @@ class ManagerController extends Controller
         if ($request->isMethod('post')) {
             if ($request->has('filter')) {
                 $reports = $this->filterReport($request);
+            }
+            if ($request->has('export')) {
+                $reports = $this->filterReport($request);
                 // dd($reports->toArray());
+                $request = $request->all();
+                $user = Auth::user();
+                return view('manager.report.export.index', [
+                    'reports' => $reports,
+                    'request' => $request,
+                ]);
             }
         }
         $organizations = Organization::get();
@@ -362,25 +371,29 @@ class ManagerController extends Controller
     protected function filterReport($request)
     {
         $query = Schedule::query();
-        $selection = $request->input('selection');
+        if (gettype($request->input('selection')) === "string") {
+            $selection = explode(",", $request->input('selection'));
+        } else {
+            $selection = $request->input('selection');
+        }
 
         switch ($request->type) {
             case 'driver':
-                if ($request->selection[0] == 'all') {
+                if ($selection[0] == 'all') {
                     $query->whereNotNull('d_id');
                 } else {
                     $query->whereIn('d_id', $selection);
                 }
                 break;
             case 'vehicle':
-                if ($request->selection[0] == 'all') {
+                if ($selection[0] == 'all') {
                     $query->whereNotNull('v_id');
                 } else {
                     $query->whereIn('v_id', $selection);
                 }
                 break;
             case 'route':
-                if ($request->selection[0] == 'all') {
+                if ($selection[0] == 'all') {
                     $query->whereNotNull('route_id');
                 } else {
                     $query->whereIn('route_id', $selection);
@@ -403,7 +416,7 @@ class ManagerController extends Controller
         });
 
         $result = $query->where('o_id', $request->o_id)
-            ->with('organizations:id,name')
+            ->with('organizations:id,name,branch_name,branch_code,email,phone,address')
             ->with('routes:id,name,number,from,to')
             ->with('vehicles:id,number')
             ->with('drivers:id,name')

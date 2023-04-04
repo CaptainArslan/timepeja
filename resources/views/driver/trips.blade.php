@@ -33,7 +33,7 @@
                             <select class="form-control" data-toggle="select2" data-width="100%" id="organization" name="o_id" required>
                                 <option value="">Select</option>
                                 @forelse ($organizations as $organization)
-                                <option value="{{ $organization->id }}" {{ $organization->id == request()->input('o_id') ? 'selected' : '' }} >{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
+                                <option value="{{ $organization->id }}" {{ $organization->id == request()->input('o_id') ? 'selected' : '' }}>{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
                                 @empty
                                 <option value="">Please select</option>
                                 @endforelse
@@ -202,7 +202,7 @@
 
     function checkOrgValue() {
         var id = $('#organization').val();
-        if(id != ''){
+        if (id != '') {
             var csrf_token = "{{ csrf_token() }}";
             $.ajax({
                 type: "GET",
@@ -224,7 +224,7 @@
     checkOrgValue();
 
     // alert("{{request()->input('driver')}}");
-    $('#driver').val("{{request()->input('driver')}}").trigger('change');
+    // $('#driver').val("{{request()->input('driver')}}").trigger('change');
 
     function appedDrivers(res) {
         $('#driver').empty();

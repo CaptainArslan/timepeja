@@ -184,20 +184,6 @@ class ScheduleController extends Controller
      */
     public function schedulePublished(Request $request)
     {
-
-        // $request->validate(
-        //     [
-        //         'o_id'  =>  'required|numeric',
-        //         'from'  => 'required|date',
-        //         'to'    => 'required|date|after:from'
-        //     ],
-        //     [
-        //         'o_id.required' => 'Organization is required',
-        //         'from.required' => "From date is required",
-        //         'to.required' => "To date Number is required",
-        //         'to.after' => "The registration to date must be a date after registration from.",
-        //     ]
-        // );
         $schedules = [];
         if ($request->isMethod('post')) {
             if ($request->has('filter')) {
