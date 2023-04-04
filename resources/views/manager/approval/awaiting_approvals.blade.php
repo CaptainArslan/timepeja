@@ -69,7 +69,7 @@
     </div> <!-- end col-->
 </div>
 
-
+@if(isset($_POST['filter']))
 <div class="row">
     <div class="col-12">
         <div class="card">
@@ -77,16 +77,19 @@
                 <div class="col-2">
                     <h4 class="header-title">Awaiting Approvals</h4>
                 </div>
-                <div class="col-7">
+                <div class="col-10">
                     <div class="row">
-                        <div class="col-md-6">
-                            <input class="form-control" type="hidden" value="" name="organization" style="font-weight: bold;" readonly>
+                        <div class="col-md-3">
+                            <input class="form-control" id="" type="hidden" value="{{ request()->input('o_id', old('o_id')) }}" name="o_id" style="font-weight: bold;" readonly>
                         </div>
                         <div class="col-md-3">
-                            <input class="form-control" id="" type="hidden" name="from">
+                            <input class="form-control" id="" type="hidden" name="from" value="{{ request()->input('from', old('from')) }}" readonly>
                         </div>
                         <div class="col-md-3">
-                            <input class="form-control" id="" type="hidden" name="to">
+                            <input class="form-control" id="" type="hidden" name="to" value="{{ request()->input('to', old('to')) }}" readonly>
+                        </div>
+                        <div class="col-md-3">
+                            <input class="form-control" id="" type="hidden" name="type" value="{{ request()->input('type', old('type')) }}" readonly>
                         </div>
                     </div>
                 </div>
@@ -123,12 +126,28 @@
                                 <!-- <a href="#" class="btn btn-danger  text-white action-icon"> <i class="mdi mdi-delete"></i></a> -->
                             </td>
                         </tr>
+                        <tr>
+                            <td>
+                                <input type="checkbox" class="child_checkbox">
+                            </td>
+                            <td>Afzaal</td>
+                            <td>BCSF!R@#</td>
+                            <td>Sales</td>
+                            <td>Multan</td>
+                            <td>5</td>
+                            <td><span class="badge bg-danger">pending</span></td>
+                            <td>
+                                <a href="#" class="btn btn-success  show_request text-white action-icon"> <i class="mdi mdi-logout-variant"></i></a>
+                                <!-- <a href="#" class="btn btn-danger  text-white action-icon"> <i class="mdi mdi-delete"></i></a> -->
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div> <!-- end card body-->
         </div> <!-- end card -->
     </div><!-- end col-->
 </div>
+@endif
 
 
 <!-- Modal -->
