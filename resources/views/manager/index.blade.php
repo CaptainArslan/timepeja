@@ -32,7 +32,12 @@
                         <div class="col-md-4">
                             <label for="organization">Select Oganization</label>
                             <select class="form-control select2_filter" id="organization_filter" name="o_id">
-                                @include('partials/organization_dropdown_option')
+                                <option value="" selected>Select</option>
+                                @forelse ($org_dropdowns as $organization)
+                                <option value="{{ $organization->id }}" {{ $organization->id == request()->input('o_id') ? 'selected' : '' }}>{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
+                                @empty
+                                <option value="">Please select</option>
+                                @endforelse
                             </select>
                         </div>
                         <div class="col-md-3">
