@@ -236,11 +236,10 @@ Route::group(['middleware' => 'auth'], function () {
         CommonController::class, 'getCities'
     ])->name('get_cities');
     Route::get('get-schedule-route-driver-vehicle/{org_id}', [
-        CommonController::class, 'getScheduleRouteDriveraVehicle'
+        CommonController::class, 'getScheduleRouteDriverVehicle'
     ])->name('get_schedule_route_driver_vehicle');
 
 
-    
     Route::post('schedule/delete/{id}', [ScheduleController::class, 'destroy'])->name('schedule.delete');
     Route::get('get-schedule', [ScheduleController::class, 'getSchedule'])->name('getSchedule');
     Route::get('get-driver-vehicle-route', [ScheduleController::class, 'getDriverVehicleRoute'])->name('getDriverVehicleRoute');

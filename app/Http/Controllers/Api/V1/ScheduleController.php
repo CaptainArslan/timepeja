@@ -258,24 +258,25 @@ class ScheduleController extends BaseController
      * @param [type] $o_id
      * @return void
      */
-    public function getOrganizationData($o_id)
+    public function getOrganizationData()
     {
-        $validator = Validator::make(['o_id' => $o_id], [
-            'o_id' => ['exists:organizations,id'],
-        ]);
+        // $validator = Validator::make(['o_id' => $manager->o_id], [
+        //     'o_id' => ['exists:organizations,id'],
+        // ]);
 
-        if ($validator->fails()) {
-            return $this->respondWithError('Invalid organization id');
-        }
+        // if ($validator->fails()) {
+        //     return $this->respondWithError('Invalid organization id');
+        // }
+        $manager = auth('manager')->user();
         try {
             $data = [];
-            $routes = Route::where('o_id', $o_id)
+            $routes = Route::where('o_id', $manager->o_id)
                 ->where('status', Route::STATUS_ACTIVE)
                 ->select('id', 'name')->get();
-            $vehicles = Vehicle::where('o_id', $o_id)
+            $vehicles = Vehicle::where('o_id', $manager->o_id)
                 ->where('status', Vehicle::STATUS_ACTIVE)
                 ->select('id', 'number as  name')->get();
-            $drivers = Driver::where('o_id', $o_id)
+            $drivers = Driver::where('o_id', $manager->o_id)
                 ->where('status', Driver::STATUS_ACTIVE)
                 ->select('id', 'name')->get();
             $data['routes'] = $routes;
@@ -284,7 +285,7 @@ class ScheduleController extends BaseController
         } catch (ModelNotFoundException $e) {
             throw new NotFoundHttpException('User not found');
         }
-        if (!$o_id) {
+        if (!$manager->o_id) {
             return $this->respondWithError('Organization id is required');
         }
         return $this->respondWithSuccess($data, 'Organization route, vehicle, driver data', 'ORGANIZATION_ROUTE_VEHICLE_DRIVER_DATA');

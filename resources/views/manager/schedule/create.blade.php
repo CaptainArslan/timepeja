@@ -245,7 +245,7 @@
                     <input type="checkbox" class="child_checkbox" value="${item.id}" name="schedule_ids[]" >
                     <input type="hidden" value="${item.organizations.id}" name="o_id">
                 </td>`,
-                `<td>${item.date}</td>`,
+                `<td>${formatDate(item.date)}</td>`,
                 `<td>${item.organizations.name}</td>`,
                 `<td>${item.drivers.name}</td>`,
                 `<td><span class=" text-danger">${item.routes.number}</span> - ${item.routes.from} <span class="text-success"> TO </span> ${item.routes.to}</td>`,
