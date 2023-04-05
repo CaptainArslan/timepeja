@@ -134,7 +134,7 @@ class DriverAuthController extends BaseController
 
         return $this->respondWithSuccess($user, 'Login successfully', 'LOGIN_API_SUCCESS', [
             'content-type' => 'application/json',
-            'uid' => $user->email,
+            // 'uid' => $user->email,
             // 'access-token' => $user->token,
             'Authorization' => $token
         ]);

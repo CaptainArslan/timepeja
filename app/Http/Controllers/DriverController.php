@@ -107,7 +107,7 @@ class DriverController extends Controller
         $request->validate([
             'o_id' => ['required', 'string'],
             'name' => ['required', 'string'],
-            'phone' => ['required', 'strin', 'unique:drivers,phone'],
+            'phone' => ['required', 'string', 'unique:drivers,phone'],
             'cnic' => ['required', 'string', 'unique:drivers,cnic'],
             'license' => ['required', 'string', 'unique:drivers,license_no'],
             'status' => ['required', 'numeric'],
