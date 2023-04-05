@@ -15,7 +15,7 @@
         <div class="page-title-box d-flex justify-content-between">
             <h4 class="page-title">Organizations {{ old('o_id') }}</h4>
             <div class="page-title">
-                <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#create_modal"> Add Organization </button>
+                <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#createModal"> Add Organization </button>
             </div>
         </div>
     </div>
@@ -32,69 +32,57 @@
                         <div class="col-md-4">
                             <label for="organization">Select Oganization</label>
                             <select class="form-control select2_filter" id="organization_filter" name="o_id">
-                                <option value="">Select</option>
-                                @forelse ($organizations as $organization)
-                                <option value="{{ $organization->id }}">{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
+                                <option value="" selected>Select</option>
+                                @forelse ($org_dropdowns as $organization)
+                                <option value="{{ $organization->id }}" {{ $organization->id == request()->input('o_id') ? 'selected' : '' }}>{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
                                 @empty
                                 <option value="">Please select</option>
                                 @endforelse
                             </select>
                         </div>
-                        <!-- <div class="col-md-3">
-                            <label for="city">Select City</label>
-                            <select class="form-control select2_filter" id="city">
-                                <option value="">Select</option>
-                                <option value="all">Lahore</option>
-                                <option value="all">Multan</option>
-                                <option value="all">Peshawar</option>
-                                <option value="all">Islamabad</option>
-                                <option value="all">Karachi</option>
-                                <option value="all">Faisalabad</option>
-                                <option value="all">Gujrat</option>
-                            </select>
-                        </div> -->
                         <div class="col-md-3">
                             <label for="from">Registration From</label>
-                            <input type="date" class="form-control today-date" id="example-from" name="from" required>
+                            <input type="date" class="form-control" name="from" value="{{ request()->input('from', old('from')) }}">
                         </div>
                         <div class="col-md-3">
                             <label for="to">Registration To</label>
-                            <input type="date" class="form-control" id="example-to" name="to" required>
+                            <input type="date" class="form-control" name="to" value="{{ request()->input('to', old('to')) }}">
                         </div>
                         <div class="col-md-1">
                             <!-- <label for="route_list"></label> -->
                             <button type="submit" class="btn btn-success" id="route_list" value="filter" name="filter" style="margin-top: 20px;"> Submit </button>
                         </div>
-                    </div> <!-- end row -->
+                    </div>
                 </form>
             </div> <!-- end card-body-->
         </div> <!-- end card-->
     </div> <!-- end col-->
 </div>
+<!-- Filters Ends -->
 
-<!-- end page title -->
+<!-- Table -->
 <div class="row">
     <div class="col-12">
         <div class="card">
             <div class="card-header d-flex justify-content-between">
                 <div class="col-2">
-                    <h4 class="header-title">Latest Managers </h4>
+                    <h4 class="header-title"> {{ !isset($_POST['filter']) ? 'Latest' : '' }} Managers </h4>
                 </div>
-                <!-- <div class="col-9">
-                    <div class="row">
+                <div class="col-9">
+                    <!-- <div class="row">
                         <div class="col-md-5">
                             <input type="text" class="form-control" id="example-from" name="organization" value="" readonly style="font-weight: bold;">
                         </div>
                         <div class="col-md-3">
-                            <input type="date" class="form-control today-date" id="example-from" name="from">
+                            <input type="date" class="form-control" id="example-from" name="from">
                         </div>
                         <div class="col-md-3">
-                            <input type="date" class="form-control today-date" id="example-to" name="to">
+                            <input type="date" class="form-control" id="example-to" name="to">
                         </div>
-                    </div>
-                </div> -->
-                <div class="col-1 d-none ">
-                    <button class="btn btn-dark">Print</button>
+                    </div> -->
+                </div>
+                <div class="col-1">
+                    <!-- <button class="btn btn-dark">Print</button> -->
                 </div>
             </div>
             <div class="card-body table-container">
@@ -105,107 +93,67 @@
                             <th>Time</th>
                             <th>OTP</th>
                             <th>Org Name</th>
-                            <th>Branch Name</th>
-                            <th>Branch Code</th>
+                            <th>Org Branch </th>
                             <th>Org Types</th>
-                            <th>Email</th>
-                            <th>Phone No</th>
-                            <th>Address</th>
+                            <th>Org Email</th>
+                            <th>Org Phone No</th>
+                            <th>Org Address</th>
                             <th>Transport Manager</th>
-                            <th>Phone No</th>
-                            <th>Email</th>
-                            <th>Address</th>
+                            <th>Manager Phone No</th>
+                            <th>Manager Email</th>
+                            <th>Manager Address</th>
                             <th>Manager Picture</th>
                             <th>Head Name</th>
-                            <th>Email</th>
-                            <th>Phone No</th>
-                            <th>Address</th>
+                            <th>Head Email</th>
+                            <th>Head Phone No</th>
+                            <th>Head Address</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($organizations as $organization)
                         <tr>
+                            <td> {{ formatDate($organization->created_at) }} </td>
+                            <td> {{ formatTime($organization->created_at) }} </td>
+                            <td> {{ ($organization->manager['otp']) ?? '' }} </td>
+                            <td> {{-- $organization->id --}} {{ $organization->name }} </td>
+                            <td> {{ isset($organization->branch_code) ? $organization->branch_code . ' - ' : '' }} {{ $organization->branch_name }} </td>
+                            <td> {{-- isset($organization->organizationType['id']) ? $organization->organizationType['id'] .' - ' : '' --}} {{ ($organization->organizationType['name']) ?? '' }} </td>
+                            <td> {{ $organization->email }} </td>
+                            <td> {{ $organization->phone }} </td>
+                            <td> {{ $organization->address }} </td>
+                            <td> {{ $organization->manager['name']  }} </td>
+                            <td> {{ $organization->manager['phone'] }} </td>
+                            <td> {{ $organization->manager['email'] }} </td>
+                            <td> {{ $organization->manager['address'] }} </td>
+                            <td> <img src="{{ $organization->manager['picture'] }}" alt="" style="height: 50px; width: 50px; object-fit: contain;"> </td>
+                            <td> {{ $organization->head_name}} </td>
+                            <td> {{ $organization->head_email}} </td>
+                            <td> {{ $organization->head_phone}} </td>
+                            <td> {{ $organization->head_address}} </td>
                             <td>
-                                {{ date("Y-m-d",strtotime($organization->created_at)) }}
-                                <input type="hidden" name="" id="" class="db_date">
-                            </td>
-                            <td>
-                                {{ date("H:m:s",strtotime($organization->created_at)) }}
-                                <input type="hidden" name="" id="" class="db_time">
-                            </td>
-                            <td>
-                                {{ ($organization->manager['otp']) ?? '' }}
-                                <input type="hidden" name="" id="" class="db_otp">
-                            </td>
-                            <td>
-                                {{ $organization->id }} - {{ $organization->name }}
-                                <input type="hidden" name="" id="" class="db_org_name">
-                            </td>
-                            <td>
-                                {{ $organization->branch_name }}
-                                <input type="hidden" name="" id="" class="db_branch_name">
-                            </td>
-                            <td>
-                                {{ $organization->branch_code }}
-                                <input type="hidden" name="" id="" class="db_branch_code">
-                            </td>
-                            <td>
-                                {{ $organization->o_type }}
-                                <input type="hidden" name="" id="" class="db_org_type">
-                            </td>
-                            <td>
-                                {{ $organization->email }}
-                                <input type="hidden" name="" id="" class="db_org_email">
-                            </td>
-                            <td>
-                                {{ $organization->phone }}
-                                <input type="hidden" name="" id="" class="db_org_phone">
-                            </td>
-                            <td>
-                                {{ $organization->address }}
-                                <input type="hidden" name="" id="" class="db_org_address">
-                            </td>
-                            <td>
-                                {{ $organization->manager['name'] ?? '' }}
-                                <input type="hidden" name="" id="" class="db_man_name">
-                            </td>
-                            <td>
-                                {{ $organization->manager['email'] ?? ''}}
-                                <input type="hidden" name="" id="" class="db_man_email">
-                            </td>
-                            <td>
-                                {{ $organization->manager['phone'] ?? ''}}
-                                <input type="hidden" name="" id="" class="db_man_phone">
-                            </td>
-                            <td>
-                                {{ $organization->manager['address'] ?? ''}}
-                                <input type="hidden" name="" id="" class="db_man_manager">
-                            </td>
-                            <td>
-                                {{ $organization->manager['picture'] ?? ''}}
-                                <input type="hidden" name="" id="" class="db_man_picture">
-                            </td>
-                            <td>
-                                {{ $organization->head_name}}
-                                <input type="hidden" name="" id="" class="">
-                            </td>
-                            <td>
-                                {{ $organization->head_email}}
-                                <input type="hidden" name="" id="" class="">
-                            </td>
-                            <td>
-                                {{ $organization->head_phone}}
-                                <input type="hidden" name="" id="" class="">
-                            </td>
-                            <td>
-                                {{ $organization->head_address}}
-                                <input type="hidden" name="" id="" class="">
-                            </td>
-                            <td>
-
+                                <input type="hidden" name="" id="" value="{{ formatDate($organization->create_at) }}" class="db_date">
+                                <input type="hidden" name="" id="" value="{{ formatTime($organization->create_at) }}" class="db_time">
+                                <input type="hidden" name="" id="" value="{{ ($organization->manager['otp'])  }}" class="db_otp">
+                                <input type="hidden" name="" id="" value="{{ $organization->name }}" class="db_org_name">
+                                <input type="hidden" name="" id="" value="{{ $organization->id }}" class="db_org_id">
+                                <input type="hidden" name="" id="" value="{{ $organization->branch_name }}" class="db_branch_name">
+                                <input type="hidden" name="" id="" value="{{ $organization->branch_code }}" class="db_branch_code">
+                                <input type="hidden" name="" id="" value="{{ isset($organization->organizationType['id']) ? $organization->organizationType['id'] .' - ' : ''  }}" class="db_org_type">
+                                <input type="hidden" name="" id="" value="{{ $organization->email }}" class="db_org_email">
+                                <input type="hidden" name="" id="" value="{{ $organization->phone }}" class="db_org_phone">
+                                <input type="hidden" name="" id="" value="{{ $organization->address }}" class="db_org_address">
+                                <input type="hidden" name="" id="" value="{{ $organization->manager['name']  }}" class="db_man_name">
+                                <input type="hidden" name="" id="" value="{{ $organization->manager['email'] }}" class="db_man_email">
+                                <input type="hidden" name="" id="" value="{{ $organization->manager['phone'] }}" class="db_man_phone">
+                                <input type="hidden" name="" id="" value="{{ $organization->manager['address'] }}" class="db_man_manager_address">
+                                <input type="hidden" name="" id="" value="{{ $organization->manager['picture'] }}" class="db_man_picture">
+                                <input type="hidden" name="" id="" value="{{ $organization->head_name}}" class="db_head_name">
+                                <input type="hidden" name="" id="" value="{{ $organization->head_email}}" class="db_head_email">
+                                <input type="hidden" name="" id="" value="{{ $organization->head_phone}}" class="db_head_phone">
+                                <input type="hidden" name="" id="" value="{{ $organization->head_address}}" class="db_head_address">
                                 <!-- <div class="btn-group btn-group-sm" style="float: none;">
-                                    <button type="button" class="tabledit-edit-button btn btn-success" style="float: none;" data-bs-toggle="modal" data-bs-target="#create_modal">
+                                    <button type="button" class="tabledit-edit-button btn btn-success" style="float: none;" data-bs-toggle="modal" data-bs-target="#createModal">
                                         <span class="mdi mdi-pencil"></span>
                                     </button>
                                 </div> -->
@@ -225,13 +173,14 @@
         </div> <!-- end card -->
     </div><!-- end col-->
 </div>
-<!-- end row-->
+<!-- Table Ends -->
+
 <!-- Modal -->
-<div class="modal fade" id="create_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="create_modalLabel" aria-hidden="true">
+<div class="modal fade" id="createModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
             <div class="modal-header bg-light">
-                <h5 class="modal-title" id="create_modalLabel">Add Organization</h5>
+                <h5 class="modal-title" id="createModalLabel">Add Organization</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -249,19 +198,22 @@
                                             </a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="#company_head" data-bs-toggle="tab" id="company_head_tab" data-toggle="tab" class="nav-link rounded-0 pt-2 pb-2" onclick="">
+                                            <a href="#company_head" data-bs-toggle="tab" id="company_head_tab" data-toggle="tab" class="nav-link rounded-0 pt-2 pb-2">
+                                                <!-- onclick="checkOrgDetailForm()" disabled="disabled" -->
                                                 <i class="fas fa-user"></i>
                                                 <span class="d-none d-sm-inline">Company Head</span>
                                             </a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="#transport_manager" data-bs-toggle="tab" data-toggle="tab" id="transport_manager_tab" class="nav-link rounded-0 pt-2 pb-2" onclick="">
+                                            <a href="#transport_manager" data-bs-toggle="tab" data-toggle="tab" id="transport_manager_tab" class="nav-link rounded-0 pt-2 pb-2">
+                                                <!-- onclick="checkOrgHeadForm()" disabled="disabled" -->
                                                 <i class="fas fa-bus-alt"></i>
                                                 <span class="d-none d-sm-inline">Transport Manager</span>
                                             </a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="#financials" id="financials_tabs" value="financials" data-bs-toggle="tab" data-toggle="tab" class="nav-link rounded-0 pt-2 pb-2" onclick="">
+                                            <a href="#financials" id="financials_tabs" value="financials" data-bs-toggle="tab" data-toggle="tab" class="nav-link rounded-0 pt-2 pb-2">
+                                                <!-- onclick="checkTransportManagerForm()" disabled="disabled" -->
                                                 <i class=" fas fa-money-bill-wave"></i>
                                                 <span class="d-none d-sm-inline">Financial</span>
                                             </a>
@@ -274,30 +226,30 @@
                                                 <div class="col-lg-6">
                                                     <div class="mb-3">
                                                         <label for="org_name" class="form-label">Organization Name</label>
-                                                        <input type="text" id="org_name" name="org_name" value="{{ old('org_name') }}" class="form-control" required>
+                                                        <input type="text" id="org_name" name="org_name" value="{{ old('org_name') }}" class="form-control" placeholder="Punjab University" required>
                                                         <span class="text-danger" id="org_name_error"></span>
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="org_branch_code" class="form-label">Branch code</label>
-                                                        <input type="number" id="org_branch_code" name="org_branch_code" value="{{ old('org_branch_code') }}" class="form-control">
+                                                        <input type="text" id="org_branch_code" name="org_branch_code" value="{{ old('org_branch_code') }}" class="form-control" data-toggle="input-mask" data-mask-format="00000000000" placeholder="12345">
                                                         <span class="text-danger" id="org_branch_code_error"></span>
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="org_email" class="form-label">Email</label>
-                                                        <input type="email" id="org_email" name="org_email" class="form-control" value="{{ old('org_email') }}" placeholder="Email" required>
+                                                        <input type="email" id="org_email" name="org_email" class="form-control" value="{{ old('org_email') }}" placeholder="text@gmail.com" required>
                                                         <span class="text-danger" id="org_email_error"></span>
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-6">
                                                     <div class="mb-3">
                                                         <label for="org_branch_name" class="form-label">Branch Name</label>
-                                                        <input type="text" id="org_branch_name" name="org_branch_name" class="form-control" value="{{ old('org_branch_name') }}">
+                                                        <input type="text" id="org_branch_name" name="org_branch_name" class="form-control" value="{{ old('org_branch_name') }}" placeholder="Lahore branch">
                                                         <span class="text-danger" id="org_branch_name_error"></span>
                                                     </div>
                                                     <div class="mb-3">
-                                                        <label for="org_type" class="form-label">Types</label>
-                                                        <select class="form-select select2" id="org_type" name="org_type " required>
-                                                            <option value="">Please Select Organization Type</option>
+                                                        <label for="org_type" class="form-label">Company Title</label>
+                                                        <select class="form-select select2" id="org_type" name="org_type" required>
+                                                            <option value="" selected>Please Select Organization Type</option>
                                                             @forelse ($organization_types as $organizaton_type)
                                                             <option value="{{$organizaton_type->id}}">{{$organizaton_type->name}} ({{$organizaton_type->desc}})</option>
                                                             @empty
@@ -308,7 +260,7 @@
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="org_phone" class="form-label">Phone No</label>
-                                                        <input type="number" id="org_phone" name="org_phone" class="form-control" value="{{ old('org_phone') }}" required>
+                                                        <input type="text" id="org_phone" name="org_phone" class="form-control" data-toggle="input-mask" data-mask-format="0000-0000000" value="{{ old('org_phone') }}" placeholder="0300-1234567" required>
                                                         <span class="text-danger" id="org_phone_error"></span>
                                                     </div>
                                                 </div>
@@ -347,27 +299,27 @@
                                                 <div class="col-lg-6">
                                                     <div class="mb-3">
                                                         <label for="org_head_name" class="form-label">Head Name</label>
-                                                        <input type="text" id="org_head_name" name="org_head_name" value="{{ old('org_head_name') }}" class="form-control" required>
+                                                        <input type="text" id="org_head_name" name="org_head_name" placeholder="John Doe" value="{{ old('org_head_name') }}" class="form-control" required>
                                                         <span class="text-danger" id="org_head_name_error"></span>
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="org_head_phone" class="form-label">Phone No</label>
-                                                        <input type="number" id="org_head_phone" name="org_head_phone" value="{{ old('org_head_phone') }}" class="form-control" required>
+                                                        <input type="text" id="org_head_phone" name="org_head_phone" data-toggle="input-mask" data-mask-format="0000-0000000" value="{{ old('org_head_phone') }}" placeholder="0300-1234567" class="form-control" required>
                                                         <span class="text-danger" id="org_head_phone_error"></span>
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-6">
                                                     <div class="mb-3">
                                                         <label for="org_head_email" class="form-label">Email</label>
-                                                        <input type="email" id="org_head_email" name="org_head_email" value="{{ old('org_head_email') }}" class="form-control" placeholder="Email" required>
+                                                        <input type="email" id="org_head_email" name="org_head_email" placeholder="test@gmail.com" value="{{ old('org_head_email') }}" class="form-control" placeholder="Email" required>
                                                         <span class="text-danger" id="org_head_email_error"></span>
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="org_head_address" class="form-label">Address</label>
                                                         <input class="form-control" id="org_head_address" name="org_head_address" value="{{ old('org_head_address') }}" rows="5"></input>
                                                     </div>
-                                                </div> <!-- end col -->
-                                            </div> <!-- end row -->
+                                                </div>
+                                            </div>
                                         </div>
 
                                         <!-- Company transport manager -->
@@ -376,11 +328,11 @@
                                                 <div class="col-lg-6">
                                                     <div class="mb-3">
                                                         <label for="man_name" class="form-label">Name</label>
-                                                        <input type="text" id="man_name" name="man_name" value="{{ old('man_name') }}" class="form-control" required>
+                                                        <input type="text" id="man_name" name="man_name" value="{{ old('man_name') }}" placeholder="John Doe" class="form-control" required>
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="phone" class="form-label">Phone No</label>
-                                                        <input type="number" id="man_phone" name="man_phone" value="{{ old('phone') }}" class="form-control" required>
+                                                        <input type="text" id="man_phone" name="man_phone" data-toggle="input-mask" data-mask-format="0000-0000000" value="{{ old('phone') }}" placeholder="0300-1234567" class="form-control" required>
                                                     </div>
                                                     <!-- <div class="mb-3">
                                                         <label for="man_password" class="form-label">Password</label>
@@ -395,7 +347,7 @@
                                                 <div class="col-lg-6">
                                                     <div class="mb-3">
                                                         <label for="man_email" class="form-label">Email</label>
-                                                        <input type="email" id="man_email" name="man_email" value="{{ old('man_email') }}" class="form-control" placeholder="Email" required>
+                                                        <input type="email" id="man_email" name="man_email" value="{{ old('man_email') }}" aria-placeholder="text@gmail.com" class="form-control" placeholder="Email" required>
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="man_pic" class="form-label">Manager Picture</label>
@@ -410,14 +362,14 @@
                                                             </div>
                                                         </div>
                                                     </div> -->
-                                                </div> <!-- end col -->
+                                                </div>
                                                 <div class="col-lg-12">
                                                     <div class="mb-3">
                                                         <label for="man_address" class="form-label">Address</label>
                                                         <textarea class="form-control" name="man_address" id="man_address" value="{{ old('man_address') }}" cols="30" rows="2" placeholder="123 Street lahore, Pakistan"></textarea>
                                                     </div>
                                                 </div>
-                                            </div> <!-- end row -->
+                                            </div>
                                         </div>
 
                                         <!-- Company financials -->
@@ -427,15 +379,15 @@
                                                 <div class="col-md-12 mt-2">
                                                     <h4 class="header-title">Who we will charge the fee from:</h4>
                                                     <div class="form-check mb-2 form-check-primary">
-                                                        <input class="form-check-input" type="checkbox" name="wallet[]" id="org_wallet" value="org_wallet" checked>
+                                                        <input class="form-check-input" type="checkbox" name="wallet[]" id="org_wallet" value="org_wallet" required>
                                                         <label class="form-check-label" for="org_wallet">Organization</label>
                                                     </div>
-                                                    <div class="form-check mb-2 form-check-success">
-                                                        <input class="form-check-input" type="checkbox" name="wallet[]" id="driver_wallet" value="driver_wallet" checked>
+                                                    <div class="form-check mb-2 form-check-primary">
+                                                        <input class="form-check-input" type="checkbox" name="wallet[]" id="driver_wallet" value="driver_wallet" onclick="driverWallet(this)">
                                                         <label class="form-check-label" for="driver_wallet">Sub Contracting Driver</label>
                                                     </div>
-                                                    <div class="form-check mb-2 form-check-danger">
-                                                        <input class="form-check-input" type="checkbox" name="wallet[]" id="passenger_wallet" value="passenger_wallet" checked>
+                                                    <div class="form-check mb-2 form-check-primary">
+                                                        <input class="form-check-input" type="checkbox" name="wallet[]" id="passenger_wallet" value="passenger_wallet" onclick="passengerWallet(this)">
                                                         <label class="form-check-label" for="passenger_wallet">Passengers</label>
                                                     </div>
                                                 </div>
@@ -445,12 +397,12 @@
                                                     <h4 class="header-title">Basis of payment calculation:</h4>
                                                     <div class="row">
                                                         <div class="col-3 d-flex align-items-center">
-                                                            <input class="form-check-input" type="checkbox" name="payment[]" id="org_payment" value="org_payment" checked="">
+                                                            <input class="form-check-input" type="checkbox" name="payment[]" id="org_payment" value="org_payment" onchange="orgPaymentCheck()">
                                                             <label class="form-check-label mx-1" for="org_payment">Organization</label>
                                                         </div>
                                                         <div class="col-2">
                                                             <label for="org_amount" class="form-label">Amount</label>
-                                                            <input class="form-control" type="number" placeholder="Amount" name="org_amount" value="{{ old('org_amount') }}">
+                                                            <input class="form-control" type="number" placeholder="Amount" name="org_amount" id="org_amount" value="{{ old('org_amount') }}">
                                                         </div>
                                                         <div class="col-1">
                                                             <label for="org_trial_days" class="form-label"> Days</label>
@@ -467,11 +419,11 @@
                                                     </div>
                                                     <div class="row mt-2">
                                                         <div class="col-3 d-flex align-items-center">
-                                                            <input class="form-check-input" type="checkbox" name="payment[]" id="driver_payment" value="driver_payment" checked="">
+                                                            <input class="form-check-input" type="checkbox" name="payment[]" id="driver_payment" value="driver_payment" onchange="driverPaymentCheck()">
                                                             <label class="form-check-label mx-1" for="driver_payment">Driver</label>
                                                         </div>
                                                         <div class="col-2 ">
-                                                            <input class="form-control" type="number" placeholder="Amount" name="driver_amount" value="{{ old('driver_amount') }}" id="">
+                                                            <input class="form-control" type="number" placeholder="Amount" name="driver_amount" value="{{ old('driver_amount') }}" id="driver_amount">
                                                         </div>
                                                         <div class="col-1 ">
                                                             <input class="form-control " type="number" name="driver_trial_days" id="driver_trial_days" value="{{ old('driver_trial_days') }}" onchange="setNextDate('#driver_trial_days', '#driver_trial_start_date', '#driver_trial_end_date')">
@@ -485,11 +437,11 @@
                                                     </div>
                                                     <div class="row mt-2">
                                                         <div class="col-3 d-flex align-items-center">
-                                                            <input class="form-check-input" type="checkbox" name="payment[]" id="passenger_payment" value="passenger_payment" checked="">
+                                                            <input class="form-check-input" type="checkbox" name="payment[]" id="passenger_payment" value="passenger_payment" onchange="passengerPaymentCheck()">
                                                             <label class="form-check-label mx-1" for="passenger_payment">Passenger</label>
                                                         </div>
                                                         <div class="col-2 ">
-                                                            <input class="form-control" type="number" placeholder="Amount" name="passenger_amount" value="{{ old('passenger_amount') }}">
+                                                            <input class="form-control" type="number" placeholder="Amount" name="passenger_amount" id="passenger_amount" value="{{ old('passenger_amount') }}">
                                                         </div>
                                                         <div class="col-1 ">
                                                             <input class="form-control" type="number" name="passenger_trial_days" id="passenger_trial_days" value="{{ old('passenger_trial_days') }}" onchange="setNextDate('#passenger_trial_days', '#passenger_trail_start_date', '#passenger_trail_end_date')">
@@ -506,7 +458,7 @@
                                             <div class="text-end mt-3">
                                                 <button type="submit" class="btn btn-success waves-effect waves-light">Save</button>
                                             </div>
-                                        </div> <!-- end row -->
+                                        </div>
                                     </div>
                                 </div> <!-- tab-content -->
                             </form>
@@ -536,6 +488,8 @@
 <script src="/js/pages/form-wizard.init.js"></script>
 <script>
     $(document).ready(function() {
+        initializeSelect2(".select2_filter", "#filter_form");
+
         // alert("{{old('organzation_id')}}")
         $('#org_state').change(function(e) {
             e.preventDefault();
@@ -562,22 +516,68 @@
             $('#organization_creation')[0].reset();
         });
 
-        $(".select2").select2({
-            placeholder: "Select",
-            allowClear: true,
-            dropdownParent: $("#create_modal "), // modal : id modal
-            width: "100%",
-            height: "30px",
-        });
-
-        $(".select2_filter").select2({
-            placeholder: "Select",
-            allowClear: true,
-            dropdownParent: $("#filter_form "), // modal : id modal
-            width: "100%",
-            height: "30px",
+        // this function is call when add route modal open
+        $('#createModal').on('shown.bs.modal', function() {
+            initializeSelect2(".select2", "#createModal")
         });
     });
+
+    function orgPaymentCheck() {
+        $("#org_amount").prop("required", false);
+        $("#org_trial_days").prop("required", false);
+        $("#org_trail_start_date").prop("required", false);
+        $("#org_trail_end_date").prop("required", false);
+        if ($("#driver_payment").is(":checked")) {
+            $("#org_amount").prop("required", true);
+            $("#org_trial_days").prop("required", true);
+            $("#org_trail_start_date").prop("required", true);
+            $("#org_trail_end_date").prop("required", true);
+        }
+    }
+
+    function driverPaymentCheck() {
+        alert("hello");
+        $("#driver_amount").prop("required", false);
+        $("#driver_trial_days").prop("required", false);
+        $("#driver_trial_start_date").prop("required", false);
+        $("#driver_trial_end_date").prop("required", false);
+        if ($("#driver_payment").is(":checked")) {
+            $("#driver_amount").prop("required", true);
+            $("#driver_trial_days").prop("required", true);
+            $("#driver_trial_start_date").prop("required", true);
+            $("#driver_trial_end_date").prop("required", true);
+        }
+    }
+
+
+    function passengerPaymentCheck() {
+        $("#passenger_amount").prop("required", false);
+        $("#passenger_trial_days").prop("required", false);
+        $("#passenger_trail_start_date").prop("required", false);
+        $("#passenger_trail_end_date").prop("required", false);
+        if ($("#driver_payment").is(":checked")) {
+            $("#passenger_amount").prop("required", true);
+            $("#passenger_trial_days").prop("required", true);
+            $("#passenger_trail_start_date").prop("required", true);
+            $("#passenger_trail_end_date").prop("required", true);
+        }
+    }
+
+    function driverWallet(param) {
+        if ($(param).is(":checked")) {
+            $("#driver_payment").prop("checked", true);
+        } else {
+            $("#driver_payment").prop("checked", false);
+        }
+    }
+
+    function passengerWallet(param) {
+        if ($(param).is(":checked")) {
+            $("#passenger_payment").prop("checked", true);
+        } else {
+            $("#passenger_payment").prop("checked", false);
+        }
+    }
 
     function deleteOrganization(param) {
         Swal.fire({
@@ -664,10 +664,12 @@
         if (orgPhone === "") {
             setErrorMsg('#org_phone', "* Required!");
             orgPhoneErr = false;
-        } else if (!isPhone(orgPhone)) {
-            setErrorMsg('#org_phone', "* Phone number length must be 11 digits and only numbers are allowed");
-            orgPhoneErr = false;
-        } else {
+        }
+        // else if (!isPhone(orgPhone)) {
+        //     setErrorMsg('#org_phone', "* Invalid format!");
+        //     orgPhoneErr = false;
+        // } 
+        else {
             setSuccessMsg('#org_phone');
         }
 
@@ -686,16 +688,22 @@
         } else {
             setSuccessMsg('#org_city');
         }
+
+        if ((orgNameErr && orgTypeErr && orgEmailErr && orgPhoneErr && orgStateErr && orgCityErr) == false) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     function checkOrgDetailForm() {
         if (orgDetailFormValidate()) {
-            $('#company_head_tab').prop('disabled', false);
-            // resetFormView();
+            $('#company_head_tab').removeAttr('disabled');
+            resetFormView();
             $('#company_head_tab').addClass('active');
             $('#company_head').addClass('active');
         } else {
-            $('#company_head_tab').prop('disabled', true);
+            $("#company_head_tab").attr("disabled", true);
         }
     }
 
@@ -731,10 +739,12 @@
         if (orgHeadPhone === "") {
             setErrorMsg('#org_head_phone', "* Required!");
             orgHeadPhoneErr = false;
-        } else if (!isPhone(orgHeadPhone)) {
-            setErrorMsg('#org_head_phone', "* Phone number length must be 11 digits and only numbers are allowed");
-            orgHeadPhoneErr = false;
-        } else {
+        }
+        // else if (!isPhone(orgHeadPhone)) {
+        //     setErrorMsg('#org_head_phone', "* Phone number length must be 11 digits and only numbers are allowed");
+        //     orgHeadPhoneErr = false;
+        // } 
+        else {
             setSuccessMsg('#org_head_phone');
         }
 
@@ -747,24 +757,13 @@
 
     function checkOrgHeadForm() {
         if (orgHeadFormValidate()) {
-            $('#transport_manager_tab').prop('disabled', false);
+            $('#transport_manager_tab').removeAttr('disabled');
             resetFormView();
             $('#transport_manager_tab').addClass('active');
             $('#transport_manager').addClass('active');
         } else {
-            $('#transport_manager_tab').prop('disabled', true);
+            $('#transport_manager_tab').attr('disabled', true);
         }
-    }
-
-    function resetFormView() {
-        $('#company_tab').removeClass('active');
-        $('#company').removeClass('active');
-        $('#transport_manager_tab').removeClass('active');
-        $('#transport_manager').removeClass('active');
-        $('#financials_tabs').removeClass('active');
-        $('#financials').removeClass('active');
-        $('#company_head_tab').removeClass('active');
-        $('#company_head').removeClass('active');
     }
 
     function transportManagerFormValidate() {
@@ -786,24 +785,26 @@
 
         //Validate Email
         if (manEmail === "") {
-            setErrorMsg("#man_phone", "* Required!");
+            setErrorMsg("#man_email", "* Required!");
             manEmailErr = false;
         } else if (!isEmail(manEmail)) {
-            setErrorMsg("#man_phone", "* invalid email format! ");
+            setErrorMsg("#man_email", "* invalid email format! ");
             manEmailErr = false;
         } else {
-            setSuccessMsg("#man_phone");
+            setSuccessMsg("#man_email");
         }
 
         //validate Phone
         if (manPhone === "") {
-            setErrorMsg('#man_email', "* Required!");
+            setErrorMsg('#man_phone', "* Required!");
             manPhoneErr = false;
-        } else if (!isPhone(manPhone)) {
-            setErrorMsg('#man_email', "* Phone number length must be 11 digits and only numbers are allowed");
-            manPhoneErr = false;
-        } else {
-            setSuccessMsg('#man_email');
+        }
+        // else if (!isPhone(manPhone)) {
+        //     setErrorMsg('#man_email', "* Phone number length must be 11 digits and only numbers are allowed");
+        //     manPhoneErr = false;
+        // } 
+        else {
+            setSuccessMsg('#man_phone');
         }
 
         if ((manNameErr && manEmailErr && manPhoneErr) == false) {
@@ -815,13 +816,28 @@
 
     function checkTransportManagerForm() {
         if (transportManagerFormValidate()) {
-            $('#financials_tabs').prop('disabled', false);
+            $('#financials_tabs').removeAttr('disabled');
             resetFormView();
             $('#financials_tabs').addClass('active');
             $('#financials').addClass('active');
         } else {
-            $('#company_head_tab').prop('disabled', true);
+            $('#financials_tabs').attr('disabled', true);
         }
+    }
+
+    function resetFormView() {
+        $('#company_tab').removeClass('active');
+        $('#company').removeClass('active');
+        $('#transport_manager_tab').removeClass('active');
+        $('#transport_manager').removeClass('active');
+        $('#financials_tabs').removeClass('active');
+        $('#financials').removeClass('active');
+        $('#company_head_tab').removeClass('active');
+        $('#company_head').removeClass('active');
+        // reset the attribute to disable
+        $("#company_head_tab").attr("disabled", true);
+        $('#transport_manager_tab').attr('disabled', true);
+        $('#financials_tabs').attr('disabled', true);
     }
 
     function setDays(startDateId, endDateId, setDaysId) {

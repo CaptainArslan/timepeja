@@ -25,42 +25,42 @@
         <div class="card">
             <div class="card-body">
                 <!-- <h4 class="header-title">Select Organization</h4> -->
-                <form action="" id="awaiting_approval_form">
+                <form action="{{ route('user.awaiting') }}" id="awaiting_approval_form" method="post">
                     @csrf
                     <div class="row">
                         <div class="col-md-4">
                             <label for="organization">Select Oganization</label>
                             <select class="form-control select2" id="organization_filter" name="o_id" required>
                                 <option value="">Select</option>
-                                @forelse ($organizations as $organization)
-                                <option value="{{ $organization->id }}">{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
+                                @forelse ($org_dropdowns as $organization)
+                                <option value="{{ $organization->id }}" {{ $organization->id == request()->input('o_id') ? 'selected' : '' }}>{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
                                 @empty
                                 <option value="">Please select</option>
                                 @endforelse
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <label for="user_type">User Type</label>
-                            <select class="form-control select2" data-toggle="select2" data-width="100%" id="user_type" required>
-                                <<option value="" selected="">Select</option>
-                                    <option value="student">Student</option>
-                                    <option value="employee">Employee</option>
-                                    <option value="guardian">Guardian</option>
+                            <label for="type">User Type</label>
+                            <select class="form-control select2" data-toggle="select2" data-width="100%" name="type" id="type" required>
+                                <option value="" @if(!request()->input('type')) selected @endif>Select</option>
+                                <option value="student" @if(request()->input('type') == 'student') selected @endif>Student</option>
+                                <option value="employee" @if(request()->input('type') == 'employee') selected @endif>Employee</option>
+                                <option value="guardian" @if(request()->input('type') == 'guardian') selected @endif>Guardian</option>
                             </select>
                         </div>
                         <div class="col-md-3">
                             <label for="date-1">Registration From</label>
-                            <input class="form-control today-date" id="" type="date" name="date">
+                            <input class="form-control today-date" type="date" name="from" value="{{ request()->input('from', old('from')) }}">
                         </div>
                     </div>
                     <div class="row mt-2">
                         <div class="col-md-3">
                             <label for="date">Reistration To</label>
-                            <input class="form-control today-date" id="" type="date" name="date">
+                            <input class="form-control today-date" type="date" name="to" value="{{ request()->input('to', old('to')) }}">
                         </div>
                         <div class="col-md-1">
-                            <label for="publish_schedule"></label>
-                            <button type="submit" class="btn btn-success" id="publish_schedule" name="submit"> Submit </button>
+                            <label for="filter"></label>
+                            <button type="submit" class="btn btn-success" id="filter" name="filter"> Submit </button>
                         </div>
                     </div> <!-- end row -->
                 </form>
@@ -69,7 +69,7 @@
     </div> <!-- end col-->
 </div>
 
-@if(isset($_POST['submit']))
+@if(isset($_POST['filter']))
 <div class="row">
     <div class="col-12">
         <div class="card">
@@ -77,16 +77,19 @@
                 <div class="col-2">
                     <h4 class="header-title">Awaiting Approvals</h4>
                 </div>
-                <div class="col-7">
+                <div class="col-10">
                     <div class="row">
-                        <div class="col-md-6">
-                            <input class="form-control" id="" type="text" value="123456 - branch - Punjab University" name="organization" style="font-weight: bold;" readonly>
+                        <div class="col-md-3">
+                            <input class="form-control" id="" type="hidden" value="{{ request()->input('o_id', old('o_id')) }}" name="o_id" style="font-weight: bold;" readonly>
                         </div>
                         <div class="col-md-3">
-                            <input class="form-control today-date" id="" type="date" name="date">
+                            <input class="form-control" id="" type="hidden" name="from" value="{{ request()->input('from', old('from')) }}" readonly>
                         </div>
                         <div class="col-md-3">
-                            <input class="form-control today-date" id="" type="date" name="date">
+                            <input class="form-control" id="" type="hidden" name="to" value="{{ request()->input('to', old('to')) }}" readonly>
+                        </div>
+                        <div class="col-md-3">
+                            <input class="form-control" id="" type="hidden" name="type" value="{{ request()->input('type', old('type')) }}" readonly>
                         </div>
                     </div>
                 </div>
@@ -96,7 +99,7 @@
                     <thead>
                         <tr>
                             <th>
-                                <input type="checkbox">
+                                <input type="checkbox" class="parent_checkbox">
                             </th>
                             <th>Student/Employee Name</th>
                             <th>Roll No/Employee ID</th>
@@ -110,13 +113,28 @@
                     <tbody>
                         <tr>
                             <td>
-                                <input type="checkbox">
+                                <input type="checkbox" class="child_checkbox">
                             </td>
                             <td>Ali</td>
                             <td>MSCS220444</td>
                             <td>8th/Sales</td>
                             <td>Johar Town Lahore</td>
                             <td>3</td>
+                            <td><span class="badge bg-danger">pending</span></td>
+                            <td>
+                                <a href="#" class="btn btn-success  show_request text-white action-icon"> <i class="mdi mdi-logout-variant"></i></a>
+                                <!-- <a href="#" class="btn btn-danger  text-white action-icon"> <i class="mdi mdi-delete"></i></a> -->
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="checkbox" class="child_checkbox">
+                            </td>
+                            <td>Afzaal</td>
+                            <td>BCSF!R@#</td>
+                            <td>Sales</td>
+                            <td>Multan</td>
+                            <td>5</td>
                             <td><span class="badge bg-danger">pending</span></td>
                             <td>
                                 <a href="#" class="btn btn-success  show_request text-white action-icon"> <i class="mdi mdi-logout-variant"></i></a>
@@ -130,6 +148,7 @@
     </div><!-- end col-->
 </div>
 @endif
+
 
 <!-- Modal -->
 <div class="modal fade" id="modal_organization" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="organizationLabel" aria-hidden="true">
@@ -197,7 +216,7 @@
 
         $('.show_request').click(function(e) {
             e.preventDefault();
-            var url = "{{ route('awaiting.approvals') }}";
+            var url = window.location.origin + "/user/approval";
             var w1 = window.open(
                 url,
                 "_blank",

@@ -163,16 +163,17 @@ class RouteController extends Controller
         $save = $route->save();
 
         if ($save) {
-            // return redirect(route('routes.index'))->with('success', 'Route updated successfully');
-            return response()->json([
-                'status' => 'success',
-                'message' => 'successfuly updated'
-            ]);
+            return redirect(route('routes.index'))->with('success', 'Route updated successfully');
+            // return response()->json([
+            //     'status' => 'success',
+            //     'message' => 'successfuly updated'
+            // ]);
         } else {
-            return response()->json([
-                'status' => 'success',
-                'message' => 'successfuly updated'
-            ]);
+            return redirect(route('routes.index'))->with('error', 'Error Occured while updating route!');
+            // return response()->json([
+            //     'status' => 'success',
+            //     'message' => 'successfuly updated'
+            // ]);
         }
     }
 

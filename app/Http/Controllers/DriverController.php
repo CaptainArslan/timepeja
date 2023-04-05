@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Driver;
 use App\Models\Organization;
+use App\Models\Schedule;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
 class DriverController extends Controller
@@ -14,11 +16,64 @@ class DriverController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $drivers = Driver::with('organizations')
+        $organizations = Organization::get();
+        $org_dropdowns = $organizations;
+        $drivers = Driver::with(['organization' => function ($query) {
+            $query->select('id', 'name', 'email');
+        }])
+            ->latest()
+            ->take(10)
+            ->orderBy('id', 'DESC')
             ->get();
-        return view('driver.index', ['drivers' => $drivers]);
+        if ($request->isMethod('post')) {
+            if ($request->has('filter')) {
+                $drivers = $this->filter($request);
+            }
+        }
+        // dd($drivers->toArray());
+        return view('driver.index', [
+            'drivers' => $drivers,
+            'organizations' => $organizations,
+        ]);
+    }
+
+
+    public function filter(Request $request)
+    {
+        $request->validate([
+            'o_id' => 'nullable|numeric',
+            'from' => 'nullable|date',
+            'to' => 'nullable|date|after:from',
+        ], [
+            'to.after' => "The registration to date must be a date after registration from.",
+        ]);
+        // Get the input values from the request
+        $o_id = $request->input('o_id');
+        $from = $request->input('from');
+        $to = $request->input('to');
+
+        // Get the filtered records
+        $records = Driver::when($o_id, function ($query, $o_id) {
+            return $query->where('o_id', $o_id);
+        })
+            ->when($from && $to, function ($query) use ($from, $to) {
+                return $query->whereBetween('created_at', [$from, $to]);
+            })
+            ->when($from && !$to, function ($query) use ($from) {
+                return $query->whereDate('created_at', '>=', $from);
+            })
+            ->when($to && !$from, function ($query) use ($to) {
+                return $query->whereDate('created_at', '<=', $to);
+            })
+            ->with('organization', function ($query) {
+                $query->select('id', 'name'); // Select the id and name columns from the organizations table
+            })
+            ->get();
+
+        // Return the filtered records to the view
+        return $records;
     }
 
     /**
@@ -50,64 +105,52 @@ class DriverController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'org_name' => 'required|string',
-            'name' => 'required|string',
-            'phone' => 'required|string|unique:drivers,phone',
-            'cnic' => 'required|string',
-            'license' => 'required|string',
-            'status' => 'required|numeric',
-            'cnic_front' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'cnic_back' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'license_front' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'license_back' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'o_id' => ['required', 'string'],
+            'name' => ['required', 'string'],
+            'phone' => ['required', 'string', 'unique:drivers,phone'],
+            'cnic' => ['required', 'string', 'unique:drivers,cnic'],
+            'license' => ['required', 'string', 'unique:drivers,license_no'],
+            'status' => ['required', 'numeric'],
+            'cnic_front' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+            'cnic_back' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+            'license_front' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+            'license_back' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+        ], [
+            'o_id.required' => 'Organization required'
         ]);
-
-        if ($request->hasFile('cnic_front')) {
-            $image_front_cnic = $request->file('cnic_front');
-            $cnic_front_pic = time() . $image_front_cnic->getClientOriginalName();
-            $image_front_cnic->move(public_path('/uploads/drivers/cnic/'), $cnic_front_pic);
-        }
-
-        if ($request->hasFile('cnic_back')) {
-            $image_back_cnic = $request->file('cnic_back');
-            $cnic_back_pic = time() . $image_back_cnic->getClientOriginalName();
-            $image_back_cnic->move(public_path('/uploads/drivers/cnic/'), $cnic_back_pic);
-        }
-
-        if ($request->hasFile('license_front')) {
-            $image_front_license = $request->file('license_front');
-            $license_front_pic = time() . $image_front_license->getClientOriginalName();
-            $image_front_license->move(public_path('/uploads/drivers/license/'), $license_front_pic);
-        }
-
-        if ($request->hasFile('license_back')) {
-            $image_back_license = $request->file('license_back');
-            $license_back_pic = time() . $image_back_license->getClientOriginalName();
-            $image_back_license->move(public_path('/uploads/drivers/license/'), $license_back_pic);
-        }
 
         $user = Auth::user();
         $driver = new Driver();
-        $driver->o_id = $request->input('org_name');
+        $driver->o_id = $request->input('o_id');
         $driver->u_id = $user->id;
         $driver->name = $request->input('name');
         $driver->phone = $request->input('phone');
         $driver->cnic = $request->input('cnic');
         $driver->license_no = $request->input('license');
-        $driver->otp = substr(uniqid(), -4);
+        $driver->otp = rand(1000, 9999);
         $driver->status = $request->input('status');
+        $driver->profile_picture = null;
+        $driver->address = null;
 
-        $driver->cnic_front_pic =  $cnic_front_pic;
-        $driver->cnic_back_pic =  $cnic_back_pic;
+        $driver->cnic_front_pic = ($request->file('cnic_front')) ?
+            uploadImage($request->file('cnic_front'), 'drivers/cnic')
+            : null;
+        $driver->cnic_back_pic =  ($request->file('cnic_back')) ?
+            uploadImage($request->file('cnic_back'), 'drivers/cnic') :
+            null;
 
-        $driver->license_no_front_pic =  $license_front_pic;
-        $driver->license_no_back_pic = $license_back_pic;
+        $driver->license_no_front_pic =  ($request->file('license_front')) ?
+            uploadImage($request->file('license_front'), 'drivers/license') :
+            null;
+        $driver->license_no_back_pic = ($request->file('license_back')) ?
+            uploadImage($request->file('license_back'), 'drivers/license') :
+            null;
 
         if ($driver->save()) {
-            return redirect()->route('driver.create')
+            return redirect()->route('driver.index')
                 ->with('success', 'Driver created successfully.');
         } else {
-            return redirect()->route('driver.create')
+            return redirect()->route('driver.index')
                 ->with('error', 'Error Occured while Driver creation .');
         }
     }
@@ -129,9 +172,75 @@ class DriverController extends Controller
      * @param  \App\Models\Driver  $driver
      * @return \Illuminate\Http\Response
      */
-    public function edit(Driver $driver)
+    public function edit(Request $request)
     {
-        //
+        $request->validate([
+            'id' => 'required|numeric|trim',
+            'o_id' => 'required|numeric|trim',
+            'name' => 'required|string|trim',
+            'phone' => 'required|string|unique:drivers,phone,' . $request->id,
+            'cnic' => 'required|string|unique:drivers,cnic,' . $request->id,
+            'license' => 'required|string|unique:drivers,license_no,' . $request->id,
+            'status' => 'required|numeric|trim',
+            'cnic_front' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048|trim',
+            'cnic_back' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048|trim',
+            'license_front' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048|trim',
+            'license_back' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048|trim',
+        ], [
+            'o_id.required' => 'Organization required'
+        ]);
+
+        $driver = Driver::find($request->id);
+        $user = Auth::user();
+        $driver->o_id = $request->input('o_id');
+        $driver->u_id = $user->id;
+        $driver->name = $request->input('name');
+        $driver->phone = $request->input('phone');
+        $driver->cnic = $request->input('cnic');
+        $driver->license_no = $request->input('license');
+        $driver->otp = substr(uniqid(), -4);
+        $driver->status = $request->input('status');
+        // dd($driver->cnic_front_pic_name);
+
+        // ----- these function are to remove old picture from the folder
+        if ($request->hasFile('cnic_front')) {
+            removeImage($driver->cnic_front_pic_name, 'drivers/cnic');
+        }
+
+        if ($request->hasFile('cnic_back')) {
+            removeImage($driver->cnic_back_pic_name, 'drivers/cnic');
+        }
+
+        if ($request->hasFile('license_front')) {
+            removeImage($driver->license_no_front_pic_name, 'drivers/license');
+        }
+
+        if ($request->hasFile('license_back')) {
+            removeImage($driver->license_no_back_pic_name, 'drivers/license');
+        }
+
+        //  Updating image here if user add new it will update the image otherwise same image
+        $driver->cnic_front_pic = ($request->file('cnic_front')) ?
+            uploadImage($request->file('cnic_front'), 'drivers/cnic')
+            : $driver->cnic_front_pic_name;
+        $driver->cnic_back_pic =  ($request->file('cnic_back')) ?
+            uploadImage($request->file('cnic_back'), 'drivers/cnic') :
+            $driver->cnic_back_pic_name;
+
+        $driver->license_no_front_pic =  ($request->file('license_front')) ?
+            uploadImage($request->file('license_front'), 'drivers/license') :
+            $driver->license_no_front_pic_name;
+        $driver->license_no_back_pic = ($request->file('license_back')) ?
+            uploadImage($request->file('license_back'), 'drivers/license') :
+            $driver->license_no_back_pic_name;
+
+        if ($driver->save()) {
+            return redirect()->route('driver.index')
+                ->with('success', 'Driver created successfully.');
+        } else {
+            return redirect()->route('driver.index')
+                ->with('error', 'Error Occured while Driver creation .');
+        }
     }
 
     /**
@@ -152,21 +261,68 @@ class DriverController extends Controller
      * @param  \App\Models\Driver  $driver
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Driver $driver)
+    public function destroy(Request $request, $id)
     {
-
-        if ($driver->delete()) {
-            return response()->json(['status'=> 'success']);
+        if (Driver::where('id', $id)->delete()) {
+            return response()->json(['status' => 'success']);
         } else {
             return response()->json(['status' => 'error']);
         }
     }
 
-    public function upcomingTrips()
+    public function multiDelete(Request $request)
     {
+        try {
+            DB::transaction(function () use ($request) {
+                foreach ($request->driver_ids as $driver_id) {
+                    $delete = Driver::where('id', $driver_id)->delete();
+                    if (!$delete) {
+                        throw new \Exception('Error updating schedule.');
+                    }
+                }
+            });
+            return redirect()->route('driver.index')
+                ->with('success', 'Vehicles deleted successfully.');
+        } catch (\Exception $e) {
+            return redirect()->route('driver.index')
+                ->with('error', 'Error occured while Vehicle deletion.');
+        }
+    }
+
+    public function upcomingTrips(Request $request)
+    {
+        $trips = [];
+        if ($request->isMethod('post')) {
+            if ($request->has('filter')) {
+                $trips = $this->filterUpcomingTrips($request);
+            }
+        }
         $organizations = Organization::get();
         return view('driver.trips', [
-            'organizations' => $organizations
+            'organizations' => $organizations,
+            'trips' => $trips
         ]);
+    }
+
+    public function filterUpcomingTrips($request)
+    {
+        // $request->validate([
+        //     'o_id' => 'required|numeric|trim',
+        //     'from' => 'required|date|trim',
+        //     'to' => 'required|date|trim',
+        // ], [
+        //     'o_id.required' => 'Organization required'
+        // ]);
+        // dd($request->all());
+        $trips = Schedule::where('o_id', $request->o_id)
+            // ->where('date', '>=', $request->from)
+            // ->where('date', '<=', $request->to)
+            ->where('trip_status', Schedule::TRIP_STATUS_UPCOMING)
+            ->with('organizations:id,name')
+            ->with('routes:id,name,number,from,to')
+            ->with('vehicles:id,number')
+            ->with('drivers:id,name')
+            ->get();
+        return $trips;
     }
 }

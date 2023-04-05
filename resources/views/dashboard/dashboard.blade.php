@@ -23,7 +23,7 @@
                     </div>
                     <div class="col-6">
                         <div class="text-end">
-                            <h3 class="text-dark mt-1"><span data-plugin="counterup">58,947</span></h3>
+                            <h3 class="text-dark mt-1"><span data-plugin="counterup">{{ $tripCount }}</span></h3>
                             <p class="text-muted mb-1 text-truncate">Total Trips Completed</p>
                         </div>
                     </div>
@@ -43,7 +43,7 @@
                     </div>
                     <div class="col-6">
                         <div class="text-end">
-                            <h3 class="text-dark mt-1"><span data-plugin="counterup">127</span></h3>
+                            <h3 class="text-dark mt-1"><span data-plugin="counterup">{{ $vehicleCount }}</span></h3>
                             <p class="text-muted mb-1 text-truncate">Total Active Vehicles</p>
                         </div>
                     </div>
@@ -63,7 +63,7 @@
                     </div>
                     <div class="col-6">
                         <div class="text-end">
-                            <h3 class="text-dark mt-1"><span data-plugin="counterup">58</span></h3>
+                            <h3 class="text-dark mt-1"><span data-plugin="counterup">{{ $passengerCount }}</span></h3>
                             <p class="text-muted mb-1 text-truncate">Total Passengers</p>
                         </div>
                     </div>
@@ -199,18 +199,19 @@
                     </div>
                 </div>
 
-                <h4 class="header-title mb-3">Top 5 Users Balances</h4>
+                <h4 class="header-title mb-3">Vehicle List</h4>
 
                 <div class="table-responsive">
                     <table class="table table-borderless table-hover table-nowrap table-centered m-0">
 
                         <thead class="table-light">
                             <tr>
-                                <th colspan="2">Profile</th>
-                                <th>Currency</th>
-                                <th>Balance</th>
-                                <th>Reserved in orders</th>
-                                <th>Action</th>
+                                <th>Vehicle</th>
+                                <th>Vehicle Type</th>
+                                <th>Route </th>
+                                <th>Driver</th>
+                                <th>Organization</th>
+                                <th>City</th>
                             </tr>
                         </thead>
                         <tbody>

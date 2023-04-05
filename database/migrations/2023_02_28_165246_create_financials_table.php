@@ -26,21 +26,21 @@ class CreateFinancialsTable extends Migration
             
             $table->boolean('org_wallet')->default(0);
             $table->boolean('org_payment')->default(0);
-            $table->float('org_amount');
-            $table->date('org_trail_start_date');
-            $table->date('org_trail_end_date');
+            $table->float('org_amount')->nullable();
+            $table->date('org_trail_start_date')->nullable();
+            $table->date('org_trail_end_date')->nullable();
             
             $table->boolean('driver_wallet')->default(0);
             $table->boolean('driver_payment')->default(0);
-            $table->float('driver_amount');
-            $table->date('driver_trail_start_date');
-            $table->date('driver_trail_end_date');
+            $table->float('driver_amount')->nullable();
+            $table->date('driver_trail_start_date')->nullable();
+            $table->date('driver_trail_end_date')->nullable();
             
             $table->boolean('passenger_wallet')->default(0);
             $table->boolean('passenger_payment')->default(0);
-            $table->float('passenger_amount');
-            $table->date('passenger_trail_start_date');
-            $table->date('passenger_trail_end_date');
+            $table->float('passenger_amount')->nullable();
+            $table->date('passenger_trail_start_date')->nullable();
+            $table->date('passenger_trail_end_date')->nullable();
             
             $table->timestamps();
             $table->softDeletes();

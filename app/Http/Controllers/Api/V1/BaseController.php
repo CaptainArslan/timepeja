@@ -33,4 +33,23 @@ class BaseController extends Controller
         }
         return response()->json($response, $code);
     }
+
+
+    public static function respondWithSuccess($data = null, $message = null, $code = null, $headers = [], $statusCode = 200)
+    {
+        return response()->json([
+            'success' => true,
+            'code' => $code,
+            'message' => $message,
+            'data' => $data,
+        ], $statusCode, $headers);
+    }
+
+    public static function respondWithError($message = null, $code = 400)
+    {
+        return response()->json([
+            'success' => false,
+            'message' => $message,
+        ], $code);
+    }
 }

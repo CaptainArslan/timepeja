@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Trip;
 use App\Models\User;
+use App\Models\State;
+use App\Models\Manager;
+use App\Models\Schedule;
 use App\Models\Financials;
+use Illuminate\Support\Str;
 use App\Models\Organization;
 use Illuminate\Http\Request;
 use App\Models\OrganizationType;
-use App\Models\State;
-use App\Models\Manager;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
@@ -23,18 +26,22 @@ class ManagerController extends Controller
     {
         $organization_types = OrganizationType::get();
         $states = State::where('ctry_id', 167)->get();
-        // dd($organizations->organizationType);
+        $org_dropdowns = Organization::get();
         // $managers_count = Manager::count();
+
+        $organizations = Organization::with('manager', 'city', 'state', 'organizationType')
+            ->orderBY('id', 'DESC')
+            ->take(10)
+            ->get();
+        // dd($organizations->toArray());
         if ($request->has('filter')) {
-            $this->filterManager($request, $organization_types, $states);
+            $organizations =  $this->filterManager($request);
         }
-        $organizations = Organization::with('manager')
-        ->orderBY('id', 'DESC')
-        ->take(10)
-        ->get();
+
         return view('manager.index', [
             // 'managers_count' => $managers_count,
             'organization_types' => $organization_types,
+            'org_dropdowns' => $org_dropdowns,
             'organizations' => $organizations,
             'states' => $states
         ]);
@@ -45,38 +52,54 @@ class ManagerController extends Controller
      *
      * @return  [type]  [return description]
      */
-    public function filterManager($request, $organization_types, $states)
+    public function filterManager($request)
     {
         $request->validate(
             [
-                'from'           => 'required|date',
-                'to'             => 'required|date|after:from',
+                'o_id'           => 'nullable|numeric',
+                'from'           => 'nullable|date',
+                'to'             => 'nullable|date|after:from',
             ],
             [
-                'from.required' => "From date is required",
-                'to.required' => "To date Number is required",
                 'to.after' => "The registration to date must be a date after registration from.",
             ]
         );
+        // Retrieve user input
+        $oId = $request->input('o_id');
+        $from = $request->input('from');
+        $to = $request->input('to');
 
-        $date_filter = false;
-        if ($request->from && $request->to) {
-            $from = $request->from;
-            $to = $request->to;
-            $date_filter = true;
-        }
-        $organizations = Organization::when($date_filter, function ($query) use ($from, $to) {
-            return $query->whereBetween('created_at', [$from, $to]);
+        // Start with base query
+        $result = Organization::when($oId, function ($query, $oId) {
+            return $query->where('id', $oId);
         })
-        ->with('manager')
-        ->get();
-        // $managers_count = Manager::count();
-        return view('manager.index', [
-            // 'managers_count' => $managers_count,
-            'organization_types' => $organization_types,
-            'organizations' => $organizations,
-            'states' => $states
-        ]);
+            ->when($from && $to, function ($query) use ($from, $to) {
+                return $query->whereBetween('created_at', [$from, $to]);
+            })
+            ->when($from && !$to, function ($query) use ($from) {
+                return $query->whereDate('created_at', '>=', $from);
+            })
+            ->when($to && !$from, function ($query) use ($to) {
+                return $query->whereDate('created_at', '<=', $to);
+            })
+            // ->with('organizations', function ($query) {
+            //     $query->select('id', 'name');
+            // })
+            ->with('manager', function ($query) {
+                $query->select('id', 'o_id', 'name', 'email', 'phone', 'otp', 'picture', 'address', 'about', 'status', 'created_at');
+            })
+            ->with('city', function ($query) {
+                $query->select('id', 'name');
+            })
+            ->with('state', function ($query) {
+                $query->select('id', 'name');
+            })
+            ->with('organizationType', function ($query) {
+                $query->select('id', 'name');
+            })
+            ->get();
+        // dd($result->toArray());
+        return $result;
     }
 
     /**
@@ -84,13 +107,9 @@ class ManagerController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        $organizaton_types = OrganizationType::all();
-        $managers = Manager::all();
-        $users = User::take(5)->orderby('id', 'desc')->get();
-        $states = State::where('country_id', 167)->get();
-        return view('manager.create', compact('organizaton_types', 'managers', 'users', 'states'));
+        dd('create');
     }
 
     /**
@@ -101,20 +120,21 @@ class ManagerController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request->all());
         $this->validate($request, [
-            'org_name' => 'required|string',
+            'org_name' => ['required', 'string', 'max:255'],
             'org_type ' => 'nullable|numeric',
-            'org_email' => 'required|email',
-            'org_phone' => 'required|regex:/^\d{11}$/',
+            'org_email' => 'required|email|unique:organizations,email',
+            'org_phone' => 'required|regex:/^03\d{2}-\d{7}$/',
             'org_state' => 'required|numeric',
             'org_city' => 'required|numeric',
 
-            'org_head_name' => 'required|string',
-            'org_head_phone' => 'required|regex:/^\d{11}$/',
-            'org_head_email' => 'required|email',
+            'org_head_name' => ['required', 'string', 'max:255'],
+            'org_head_phone' => 'required|regex:/^03\d{2}-\d{7}$/',
+            'org_head_email' => 'required|email|unique:organizations,head_email',
 
-            'man_name' => 'required|string',
-            'man_email' => 'nullable|email',
+            'man_name' => ['required', 'string', 'max:255'],
+            'man_email' => 'nullable|email|unique:managers,email',
             'man_phone' => 'required|unique:managers,phone',
             'man_pic' => 'nullable|mimes:jpg,png',
 
@@ -132,73 +152,90 @@ class ManagerController extends Controller
             'passenger_amount' => 'nullable|numeric',
             'passenger_trail_start_date' => 'nullable|date',
             'passenger_trail_end_date' => 'nullable|date',
+        ], [
+            'org_name.required' => 'Organization name required!',
+            'org_type.required' => 'Organization Organization type required!',
+            'org_email.required' => 'Organization email required',
+            'org_phone.required' => 'Organization phone required!',
+            'org_state.required' => 'Organization state required!',
+            'org_city.required' => 'Organization city required!',
+
+            'org_head_name.required' => 'Organization head name required!',
+            'org_head_phone.required' => 'Organization head phone required!',
+            'org_head_email.required' => 'Organization head email required!',
+
+            'man_name.required' => 'Manager name required!',
+            'man_email.required' => 'Manager email required!',
+            'man_email.unique' => 'Manager email already taken!',
+            'man_phone.required' => 'Manager phone required!',
         ]);
 
         $user = Auth::user();
         $error = false;
         DB::beginTransaction();
-        $users = new User();
-        $users->user_name    = $request->input('man_name');
-        $users->email        = $request->input('man_email');
-        // $users->user_type    = 'manager';
-        // $users->otp          = rand(100000, 999999);
-        $users->phone        = $request->input('man_phone');
-        $users_save          = $users->save();
-        if ($users_save) {
-            $org = new Organization();
-            $org->u_id          = $user->id;
-            $org->name          = $request->input('org_name');
-            $org->branch_name   = $request->input('org_branch_name');
-            $org->branch_code   = $request->input('org_branch_code');
-            $org->o_type_id     = $request->input('org_type');
-            $org->email         = $request->input('org_email');
-            $org->phone         = $request->input('org_phone');
-            $org->address       = $request->input('org_address');
-            $org->s_id          = $request->input('org_state');
-            $org->c_id          = $request->input('org_city');
-            $org->head_name     = $request->input('org_head_name');
-            $org->head_phone    = $request->input('org_head_phone');
-            $org->head_email    = $request->input('org_head_email');
-            $org->head_address  = $request->input('org_head_address');
-            $org_save = $org->save();
-            if ($org_save) {
-                $manager = new Manager();
-                $manager->o_id          = $org->id;
-                $manager->name          = $request->input('man_name');
-                $manager->email         = $request->input('man_email');
-                $manager->phone         = $request->input('man_phone');
-                $manager->address       = $request->input('man_address');
-                $manager->otp           = substr(uniqid(), -4);
-                $manager->picture       = '';
-                $manager_save = $manager->save();
-                if ($manager_save) {
-                    $financials = new Financials();
-                    $financials->u_id                       = $user->id;
-                    $financials->o_id                       = $org->id;
+        // $users = new User();
+        // $users->user_name    = $request->input('man_name');
+        // $users->email        = $request->input('man_email');
+        // // $users->user_type    = 'manager';
+        // // $users->otp          = rand(100000, 999999);
+        // $users->phone        = $request->input('man_phone');
+        // $users_save          = $users->save();
+        // if ($users_save) {
+        $org = new Organization();
+        $org->u_id          = $user->id;
+        $org->name          = $request->input('org_name');
+        $org->branch_name   = $request->input('org_branch_name');
+        $org->branch_code   = $request->input('org_branch_code');
+        $org->o_type_id     = $request->input('org_type');
+        $org->email         = $request->input('org_email');
+        $org->phone         = $request->input('org_phone');
+        $org->address       = $request->input('org_address');
+        $org->s_id          = $request->input('org_state');
+        $org->c_id          = $request->input('org_city');
+        $org->head_name     = $request->input('org_head_name');
+        $org->head_phone    = $request->input('org_head_phone');
+        $org->head_email    = $request->input('org_head_email');
+        $org->head_address  = $request->input('org_head_address');
+        $org_save = $org->save();
+        if ($org_save) {
+            $manager = new Manager();
+            $manager->o_id          = $org->id;
+            $manager->uid           = Str::random(60); //substr(uniqid(), 4);
+            $manager->name          = $request->input('man_name');
+            $manager->email         = $request->input('man_email');
+            $manager->phone         = $request->input('man_phone');
+            $manager->address       = $request->input('man_address');
+            $manager->otp           = rand(1000, 9999);
+            $manager->picture       = ($request->file('man_pic'))
+                ? uploadImage($request->file('man_pic'), 'managers/')
+                : null;
+            $manager_save = $manager->save();
+            if ($manager_save) {
+                $financials = new Financials();
+                $financials->u_id                       = $user->id;
+                $financials->o_id                       = $org->id;
+                $financials->o_id                       = $org->id;
 
-                    $financials->org_wallet                 = isset($request->wallet[0]) ? 1 : 0;
-                    $financials->org_payment                = isset($request->payment[0]) ? 1 : 0;
-                    $financials->org_amount                 = $request->input('org_amount');
-                    $financials->org_trail_start_date       = $request->input('org_trail_start_date');
-                    $financials->org_trail_end_date         = $request->input('org_trail_end_date');
+                $financials->org_wallet                 = isset($request->wallet[0]) ? 1 : 0;
+                $financials->org_payment                = isset($request->payment[0]) ? 1 : 0;
+                $financials->org_amount                 = $request->input('org_amount');
+                $financials->org_trail_start_date       = $request->input('org_trail_start_date');
+                $financials->org_trail_end_date         = $request->input('org_trail_end_date');
 
-                    $financials->driver_wallet              = isset($request->wallet[1]) ? 1 : 0;
-                    $financials->driver_payment             = isset($request->payment[1]) ? 1 : 0;
-                    $financials->driver_amount              = $request->input('driver_amount');
-                    $financials->driver_trail_start_date    = $request->input('driver_trial_start_date');
-                    $financials->driver_trail_end_date      = $request->input('driver_trial_end_date');
+                $financials->driver_wallet              = isset($request->wallet[1]) ? 1 : 0;
+                $financials->driver_payment             = isset($request->payment[1]) ? 1 : 0;
+                $financials->driver_amount              = $request->input('driver_amount');
+                $financials->driver_trail_start_date    = $request->input('driver_trial_start_date');
+                $financials->driver_trail_end_date      = $request->input('driver_trial_end_date');
 
-                    $financials->passenger_wallet           = isset($request->wallet[2]) ? 1 : 0;
-                    $financials->passenger_payment          = isset($request->payment[2]) ? 1 : 0;
-                    $financials->passenger_amount           = $request->input('passenger_amount');
-                    $financials->passenger_trail_start_date = $request->input('passenger_trail_start_date');
-                    $financials->passenger_trail_end_date   = $request->input('passenger_trail_end_date');
+                $financials->passenger_wallet           = isset($request->wallet[2]) ? 1 : 0;
+                $financials->passenger_payment          = isset($request->payment[2]) ? 1 : 0;
+                $financials->passenger_amount           = $request->input('passenger_amount');
+                $financials->passenger_trail_start_date = $request->input('passenger_trail_start_date');
+                $financials->passenger_trail_end_date   = $request->input('passenger_trail_end_date');
 
-                    $financials_save = $financials->save();
-                    if (!$financials_save) {
-                        $error = true;
-                    }
-                } else {
+                $financials_save = $financials->save();
+                if (!$financials_save) {
                     $error = true;
                 }
             } else {
@@ -207,6 +244,9 @@ class ManagerController extends Controller
         } else {
             $error = true;
         }
+        // } else {
+        //     $error = true;
+        // }
         if (!$error) {
             DB::commit();
             return redirect()->route('manager.index')
@@ -264,6 +304,13 @@ class ManagerController extends Controller
         dd('destroy');
     }
 
+    /**
+     * [deleteOrganization description]
+     *
+     * @param   [type]  $id  [$id description]
+     *
+     * @return  [type]       [return description]
+     */
     public function deleteOrganization($id)
     {
         $delOrg = Organization::where('id', $id)->delete();
@@ -280,22 +327,185 @@ class ManagerController extends Controller
         }
     }
 
-    public function logReport()
+    /**
+     * Display the log report for the organization.
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function logReport(Request $request)
     {
+        $request->validate([
+            'o_id' => 'nullable|numeric',
+            'from' => 'nullable|date',
+            'to' => 'nullable|date|after:from',
+        ], [
+            'to.after' => "The registration to date must be a date after registration from.",
+        ]);
+
+        $reports = [];
+        if ($request->isMethod('post')) {
+            if ($request->has('filter')) {
+                $reports = $this->filterReport($request);
+            }
+            if ($request->has('export')) {
+                $reports = $this->filterReport($request);
+                // dd($reports->toArray());
+                $request = $request->all();
+                $user = Auth::user();
+                return view('manager.report.export.index', [
+                    'reports' => $reports,
+                    'request' => $request,
+                ]);
+            }
+        }
         $organizations = Organization::get();
-        return view('manager.log_report', [
-            'organizations' => $organizations
+        $org_dropdowns = $organizations;
+        return view('manager.report.index', [
+            'organizations' => $organizations,
+            'org_dropdowns' => $org_dropdowns,
+            'reports' => $reports
         ]);
     }
 
+
+    protected function filterReport($request)
+    {
+        $query = Schedule::query();
+        if (gettype($request->input('selection')) === "string") {
+            $selection = explode(",", $request->input('selection'));
+        } else {
+            $selection = $request->input('selection');
+        }
+
+        switch ($request->type) {
+            case 'driver':
+                if ($selection[0] == 'all') {
+                    $query->whereNotNull('d_id');
+                } else {
+                    $query->whereIn('d_id', $selection);
+                }
+                break;
+            case 'vehicle':
+                if ($selection[0] == 'all') {
+                    $query->whereNotNull('v_id');
+                } else {
+                    $query->whereIn('v_id', $selection);
+                }
+                break;
+            case 'route':
+                if ($selection[0] == 'all') {
+                    $query->whereNotNull('route_id');
+                } else {
+                    $query->whereIn('route_id', $selection);
+                }
+                break;
+            default:
+                break;
+        }
+
+        $query->when($request->filled('from') && $request->filled('to'), function ($query) use ($request) {
+            $query->whereBetween('date', [$request->input('from'), $request->input('to')]);
+        });
+
+        $query->when($request->filled('from'), function ($query) use ($request) {
+            $query->where('date', '>=', $request->input('from'));
+        });
+
+        $query->when($request->filled('to'), function ($query) use ($request) {
+            $query->where('date', '<=', $request->input('to'));
+        });
+
+        $result = $query->where('o_id', $request->o_id)
+            ->with('organizations:id,name,branch_name,branch_code,email,phone,address')
+            ->with('routes:id,name,number,from,to')
+            ->with('vehicles:id,number')
+            ->with('drivers:id,name')
+            ->get();
+
+        return $result;
+    }
+
+    // protected function filterReport($request)
+    // {
+    //     // dd($request->all());
+    //     // dd($request->selection[0]);
+    //     $query = Schedule::query();
+    //     if ($request->type == 'driver') {
+    //         if ($request->selection[0] == 'all') {
+    //             // return 'all';
+    //             $query->when($request->input('selection'), function ($query) use ($request) {
+    //                 $query->whereNotNull('d_id');
+    //             });
+    //         } else {
+    //             // return 'selection';
+    //             $query->when($request->input('selection'), function ($query) use ($request) {
+    //                 $query->whereIn('d_id', $request->input('selection'));
+    //             });
+    //         }
+    //     } elseif ($request->type == 'vehicle') {
+    //         if ($request->selection[0] == 'all') {
+    //             // return 'all';
+    //             $query->when($request->input('selection'), function ($query) use ($request) {
+    //                 $query->whereNotNull('v_id');
+    //             });
+    //         } else {
+    //             // return 'selection';
+    //             $query->when($request->input('selection'), function ($query) use ($request) {
+    //                 $query->whereIn('v_id', $request->input('selection'));
+    //             });
+    //         }
+    //     } elseif ($request->type == 'route') {
+    //         if ($request->selection[0] == 'all') {
+    //             // return 'all';
+    //             $query->when($request->input('selection'), function ($query) use ($request) {
+    //                 $query->whereNotNull('route_id');
+    //             });
+    //         } else {
+    //             // return 'selection';
+    //             $query->when($request->input('selection'), function ($query) use ($request) {
+    //                 $query->whereIn('route_id', $request->input('selection'));
+    //             });
+    //         }
+    //     }
+    //     // Add date range constraint if both dates are provided
+    //     $query->when($request->input('from') && $request->input('to'), function ($query) use ($request) {
+    //         $query->whereBetween('date', [$request->input('from'), $request->input('to')]);
+    //     })->when($request->input('from') && !$request->input('to'), function ($query) use ($request) {
+    //         $query->where('date', $request->input('from'));
+    //     })->when(!$request->input('from') && $request->input('to'), function ($query) use ($request) {
+    //         $query->where('date', $request->input('to'));
+    //     });
+
+    //     $result = $query->where('o_id', $request->o_id)
+    //         ->with('organizations:id,name')
+    //         ->with('routes:id,name,number,from,to')
+    //         ->with('vehicles:id,number')
+    //         ->with('drivers:id,name')
+    //         ->get();
+    //     // dd($result->toArray());
+    //     return $result;
+    // }
+
+    /**
+     * [awaitingApproval description]
+     *
+     * @return  [type]  [return description]
+     */
     public function awaitingApproval()
     {
         $organizations = Organization::get();
+        $org_dropdowns = $organizations;
         return view('manager.approval.awaiting_approvals', [
-            'organizations' => $organizations
+            'organizations' => $organizations,
+            'org_dropdowns' => $org_dropdowns
         ]);
     }
 
+    /**
+     * [approvedUser description]
+     *
+     * @return  [type]  [return description]
+     */
     public function approvedUser()
     {
         $organizations = Organization::get();
@@ -304,6 +514,11 @@ class ManagerController extends Controller
         ]);
     }
 
+    /**
+     * [disapprovedUser description]
+     *
+     * @return  [type]  [return description]
+     */
     public function disapprovedUser()
     {
         $organizations = Organization::get();
@@ -312,6 +527,11 @@ class ManagerController extends Controller
         ]);
     }
 
+    /**
+     * [pastUser description]
+     *
+     * @return  [type]  [return description]
+     */
     public function pastUser()
     {
         $organizations = Organization::get();
