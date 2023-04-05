@@ -146,15 +146,16 @@
         <div class="body-section">
             <div class="row">
                 <div class="col-6">
-                    <h2 class="heading">Organiation: {{ $reports[0]->organizations['name'] }}</h2>
-                    <p class="sub-heading">From Date: {{ formatDate(request()->input('from')) }} </p>
-                    <p class="sub-heading">Email: {{ $reports[0]->organizations['email'] }} </p>
+                    <h2 class="heading"> (System Unique code) {{ $reports[0]->organizations['name'] }}, {{ $reports[0]->organizations['branch_name'] }}, city</h2>
                     <p class="sub-heading">Address: {{ $reports[0]->organizations['address'] }}</p>
+                    <!-- here manager information for that organization, email, name, phone -->
+                    <p class="sub-heading">Email: {{ $reports[0]->organizations['email'] }} </p>
+                    <p class="sub-heading">Phone Number: {{ $reports[0]->organizations['phone'] }}</p>
                 </div>
                 <div class="col-6">
-                    <h2 class="heading">Organiation Code: {{ $reports[0]->organizations['branch_code'] }}</h2>
-                    <p class="sub-heading">To Date: {{ formatDate(request()->input('to')) }}</p>
-                    <p class="sub-heading">Phone Number: {{ $reports[0]->organizations['phone'] }}</p>
+                    <!-- <h2 class="heading">Organiation Code: {{ $reports[0]->organizations['branch_code'] }}</h2> -->
+                    <p class="sub-heading">From: {{ formatDate(request()->input('from')) }} </p>
+                    <p class="sub-heading">To: {{ formatDate(request()->input('to')) }}</p>
                     <!-- <p class="sub-heading">Order Date: 20-20-2021 </p> -->
                 </div>
             </div>
@@ -176,12 +177,22 @@
                     <tr>
                         <th>Date</th>
                         <th>Scheduled Time</th>
+                        @if(request()->input('type') == 'driver')
                         <th>Driver</th>
                         <th>Vehicle</th>
                         <th>Route No</th>
+                        @elseif(request()->input('type') == 'vehicle')
+                        <th>Vehicle</th>
+                        <th>Driver</th>
+                        <th>Route No</th>
+                        @elseif(request()->input('type') == 'route')
+                        <th>Route No</th>
+                        <th>Vehicle</th>
+                        <th>Driver</th>
+                        @endif
                         <th>Actual trip start/ End time</th>
                         <th>Trip Status</th>
-                        <th>Delay</th>
+                        <th>Status</th>
                         <th>Delay Reason</th>
                     </tr>
                 </thead>
@@ -205,7 +216,7 @@
                         @endif
                         <td>{{ formatTime($report->start_time) }} / {{ formatTime($report->end_time) }} </td>
                         <td>{{ $report->trip_status }} </td>
-                        <td>@if($report->is_delay) Delay @else N/A @endif </td>
+                        <td>@if($report->is_delay)  <span style="color:red">Delay </span>  @else On-Time @endif </td>
                         <td>{{ ($report->delayed_reason) ?? 'N/A' }} </td>
                     </tr>
                     @empty
