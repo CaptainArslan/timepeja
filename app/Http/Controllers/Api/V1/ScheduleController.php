@@ -64,9 +64,9 @@ class ScheduleController extends BaseController
             'date' => ['required', 'date'],
             'time' => ['required'],
         ], [
-            'o_id.required' => 'Oragnization is required',
-            'o_id.numeric' => 'Organization id in numeric required',
-            'o_id.exists' => 'Invalid organization id',
+            // 'o_id.required' => 'Oragnization is required',
+            // 'o_id.numeric' => 'Organization id in numeric required',
+            // 'o_id.exists' => 'Invalid organization id',
 
             'route_id.required' => 'Route is required',
             'route_id.numeric' => 'Route id in numeric required',
