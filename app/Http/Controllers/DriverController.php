@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Driver;
 use App\Models\Organization;
+use App\Models\Schedule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -290,9 +291,38 @@ class DriverController extends Controller
 
     public function upcomingTrips(Request $request)
     {
+        $trips = [];
+        if ($request->isMethod('post')) {
+            if ($request->has('filter')) {
+                $trips = $this->filterUpcomingTrips($request);
+            }
+        }
         $organizations = Organization::get();
         return view('driver.trips', [
-            'organizations' => $organizations
+            'organizations' => $organizations,
+            'trips' => $trips
         ]);
+    }
+
+    public function filterUpcomingTrips($request)
+    {
+        // $request->validate([
+        //     'o_id' => 'required|numeric|trim',
+        //     'from' => 'required|date|trim',
+        //     'to' => 'required|date|trim',
+        // ], [
+        //     'o_id.required' => 'Organization required'
+        // ]);
+        // dd($request->all());
+        $trips = Schedule::where('o_id', $request->o_id)
+            // ->where('date', '>=', $request->from)
+            // ->where('date', '<=', $request->to)
+            ->where('trip_status', Schedule::TRIP_STATUS_UPCOMING)
+            ->with('organizations:id,name')
+            ->with('routes:id,name,number,from,to')
+            ->with('vehicles:id,number')
+            ->with('drivers:id,name')
+            ->get();
+        return $trips;
     }
 }

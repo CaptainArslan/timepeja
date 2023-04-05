@@ -30,7 +30,7 @@ Route::group(['middleware' => 'api'], function () {
         Route::post('/forget-password', [ManagerAuthController::class, 'forgetPassword']);
         Route::middleware(['jwt.verify:manager'])->group(function () {
             Route::get('/profile', [ManagerAuthController::class, 'profile']);
-            Route::get('/get-organization-data/{o_id}', [ApiScheduleController::class, 'getOrganizationData']);
+            Route::get('/get-organization-data', [ApiScheduleController::class, 'getOrganizationData']);
             // Route::post('/create-schedule', [ApiScheduleController::class, 'create']);
 
             /**

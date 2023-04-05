@@ -114,34 +114,37 @@
                         </tr>
                         </tr>
                     </thead>
-                    <tr>
-                        <td>
-                            <input type="checkbox">
-                        </td>
-                        <td>20/12/2022</td>
-                        <!-- <td><b><a href="#" data-bs-toggle="modal" data-bs-target="#modal_organization">Punjab University</a></b></td> -->
-                        <td> 09:00 AM</td>
-                        <td> <b> <span class=" text-danger">15</span> - Gujranwala <span class="text-success"> TO </span> Lahore </b> </td>
-                        <td> LHR-123</td>
-                        <td><span class="badge bg-warning">pending</span></td>
-                        <td>Nill</td>
-                        <td>
-                            <div class="btn-group btn-group-sm" style="float: none;">
-                                <button type="button" type="button" class="tabledit-edit-button btn btn-success" style="float: none;"><span>Start Trip</span></button>
-                            </div>
-                            <div class="btn-group btn-group-sm" style="float: none;">
-                                <button type="button" type="button" class="tabledit-edit-button btn btn-dark" style="float: none;" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-                                    <span>Delay Trip</span>
-                                </button>
-                            </div>
-                            <div class="btn-group btn-group-sm" style="float: none;">
-                                <button type="button" type="button" class="tabledit-edit-button btn btn-danger" style="float: none;">
-                                    <span>End Trip</span>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
                     <tbody>
+                        @forelse ($trips as $trip)
+                        <tr>
+                            <td>
+                                <input type="checkbox" name="schedule_ids[]" id="" value="{{ $trip->id }}">
+                            </td>
+                            <td> {{ formatDate($trip->date) }} </td>
+                            <!-- <td><b><a href="#" data-bs-toggle="modal" data-bs-target="#modal_organization">Punjab University</a></b></td> -->
+                            <td> {{ formatTime($trip->time) }} </td>
+                            <td> <span class=" text-danger">{{ $trip->routes['number'] }}</span> - {{ $trip->routes['from'] }}<span class="text-success"> TO </span> {{ $trip->routes['to'] }} </td>
+                            <td> {{ $trip->vehicles['number'] }} </td>
+                            <td><span class="badge bg-warning"> {{$trip->trip_status}} </span></td>
+                            <td>Nill</td>
+                            <td>
+                                <div class="btn-group btn-group-sm" style="float: none;">
+                                    <button type="button" type="button" class="tabledit-edit-button btn btn-success" style="float: none;"><span>Start Trip</span></button>
+                                </div>
+                                <!-- <div class="btn-group btn-group-sm" style="float: none;">
+                                    <button type="button" type="button" class="tabledit-edit-button btn btn-dark" style="float: none;" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                                        <span>Delay Trip</span>
+                                    </button>
+                                </div> -->
+                                <div class="btn-group btn-group-sm" style="float: none;">
+                                    <button type="button" type="button" class="tabledit-edit-button btn btn-danger" style="float: none;">
+                                        <span>End Trip</span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        @empty
+                        @endforelse
                     </tbody>
                 </table>
             </div> <!-- end card body-->

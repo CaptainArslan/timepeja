@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use Exception;
 use App\Models\Route;
 use App\Models\Driver;
 use App\Models\Vehicle;
@@ -170,13 +171,13 @@ class ScheduleController extends BaseController
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'id' => ['required', 'numeric', 'exists:schedules,id'],
             'o_id' => ['required', 'numeric', 'exists:organizations,id'],
             'route_id' => ['required', 'numeric', 'exists:routes,id'],
             'v_id' => ['required', 'numeric', 'exists:vehicles,id'],
             'd_id' => ['required', 'numeric', 'exists:drivers,id'],
             'date' => ['required', 'date'],
             'time' => ['required'],
+            'id' => ['numeric', 'exists:schedules,id'],
         ], [
             'o_id.required' => 'Oragnization is required',
             'o_id.numeric' => 'Organization id in numeric required',
@@ -200,7 +201,7 @@ class ScheduleController extends BaseController
         ]);
 
         if ($validator->fails()) {
-            return $this->respondWithError('Please fill fileds correctly');
+            return $this->respondWithError('Please fill the form correctly');
             // return $this->respondWithSuccess($validator->errors()->all(), 'message', 'VALIDATION_ERROR');
         }
 
@@ -217,7 +218,7 @@ class ScheduleController extends BaseController
 
             return $this->respondWithSuccess($schedule, 'Schedule updated successfully', 'SCHEDULE_UPDATED');
         } catch (ModelNotFoundException $e) {
-            return $this->respondWithError('Schedule id not found');
+            return $this->respondWithError('Invalid Schedule id');
             // throw new NotFoundHttpException('Schedule id not found');
         }
     }
@@ -244,9 +245,9 @@ class ScheduleController extends BaseController
         try {
             $schedule = Schedule::findOrFail($id);
             $schedule->delete();
-            return $this->respondWithSuccess($schedule, 'Schedule deleted successfully', 'API_SCHEDULE_DELETED');
+            return $this->respondWithSuccess($schedule->id, 'Schedule deleted successfully', 'API_SCHEDULE_DELETED');
         } catch (ModelNotFoundException $e) {
-            return $this->respondWithError('Schedule id not found');
+            return $this->respondWithError('Invalid Schedule id');
             throw new NotFoundHttpException('Schedule id not found');
         }
     }
@@ -258,24 +259,25 @@ class ScheduleController extends BaseController
      * @param [type] $o_id
      * @return void
      */
-    public function getOrganizationData($o_id)
+    public function getOrganizationData()
     {
-        $validator = Validator::make(['o_id' => $o_id], [
-            'o_id' => ['exists:organizations,id'],
-        ]);
+        // $validator = Validator::make(['o_id' => $manager->o_id], [
+        //     'o_id' => ['exists:organizations,id'],
+        // ]);
 
-        if ($validator->fails()) {
-            return $this->respondWithError('Invalid organization id');
-        }
+        // if ($validator->fails()) {
+        //     return $this->respondWithError('Invalid organization id');
+        // }
+        $manager = auth('manager')->user();
         try {
             $data = [];
-            $routes = Route::where('o_id', $o_id)
+            $routes = Route::where('o_id', $manager->o_id)
                 ->where('status', Route::STATUS_ACTIVE)
                 ->select('id', 'name')->get();
-            $vehicles = Vehicle::where('o_id', $o_id)
+            $vehicles = Vehicle::where('o_id', $manager->o_id)
                 ->where('status', Vehicle::STATUS_ACTIVE)
                 ->select('id', 'number as  name')->get();
-            $drivers = Driver::where('o_id', $o_id)
+            $drivers = Driver::where('o_id', $manager->o_id)
                 ->where('status', Driver::STATUS_ACTIVE)
                 ->select('id', 'name')->get();
             $data['routes'] = $routes;
@@ -284,7 +286,7 @@ class ScheduleController extends BaseController
         } catch (ModelNotFoundException $e) {
             throw new NotFoundHttpException('User not found');
         }
-        if (!$o_id) {
+        if (!$manager->o_id) {
             return $this->respondWithError('Organization id is required');
         }
         return $this->respondWithSuccess($data, 'Organization route, vehicle, driver data', 'ORGANIZATION_ROUTE_VEHICLE_DRIVER_DATA');
@@ -308,29 +310,35 @@ class ScheduleController extends BaseController
         ]);
 
         if ($validator->fails()) {
-            return $this->respondWithError('Please Submit ids correctly');
+            // $errors = $validator->errors()->all();
+            // return $this->respondWithError(implode(", ", $errors));
+            return $this->respondWithError('Invalid schedule id');
         }
 
         $ids = (array) $request->input('ids');
 
         try {
-            DB::beginTransaction();
-
             $updatedIds = [];
+            $error = false;
 
-            foreach ($ids as $id) {
-                $schedule = Schedule::find($id);
-                $schedule->status = Schedule::STATUS_PUBLISHED;
-                $schedule->save();
-                $updatedIds[] = $id;
-            }
-
-            DB::commit();
+            DB::transaction(function () use ($ids, &$updatedIds, &$error) {
+                foreach ($ids as $id) {
+                    $schedule = Schedule::findOrFail($id);
+                    $schedule->status = Schedule::STATUS_PUBLISHED;
+                    if (!$schedule->save()) {
+                        $error = true;
+                        break;
+                    }
+                    $updatedIds[] = $id;
+                }
+                if ($error) {
+                    throw new Exception("Failed to update one or more Schedules");
+                }
+            });
 
             return $this->respondWithSuccess($updatedIds, 'Schedules published successfully', 'PUBLISH_SCHEDULE');
-        } catch (\Throwable $th) {
-            DB::rollBack();
-            return $this->respondWithError('Error Occured while publishing');
+        } catch (Exception $e) {
+            return $this->respondWithError($e->getMessage());
         }
     }
 
@@ -352,29 +360,34 @@ class ScheduleController extends BaseController
         ]);
 
         if ($validator->fails()) {
-            return $this->respondWithError('Please submit ids correctly');
+            // $errors = $validator->errors()->all();
+            return $this->respondWithError('Invalid schedule id');
         }
 
         $ids = (array) $request->input('ids');
 
         try {
-            DB::beginTransaction();
-
             $updatedIds = [];
+            $error = false;
 
-            foreach ($ids as $id) {
-                $schedule = Schedule::find($id);
-                $schedule->status = Schedule::STATUS_DRAFT;
-                $schedule->save();
-                $updatedIds[] = $id;
-            }
+            DB::transaction(function () use ($ids, &$updatedIds, &$error) {
+                foreach ($ids as $id) {
+                    $schedule = Schedule::findOrFail($id);
+                    $schedule->status = Schedule::STATUS_DRAFT;
+                    if (!$schedule->save()) {
+                        $error = true;
+                        break;
+                    }
+                    $updatedIds[] = $id;
+                }
+                if ($error) {
+                    throw new Exception("Failed to update one or more Schedules");
+                }
+            });
 
-            DB::commit();
-
-            return $this->respondWithSuccess($updatedIds, 'Schedules published successfully', 'DRAFT_SCHEDULE');
-        } catch (\Throwable $th) {
-            DB::rollBack();
-            return $this->respondWithError('Error Occured while publishing');
+            return $this->respondWithSuccess($updatedIds, 'Schedules draft successfully', 'DRAFT_SCHEDULE');
+        } catch (Exception $e) {
+            return $this->respondWithError($e->getMessage());
         }
     }
 
@@ -387,7 +400,7 @@ class ScheduleController extends BaseController
         ]);
 
         if ($validator->fails()) {
-            return $this->respondWithError($validator->errors()->first());
+            return $this->respondWithError(implode(',', $validator->errors()->all()));
         }
 
         try {
