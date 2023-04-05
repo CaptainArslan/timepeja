@@ -189,6 +189,11 @@ function formatTime(timeString) {
     return (hour % 12 || 12) + " : " + minute + (hour < 12 ? " AM" : " PM");
 }
 
+function formatDate(dateString) {
+    const parts = dateString.split("-");
+    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+}
+
 /**
  *
  * @param {*} select2class
@@ -204,24 +209,27 @@ function initializeSelect2(select2class, formid) {
     });
 }
 
-
-function formSubmitConfirmation(formIds){
-    $(formIds).on('submit', function(e) {
+/**
+ *
+ * @param {*} formIds
+ */
+function formSubmitConfirmation(formIds) {
+    $(formIds).on("submit", function (e) {
         e.preventDefault(); // Prevent the form from submitting normally
         const form = this; // Store the form element in a variable
         // Display a SweetAlert confirmation dialog
         Swal.fire({
-            title: 'Are you sure?',
-            text: 'You will not be able to undo this action.',
-            icon: 'warning',
+            title: "Are you sure?",
+            text: "You will not be able to undo this action.",
+            icon: "warning",
             showCancelButton: true,
-            confirmButtonText: 'Yes, submit it!',
-            cancelButtonText: 'No, cancel it'
+            confirmButtonText: "Yes, submit it!",
+            cancelButtonText: "No, cancel it",
         }).then((result) => {
             if (result.isConfirmed) {
                 // If the user confirms, submit the form
                 form.submit();
             }
-        })
+        });
     });
 }

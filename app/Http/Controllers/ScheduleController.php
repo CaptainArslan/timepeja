@@ -11,8 +11,6 @@ use App\Models\Vehicle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use Dompdf\Dompdf;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\View;
 
 class ScheduleController extends Controller
@@ -339,28 +337,6 @@ class ScheduleController extends Controller
             'type' => $type,
             'data' => $data
         ]);
-    }
-
-     /**
-     * Undocumented function
-     *
-     * @param [type] $view
-     * @param [type] $data
-     * @return void
-     */
-    public function generatePdf($view, $data)
-    {
-        // Load the view and pass the data
-        $html = View::make($view, $data)->render();
-        return $html;
-        // Create a new instance of Dompdf
-        $pdf = new Dompdf();
-        // Load the HTML content
-        $pdf->loadHtml($html);
-        // Render the PDF
-        $pdf->render();
-        // Output the generated PDF to the browser
-        return $pdf->stream();
     }
 
     /**

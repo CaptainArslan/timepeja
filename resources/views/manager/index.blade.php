@@ -397,12 +397,12 @@
                                                     <h4 class="header-title">Basis of payment calculation:</h4>
                                                     <div class="row">
                                                         <div class="col-3 d-flex align-items-center">
-                                                            <input class="form-check-input" type="checkbox" name="payment[]" id="org_payment" value="org_payment" onchange="driverPaymentCheck()">
+                                                            <input class="form-check-input" type="checkbox" name="payment[]" id="org_payment" value="org_payment" onchange="orgPaymentCheck()">
                                                             <label class="form-check-label mx-1" for="org_payment">Organization</label>
                                                         </div>
                                                         <div class="col-2">
                                                             <label for="org_amount" class="form-label">Amount</label>
-                                                            <input class="form-control" type="number" placeholder="Amount" name="org_amount" value="{{ old('org_amount') }}">
+                                                            <input class="form-control" type="number" placeholder="Amount" name="org_amount" id="org_amount" value="{{ old('org_amount') }}">
                                                         </div>
                                                         <div class="col-1">
                                                             <label for="org_trial_days" class="form-label"> Days</label>
@@ -437,11 +437,11 @@
                                                     </div>
                                                     <div class="row mt-2">
                                                         <div class="col-3 d-flex align-items-center">
-                                                            <input class="form-check-input" type="checkbox" name="payment[]" id="passenger_payment" value="passenger_payment" onchange="driverPaymentCheck()">
+                                                            <input class="form-check-input" type="checkbox" name="payment[]" id="passenger_payment" value="passenger_payment" onchange="passengerPaymentCheck()">
                                                             <label class="form-check-label mx-1" for="passenger_payment">Passenger</label>
                                                         </div>
                                                         <div class="col-2 ">
-                                                            <input class="form-control" type="number" placeholder="Amount" name="passenger_amount" value="{{ old('passenger_amount') }}">
+                                                            <input class="form-control" type="number" placeholder="Amount" name="passenger_amount" id="passenger_amount" value="{{ old('passenger_amount') }}">
                                                         </div>
                                                         <div class="col-1 ">
                                                             <input class="form-control" type="number" name="passenger_trial_days" id="passenger_trial_days" value="{{ old('passenger_trial_days') }}" onchange="setNextDate('#passenger_trial_days', '#passenger_trail_start_date', '#passenger_trail_end_date')">
@@ -522,9 +522,45 @@
         });
     });
 
+    function orgPaymentCheck() {
+        $("#org_amount").prop("required", false);
+        $("#org_trial_days").prop("required", false);
+        $("#org_trail_start_date").prop("required", false);
+        $("#org_trail_end_date").prop("required", false);
+        if ($("#driver_payment").is(":checked")) {
+            $("#org_amount").prop("required", true);
+            $("#org_trial_days").prop("required", true);
+            $("#org_trail_start_date").prop("required", true);
+            $("#org_trail_end_date").prop("required", true);
+        }
+    }
 
     function driverPaymentCheck() {
-        alert('asdf');
+        alert("hello");
+        $("#driver_amount").prop("required", false);
+        $("#driver_trial_days").prop("required", false);
+        $("#driver_trial_start_date").prop("required", false);
+        $("#driver_trial_end_date").prop("required", false);
+        if ($("#driver_payment").is(":checked")) {
+            $("#driver_amount").prop("required", true);
+            $("#driver_trial_days").prop("required", true);
+            $("#driver_trial_start_date").prop("required", true);
+            $("#driver_trial_end_date").prop("required", true);
+        }
+    }
+
+
+    function passengerPaymentCheck() {
+        $("#passenger_amount").prop("required", false);
+        $("#passenger_trial_days").prop("required", false);
+        $("#passenger_trail_start_date").prop("required", false);
+        $("#passenger_trail_end_date").prop("required", false);
+        if ($("#driver_payment").is(":checked")) {
+            $("#passenger_amount").prop("required", true);
+            $("#passenger_trial_days").prop("required", true);
+            $("#passenger_trail_start_date").prop("required", true);
+            $("#passenger_trail_end_date").prop("required", true);
+        }
     }
 
     function driverWallet(param) {

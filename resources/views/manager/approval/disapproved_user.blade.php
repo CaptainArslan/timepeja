@@ -15,7 +15,7 @@
 <div class="row">
     <div class="col-12">
         <div class="page-title-box">
-            <h4 class="page-title">All Disapproved User</h4>
+            <h4 class="page-title">Disapproved User</h4>
         </div>
     </div>
 </div>
@@ -30,10 +30,10 @@
                     <div class="row">
                         <div class="col-md-4">
                             <label for="organization">Select Oganization</label>
-                            <select class="form-control" data-toggle="select2" data-width="100%" id="organization" required>
+                            <select class="form-control select2" data-toggle="select2" name="o_id" data-width="100%" id="organization" required>
                                 <option value="">Select</option>
                                 @forelse ($organizations as $organization)
-                                <option value="{{ $organization->id }}">{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
+                                <option value="{{ $organization->id }}" {{ $organization->id == request()->input('o_id') ? 'selected' : '' }}>{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
                                 @empty
                                 <option value="">Please select</option>
                                 @endforelse
@@ -41,26 +41,26 @@
                         </div>
                         <div class="col-md-4">
                             <label for="organization">User Type</label>
-                            <select class="form-control" data-toggle="select2" data-width="100%" id="user_type" required>
-                                <option value="" selected>Select</option>
-                                <option value="student">Student</option>
-                                <option value="employee">Employee</option>
-                                <option value="guardian">Guardian</option>
+                            <select class="form-control" data-toggle="select2" data-width="100%" name="type" id="user_type" required>
+                                <option value="" @if(!request()->input('type')) selected @endif>Select</option>
+                                <option value="student" @if(request()->input('type') == 'student') selected @endif>Student</option>
+                                <option value="employee" @if(request()->input('type') == 'employee') selected @endif>Employee</option>
+                                <option value="guardian" @if(request()->input('type') == 'guardian') selected @endif>Guardian</option>
                             </select>
                         </div>
                         <div class="col-md-4">
                             <label for="date-1">Registration From</label>
-                            <input class="form-control today-date" id="" type="date" name="date">
+                            <input class="form-control today-date" id="" type="date" name="from" value="{{ request()->input('from', old('from')) }}">
                         </div>
                     </div>
                     <div class="row mt-2">
                         <div class="col-md-3">
                             <label for="date">Registration To</label>
-                            <input class="form-control today-date" id="" type="date" name="date">
+                            <input class="form-control today-date" id="" type="date" name="to" value="{{ request()->input('to', old('to')) }}">
                         </div>
                         <div class="col-md-1">
-                            <label for="publish_schedule">.</label>
-                            <button type="submit" class="btn btn-success" id="publish_schedule" name="submit"> Submit </button>
+                            <label for="submit">.</label>
+                            <button type="submit" class="btn btn-success" id="submit" name="submit"> Submit </button>
                         </div>
                     </div> <!-- end row -->
                 </form>
@@ -80,13 +80,16 @@
                 <div class="col-9">
                     <div class="row">
                         <div class="col-md-6">
-                            <input class="form-control" id="" type="text" value="123456 - branch - Punjab University" name="organization" style="font-weight: bold;" readonly>
+                            <input class="form-control" id="" type="hidden" value="{{ request()->input('o_id', old('o_id')) }}" name="o_id" style="font-weight: bold;" readonly>
                         </div>
                         <div class="col-md-3">
-                            <input class="form-control" id="" type="date" name="date">
+                            <input class="form-control" id="" type="hidden" name="from" value="{{ request()->input('from', old('from')) }}" readonly>
                         </div>
                         <div class="col-md-3">
-                            <input class="form-control" id="" type="date" name="date">
+                            <input class="form-control" id="" type="hidden" name="to" value="{{ request()->input('to', old('to')) }}" readonly>
+                        </div>
+                        <div class="col-md-3">
+                            <input class="form-control" id="" type="hidden" name="type" value="{{ request()->input('type', old('type')) }}" readonly>
                         </div>
                     </div>
                 </div>
