@@ -35,9 +35,9 @@ class Schedule extends Model
     ];
 
     /**
-     * [organizations description]
+     * relation with organization
      *
-     * @return  [type]  [return description]
+     * @return  [type]  return relation
      */
     public function organizations()
     {
@@ -45,9 +45,9 @@ class Schedule extends Model
     }
 
     /**
-     * [routes description]
+     * relation with route
      *
-     * @return  [type]  [return description]
+     * @return  [type]  return relation
      */
     public function routes()
     {
@@ -55,9 +55,9 @@ class Schedule extends Model
     }
 
     /**
-     * [vehicles description]
+     * RELATION WITH VEHICLE
      *
-     * @return  [type]  [return description]
+     * @return  [type]  return relation
      */
     public function vehicles()
     {
@@ -65,9 +65,9 @@ class Schedule extends Model
     }
 
     /**
-     * [drivers description]
+     * relation with driver
      *
-     * @return  [type]  [return description]
+     * @return  [type]  return relation
      */
     public function drivers()
     {
@@ -75,10 +75,11 @@ class Schedule extends Model
     }
 
     /**
-     * [users description]
+     * relation with user
      *
      * @return  [type]  [return description]
      */
+
     public function users()
     {
         return $this->belongsTo(User::class, 'u_id', 'id');

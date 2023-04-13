@@ -286,6 +286,7 @@ class ScheduleController extends BaseController
                 ->where('o_id', $manager->o_id)
                 ->whereDate('date', date('Y-m-d'))
                 ->where('status', Schedule::STATUS_PUBLISHED)
+                ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time', 'status', 'created_at')
                 ->get();
 
             $published = $schedule->where('status', Schedule::STATUS_PUBLISHED);
@@ -431,7 +432,7 @@ class ScheduleController extends BaseController
                 ->get();
             return $this->respondWithSuccess($schedules, 'Schedule by date', 'SCHEDULE_BY_DATE');
         } catch (\Throwable $th) {
-            return $this->respondWithError('An error occurred while fetching schedules for this date.');
+            return $this->respondWithError('An error occurred while fetching schedules for this date.' . $th->getMessage());
         }
     }
 
