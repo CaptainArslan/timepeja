@@ -280,20 +280,12 @@ class ScheduleController extends BaseController
                 ->get();
 
             $schedule = Schedule::with('organizations:id,name')
-                ->with(['routes' => function ($query) {
-                    $query->where('status', Route::STATUS_ACTIVE)
-                        ->select('id', 'name');
-                }])
-                ->with(['vehicles' => function ($query) {
-                    $query->where('status', Vehicle::STATUS_ACTIVE)
-                        ->select('id', 'number as name');
-                }])
-                ->with(['drivers' => function ($query) {
-                    $query->where('status', Driver::STATUS_ACTIVE)
-                        ->select('id', 'name');
-                }])
+                ->with('routes:id,name,number,from,to')
+                ->with('vehicles:id,number')
+                ->with('drivers:id,name')
                 ->where('o_id', $manager->o_id)
                 ->whereDate('date', date('Y-m-d'))
+                ->where('status', Schedule::STATUS_PUBLISHED)
                 ->get();
 
             $published = $schedule->where('status', Schedule::STATUS_PUBLISHED);
@@ -311,8 +303,8 @@ class ScheduleController extends BaseController
         }
         return $this->respondWithSuccess(
             $data,
-            'Organization route, vehicle, driver data',
-            'ORGANIZATION_ROUTE_VEHICLE_DRIVER_DATA'
+            'Organization route, vehicle, driver data, published and created schedule',
+            'ORGANIZATION_ROUTE_VEHICLE_DRIVER_DATA_SCHEDULE'
         );
     }
 
