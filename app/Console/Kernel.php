@@ -9,6 +9,7 @@ class Kernel extends ConsoleKernel
 {
     protected $commands = [
         Commands\MigrateInOrder::class,
+        Commands\ScheduleSeed::class,
     ];
     /**
      * Define the application's command schedule.
@@ -18,6 +19,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        $schedule->command('schedule:seed')->daily();
         // $schedule->command('inspire')->hourly();
     }
 
@@ -28,7 +30,7 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
-        $this->load(__DIR__.'/Commands');
+        $this->load(__DIR__ . '/Commands');
 
         require base_path('routes/console.php');
     }

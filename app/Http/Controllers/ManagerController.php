@@ -9,11 +9,14 @@ use App\Models\Manager;
 use App\Models\Schedule;
 use App\Models\Financials;
 use Illuminate\Support\Str;
+use App\Mail\ActivationMail;
 use App\Models\Organization;
 use Illuminate\Http\Request;
 use App\Models\OrganizationType;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use App\Http\Requests\ManagerStoreRequest;
 
 class ManagerController extends Controller
 {
@@ -118,58 +121,8 @@ class ManagerController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ManagerStoreRequest $request)
     {
-        // dd($request->all());
-        $this->validate($request, [
-            'org_name' => ['required', 'string', 'max:255'],
-            'org_type ' => 'nullable|numeric',
-            'org_email' => 'required|email|unique:organizations,email',
-            'org_phone' => 'required|regex:/^03\d{2}-\d{7}$/',
-            'org_state' => 'required|numeric',
-            'org_city' => 'required|numeric',
-
-            'org_head_name' => ['required', 'string', 'max:255'],
-            'org_head_phone' => 'required|regex:/^03\d{2}-\d{7}$/',
-            'org_head_email' => 'required|email|unique:organizations,head_email',
-
-            'man_name' => ['required', 'string', 'max:255'],
-            'man_email' => 'nullable|email|unique:managers,email',
-            'man_phone' => 'required|unique:managers,phone',
-            'man_pic' => 'nullable|mimes:jpg,png',
-
-            'wallet' => 'required',
-            'payment' => 'required',
-
-            'org_amount' => 'nullable|numeric',
-            'org_trail_start_date' => 'nullable|date',
-            'org_trail_end_date' => 'nullable|date',
-
-            'driver_amount' => 'nullable|numeric',
-            'driver_trial_start_date' => 'nullable|date',
-            'driver_trial_end_date' => 'nullable|date',
-
-            'passenger_amount' => 'nullable|numeric',
-            'passenger_trail_start_date' => 'nullable|date',
-            'passenger_trail_end_date' => 'nullable|date',
-        ], [
-            'org_name.required' => 'Organization name required!',
-            'org_type.required' => 'Organization Organization type required!',
-            'org_email.required' => 'Organization email required',
-            'org_phone.required' => 'Organization phone required!',
-            'org_state.required' => 'Organization state required!',
-            'org_city.required' => 'Organization city required!',
-
-            'org_head_name.required' => 'Organization head name required!',
-            'org_head_phone.required' => 'Organization head phone required!',
-            'org_head_email.required' => 'Organization head email required!',
-
-            'man_name.required' => 'Manager name required!',
-            'man_email.required' => 'Manager email required!',
-            'man_email.unique' => 'Manager email already taken!',
-            'man_phone.required' => 'Manager phone required!',
-        ]);
-
         $user = Auth::user();
         $error = false;
         DB::beginTransaction();
@@ -248,7 +201,15 @@ class ManagerController extends Controller
         //     $error = true;
         // }
         if (!$error) {
-            DB::commit();
+            // send mail to organization
+            $email = $request->input('org_email');
+            $mail = Mail::to($email)->send(new ActivationMail());
+
+            if ($mail) {
+                DB::commit();
+            }
+
+
             return redirect()->route('manager.index')
                 ->with('success', 'Organization created successfully.');
         } else {
