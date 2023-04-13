@@ -261,35 +261,59 @@ class ScheduleController extends BaseController
      */
     public function getOrganizationData()
     {
-        // $validator = Validator::make(['o_id' => $manager->o_id], [
-        //     'o_id' => ['exists:organizations,id'],
-        // ]);
-
-        // if ($validator->fails()) {
-        //     return $this->respondWithError('Invalid organization id');
-        // }
         $manager = auth('manager')->user();
         try {
             $data = [];
             $routes = Route::where('o_id', $manager->o_id)
                 ->where('status', Route::STATUS_ACTIVE)
-                ->select('id', 'name')->get();
+                ->select('id', 'name')
+                ->get();
+
             $vehicles = Vehicle::where('o_id', $manager->o_id)
                 ->where('status', Vehicle::STATUS_ACTIVE)
-                ->select('id', 'number as  name')->get();
+                ->select('id', 'number as  name')
+                ->get();
+
             $drivers = Driver::where('o_id', $manager->o_id)
                 ->where('status', Driver::STATUS_ACTIVE)
-                ->select('id', 'name')->get();
+                ->select('id', 'name')
+                ->get();
+
+            $schedule = Schedule::with('organizations:id,name')
+                ->with(['routes' => function ($query) {
+                    $query->where('status', Route::STATUS_ACTIVE)
+                        ->select('id', 'name');
+                }])
+                ->with(['vehicles' => function ($query) {
+                    $query->where('status', Vehicle::STATUS_ACTIVE)
+                        ->select('id', 'number as name');
+                }])
+                ->with(['drivers' => function ($query) {
+                    $query->where('status', Driver::STATUS_ACTIVE)
+                        ->select('id', 'name');
+                }])
+                ->where('o_id', $manager->o_id)
+                ->whereDate('date', date('Y-m-d'))
+                ->get();
+
+            $published = $schedule->where('status', Schedule::STATUS_PUBLISHED);
+            $created = $schedule->where('status', Schedule::STATUS_DRAFT);
             $data['routes'] = $routes;
             $data['vehicles'] = $vehicles;
             $data['drivers'] = $drivers;
+            $data['published_schedule'] = $published;
+            $data['created_schedule'] = $created;
         } catch (ModelNotFoundException $e) {
             throw new NotFoundHttpException('User not found');
         }
         if (!$manager->o_id) {
             return $this->respondWithError('Organization id is required');
         }
-        return $this->respondWithSuccess($data, 'Organization route, vehicle, driver data', 'ORGANIZATION_ROUTE_VEHICLE_DRIVER_DATA');
+        return $this->respondWithSuccess(
+            $data,
+            'Organization route, vehicle, driver data',
+            'ORGANIZATION_ROUTE_VEHICLE_DRIVER_DATA'
+        );
     }
 
     /**
@@ -391,7 +415,7 @@ class ScheduleController extends BaseController
         }
     }
 
-    public function getScheduleByDate($date)
+    public function getPublishedScheduleByDate($date)
     {
         $validator = Validator::make(['date' => $date], [
             'date' => ['required', 'date']
@@ -411,6 +435,35 @@ class ScheduleController extends BaseController
                 ->with('drivers:id,name')
                 ->where('o_id', $manager->o_id)
                 ->whereDate('date', $date)
+                ->where('status', Schedule::STATUS_PUBLISHED)
+                ->get();
+            return $this->respondWithSuccess($schedules, 'Schedule by date', 'SCHEDULE_BY_DATE');
+        } catch (\Throwable $th) {
+            return $this->respondWithError('An error occurred while fetching schedules for this date.');
+        }
+    }
+
+    public function getCreatedScheduleByDate($date)
+    {
+        $validator = Validator::make(['date' => $date], [
+            'date' => ['required', 'date']
+        ], [
+            'id.required' => 'Date is required',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->respondWithError(implode(',', $validator->errors()->all()));
+        }
+
+        try {
+            $manager = auth('manager')->user();
+            $schedules = Schedule::with('organizations:id,name')
+                ->with('routes:id,name,number,from,to')
+                ->with('vehicles:id,number')
+                ->with('drivers:id,name')
+                ->where('o_id', $manager->o_id)
+                ->whereDate('date', $date)
+                ->where('status', Schedule::STATUS_DRAFT)
                 ->get();
             return $this->respondWithSuccess($schedules, 'Schedule by date', 'SCHEDULE_BY_DATE');
         } catch (\Throwable $th) {
