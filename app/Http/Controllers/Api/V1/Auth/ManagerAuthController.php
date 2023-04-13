@@ -113,10 +113,7 @@ class ManagerAuthController extends BaseController
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => "Please fill the form correctly"
-            ], 401);
+            return $this->respondWithError('Please fill the form correctly');
         }
 
         $credentials = $request->only(['phone', 'password']);
