@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Trip;
-use App\Models\User;
 use App\Models\State;
 use App\Models\Manager;
 use App\Models\Schedule;
 use App\Models\Financials;
 use Illuminate\Support\Str;
-use App\Mail\ActivationMail;
 use App\Models\Organization;
 use Illuminate\Http\Request;
 use App\Models\OrganizationType;
+use App\Jobs\SendOrgRegisterEmail;
 use Illuminate\Support\Facades\DB;
+use App\Mail\OrgRegisterationEmail;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\ManagerStoreRequest;
@@ -126,6 +126,8 @@ class ManagerController extends Controller
         $user = Auth::user();
         $error = false;
         DB::beginTransaction();
+        $otp = rand(1000, 9999);
+        $orgEmail = $request->input('org_email');
         // $users = new User();
         // $users->user_name    = $request->input('man_name');
         // $users->email        = $request->input('man_email');
@@ -134,13 +136,16 @@ class ManagerController extends Controller
         // $users->phone        = $request->input('man_phone');
         // $users_save          = $users->save();
         // if ($users_save) {
+        // } else {
+        //     $error = true;
+        // }
         $org = new Organization();
         $org->u_id          = $user->id;
         $org->name          = $request->input('org_name');
         $org->branch_name   = $request->input('org_branch_name');
         $org->branch_code   = $request->input('org_branch_code');
         $org->o_type_id     = $request->input('org_type');
-        $org->email         = $request->input('org_email');
+        $org->email         = $orgEmail;
         $org->phone         = $request->input('org_phone');
         $org->address       = $request->input('org_address');
         $org->s_id          = $request->input('org_state');
@@ -158,7 +163,7 @@ class ManagerController extends Controller
             $manager->email         = $request->input('man_email');
             $manager->phone         = $request->input('man_phone');
             $manager->address       = $request->input('man_address');
-            $manager->otp           = rand(1000, 9999);
+            $manager->otp           = $otp;
             $manager->picture       = ($request->file('man_pic'))
                 ? uploadImage($request->file('man_pic'), 'managers/')
                 : null;
@@ -197,18 +202,25 @@ class ManagerController extends Controller
         } else {
             $error = true;
         }
-        // } else {
-        //     $error = true;
-        // }
+
         if (!$error) {
-            // send mail to organization
-            $email = $request->input('org_email');
-            $mail = Mail::to($email)->send(new ActivationMail());
+            $details = [
+                'title' => 'Mail from Timepeyjao',
+                'name' => $request->input('man_name'),
+                'email' => $request->input('man_email'),
+                'phone' => $request->input('man_phone'),
+                'otp' => $otp,
+                'body' => '',
+            ];
 
-            if ($mail) {
-                DB::commit();
+            try {
+                Mail::to($orgEmail)->send(new OrgRegisterationEmail($details));
+                Log::info('Email send succcesffuly');
+            } catch (\Exception $e) {
+                // Handle the exception here
+                Log::info('Error Occured \n ' . $e->getMessage());
             }
-
+            DB::commit();
 
             return redirect()->route('manager.index')
                 ->with('success', 'Organization created successfully.');
