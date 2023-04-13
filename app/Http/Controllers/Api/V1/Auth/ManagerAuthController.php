@@ -246,7 +246,7 @@ class ManagerAuthController extends BaseController
     public function logout()
     {
         auth('manager')->logout();
-        return response()->json(['message' => 'Successfully logged out']);
+        return $this->respondWithSuccess(null, 'Successfully logged out', 'LOGOUT');
     }
 
     /**

@@ -39,7 +39,8 @@ Route::group(['middleware' => 'api'], function () {
             Route::apiResource('/schedule', ApiScheduleController::class);
             Route::put('schedules/publish', [ApiScheduleController::class, 'publish']);
             Route::put('schedules/draft', [ApiScheduleController::class, 'draft']);
-            Route::get('schedules/{date}', [ApiScheduleController::class, 'getScheduleByDate']);
+            Route::get('schedules/published/{date}', [ApiScheduleController::class, 'getPublishedScheduleByDate']);
+            Route::get('schedules/created/{date}', [ApiScheduleController::class, 'getCreatedScheduleByDate']);
 
             /**
              * Driver api
