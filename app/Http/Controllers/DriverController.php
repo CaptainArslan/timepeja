@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Driver\DriverStoreRequest;
+use App\Http\Requests\Driver\DriverUpdateRequest;
 use App\Models\Driver;
 use App\Models\Organization;
 use App\Models\Schedule;
@@ -97,28 +99,13 @@ class DriverController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store request validation and store data in database by using form request
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param DriverStoreRequest $request
+     * @return void
      */
-    public function store(Request $request)
+    public function store(DriverStoreRequest $request)
     {
-        $request->validate([
-            'o_id' => ['required', 'string'],
-            'name' => ['required', 'string'],
-            'phone' => ['required', 'string', 'unique:drivers,phone'],
-            'cnic' => ['required', 'string', 'unique:drivers,cnic'],
-            'license' => ['required', 'string', 'unique:drivers,license_no'],
-            'status' => ['required', 'numeric'],
-            'cnic_front' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
-            'cnic_back' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
-            'license_front' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
-            'license_back' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
-        ], [
-            'o_id.required' => 'Organization required'
-        ]);
-
         $user = Auth::user();
         $driver = new Driver();
         $driver->o_id = $request->input('o_id');
@@ -167,29 +154,13 @@ class DriverController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * function to update driver by using formrequest
      *
-     * @param  \App\Models\Driver  $driver
-     * @return \Illuminate\Http\Response
+     * @param DriverUpdateRequest $request
+     * @return void
      */
-    public function edit(Request $request)
+    public function edit(DriverUpdateRequest $request)
     {
-        $request->validate([
-            'id' => 'required|numeric|trim',
-            'o_id' => 'required|numeric|trim',
-            'name' => 'required|string|trim',
-            'phone' => 'required|string|unique:drivers,phone,' . $request->id,
-            'cnic' => 'required|string|unique:drivers,cnic,' . $request->id,
-            'license' => 'required|string|unique:drivers,license_no,' . $request->id,
-            'status' => 'required|numeric|trim',
-            'cnic_front' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048|trim',
-            'cnic_back' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048|trim',
-            'license_front' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048|trim',
-            'license_back' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048|trim',
-        ], [
-            'o_id.required' => 'Organization required'
-        ]);
-
         $driver = Driver::find($request->id);
         $user = Auth::user();
         $driver->o_id = $request->input('o_id');
@@ -198,9 +169,8 @@ class DriverController extends Controller
         $driver->phone = $request->input('phone');
         $driver->cnic = $request->input('cnic');
         $driver->license_no = $request->input('license');
-        $driver->otp = substr(uniqid(), -4);
+        // $driver->otp = rand(1000, 9999);
         $driver->status = $request->input('status');
-        // dd($driver->cnic_front_pic_name);
 
         // ----- these function are to remove old picture from the folder
         if ($request->hasFile('cnic_front')) {
@@ -236,10 +206,10 @@ class DriverController extends Controller
 
         if ($driver->save()) {
             return redirect()->route('driver.index')
-                ->with('success', 'Driver created successfully.');
+                ->with('success', 'Driver updated successfully.');
         } else {
             return redirect()->route('driver.index')
-                ->with('error', 'Error Occured while Driver creation .');
+                ->with('error', 'Error occured while driver updation .');
         }
     }
 

@@ -1,14 +1,13 @@
 @extends('layouts.app')
-@section('title', 'Add Vehicle')
+@section('title', 'Vehicles')
 <!-- start page title -->
 @section('page_css')
 <!-- Plugins css -->
 <link href="{{ asset('libs/select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
 <!-- App css -->
 <!-- Plugins css -->
-
-<link href="/libs/dropzone/min/dropzone.min.css" rel="stylesheet" type="text/css" />
-<link href="/libs/dropify/css/dropify.min.css" rel="stylesheet" type="text/css" />
+<link href="{{ asset('/libs/dropzone/min/dropzone.min.css') }}" rel="stylesheet" type="text/css" />
+<link href="{{ asset('/libs/dropify/css/dropify.min.css') }}" rel="stylesheet" type="text/css" />
 
 <link href="{{ asset('libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet" type="text/css" id="app-style" />
 <link href="{{ asset('css/app.min.css') }}" rel="stylesheet" type="text/css" id="app-style" />
@@ -18,9 +17,9 @@
 <div class="row">
     <div class="col-12">
         <div class="page-title-box d-flex justify-content-between">
-            <h4 class="page-title">All Vehicles</h4>
+            <h4 class="page-title">Vehicles</h4>
             <div class="page-title">
-                <button type="button" type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#create_modal">
+                <button type="button" type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#createModal">
                     Add Vehicle </button>
             </div>
         </div>
@@ -31,12 +30,12 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <form action="{{ route('vehicle.index') }}" method="post" id="filter_form">
+                <form action="{{ route('vehicle.index') }}" method="post" id="filterForm" enctype="multipart/form-data">
                     @csrf
                     <div class="row">
                         <div class="col-md-5">
                             <label for="organization">Select Oganization</label>
-                            <select class="form-select select2_filter" id="o_id" name="o_id" required>
+                            <select class="form-select select1" id="o_id" name="o_id" required>
                                 <option value="">Select</option>
                                 @forelse ($organizations as $organization)
                                 <option value="{{ $organization->id }}" {{ $organization->id == request()->input('o_id') ? 'selected' : '' }}>{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
@@ -114,8 +113,12 @@
                                 <td>{{$vehicle->organizations['name'] ?? '' }}</td>
                                 <td>{{$vehicle->vehiclesTypes['name'] ?? ''}}</td>
                                 <td>{{$vehicle->number}}</td>
-                                <td><img src="{{ $vehicle->front_pic }}" alt="" width="50px" height="50px"></td>
-                                <td><img src="{{ $vehicle->number_pic }}" alt="" width="50px" height="50px"></td>
+                                <td>
+                                    <img src="{{ $vehicle->front_pic }}" alt="front_pic" style="width: 50px; height: 50px; object-fit: contain;">
+                                </td>
+                                <td>
+                                    <img src="{{ $vehicle->number_pic }}" alt="number_pic" style="width: 50px; height: 50px; object-fit: contain;">
+                                </td>
                                 <td>
                                     <input type="hidden" value="{{ $vehicle->id }}" class="db_id" name="id">
                                     <input type="hidden" value="{{ $vehicle->reg_date }}" class="reg_date" name="reg_date">
@@ -127,7 +130,7 @@
                                     <input type="hidden" value="{{ $vehicle->number_pic }}" class="db_number_pic" name="number_pic">
                                     <input type="hidden" value="{{$vehicle->created_at }}" class="db_created_at" name="created_at">
                                     <div class="btn-group btn-group-sm" style="float: none;" data-id="{{ $vehicle->id  }}">
-                                        <button type="button" class="tabledit-edit-button btn btn-success edit_btn" style="float: none;" data-bs-toggle="modal" data-bs-target="#edit_modal">
+                                        <button type="button" class="tabledit-edit-button btn btn-success edit_btn" style="float: none;" data-bs-toggle="modal" data-bs-target="#editModal">
                                             <span class="mdi mdi-pencil"></span>
                                         </button>
                                     </div>
@@ -149,35 +152,36 @@
 </div>
 <!-- end row-->
 <!-- Modal -->
-<div class="modal fade" id="create_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="create_modalLabel" aria-hidden="true">
+<div class="modal fade" id="createModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-light">
-                <h5 class="modal-title" id="create_modalLabel">Add Vehicle</h5>
+                <h5 class="modal-title" id="createModalLabel">Add Vehicle</h5>
                 <button type="button" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="{{ route('vehicle.store') }}" method="POST" enctype="multipart/form-data" id="create_modal_form">
+                <form action="{{ route('vehicle.store') }}" method="POST" enctype="multipart/form-data" id="createModal_form">
                     @csrf
                     <div class="col-xl-12">
                         <div class="card shadow-none">
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="mb-3">
-                                        <label for="veh_type" class="form-label">Select Organization</label>
-                                        <select class="form-select select2_modal" id="o_id" name="o_id" required>
-                                            <option value="">Select</option>
-                                            @forelse ($organizations as $organization)
-                                            <option value="{{ $organization->id }}">{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
-                                            @empty
-                                            <option value="">Please select</option>
-                                            @endforelse
-                                        </select>
+                                    <div class="col-lg-12">
+                                        <div class="mb-3">
+                                            <label for="o_id" class="form-label">Select Organization</label>
+                                            <select class="form-select select2" id="o_id" name="o_id" required>
+                                                <option value="">Select</option>
+                                                @forelse ($organizations as $organization)
+                                                <option value="{{ $organization->id }}">{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
+                                                @empty
+                                                @endforelse
+                                            </select>
+                                        </div>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="mb-3">
                                             <label for="veh_type" class="form-label">Vehicle Type</label>
-                                            <select class="form-select select2_modal" id="veh_type" name="v_type_id" required>
+                                            <select class="form-select select2" id="veh_type" name="v_type_id" required>
                                                 <option value="" selected>Please select</option>
                                                 @forelse ($vehicle_types as $vehicle_type)
                                                 <option value="{{$vehicle_type->id}}"> {{ucfirst($vehicle_type->name)}}
@@ -188,7 +192,7 @@
                                         </div>
                                         <div class="col-12">
                                             <div class="mt-1">
-                                                <input type="file" accept="image/*" data-allowed-file-extensions="jpg jpeg png" data-plugins="dropify" name="veh_front_pic" data-default-file="" />
+                                                <input type="file" accept="image/*" data-allowed-file-extensions="jpg jpeg png" data-default-file="" data-plugins="dropify" name="veh_front_pic" data-default-file="" />
                                                 <p class="text-muted text-center mt-2 mb-0">Vehicle Picture from front
                                                 </p>
                                             </div>
@@ -220,15 +224,15 @@
     </div>
 </div>
 <!-- Modal -->
-<div class="modal fade" id="edit_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="edit_modalLabel" aria-hidden="true">
+<div class="modal fade" id="editModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-light">
-                <h5 class="modal-title" id="edit_modalLabel">Edit Vehicle</h5>
+                <h5 class="modal-title" id="editModalLabel">Edit Vehicle</h5>
                 <button type="button" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="{{ route('vehicle.edit') }}" method="POST" enctype="multipart/form-data" id="edit_modal_form">
+                <form action="{{ route('vehicle.edit') }}" method="POST" enctype="multipart/form-data" id="editModal_form">
                     @csrf
                     <input type="hidden" class="form-control" name="id" id="edit_id">
                     <div class="col-xl-12">
@@ -237,7 +241,7 @@
                                 <div class="row">
                                     <div class="mb-3">
                                         <label for="edit_organization" class="form-label">Organization Name</label>
-                                        <select class="form-select select3" id="edit_o_id" name="o_id">
+                                        <select class="form-select editselect2" id="edit_o_id" name="o_id">
                                             <option value="">Select Organization</option>
                                             @forelse ($organizations as $organization)
                                             <option value="{{$organization->id}}"> {{ucfirst($organization->name)}}
@@ -250,7 +254,7 @@
                                     <div class="col-lg-6">
                                         <div class="mb-3">
                                             <label for="edit_v_type_id" class="form-label">Vehicle Type</label>
-                                            <select class="form-select select3" id="edit_v_type_id" name="v_type_id">
+                                            <select class="form-select editselect2" id="edit_v_type_id" name="v_type_id">
                                                 <option value="">Please Select Vehicle Type</option>
                                                 @forelse ($vehicle_types as $vehicle_type)
                                                 <option value="{{$vehicle_type->id}}"> {{ucfirst($vehicle_type->name)}}
@@ -262,7 +266,7 @@
                                         </div>
                                         <div class="col-12">
                                             <div class="mt-1">
-                                                <input type="file" data-plugins="dropify" accept="image/*" data-allowed-file-extensions="jpg jpeg png" name="veh_front_pic" id="edit_front_pic" data-default-file="" />
+                                                <input type="file" data-plugins="dropify" accept="image/*" data-allowed-file-extensions="jpg jpeg png" name="veh_front_pic" id="edit_front_pic" data-default-file="{{ asset('uploads/vehicles/placeholder.jpg') }}" />
                                                 <p class="text-muted text-center mt-2 mb-0">Vehicle Picture from front
                                                 </p>
                                             </div>
@@ -275,7 +279,7 @@
                                         </div>
                                         <div class="col-12">
                                             <div class="mt-1">
-                                                <input type="file" data-plugins="dropify" accept="image/*" data-allowed-file-extensions="jpg jpeg png" name="veh_license_plate" id="edit_number_pic" data-default-file="" />
+                                                <input type="file" data-plugins="dropify" accept="image/*" data-allowed-file-extensions="jpg jpeg png" name="veh_license_plate" id="edit_number_pic" data-default-file="{{ asset('uploads/vehicles/placeholder.jpg') }}" />
                                                 <p class="text-muted text-center mt-2 mb-0">Vehicle license plate
                                                     picture</p>
                                             </div>
@@ -316,21 +320,27 @@
 
 <script>
     $(document).ready(function() {
-        $(".select2_modal").select2({
-            placeholder: "Select",
-            allowClear: true,
-            dropdownParent: $("#create_modal"), // modal : id modal
-            width: "100%",
-            height: "30px",
-        });
 
-        $(".select2_filter").select2({
-            placeholder: "Select",
-            allowClear: true,
-            dropdownParent: $("#filter_form"), // modal : id modal
-            width: "100%",
-            height: "30px",
-        });
+        initializeSelect2(".select2", '#createModal');
+        initializeSelect2(".editselect2", '#editModal');
+        initializeSelect2(".select1", '#filterForm');
+
+
+        // $(".select2_modal").select2({
+        //     placeholder: "Select",
+        //     allowClear: true,
+        //     dropdownParent: $("#createModal"), // modal : id modal
+        //     width: "100%",
+        //     height: "30px",
+        // });
+
+        // $(".select2_filter").select2({
+        //     placeholder: "Select",
+        //     allowClear: true,
+        //     dropdownParent: $("#filterForm"), // modal : id modal
+        //     width: "100%",
+        //     height: "30px",
+        // });
 
         /**
          * this function will popup the edit modal of the driver
@@ -341,8 +351,8 @@
             $('#edit_number').val(_this.find('.db_number').val());
             $('#edit_o_id').val(_this.find('.db_o_id').val()).trigger('change');
             $('#edit_v_type_id').val(_this.find('.db_v_type_id').val()).trigger('change');
-            $('#edit_front_pic').attr('data-default-file', _this.find('.db_front_pic').val()).dropify();
-            $('#edit_number_pic').attr('data-default-file', _this.find('.db_number_pic').val()).dropify();
+            resetPreviewDropify(_this.find('.db_front_pic').val(), "#edit_front_pic");
+            resetPreviewDropify(_this.find('.db_number_pic').val(), "#edit_number_pic");
         });
 
         /**
@@ -421,7 +431,8 @@
      * @return void
      */
     function countCheckboxChecked() {
-        if ($('.child_checkbox:checked, .parent_checkbox:checked').length > 0) {
+        alert($('.child_checkbox:checked').length)
+        if ($('.child_checkbox:checked').length > 0) {
             $('#btnMultilDelete').prop('disabled', false);
         } else {
             $('#btnMultilDelete').prop('disabled', true);

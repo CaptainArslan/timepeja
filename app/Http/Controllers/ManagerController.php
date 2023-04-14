@@ -204,22 +204,22 @@ class ManagerController extends Controller
         }
 
         if (!$error) {
-            $details = [
-                'title' => 'Mail from Timepeyjao',
-                'name' => $request->input('man_name'),
-                'email' => $request->input('man_email'),
-                'phone' => $request->input('man_phone'),
-                'otp' => $otp,
-                'body' => '',
-            ];
+            // $details = [
+            //     'title' => 'Mail from Timepeyjao',
+            //     'name' => $request->input('man_name'),
+            //     'email' => $request->input('man_email'),
+            //     'phone' => $request->input('man_phone'),
+            //     'otp' => $otp,
+            //     'body' => '',
+            // ];
 
-            try {
-                Mail::to($orgEmail)->send(new OrgRegisterationEmail($details));
-                Log::info('Email send succcesffuly');
-            } catch (\Exception $e) {
-                // Handle the exception here
-                Log::info('Error Occured \n ' . $e->getMessage());
-            }
+            // try {
+            //     Mail::to($orgEmail)->send(new OrgRegisterationEmail($details));
+            //     Log::info('Email send succcesffuly');
+            // } catch (\Exception $e) {
+            //     // Handle the exception here
+            //     Log::info('Error Occured \n ' . $e->getMessage());
+            // }
             DB::commit();
 
             return redirect()->route('manager.index')

@@ -27,7 +27,7 @@ $(document).ready(function () {
     $(".current-time").val(formatted_time);
 
     // When a parent  checkbox is clicked
-    $(".parent_checkbox").click(function () {
+    $(".parent_checkbox").change(function () {
         // If the parent checkbox is checked
         if ($(this).is(":checked")) {
             // Check all child checkboxes
@@ -38,8 +38,8 @@ $(document).ready(function () {
         }
     });
 
-    // When a child checkbox is clicked
-    $(".child_checkbox").click(function () {
+    // When a child checkbox is changeed
+    $(".child_checkbox").change(function () {
         // If the child checkbox is unchecked
         if (!$(this).is(":checked")) {
             // Uncheck the parent checkbox
@@ -232,4 +232,24 @@ function formSubmitConfirmation(formIds) {
             }
         });
     });
+}
+
+/**
+ * this function reset the dropify image preview
+ * @param {*} imageUrl
+ * @param {*} inputId
+ * @returns
+ */
+function resetPreviewDropify(imageUrl, inputId) {
+    // alert(imageUrl + '   ' + inputId);
+    let imagenUrl = imageUrl;
+    let drEvent = $(inputId).dropify({
+        defaultFile: imagenUrl,
+    });
+    drEvent = drEvent.data("dropify");
+    drEvent.resetPreview();
+    drEvent.clearElement();
+    drEvent.settings.defaultFile = imagenUrl;
+    drEvent.destroy();
+    drEvent.init();
 }
