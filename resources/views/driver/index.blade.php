@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Add Drivers')
+@section('title', 'Drivers | Timepejao')
 <!-- start page title -->
 @section('page_css')
 @include('partials.datatable_css')
@@ -135,15 +135,16 @@
                                 <td> {{ $driver->phone }} </td>
                                 <td> {{ $driver->cnic }} </td>
                                 <td> {{ $driver->license_no }} </td>
-                                <td> <img src="{{ $driver->cnic_front_pic }}" alt="cnic front" height="50" width="50"> </td>
-                                <td> <img src="{{ $driver->cnic_back_pic }}" alt="cnic back" height="50" width="50"> </td>
-                                <td> <img src="{{ $driver->license_no_front_pic }}" alt="licsence front" height="50" width="50"> </td>
-                                <td> <img src="{{ $driver->license_no_back_pic }}" alt="License Back" height="50" width="50"> </td>
+                                <td> <img src="{{ $driver->cnic_front_pic }}" alt="cnic front" style="width: 50px; height: 50px; object-fit: contain;"> </td>
+                                <td> <img src="{{ $driver->cnic_back_pic }}" alt="cnic back" style="width: 50px; height: 50px; object-fit: contain;"> </td>
+                                <td> <img src="{{ $driver->license_no_front_pic }}" alt="licsence front" style="width: 50px; height: 50px; object-fit: contain;"> </td>
+                                <td> <img src="{{ $driver->license_no_back_pic }}" alt="License Back" style="width: 50px; height: 50px; object-fit: contain;"> </td>
                                 <td>
                                     <span class="badge  @if($driver->status) bg-success @else bg-danger @endif ">
                                         @if($driver->status) Active @else Deactive @endif</span>
                                 </td>
                                 <td>
+                                    <input type="hidden" class="db_id" value="{{ $driver->id }}">
                                     <input type="hidden" class="db_org_name" value="{{ $driver->organization['id'] }}">
                                     <input type="hidden" class="db_name" value="{{ $driver->name }}">
                                     <input type="hidden" class="db_phone" value="{{ $driver->phone }}">
@@ -480,20 +481,27 @@
         //         }
         //     });
         // });
+
     });
 
 
     function fillEditForm(param) {
-        let id = $(param).data('id');
-        let _this = $(param).parent('tr');
-        // $('#edit_driver_form').attr('action', '/driver/' + id);
-        $('#edit_id').val(id);
+        let _this = $(param).parents('tr');
+        console.log(_this.find('.db_cnic_front_pic').val());
+        $('#edit_id').val(_this.find('.db_id').val());
         $('#edit_org_name').val(_this.find('.db_org_name').val()).trigger('change');
         $('#edit_name').val(_this.find('.db_name').val());
         $('#edit_phone').val(_this.find('.db_phone').val());
         $('#edit_cnic').val(_this.find('.db_cnic').val());
         $('#edit_license').val(_this.find('.db_license').val());
         $('#edit_status').val(_this.find('.db_status').val()).trigger('change');
+
+        // alert(_this.find('.db_cnic_front_pic').val());
+
+        resetPreviewDropify(_this.find('.db_cnic_front_pic').val(), "#edit_cnic_front");
+        resetPreviewDropify(_this.find('.db_cnic_back_pic').val(), "#edit_cnic_back");
+        resetPreviewDropify(_this.find('.db_license_no_front_pic').val(), "#edit_license_front");
+        resetPreviewDropify(_this.find('.db_license_no_back_pic').val(), "#edit_license_back");
     }
 
     function validateForm() {

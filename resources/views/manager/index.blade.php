@@ -26,12 +26,12 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <form action="{{ route('manager.index') }}" method="POST" id="filter_form">
+                <form action="{{ route('manager.index') }}" method="POST" id="filterForm">
                     @csrf
                     <div class="row">
                         <div class="col-md-4">
                             <label for="organization">Select Oganization</label>
-                            <select class="form-control select2_filter" id="organization_filter" name="o_id">
+                            <select class="form-control select2Filter" id="organization_filter" name="o_id">
                                 <option value="" selected>Select</option>
                                 @forelse ($org_dropdowns as $organization)
                                 <option value="{{ $organization->id }}" {{ $organization->id == request()->input('o_id') ? 'selected' : '' }}>{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
@@ -488,7 +488,7 @@
 <script src="/js/pages/form-wizard.init.js"></script>
 <script>
     $(document).ready(function() {
-        initializeSelect2(".select2_filter", "#filter_form");
+        initializeSelect2(".select2Filter", "#filterForm");
 
         // alert("{{old('organzation_id')}}")
         $('#org_state').change(function(e) {

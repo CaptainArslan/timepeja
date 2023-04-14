@@ -180,7 +180,7 @@ class ManagerAuthController extends BaseController
      *
      * @return  [type]             [return description]
      */
-    public function forgetPassword(Request $request)
+    public function forgetPassword(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'otp' => ['required', 'string'],
@@ -225,7 +225,7 @@ class ManagerAuthController extends BaseController
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function profile(Request $request)
+    public function profile(Request $request): JsonResponse
     {
         return $this->respondWithSuccess(
             auth('manager')->user(),
@@ -243,7 +243,7 @@ class ManagerAuthController extends BaseController
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function logout()
+    public function logout(): JsonResponse
     {
         auth('manager')->logout();
         return $this->respondWithSuccess(null, 'Successfully logged out', 'LOGOUT');
@@ -254,7 +254,7 @@ class ManagerAuthController extends BaseController
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function refresh()
+    public function refresh(): JsonResponse
     {
         return $this->respondWithToken(auth('manager')->refresh());
     }

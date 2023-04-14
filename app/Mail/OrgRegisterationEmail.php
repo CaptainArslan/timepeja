@@ -34,6 +34,5 @@ class OrgRegisterationEmail extends Mailable
     {
         return $this->subject('Mail from Timepejao')
             ->markdown('emails.registeration');
-        // return $this->view('view.name');`
     }
 }

@@ -47,7 +47,6 @@ class DriverController extends BaseController
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'o_id' => ['required', 'string'],
             'name' => ['required', 'string'],
             'phone' => ['required', 'string', 'unique:drivers,phone'],
             'cnic' => ['required', 'string', 'regex:/^[0-9+]{5}-[0-9+]{7}-[0-9]{1}$/', 'unique:drivers,cnic'],
@@ -56,17 +55,18 @@ class DriverController extends BaseController
             'cnic_back' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
             'license_front' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
             'license_back' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
-            'status' => ['required', 'numeric'],
+            // 'status' => ['required', 'numeric'],
         ], [
             'o_id.required' => 'Organization required',
             'cnic.regex' => 'Invalid cnic format'
         ]);
 
         if ($validator->fails()) {
+            return $this->respondWithSuccess($validator->errors()->all(), 'message', 'Validation Error');
             return $this->respondWithError("Please fill the form correctly");
-            // return $this->respondWithSuccess($validator->errors()->all(), 'message', 'Validation Error');
         }
         $manager = auth('manager')->user();
+        $otp = rand(1000, 9999);
         $data = [
             'o_id'                      => $manager->o_id,
             'u_id'                      => $manager->id,
@@ -74,6 +74,7 @@ class DriverController extends BaseController
             'phone'                     => $request->phone,
             'cnic'                      => $request->cnic,
             'license_no'                => $request->license_no,
+            'otp'                       => $otp,
             'profile_picture'           => null,
             'address'                   => null,
             'cnic_front_pic'            => ($request->file('cnic_front'))

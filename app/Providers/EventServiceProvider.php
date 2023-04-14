@@ -2,7 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\Manager;
+use App\Models\Organization;
 use App\Models\Schedule;
+use App\Observers\ManagerObserver;
+use App\Observers\OrganizationObserver;
 use App\Observers\ScheduleObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -30,5 +34,7 @@ class EventServiceProvider extends ServiceProvider
     public function boot()
     {
         Schedule::observe(ScheduleObserver::class);
+        Manager::observe(ManagerObserver::class);
+        Organization::observe(OrganizationObserver::class);
     }
 }
