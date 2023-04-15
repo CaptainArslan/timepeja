@@ -23,6 +23,7 @@ class ScheduleFactory extends Factory
             Schedule::TRIP_ISDELAYED,
             Schedule::TRIP_NOTDELAYED
         ]);
+
         $delayReason = $isDelayed == Schedule::TRIP_ISDELAYED ? $this->faker->sentence() : null;
 
         return [

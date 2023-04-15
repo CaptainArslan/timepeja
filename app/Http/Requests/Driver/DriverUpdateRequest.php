@@ -18,6 +18,20 @@ class DriverUpdateRequest extends FormRequest
     }
 
     /**
+     * Prepare the data for validation.
+     *
+     * @return void
+     */
+    public function prepareForValidation()
+    {
+        $this->merge([
+            'phone' => str_replace('-', '', $this->phone),
+            'cnic' => str_replace('-', '', $this->cnic),
+            'license' => str_replace('-', '', $this->license),
+        ]);
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array

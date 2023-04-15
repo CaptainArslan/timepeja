@@ -22,7 +22,7 @@ class CreateDriversTable extends Migration
             $table->string('name');
             $table->string('email')->unique()->nullable();
             $table->string('password')->nullable();
-            $table->string('phone');
+            $table->string('phone')->unique();
             $table->string('cnic')->unique();
             $table->longText('profile_picture')->nullable();
             $table->string('cnic_front_pic')->nullable();

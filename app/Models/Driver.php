@@ -150,6 +150,28 @@ class Driver extends Authenticatable implements JWTSubject
      * @param  string  $value
      * @return void
      */
+    public function setLicenseNoAttribute($value)
+    {
+        $this->attributes['license_no'] = str_replace('-', '', $value);
+    }
+
+    /**
+     * Get the license_no number attribute.
+     *
+     * @param  string  $value
+     * @return string
+     */
+    public function getLicenseNoAttribute($value)
+    {
+        return substr($value, 0, 10) . '-' . substr($value, 11, 3);
+    }
+
+    /**
+     * Set the phone number attribute.
+     *
+     * @param  string  $value
+     * @return void
+     */
     public function setCnicAttribute($value)
     {
         $this->attributes['cnic'] = str_replace('-', '', $value);

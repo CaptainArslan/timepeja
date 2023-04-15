@@ -35,7 +35,6 @@
                                 @forelse ($organizations as $organization)
                                 <option value="{{ $organization->id }}" {{ $organization->id == request()->input('o_id') ? 'selected' : '' }}>{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
                                 @empty
-                                <option value="">Please select</option>
                                 @endforelse
                             </select>
                         </div>
@@ -54,13 +53,13 @@
                         </div> -->
                         <div class="col-md-3">
                             <label for="from">From</label>
-                            <input class="form-control today-date" name="from" id="from" type="date" name="date" value="{{ request()->input('from', old('from')) }}">
+                            <input class="form-control" name="from" id="from" type="date" value="{{ request()->input('from') }}">
                         </div>
                     </div>
                     <div class="row mt-1">
                         <div class="col-md-3">
                             <label for="to">To</label>
-                            <input class="form-control today-date" name="to" id="to" type="date" name="date" value="{{ request()->input('to', old('to')) }}">
+                            <input class="form-control" name="to" id="to" type="date" value="{{ request()->input('to') }}">
                         </div>
                         <div class="col-md-1">
                             <label for="publish_schedule">.</label>
@@ -74,7 +73,7 @@
 </div>
 
 
-@if(isset($_POST['filter']))
+@if(request()->has('filter'))
 <div class="row">
     <div class="col-12 table-responsive">
         <div class="card">
@@ -126,18 +125,35 @@
                             <td> <span class=" text-danger">{{ $trip->routes['number'] }}</span> - {{ $trip->routes['from'] }}<span class="text-success"> TO </span> {{ $trip->routes['to'] }} </td>
                             <td> {{ $trip->vehicles['number'] }} </td>
                             <td><span class="badge bg-warning"> {{$trip->trip_status}} </span></td>
-                            <td>Nill</td>
+                            <td>{{ $trip->is_delay ? $trip->delayed_reason : 'N/A'}}</td>
+
+                            @php
+                                $startDisabled = '';
+                                $delayDisabled = '';
+                                $endDisabled = '';
+                                if($trip->trip_status == 'pending'){
+                                    $delayDisabled = 'disabled';
+                                    $endDisabled = 'disabled';
+                                }elseif($trip->trip_status == 'in-progress'){
+                                    $startDisabled = 'disabled';
+                                    $endDisabled = 'disabled';
+                                }elseif($trip->trip_status == 'completed'){
+                                    $startDisabled = 'disabled';
+                                    $delayDisabled = 'disabled';
+                                }
+                            @endphp
+
                             <td>
                                 <div class="btn-group btn-group-sm" style="float: none;">
-                                    <button type="button" type="button" class="tabledit-edit-button btn btn-success" style="float: none;"><span>Start Trip</span></button>
+                                    <button type="button" type="button" class="tabledit-edit-button btn btn-success" style="float: none;" {{ $startDisabled }}><span>Start Trip</span></button>
                                 </div>
-                                <!-- <div class="btn-group btn-group-sm" style="float: none;">
-                                    <button type="button" type="button" class="tabledit-edit-button btn btn-dark" style="float: none;" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                                <div class="btn-group btn-group-sm" style="float: none;">
+                                    <button type="button" type="button" class="tabledit-edit-button btn btn-dark" style="float: none;" data-bs-toggle="modal" data-bs-target="#staticBackdrop" {{ $delayDisabled }}>
                                         <span>Delay Trip</span>
                                     </button>
-                                </div> -->
+                                </div>
                                 <div class="btn-group btn-group-sm" style="float: none;">
-                                    <button type="button" type="button" class="tabledit-edit-button btn btn-danger" style="float: none;">
+                                    <button type="button" type="button" class="tabledit-edit-button btn btn-danger" style="float: none;" {{ $endDisabled }}>
                                         <span>End Trip</span>
                                     </button>
                                 </div>
@@ -192,11 +208,6 @@
 @include('partials.datatable_js')
 <script>
     $(document).ready(function() {
-
-        $('#organization').val("{{ old('o_id') }}").trigger('change');
-
-        $("#Id option:selected").text();
-
         $('#organization').change(function(e) {
             e.preventDefault();
             checkOrgValue()
@@ -226,15 +237,20 @@
 
     checkOrgValue();
 
-    // alert("{{request()->input('driver')}}");
-    // $('#driver').val("{{request()->input('driver')}}").trigger('change');
-
     function appedDrivers(res) {
         $('#driver').empty();
-        let html = `<option value="" selected>Please Select</option>`;
-        res.map((item) => {
-            html += `<option value="${item.id}">${item.name}</option>`;
-        });
+        let html = `<option value="">All</option>`;
+        let selected = '';
+        if (res.length > 0) {
+            res.map((item) => {
+                if (item.id == "{{ request()->input('driver') }}") {
+                    selected = 'selected';
+                }
+                html += `<option value="${item.id}" ${selected}>${item.name}</option>`;
+            });
+        } else {
+            // alert('No Driver Found for this Organization');
+        }
         $('#driver').append(html);
     }
 </script>
