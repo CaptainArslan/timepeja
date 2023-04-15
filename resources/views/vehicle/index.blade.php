@@ -82,7 +82,7 @@
                 <div class="card-header">
                     <div class="d-flex justify-content-between">
                         <h4 class="header-title">Vehicle List</h4>
-                        <button type="submit" id="btnMultilDelete" class="btn btn-danger delete_multiple" disabled>Delete</button>
+                        <button type="submit" id="btnMultilDelete" class="btn btn-danger delete_multiple" disabled="disabled">Delete</button>
                     </div>
                 </div>
                 <div class="card-body">
@@ -90,7 +90,7 @@
                         <thead>
                             <tr>
                                 <th>
-                                    <input type="checkbox" class="parent_checkbox" onclick="countCheckboxChecked()">
+                                    <input type="checkbox" class="parent_checkbox">
                                 </th>
                                 <th>Date</th>
                                 <th>Time</th>
@@ -106,7 +106,7 @@
                             @forelse($vehicles as $vehicle)
                             <tr>
                                 <td>
-                                    <input type="checkbox" class="child_checkbox" name="vehicle_ids[]" value="{{ $vehicle->id }}" onclick="countCheckboxChecked()">
+                                    <input type="checkbox" class="child_checkbox" name="vehicle_ids[]" value="{{ $vehicle->id }}">
                                 </td>
                                 <td>{{ formatDate($vehicle->created_at) }}</td>
                                 <td>{{ formatTime($vehicle->created_at)  }}</td>
@@ -323,24 +323,7 @@
 
         initializeSelect2(".select2", '#createModal');
         initializeSelect2(".editselect2", '#editModal');
-        initializeSelect2(".select1", '#filterForm');
-
-
-        // $(".select2_modal").select2({
-        //     placeholder: "Select",
-        //     allowClear: true,
-        //     dropdownParent: $("#createModal"), // modal : id modal
-        //     width: "100%",
-        //     height: "30px",
-        // });
-
-        // $(".select2_filter").select2({
-        //     placeholder: "Select",
-        //     allowClear: true,
-        //     dropdownParent: $("#filterForm"), // modal : id modal
-        //     width: "100%",
-        //     height: "30px",
-        // });
+        initializeSelect2(".select1", '#filterForm')
 
         /**
          * this function will popup the edit modal of the driver
@@ -423,6 +406,18 @@
                 }
             })
         });
+
+        // Listen for changes to child and parent checkboxes
+        $('.child_checkbox, .parent_checkbox').on('change', function() {
+            // Check if any checkboxes are checked
+            if ($('.child_checkbox:checked, .parent_checkbox:checked').length > 0) {
+                // At least one checkbox is checked
+                $('#btnMultilDelete').prop('disabled', false);
+            } else {
+                // No checkboxes are checked
+                $('#btnMultilDelete').prop('disabled', true);
+            }
+        });
     });
 
     /**
@@ -430,13 +425,13 @@
      *
      * @return void
      */
-    function countCheckboxChecked() {
-        alert($('.child_checkbox:checked').length)
-        if ($('.child_checkbox:checked').length > 0) {
-            $('#btnMultilDelete').prop('disabled', false);
-        } else {
-            $('#btnMultilDelete').prop('disabled', true);
-        }
-    }
+    // function countCheckboxChecked() {
+    //     // alert($('.child_checkbox:checked').length)
+    //     if ($('.child_checkbox:checked').length > 0) {
+    //         $('#btnMultilDelete').prop('disabled', false);
+    //     } else {
+    //         $('#btnMultilDelete').prop('disabled', true);
+    //     }
+    // }
 </script>
 @endsection

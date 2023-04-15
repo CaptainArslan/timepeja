@@ -24,7 +24,7 @@ class RouteController extends Controller
 
         if (isset($_POST['filter'])) {
             $this->validate($request, [
-                'o_id' => 'required|int',
+                'o_id'           => 'required|int',
                 'from'           => 'required|date',
                 'to'             => 'required|date|after:from',
             ], [
