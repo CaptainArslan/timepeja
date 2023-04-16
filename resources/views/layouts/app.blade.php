@@ -71,6 +71,10 @@
 
     <!-- Init js-->
     <script src="/js/pages/form-masks.init.js"></script>
+
+    <!-- firebase cdns -->
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-app.js"></script>
+    <!-- https://cdnjs.cloudflare.com/ajax/libs/firebase/9.19.1/firebase-app.js -->
     @yield('page_js')
 
 </body>

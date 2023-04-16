@@ -118,7 +118,7 @@ class DriverController extends Controller
         $driver->name = $request->input('name');
         $driver->phone = $request->input('phone');
         $driver->cnic = $request->input('cnic');
-        $driver->license_no = $request->input('license');
+        $driver->license_no = $request->input('license_no');
         $driver->otp = rand(1000, 9999);
         $driver->status = $request->input('status');
         $driver->profile_picture = null;
@@ -173,7 +173,7 @@ class DriverController extends Controller
         $driver->name = $request->input('name');
         $driver->phone = $request->input('phone');
         $driver->cnic = $request->input('cnic');
-        $driver->license_no = $request->input('license');
+        $driver->license_no = $request->input('license_no');
         // $driver->otp = rand(1000, 9999);
         $driver->status = $request->input('status');
 

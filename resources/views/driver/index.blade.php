@@ -247,7 +247,7 @@
                                     <div class="col-lg-6">
                                         <div class="mb-3">
                                             <label for="license" class="form-label">License Number</label>
-                                            <input type="text" id="license" name="license" class="form-control" value="{{ old('license') }}" data-toggle="input-mask" data-mask-format="0000000000-AAA" required>
+                                            <input type="text" id="license" name="license_no" class="form-control" value="{{ old('license_no') }}" data-toggle="input-mask" data-mask-format="0000000000-AAA" required>
                                             <span class="text-danger" id="license_error"></span>
                                         </div>
                                         <div class="mb-3">
