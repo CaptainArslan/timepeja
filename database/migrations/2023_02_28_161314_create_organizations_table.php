@@ -22,6 +22,7 @@ class CreateOrganizationsTable extends Migration
             $table->unsignedBigInteger('o_type_id')->index('o_type_id')->nullable();
             $table->string('email');
             $table->string('phone');
+            $table->string('code');
             $table->unsignedBigInteger('s_id')->nullable();
             $table->unsignedBigInteger('c_id')->nullable();
             $table->string('address');

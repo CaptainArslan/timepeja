@@ -198,22 +198,22 @@
                                             </a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="#company_head" data-bs-toggle="tab" id="company_head_tab" data-toggle="tab" class="nav-link rounded-0 pt-2 pb-2">
-                                                <!-- onclick="checkOrgDetailForm()" disabled="disabled" -->
+                                            <a href="#company_head" data-bs-toggle="tab" id="company_head_tab" data-toggle="tab" class="nav-link rounded-0 pt-2 pb-2"
+                                            onclick="checkOrgDetailForm()" disabled="disabled">
                                                 <i class="fas fa-user"></i>
                                                 <span class="d-none d-sm-inline">Company Head</span>
                                             </a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="#transport_manager" data-bs-toggle="tab" data-toggle="tab" id="transport_manager_tab" class="nav-link rounded-0 pt-2 pb-2">
-                                                <!-- onclick="checkOrgHeadForm()" disabled="disabled" -->
+                                            <a href="#transport_manager" data-bs-toggle="tab" data-toggle="tab" id="transport_manager_tab" class="nav-link rounded-0 pt-2 pb-2" onclick="checkOrgHeadForm()" disabled="disabled">
+                                                <!--  -->
                                                 <i class="fas fa-bus-alt"></i>
                                                 <span class="d-none d-sm-inline">Transport Manager</span>
                                             </a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="#financials" id="financials_tabs" value="financials" data-bs-toggle="tab" data-toggle="tab" class="nav-link rounded-0 pt-2 pb-2">
-                                                <!-- onclick="checkTransportManagerForm()" disabled="disabled" -->
+                                            <a href="#financials" id="financials_tabs" value="financials" data-bs-toggle="tab" data-toggle="tab" class="nav-link rounded-0 pt-2 pb-2" onclick="checkTransportManagerForm()" disabled="disabled">
+                                                <!--  -->
                                                 <i class=" fas fa-money-bill-wave"></i>
                                                 <span class="d-none d-sm-inline">Financial</span>
                                             </a>

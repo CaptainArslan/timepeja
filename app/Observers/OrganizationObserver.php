@@ -2,8 +2,8 @@
 
 namespace App\Observers;
 
+use App\Jobs\SendOrgRegisterEmailJob;
 use App\Models\Organization;
-use App\Jobs\SendOrgRegisterEmail;
 use App\Mail\OrgRegisterationEmail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -28,7 +28,7 @@ class OrganizationObserver
         ];
 
         try {
-            dispatch(new SendOrgRegisterEmail($organization->email, $details));
+            dispatch(new SendOrgRegisterEmailJob($organization->email, $details));
             // Mail::to($organization->email)->send(new OrgRegisterationEmail($details));
             Log::info('Email send succcesffuly');
         } catch (\Exception $e) {

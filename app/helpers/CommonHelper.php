@@ -1,5 +1,7 @@
 <?php
 
+use App\Jobs\SendOrgRegisterEmailJob;
+
 /**
  * [print_data description]
  *
@@ -70,7 +72,6 @@ function makeCnicFormat($cnic_number)
 }
 
 /**
-
  *Uploads an image to a specified folder and returns the filename
  *
  *@param \Illuminate\Http\UploadedFile $image The uploaded image file
@@ -81,7 +82,6 @@ function makeCnicFormat($cnic_number)
  *
  *@throws \Exception if the image is invalid or an error occurs during the upload process
  */
-
 function uploadImage($image, $folderName)
 {
     // Check if the image is valid
@@ -132,4 +132,24 @@ function base64url_encode($data)
     $base64 = base64_encode($data);
     $base64url = strtr($base64, '+/', '-_');
     return rtrim($base64url, '=');
+}
+
+// Helper function for to send job application email
+/**
+ * Undocumented function
+ *
+ * @param [type] $email
+ * @param [type] $details
+ * @return void
+ */
+function emailsendingJob($email, $object)
+{
+    $details = [
+        'title' => 'Stoppick Registeration',
+        'name' => $object->name,
+        'email' => $object->email,
+        'phone' => $object->phone,
+        'otp' => $object->otp,
+    ];
+    dispatch(new SendOrgRegisterEmailJob($email, $details));
 }

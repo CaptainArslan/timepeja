@@ -11,7 +11,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 
-class SendOrgRegisterEmail implements ShouldQueue, shouldBeUnique
+class SendOrgRegisterEmailJob implements ShouldQueue, shouldBeUnique
 {
     use Dispatchable;
     use InteractsWithQueue;

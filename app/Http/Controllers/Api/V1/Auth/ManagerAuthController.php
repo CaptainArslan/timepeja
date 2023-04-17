@@ -60,7 +60,7 @@ class ManagerAuthController extends BaseController
         ]);
 
         if ($validator->fails()) {
-            return $this->respondWithError("Please fill the form correctly");
+            return $this->respondWithError($validator->errors()->first());
         }
 
         $manager = Manager::where('phone', $request->phone)

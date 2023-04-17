@@ -7,8 +7,10 @@ use App\Models\Manager;
 use Illuminate\Support\Str;
 use App\Models\Organization;
 use Illuminate\Database\Seeder;
+use App\Models\OrganizationType;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Faker;
 
 class OrganizationSeeder extends Seeder
 {
@@ -19,7 +21,7 @@ class OrganizationSeeder extends Seeder
      */
     public function run()
     {
-        Organization::factory(2)->create();
+        Organization::factory(1)->create();
         // DB::table('organizations')->delete();
         // Organization::insert([
         //     [
@@ -58,32 +60,6 @@ class OrganizationSeeder extends Seeder
         //         'status' => '1',
         //         'created_at' => Carbon::now()
         //     ],
-        // ]);
-
-        // DB::table('managers')->delete();
-        // Manager::insert([
-        //     [
-        //         'o_id' => 1,
-        //         'name' => 'Zaheer',
-        //         'email' => 'zaheer@gmail.com',
-        //         'phone' => '03123456789',
-        //         'password' => Hash::make('12345678'),
-        //         'otp' => substr(uniqid(), -4),
-        //         'address' => '',
-        //         'status' => 1,
-        //         'created_at' => Carbon::now(),
-        //     ],
-        //     [
-        //         'o_id' => 2,
-        //         'name' => 'Afzal',
-        //         'email' => 'afzal@gmail.com',
-        //         'phone' => '03123456987',
-        //         'password' => Hash::make('12345678'),
-        //         'otp' => substr(uniqid(), -4),
-        //         'address' => '',
-        //         'status' => 1,
-        //         'created_at' => Carbon::now(),
-        //     ]
         // ]);
     }
 }
