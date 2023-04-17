@@ -282,7 +282,6 @@ class ScheduleController extends BaseController
                 ->with('drivers:id,name')
                 ->where('o_id', $manager->o_id)
                 ->whereDate('date', date('Y-m-d'))
-                ->where('status', Schedule::STATUS_PUBLISHED)
                 ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time', 'status', 'created_at')
                 ->get();
 
