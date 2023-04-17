@@ -197,10 +197,8 @@ class ScheduleController extends BaseController
         }
 
         try {
+            // $schedule->o_id = $request->input('o_id');
             $schedule = Schedule::findOrFail($id);
-            // $manager = auth('manager')->user();
-            // $schedule->o_id = intval($manager->id);
-            // $schedule->o_id = intval($manager->o_id);
             $schedule->route_id = intval($request->input('route_id'));
             $schedule->v_id = intval($request->input('v_id'));
             $schedule->d_id = intval($request->input('d_id'));
@@ -208,22 +206,12 @@ class ScheduleController extends BaseController
             $schedule->time = $request->input('time');
             $schedule->save();
 
-            $data = $schedule->with('organization', function ($query) {
-                $query->select('id', 'name');
-            })->with('route', function ($query) {
-                $query->select('id', 'name', 'number', 'from', 'to');
-            })->with('vehicle', function ($query) {
-                $query->select('id', 'number');
-            })->with('driver', function ($query) {
-                $query->select('id', 'name');
-            });
-
-            // ->load([
-            //     'organizations:id,name',
-            //     'routes:id,name,number,from,to',
-            //     'vehicles:id,number',
-            //     'drivers:id,name'
-            // ]);
+            $data = $schedule->load([
+                'organizations:id,name',
+                'routes:id,name,number,from,to',
+                'vehicles:id,number',
+                'drivers:id,name'
+            ]);
 
             return $this->respondWithSuccess($data, 'Schedule updated successfully', 'SCHEDULE_UPDATED');
         } catch (ModelNotFoundException $e) {
@@ -275,7 +263,7 @@ class ScheduleController extends BaseController
             $data = [];
             $routes = Route::where('o_id', $manager->o_id)
                 ->where('status', Route::STATUS_ACTIVE)
-                ->select('id', 'name', 'number', 'from', 'to')
+                ->select('id', 'name')
                 ->get();
 
             $vehicles = Vehicle::where('o_id', $manager->o_id)
@@ -294,11 +282,12 @@ class ScheduleController extends BaseController
                 ->with('drivers:id,name')
                 ->where('o_id', $manager->o_id)
                 ->whereDate('date', date('Y-m-d'))
+                ->where('status', Schedule::STATUS_PUBLISHED)
                 ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time', 'status', 'created_at')
                 ->get();
 
-            $created = $schedule->where('status', Schedule::STATUS_DRAFT);
             $published = $schedule->where('status', Schedule::STATUS_PUBLISHED);
+            $created = $schedule->where('status', Schedule::STATUS_DRAFT);
             $data['routes'] = $routes;
             $data['vehicles'] = $vehicles;
             $data['drivers'] = $drivers;
@@ -434,17 +423,13 @@ class ScheduleController extends BaseController
 
         try {
             $manager = auth('manager')->user();
-            $schedules = Schedule::with('organization', function ($query) {
-                $query->select('id', 'name');
-            })->with('route', function ($query) {
-                $query->select('id', 'name', 'number', 'from', 'to')
-            })
-                // ->with('routes:id,name,number,from,to')
-                // ->with('vehicles:id,number')
-                // ->with('drivers:id,name')
-                // ->where('o_id', $manager->o_id)
-                // ->whereDate('date', $date)
-                // ->where('status', Schedule::STATUS_PUBLISHED)
+            $schedules = Schedule::with('organizations:id,name')
+                ->with('routes:id,name,number,from,to')
+                ->with('vehicles:id,number')
+                ->with('drivers:id,name')
+                ->where('o_id', $manager->o_id)
+                ->whereDate('date', $date)
+                ->where('status', Schedule::STATUS_PUBLISHED)
                 // ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time', 'status', 'is_delay', 'trip_status', 'created_at', 'updated_at', 'delayed_reason')
                 ->get();
             return $this->respondWithSuccess($schedules, 'Schedule by date', 'SCHEDULE_BY_DATE');
