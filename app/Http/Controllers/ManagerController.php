@@ -10,13 +10,13 @@ use Illuminate\Support\Str;
 use App\Models\Organization;
 use Illuminate\Http\Request;
 use App\Models\OrganizationType;
-use App\Jobs\SendOrgRegisterEmail;
 use Illuminate\Support\Facades\DB;
 use App\Mail\OrgRegisterationEmail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\ManagerStoreRequest;
+use App\Jobs\SendOrgRegisterEmailJob;
 
 class ManagerController extends Controller
 {
@@ -30,15 +30,22 @@ class ManagerController extends Controller
         $organization_types = OrganizationType::get();
         $states = State::where('ctry_id', 167)->get();
         $org_dropdowns = Organization::get();
-        // $managers_count = Manager::count();
-
-        $organizations = Organization::with('manager', 'city', 'state', 'organizationType')
-            ->orderBY('id', 'DESC')
-            ->take(10)
-            ->get();
-        // dd($organizations->toArray());
         if ($request->has('filter')) {
             $organizations =  $this->filterManager($request);
+        } else {
+            $organizations = Organization::with('organizationType')
+                ->with('city', function ($query) {
+                    $query->select('id', 'name');
+                })
+                ->with('state', function ($query) {
+                    $query->select('id', 'name');
+                })
+                ->with('manager', function ($query) {
+                    $query->select('id', 'o_id', 'name', 'email', 'phone', 'otp', 'picture');
+                })
+                ->orderBY('id', 'DESC')
+                ->take(10)
+                ->get();
         }
 
         return view('manager.index', [
@@ -148,6 +155,7 @@ class ManagerController extends Controller
         $org->email         = $orgEmail;
         $org->phone         = $request->input('org_phone');
         $org->address       = $request->input('org_address');
+        $org->code          = substr(uniqid(), -8);
         $org->s_id          = $request->input('org_state');
         $org->c_id          = $request->input('org_city');
         $org->head_name     = $request->input('org_head_name');
@@ -158,14 +166,14 @@ class ManagerController extends Controller
         if ($org_save) {
             $manager = new Manager();
             $manager->o_id          = $org->id;
-            $manager->uid           = Str::random(60); //substr(uniqid(), 4);
+            $manager->u_id          = $user->id;
             $manager->name          = $request->input('man_name');
             $manager->email         = $request->input('man_email');
             $manager->phone         = $request->input('man_phone');
             $manager->address       = $request->input('man_address');
             $manager->otp           = $otp;
             $manager->picture       = ($request->file('man_pic'))
-                ? uploadImage($request->file('man_pic'), 'managers/')
+                ? uploadImage($request->file('man_pic'), 'managers/profiles/')
                 : null;
             $manager_save = $manager->save();
             if ($manager_save) {
@@ -204,6 +212,9 @@ class ManagerController extends Controller
         }
         if (!$error) {
             DB::commit();
+
+            emailsendingJob($orgEmail, $org);
+
             return redirect()->route('manager.index')
                 ->with('success', 'Organization created successfully.');
         } else {

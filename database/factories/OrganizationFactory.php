@@ -25,12 +25,14 @@ class OrganizationFactory extends Factory
             'o_type_id' =>  OrganizationType::inRandomOrder()->first()->id,
             'email' => $this->faker->safeEmail(),
             'phone' => '03' . $this->faker->regexify('/^[0-9+]{2}-[0-9+]{7}$/'),
+            'code' => substr(uniqid(), -8),
             'address' => Str::random(5),
             's_id' => State::inRandomOrder()->first()->id,
             'c_id' => City::inRandomOrder()->first()->id,
             'head_name' => 'Test 1',
             'head_email' => $this->faker->safeEmail(),
             'head_phone' => '03' . $this->faker->regexify('/^[0-9+]{2}-[0-9+]{7}$/'),
+            'head_address' => $this->faker->address(),
             'status' => 1,
         ];
     }

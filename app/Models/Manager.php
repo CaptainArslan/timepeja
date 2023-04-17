@@ -158,6 +158,6 @@ class Manager extends Authenticatable implements JWTSubject
      */
     public function getPictureAttribute()
     {
-        return $this->attributes['picture'] ? asset('uploads/managers/' . $this->attributes['picture']) : null;
+        return $this->attributes['picture'] ? asset('uploads/managers/profiles/' . $this->attributes['picture']) : null;
     }
 }

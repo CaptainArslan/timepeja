@@ -34,7 +34,7 @@ class EventServiceProvider extends ServiceProvider
     public function boot()
     {
         Schedule::observe(ScheduleObserver::class);
-        Manager::observe(ManagerObserver::class);
-        Organization::observe(OrganizationObserver::class);
+        // Manager::observe(ManagerObserver::class);
+        // Organization::observe(OrganizationObserver::class);
     }
 }

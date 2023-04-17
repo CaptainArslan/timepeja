@@ -23,10 +23,6 @@ class ScheduleController extends Controller
     public function index(Request $request)
     {
         return $this->create();
-        // $organizations = Organization::get();
-        // return view('manager.schedule.create', [
-        //     'organizations' => $organizations
-        // ]);
     }
 
     /**
