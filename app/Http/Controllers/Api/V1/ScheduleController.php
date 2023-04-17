@@ -296,13 +296,12 @@ class ScheduleController extends BaseController
                 ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time', 'status', 'created_at')
                 ->get();
 
-            // $published = $schedule->where('status', Schedule::STATUS_PUBLISHED);
-            // $created = $schedule->where('status', Schedule::STATUS_DRAFT);
             $data['routes'] = $routes;
             $data['vehicles'] = $vehicles;
             $data['drivers'] = $drivers;
             $data['published_schedule'] = $published;
             $data['created_schedule'] = $created;
+
         } catch (ModelNotFoundException $e) {
             throw new NotFoundHttpException('User not found');
         }
