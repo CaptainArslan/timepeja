@@ -276,17 +276,28 @@ class ScheduleController extends BaseController
                 ->select('id', 'name')
                 ->get();
 
-            $schedule = Schedule::with('organizations:id,name')
+            $published = Schedule::with('organizations:id,name')
                 ->with('routes:id,name,number,from,to')
                 ->with('vehicles:id,number')
                 ->with('drivers:id,name')
                 ->where('o_id', $manager->o_id)
                 ->whereDate('date', date('Y-m-d'))
+                ->where('status', Schedule::STATUS_PUBLISHED)
                 ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time', 'status', 'created_at')
                 ->get();
 
-            $published = $schedule->where('status', Schedule::STATUS_PUBLISHED);
-            $created = $schedule->where('status', Schedule::STATUS_DRAFT);
+            $created = Schedule::with('organizations:id,name')
+                ->with('routes:id,name,number,from,to')
+                ->with('vehicles:id,number')
+                ->with('drivers:id,name')
+                ->where('o_id', $manager->o_id)
+                ->whereDate('date', date('Y-m-d'))
+                ->where('status', Schedule::STATUS_DRAFT)
+                ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time', 'status', 'created_at')
+                ->get();
+
+            // $published = $schedule->where('status', Schedule::STATUS_PUBLISHED);
+            // $created = $schedule->where('status', Schedule::STATUS_DRAFT);
             $data['routes'] = $routes;
             $data['vehicles'] = $vehicles;
             $data['drivers'] = $drivers;
