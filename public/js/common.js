@@ -53,6 +53,13 @@ $(document).ready(function () {
             $(".parent_checkbox").prop("checked", true);
         }
     });
+
+    // this is for to add asterick for all the required fields
+
+    var now = new Date();
+    var currentDateTime = now.toISOString().substring(0, 16);
+    // $(".currentDateTime").val(currentDateTime);
+    $(".currentDateTime").prop("min", currentDateTime);
 });
 
 //Name Validation for character and whitespaces
@@ -252,4 +259,32 @@ function resetPreviewDropify(imageUrl, inputId) {
     drEvent.settings.defaultFile = imagenUrl;
     drEvent.destroy();
     drEvent.init();
+}
+
+// this function is use to show the success message
+function showSuccess( message = "Success created" ) {
+    $.toast({
+        heading: "Success",
+        text: message,
+        icon: "success",
+        position: "top-right",
+        loader: false,
+        bgColor: "#1abc9c",
+        hideAfter: 5000,
+        stack: 5,
+    });
+}
+
+// this function is use to show the error message
+function showError( message = "Error Occured!") {
+    $.toast({
+        heading: "Error",
+        text: message,
+        icon: "success",
+        position: "top-right",
+        loader: false,
+        bgColor: "#f1556c",
+        hideAfter: 5000,
+        stack: 5,
+    });
 }

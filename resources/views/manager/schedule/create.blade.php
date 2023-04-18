@@ -184,6 +184,8 @@
                         if (response.status == 'success') {
                             if (response.message == 'created') {
                                 addRow(table, response.data);
+                                showSuccess();
+                                showError();
                             } else {
                                 addScheduleToTable();
                             }
