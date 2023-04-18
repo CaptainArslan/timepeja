@@ -19,7 +19,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('schedule:seed')->daily();
+        $schedule->command('schedule:seed')->daily();
         // $schedule->command('inspire')->hourly();
     }
 
