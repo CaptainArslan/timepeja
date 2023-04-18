@@ -8,11 +8,12 @@ use App\Models\Driver;
 use App\Models\Vehicle;
 use App\Models\Schedule;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Api\V1\BaseController;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ScheduleController extends BaseController
@@ -63,7 +64,7 @@ class ScheduleController extends BaseController
             'v_id' => ['required', 'numeric', 'exists:vehicles,id'],
             'd_id' => ['required', 'numeric', 'exists:drivers,id'],
             'date' => ['required', 'date'],
-            'time' => ['required'],
+            'time' => ['required', 'after_or_equal:' . Carbon::now()->toDateString()],
         ], [
             'route_id.required' => 'Route is required',
             'route_id.numeric' => 'Route id in numeric required',
@@ -80,6 +81,7 @@ class ScheduleController extends BaseController
             'date.required' => 'Date is required',
 
             'time.required' => 'Time is required',
+            'time.after_or_equal' => 'Time must be greater than or equal to current time',
         ]);
 
         if ($validator->fails()) {

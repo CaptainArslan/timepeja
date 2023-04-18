@@ -23,6 +23,9 @@
     <link href="{{ asset('css/icons.min.css') }}" rel="stylesheet" type="text/css" />
     <!-- Head js -->
     <script src="{{ asset('js/head.js') }}"></script>
+
+    <!-- toast -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.css">
     @yield('page_css')
 </head>
 <!-- body start -->
@@ -56,21 +59,23 @@
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>
     <!-- Vendor js -->
-    <script src="{{asset('js/vendor.min.js')}}"></script>
+    <script src="{{ asset('js/vendor.min.js') }}"></script>
     <!-- Plugins js-->
-    <script src="{{asset('libs/flatpickr/flatpickr.min.js')}}"></script>
-    <!-- <script src="{{asset('libs/apexcharts/apexcharts.min.js')}}"></script> -->
-    <script src="{{asset('libs/selectize/js/standalone/selectize.min.js')}}"></script>
+    <script src="{{ asset('libs/flatpickr/flatpickr.min.js') }}"></script>
+    <!-- <script src="{{ asset('libs/apexcharts/apexcharts.min.js') }}"></script> -->
+    <script src="{{ asset('libs/selectize/js/standalone/selectize.min.js') }}"></script>
     <!-- App js-->
-    <script src="{{asset('js/app.min.js')}}"></script>
-    <script src="{{asset('js/common.js')}}"></script>
+    <script src="{{ asset('js/app.min.js') }}"></script>
+    <script src="{{ asset('js/common.js') }}"></script>
 
     <!-- Plugins js -->
-    <script src="/libs/jquery-mask-plugin/jquery.mask.min.js"></script>
-    <script src="/libs/autonumeric/autoNumeric.min.js"></script>
+    <script src="{{ asset('/libs/jquery-mask-plugin/jquery.mask.min.js') }}"></script>
+    <script src="{{ asset('/libs/autonumeric/autoNumeric.min.js') }}"></script>
 
     <!-- Init js-->
-    <script src="/js/pages/form-masks.init.js"></script>
+    <script src="{{ asset('/js/pages/form-masks.init.js') }}"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.js"></script>
 
     <!-- firebase cdns -->
     <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-app.js"></script>

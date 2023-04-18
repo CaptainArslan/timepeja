@@ -52,9 +52,9 @@ class ScheduleController extends Controller
         $data = [
             'o_id'         => $request->organization,
             'u_id'         => $user->id,
-            'route_id'     => $request->route_no ?? 1,
-            'v_id'         => $request->vehicle ?? 1,
-            'd_id'         => $request->driver ?? 1,
+            'route_id'     => $request->route_no,
+            'v_id'         => $request->vehicle,
+            'd_id'         => $request->driver,
             'date'         => $request->date,
             'time'         => $request->time,
             'status'       => Schedule::STATUS_DRAFT,

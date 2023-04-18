@@ -34,6 +34,21 @@ class Schedule extends Model
         'status'
     ];
 
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'options' => 'array',
+        'o_id' => 'integer',
+        'u_id' => 'integer',
+        'route_id' => 'integer',
+        'v_id' => 'integer',
+        'd_id' => 'integer',
+    ];
+
     /**
      * relation with organization
      *
