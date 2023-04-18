@@ -21,8 +21,9 @@ class JwtMiddleware
     public function handle($request, Closure $next, $guard)
     {
         // $uid = $request->header('uid');
-        $authorization = $request->header('Authorization');
-        if (!$authorization) {
+        $Authorization = $request->header('Authorization');
+        $authorization = $request->header('authorization');
+        if (!$Authorization || !$authorization) {
             return ApiHelper::respondWithError('Required headers not present. Authorization is missing!');
         }
 
