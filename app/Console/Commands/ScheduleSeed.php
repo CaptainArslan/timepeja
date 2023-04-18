@@ -38,8 +38,14 @@ class ScheduleSeed extends Command
      */
     public function handle()
     {
-        Artisan::call('db:seed', [
-            '--class' => 'ScheduleSeeder'
+        $command = Artisan::call('db:seed', [
+            '--class' => 'ScheduleSeeder',
         ]);
+        
+        if (!$command) {
+            $this->info("Successfullly seeded data for schedule.");
+        } else {
+            $this->error('Failed to seed data for schedule.');
+        }
     }
 }
