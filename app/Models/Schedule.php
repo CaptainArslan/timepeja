@@ -41,7 +41,6 @@ class Schedule extends Model
      * @var array
      */
     protected $casts = [
-        'options' => 'array',
         'o_id' => 'integer',
         'u_id' => 'integer',
         'route_id' => 'integer',

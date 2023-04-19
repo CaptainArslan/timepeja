@@ -113,7 +113,7 @@ class ManagerAuthController extends BaseController
         ]);
 
         if ($validator->fails()) {
-            return $this->respondWithError('Please fill the form correctly');
+            return $this->respondWithError($validator->errors()->first());
         }
 
         $credentials = $request->only(['phone', 'password']);
@@ -146,7 +146,7 @@ class ManagerAuthController extends BaseController
     public function getVerificationCode(Request $request): JsonResponse
     {
         $fields = $request->all();
-        $validate = Validator::make($fields, [
+        $validator = Validator::make($fields, [
             'phone' => ['required', 'numeric', 'digits:11'],
         ], [
             'phone.required' => 'Phone number is required',
@@ -154,8 +154,8 @@ class ManagerAuthController extends BaseController
             'phone.digits' => 'Phone number must be 11 digits',
         ]);
 
-        if ($validate->fails()) {
-            return $this->respondWithError('Please fill the form correctly');
+        if ($validator->fails()) {
+            return $this->respondWithError($validator->errors()->first());
         }
 
         $manager = Manager::where('phone', $fields['phone'])->first();
@@ -199,7 +199,7 @@ class ManagerAuthController extends BaseController
         ]);
 
         if ($validator->fails()) {
-            return $this->respondWithError('Please fill the forn correctly');
+            return $this->respondWithError($validator->errors()->first());
         }
 
         $manager = Manager::where('phone', $request->phone)
