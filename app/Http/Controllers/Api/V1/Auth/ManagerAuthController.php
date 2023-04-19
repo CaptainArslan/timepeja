@@ -33,7 +33,7 @@ class ManagerAuthController extends BaseController
     {
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'string', 'min:3', 'max:255'],
-            'phone' => ['required', 'numeric', 'digits:11'],
+            'phone' => ['required', 'numeric'],
             'otp' => ['required', 'string'],
             'password' => [
                 'required',
@@ -94,7 +94,7 @@ class ManagerAuthController extends BaseController
     public function login(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'phone' => ['required', 'numeric', 'digits:11'],
+            'phone' => ['required', 'numeric'],
             'password' => [
                 'required',
                 'string',
@@ -147,7 +147,7 @@ class ManagerAuthController extends BaseController
     {
         $fields = $request->all();
         $validator = Validator::make($fields, [
-            'phone' => ['required', 'numeric', 'digits:11'],
+            'phone' => ['required', 'numeric'],
         ], [
             'phone.required' => 'Phone number is required',
             'phone.numeric' => 'Phone number must be numeric',
@@ -184,7 +184,7 @@ class ManagerAuthController extends BaseController
     {
         $validator = Validator::make($request->all(), [
             'otp' => ['required', 'string'],
-            'phone' => ['required', 'numeric', 'digits:11'],
+            'phone' => ['required', 'numeric'],
             'password' => [
                 'required',
                 'string',
