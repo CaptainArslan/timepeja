@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\Auth\ManagerAuthController;
 use App\Http\Controllers\Api\V1\Auth\DriverAuthController;
 use App\Http\Controllers\Api\V1\ApiDriverController as ApiDriverController;
-use App\Http\Controllers\Api\v1\ApiManagerController as ApiManagerController;
+use App\Http\Controllers\Api\V1\ApiManagerController as ApiManagerController;
 use App\Http\Controllers\Api\V1\ApiScheduleController as ApiScheduleController;
 
 /*

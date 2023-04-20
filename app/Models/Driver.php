@@ -20,6 +20,11 @@ class Driver extends Authenticatable implements JWTSubject
     public const STATUS_ACTIVE = true;
     public const STATUS_INACTIVE = false;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<string>
+     */
     protected $fillable = [
         'o_id',
         'u_id',
@@ -41,6 +46,18 @@ class Driver extends Authenticatable implements JWTSubject
         'status',
         'online_status',
         'address',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'o_id' => 'integer',
+        'u_id' => 'integer',
+        'status' => 'boolean',
+        'online_status' => 'boolean'
     ];
 
     /**
