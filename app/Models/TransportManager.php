@@ -8,7 +8,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Route extends Model
 {
-    use HasFactory , SoftDeletes;
+    use HasFactory;
+    use SoftDeletes;
+
+    public const STATUS_ACTIVE = true;
+    public const STATUS_INACTIVE = false;
+
+    /**
+     * array for fillable
+     *
+     * @var array
+     */
     protected $fillable = [
         'o_id',
         'u_id',
@@ -21,6 +31,17 @@ class Route extends Model
         'to_longitude',
         'to_latitude',
         'status'
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'o_id' => 'integer',
+        'u_id' => 'integer',
+        'number' => 'integer',
     ];
 
     /**

@@ -30,7 +30,7 @@ class CreateOrganizationsTable extends Migration
             $table->string('head_email');
             $table->string('head_phone');
             $table->string('head_address')->nullable();
-            $table->integer('status');
+            $table->boolean('status');
             $table->timestamps();
             $table->softDeletes();
             $table->foreign('o_type_id')->references('id')->on('organization_types');

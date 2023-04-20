@@ -38,7 +38,7 @@ class CreateVehiclesTable extends Migration
             $table->string('chassis_no')->nullable();
             $table->string('engine_no')->nullable();
             $table->string('car_accessories')->nullable();
-            $table->integer('status');
+            $table->boolean('status');
             $table->timestamps();
             $table->softDeletes();
             $table->foreign('v_type_id')->references('id')->on('vehicle_types')->onUpdate('cascade');

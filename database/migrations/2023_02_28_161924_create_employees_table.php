@@ -25,7 +25,7 @@ class CreateEmployeesTable extends Migration
             $table->string('discipline')->nullable();
             $table->string('designaiton')->nullable();
             $table->string('degree_duration')->nullable();
-            $table->integer('status');
+            $table->boolean('status');
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

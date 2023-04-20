@@ -17,8 +17,8 @@ class Manager extends Authenticatable implements JWTSubject
     protected $table = 'managers';
     protected $appends = ['picture'];
 
-    public const STATUS_ACTIVE = 0;
-    public const STATUS_INACTIVE = 1;
+    public const STATUS_ACTIVE = false;
+    public const STATUS_INACTIVE = true;
 
     protected $fillable = [
         'id',
@@ -29,6 +29,16 @@ class Manager extends Authenticatable implements JWTSubject
         'phone',
         'picture',
         'address'
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'o_id' => 'integer',
+        'u_id' => 'integer',
     ];
 
     /**

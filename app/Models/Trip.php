@@ -11,15 +11,20 @@ class Trip extends Model
     use HasFactory;
     use SoftDeletes;
 
-    const STATUS_PENDING = 'pending';
-    const STATUS_INPROGRESS = 'in-progress';
-    const STATUS_COMPLETED = 'completed';
-    const STATUS_DELAY = 'delay';
+    public const STATUS_PENDING = 'pending';
+    public const STATUS_INPROGRESS = 'in-progress';
+    public const STATUS_COMPLETED = 'completed';
+    public const STATUS_DELAY = 'delay';
 
-    const IS_DELAYED = 0;
-    const IS_NOT_DELAYED = 1;
+    public const IS_DELAYED = true;
+    public const IS_NOT_DELAYED = false;
 
 
+    /**
+     * array for fillable
+     *
+     * @var array
+     */
     protected $fillable = [
         'o_id',
         'u_id',
@@ -27,5 +32,16 @@ class Trip extends Model
         'delay_reason',
         'delay_time',
         'status',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'o_id' => 'integer',
+        'u_id' => 'integer',
+        'sch_id' => 'integer',
     ];
 }

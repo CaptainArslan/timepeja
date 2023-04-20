@@ -18,8 +18,8 @@ class Schedule extends Model
     public const TRIP_STATUS_INPROGRESS = 'in-progress';
     public const TRIP_STATUS_COMPLETED = 'completed';
 
-    public const TRIP_NOTDELAYED = 0;
-    public const TRIP_ISDELAYED = 1;
+    public const TRIP_NOTDELAYED = false;
+    public const TRIP_ISDELAYED = true;
 
     protected $table = 'schedules';
 
@@ -47,6 +47,12 @@ class Schedule extends Model
         'v_id' => 'integer',
         'd_id' => 'integer',
     ];
+
+
+
+    // ----------------------------------------------------------------
+    // -------------------------- Relations ---------------------------
+    // ----------------------------------------------------------------
 
     /**
      * relation with organization
@@ -98,4 +104,9 @@ class Schedule extends Model
     {
         return $this->belongsTo(User::class, 'u_id', 'id');
     }
+
+
+    // ----------------------------------------------------------------
+    // ------------------ Accessors & Mutator -------------------------
+    // ----------------------------------------------------------------
 }

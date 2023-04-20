@@ -11,9 +11,14 @@ class Organization extends Model
     use HasFactory;
     use SoftDeletes;
 
-    public const STATUS_ACTIVE = 1;
-    public const STATUS_DEACTIVE = 0;
+    public const STATUS_ACTIVE = true;
+    public const STATUS_DEACTIVE = false;
 
+    /**
+     * array for fillable
+     *
+     * @var array
+     */
     protected $fillable = [
         'name',
         'branch_name',
@@ -21,12 +26,26 @@ class Organization extends Model
         'phone',
         's_id',
         'c_id',
+        'o_type_id',
         'address',
         'head_name',
         'head_email',
         'head_phone',
         'head_address',
         'status'
+    ];
+
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'u_id' => 'integer',
+        's_id' => 'integer',
+        'c_id' => 'integer',
+        'o_type_id' => 'integer',
     ];
 
     /**

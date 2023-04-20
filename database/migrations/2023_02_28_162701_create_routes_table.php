@@ -30,7 +30,7 @@ class CreateRoutesTable extends Migration
             $table->string('to');
             $table->string('to_longitude')->nullable();
             $table->string('to_latitude')->nullable();
-            $table->integer('status');
+            $table->boolean('status');
             $table->timestamps();
             $table->softDeletes();
             $table->foreign('o_id')->references('id')->on('organizations')->onDelete('cascade')->onUpdate('cascade');

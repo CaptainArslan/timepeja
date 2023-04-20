@@ -25,7 +25,7 @@ return new class extends Migration
             $table->string('provider')->nullable();
             $table->string('designation')->nullable();
             $table->string('verify_code')->unique()->nullable();
-            $table->integer('status');
+            $table->boolean('status');
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

@@ -14,11 +14,11 @@ class Driver extends Authenticatable implements JWTSubject
     use SoftDeletes;
     use Notifiable;
 
-    public const STATUS_ONLINE = 1;
-    public const STATUS_OFFLINE = 0;
+    public const STATUS_ONLINE = true;
+    public const STATUS_OFFLINE = false;
 
-    public const STATUS_ACTIVE = 1;
-    public const STATUS_INACTIVE = 0;
+    public const STATUS_ACTIVE = true;
+    public const STATUS_INACTIVE = false;
 
     protected $fillable = [
         'o_id',
