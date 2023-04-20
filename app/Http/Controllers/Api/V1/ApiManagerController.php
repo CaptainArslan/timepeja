@@ -7,7 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class ManagerController extends BaseController
+class ApiManagerController extends BaseController
 {
     /**
      * Display a listing of the resource.
@@ -109,18 +109,22 @@ class ManagerController extends BaseController
             return $this->respondWithError($validator->errors()->first());
         }
 
-        $manager = auth('manager')->user();
+        try {
+            $manager = auth('manager')->user();
 
-        if ($request->hasFile('profile_picture')) {
-            removeImage($manager->picture_name, '/managers/profiles/');
-        }
-        $image = uploadImage($request->file('profile_picture'), '/managers/profiles/');
+            if ($request->hasFile('profile_picture')) {
+                removeImage($manager->picture_name, '/managers/profiles/');
+            }
+            $image = uploadImage($request->file('profile_picture'), '/managers/profiles/');
 
-        $manager->picture = $image;
-        if ($manager->save()) {
-            return $this->respondWithSuccess($manager->picture, 'Profile Uploaded', 'PROFILE_UPLOADED');
-        } else {
-            return $this->respondWithError('Profile not uploaded');
+            $manager->picture = $image;
+            if ($manager->save()) {
+                return $this->respondWithSuccess($manager->picture, 'Profile Uploaded', 'PROFILE_UPLOADED');
+            } else {
+                return $this->respondWithError('Profile not uploaded');
+            }
+        } catch (\Throwable $th) {
+            return $this->respondWithError('Error Occured while profile uploading');
         }
 
         // return $this->respondWithSuccess(null, 'Profile Uploaded', 'PROFILE_UPLOADED');
