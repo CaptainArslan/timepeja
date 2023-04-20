@@ -14,9 +14,9 @@ class ApiManagerController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(): JsonResponse
     {
-        //
+        return $this->sendResponse([], 'Manager index');
     }
 
     /**
@@ -24,9 +24,9 @@ class ApiManagerController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(): JsonResponse
     {
-        //
+        return $this->sendResponse([], 'Manager create');
     }
 
     /**
@@ -35,9 +35,9 @@ class ApiManagerController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
-        //
+        return $this->sendResponse([], 'Manager store');
     }
 
     /**
@@ -46,9 +46,9 @@ class ApiManagerController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id): JsonResponse
     {
-        //
+        return $this->sendResponse([], 'Manager show');
     }
 
     /**
@@ -57,9 +57,9 @@ class ApiManagerController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($id): JsonResponse
     {
-        //
+        return $this->sendResponse([], 'Manager edit');
     }
 
     /**
@@ -69,9 +69,9 @@ class ApiManagerController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id): JsonResponse
     {
-        //
+        return $this->sendResponse([], 'Manager update');
     }
 
     /**
@@ -80,9 +80,9 @@ class ApiManagerController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($id): jsonResponse
     {
-        //
+        return $this->sendResponse([], 'Manager destroy');
     }
 
     /**
