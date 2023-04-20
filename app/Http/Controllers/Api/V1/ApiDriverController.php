@@ -11,7 +11,7 @@ use App\Http\Requests\Driver\DriverStoreRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class DriverController extends BaseController
+class ApiDriverController extends BaseController
 {
     /**
      * Display a listing of the resource.

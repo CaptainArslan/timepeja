@@ -3,9 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\Auth\ManagerAuthController;
 use App\Http\Controllers\Api\V1\Auth\DriverAuthController;
-use App\Http\Controllers\Api\V1\DriverController as ApiDriverController;
-use App\Http\Controllers\Api\v1\ManagerController;
-use App\Http\Controllers\Api\V1\ScheduleController as ApiScheduleController;
+use App\Http\Controllers\Api\V1\ApiDriverController as ApiDriverController;
+use App\Http\Controllers\Api\v1\ApiManagerController as ApiManagerController;
+use App\Http\Controllers\Api\V1\ApiScheduleController as ApiScheduleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,12 +29,14 @@ Route::group(['middleware' => 'api'], function () {
         Route::post('/refresh', [ManagerAuthController::class, 'refresh']);
         Route::post('/logout', [ManagerAuthController::class, 'logout']);
         Route::post('/forget-password', [ManagerAuthController::class, 'forgetPassword']);
+
+        // Manager Auth Middleware with jwt
         Route::middleware(['jwt.verify:manager'])->group(function () {
             Route::get('/profile', [ManagerAuthController::class, 'profile']);
             Route::get('/get-organization-data', [ApiScheduleController::class, 'getOrganizationData']);
             // Route::post('/create-schedule', [ApiScheduleController::class, 'create']);
 
-            Route::post('/profile/upload', [ManagerController::class, 'profileUpload']);
+            Route::post('/profile/upload', [ApiManagerController::class, 'profileUpload']);
 
             /**
              * Schedule Api

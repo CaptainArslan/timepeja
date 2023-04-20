@@ -18,7 +18,7 @@ class ManagerFactory extends Factory
     {
         return [
             'o_id' => Organization::inRandomOrder()->first()->id,
-            'u_id' => Str::random(10),
+            'u_id' => 1,
             'name' => $this->faker->name(),
             'email' => $this->faker->safeEmail(),
             'phone' => '03174407032',

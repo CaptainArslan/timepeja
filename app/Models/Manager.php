@@ -39,6 +39,7 @@ class Manager extends Authenticatable implements JWTSubject
     protected $casts = [
         'o_id' => 'integer',
         'u_id' => 'integer',
+        'status' => 'boolean',
     ];
 
     /**
