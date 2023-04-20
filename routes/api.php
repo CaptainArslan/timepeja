@@ -1,11 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\V1\Auth\ManagerAuthController;
+use App\Http\Controllers\Api\V1\ApiScheduleController;
 use App\Http\Controllers\Api\V1\Auth\DriverAuthController;
+use App\Http\Controllers\Api\V1\Auth\ManagerAuthController;
 use App\Http\Controllers\Api\V1\ApiDriverController as ApiDriverController;
 use App\Http\Controllers\Api\V1\ApiManagerController as ApiManagerController;
-use App\Http\Controllers\Api\V1\ApiScheduleController as ApiScheduleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,8 +33,7 @@ Route::group(['middleware' => 'api'], function () {
         // Manager Auth Middleware with jwt
         Route::middleware(['jwt.verify:manager'])->group(function () {
             Route::get('/profile', [ManagerAuthController::class, 'profile']);
-            Route::get('/get-organization-data', [ApiScheduleController::class, 'getOrganizationData']);
-            // Route::post('/create-schedule', [ApiScheduleController::class, 'create']);
+            // Route::post('/create-schedule', [ScheduleController::class, 'create']);
 
             Route::post('/profile/upload', [ApiManagerController::class, 'profileUpload']);
 
@@ -42,6 +41,7 @@ Route::group(['middleware' => 'api'], function () {
              * Schedule Api
              */
             Route::apiResource('/schedule', ApiScheduleController::class);
+            Route::get('/get-organization-data', [ApiScheduleController::class, 'getOrganizationData']);
             Route::put('schedules/publish', [ApiScheduleController::class, 'publish']);
             Route::put('schedules/draft', [ApiScheduleController::class, 'draft']);
             Route::get('schedules/published/{date}', [ApiScheduleController::class, 'getPublishedScheduleByDate']);

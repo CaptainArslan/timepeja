@@ -16,7 +16,7 @@ use App\Http\Controllers\Api\V1\BaseController;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class ScheduleController extends BaseController
+class ApiScheduleController extends BaseController
 {
     /**
      * Display a listing of the resource.
