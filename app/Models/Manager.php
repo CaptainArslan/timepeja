@@ -170,4 +170,15 @@ class Manager extends Authenticatable implements JWTSubject
     {
         return $this->attributes['picture'] ? asset('uploads/managers/profiles/' . $this->attributes['picture']) : null;
     }
+
+    /**
+     * Get the front picture name of the vehicle.
+     *
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getPictureNameAttribute()
+    {
+        return $this->attributes['picture'];
+    }
 }
