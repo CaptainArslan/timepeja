@@ -44,7 +44,7 @@ class CreatePassengersTable extends Migration
             $table->unsignedBigInteger('c_id')->index('c_id')->nullable();
             $table->string('street_no');
             $table->string('town');
-            $table->integer('status');
+            $table->boolean('status');
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

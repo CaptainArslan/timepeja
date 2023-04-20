@@ -22,7 +22,7 @@ class CreateTransactionsTable extends Migration
             $table->integer('in_or_out');
             $table->double('value');
             $table->unsignedBigInteger('w_id')->index('w_id')->nullable();
-            $table->integer('status');
+            $table->boolean('status');
             $table->timestamps();
             $table->softDeletes();
             $table->foreign('w_id')->references('id')->on('wallets');

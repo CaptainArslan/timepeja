@@ -8,6 +8,28 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class OrganizationType extends Model
 {
-    use HasFactory, SoftDeletes;
-    protected $fillable = ['name', 'desc', 'user_id', 'status'];
+    use HasFactory;
+    use SoftDeletes;
+
+    /**
+     * array for fillable
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'name',
+        'desc',
+        'u_id',
+        'status'
+    ];
+
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'u_id' => 'integer',
+    ];
 }

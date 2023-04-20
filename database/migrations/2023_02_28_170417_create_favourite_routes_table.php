@@ -20,7 +20,7 @@ class CreateFavouriteRoutesTable extends Migration
             $table->unsignedBigInteger('o_id')->index('o_id')->nullable();
             $table->unsignedBigInteger('p_id')->index('p_id')->nullable();
             $table->unsignedBigInteger('route_id')->index('route_id')->nullable();
-            $table->integer('status');
+            $table->boolean('status');
             $table->timestamps();
             $table->softDeletes();
             $table->foreign('o_id')->references('id')->on('organizations')->onUpdate('cascade');
