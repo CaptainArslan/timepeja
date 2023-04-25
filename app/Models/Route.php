@@ -14,6 +14,9 @@ class Route extends Model
     public const STATUS_ACTIVE = true;
     public const STATUS_INACTIVE = false;
 
+    // for pagination
+    public const ROUTE_LIMIT_PER_PAGE = 10;
+
     /**
      * array for fillable
      *
@@ -42,6 +45,7 @@ class Route extends Model
         'o_id' => 'integer',
         'u_id' => 'integer',
         'number' => 'integer',
+        'status' => 'boolean'
     ];
 
     /**
@@ -53,4 +57,77 @@ class Route extends Model
     {
         return $this->belongsTo(Organization::class, 'o_id', 'id');
     }
+
+
+
+    // ----------------------------------------------------------------
+    // ------------------ Accessors & Mutator -------------------------
+    // ----------------------------------------------------------------
+
+    /**
+     * Set the name attribute.
+     *
+     * @param  string  $value
+     * @return void
+     */
+    public function setNameAttribute($value)
+    {
+        $this->attributes['name'] = ucwords(strtolower($value));
+    }
+
+    /**
+     * Get the name attribute.
+     *
+     * @param  string  $value
+     * @return string
+     */
+    public function getNameAttribute($value)
+    {
+        return ucwords(strtolower($value));
+    }
+
+    /**
+     * Set the from attribute.
+     *
+     * @param  string  $value
+     * @return void
+     */
+    public function setFromAttribute($value)
+    {
+        $this->attributes['from'] = ucwords(strtolower($value));
+    }
+
+    /**
+     * Get the from attribute.
+     *
+     * @param  string  $value
+     * @return string
+     */
+    public function getFromAttribute($value)
+    {
+        return ucwords(strtolower($value));
+    }
+
+    /**
+     * Set the to attribute.
+     *
+     * @param  string  $value
+     * @return void
+     */
+    public function setToAttribute($value)
+    {
+        $this->attributes['to'] = ucwords(strtolower($value));
+    }
+
+    /**
+     * Get the to attribute.
+     *
+     * @param  string  $value
+     * @return string
+     */
+    public function getToAttribute($value)
+    {
+        return ucwords(strtolower($value));
+    }
+
 }

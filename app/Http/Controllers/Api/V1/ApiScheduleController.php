@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Api\V1\BaseController;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Cache;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ApiScheduleController extends BaseController
@@ -195,7 +196,6 @@ class ApiScheduleController extends BaseController
 
         if ($validator->fails()) {
             return $this->respondWithError($validator->errors()->first());
-            // return $this->respondWithSuccess($validator->errors()->all(), 'message', 'VALIDATION_ERROR');
         }
 
         try {
@@ -284,9 +284,17 @@ class ApiScheduleController extends BaseController
                 ->with('drivers:id,name')
                 ->where('o_id', $manager->o_id)
                 ->whereDate('date', date('Y-m-d'))
-                ->where('status', Schedule::STATUS_PUBLISHED)
+                ->whereIn('status', [Schedule::STATUS_PUBLISHED, Schedule::STATUS_DRAFT])
                 ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time', 'status', 'created_at')
                 ->get();
+
+            // $published = $schedules->filter(function ($schedule) {
+            //     return $schedule->status === Schedule::STATUS_PUBLISHED;
+            // });
+
+            // $created = $schedules->filter(function ($schedule) {
+            //     return $schedule->status === Schedule::STATUS_DRAFT;
+            // });
 
             $created = Schedule::with('organizations:id,name')
                 ->with('routes:id,name,number,from,to')
@@ -297,13 +305,16 @@ class ApiScheduleController extends BaseController
                 ->where('status', Schedule::STATUS_DRAFT)
                 ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time', 'status', 'created_at')
                 ->get();
-            $data['routes'] = $routes;
-            $data['vehicles'] = $vehicles;
-            $data['drivers'] = $drivers;
-            $data['published_schedule'] = $published;
-            $data['created_schedule'] = $created;
+
+            $data = [
+                'routes' => $routes,
+                'vehicles' => $vehicles,
+                'drivers' => $drivers,
+                'published_schedule' => $published,
+                'created_schedule' => $created
+            ];
         } catch (ModelNotFoundException $e) {
-            throw new NotFoundHttpException('User not found');
+            throw new NotFoundHttpException('User not found' . $e->getMessage());
         }
         if (!$manager->o_id) {
             return $this->respondWithError('Organization id is required');

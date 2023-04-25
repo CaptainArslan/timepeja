@@ -244,8 +244,8 @@
                                         <select class="form-select editselect2" id="edit_o_id" name="o_id">
                                             <option value="">Select Organization</option>
                                             @forelse ($organizations as $organization)
-                                            <option value="{{$organization->id}}"> {{ucfirst($organization->name)}}
-                                            </option>
+                                            <option value="{{ $organization->id }}">{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
+
                                             @empty
                                             <option>Organization not Available</option>
                                             @endforelse

@@ -11,10 +11,19 @@ class Vehicle extends Model
     use HasFactory;
     use SoftDeletes;
 
-    public const STATUS_ACTIVE = 1;
-    public const STATUS_DEACTIVE = 0;
+    protected $table = 'vehicles';
 
+    public const STATUS_ACTIVE = true;
+    public const STATUS_DEACTIVE = false;
 
+    // for pagination
+    public const VEHICLE_LIMIT_PER_PAGE = 10;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
     protected $fillable = [
         'o_id',
         'u_id',
@@ -34,7 +43,23 @@ class Vehicle extends Model
         'car_accessories',
         'status'
     ];
-    protected $table = 'vehicles';
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'o_id' => 'integer',
+        'u_id' => 'integer',
+        'v_type_id' => 'integer',
+        'status' => 'boolean'
+    ];
+
+
+    // ----------------------------------------------------------------
+    // -------------------------- Relations ---------------------------
+    // ----------------------------------------------------------------
 
     public function organizations()
     {

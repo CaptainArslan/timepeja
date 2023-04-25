@@ -19,7 +19,7 @@ class ManagerAuthController extends BaseController
      */
     public function __construct()
     {
-        $this->middleware('auth:manager', ['except' => ['login', 'register', 'getVerificationCode', 'forgetPassword']]);
+        $this->middleware('auth:manager', ['except' => ['login', 'register', 'getVerificationCode', 'forgetPassword', 'webLogin']]);
     }
 
     /**
@@ -132,7 +132,7 @@ class ManagerAuthController extends BaseController
             'content-type' => 'application/json',
             // 'uid' => $user->email,
             // 'access-token' => $user->token,
-            'Authorization' => $token
+            'authorization' => $token
         ]);
     }
 
@@ -257,6 +257,58 @@ class ManagerAuthController extends BaseController
     public function refresh(): JsonResponse
     {
         return $this->respondWithToken(auth('manager')->refresh());
+    }
+
+    /**
+     * [login description]
+     *
+     * @param   Request       $request  [$request description]
+     *
+     * @return  JsonResponse            [return description]
+     */
+    public function webLogin(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'phone' => ['required', 'numeric'],
+            'password' => [
+                'required',
+                'string',
+                'between:8,25',
+                // 'regex:/^(?=.*[a-z])(?=.*[A- Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'
+            ],
+        ], [
+            'phone.required' => 'Phone number is required',
+            'phone.numeric' => 'Phone number must be numeric',
+            'phone.digits' => 'Phone number must be 11 digits',
+            'password.required' => 'Password is required',
+            'password.between' => 'Password must be between :min and :max characters',
+            'password.regex' =>
+            'The password must contain at least one uppercase letter, one lowercase letter, 
+            one number, and one special character.'
+        ]);
+
+        if ($validator->fails()) {
+            return $this->respondWithError($validator->errors()->first());
+        }
+
+        $credentials = $request->only(['phone', 'password']);
+
+        if (!$token = auth('manager')->attempt($credentials)) {
+            return $this->respondWithError('Invalid phone number or password');
+        }
+
+        $user = auth('manager')->user();
+        if (!$user) {
+            return $this->respondWithError('User not Found');
+        }
+        $user->makeHidden('password');
+
+        $user['token'] = $token;
+
+        return $this->respondWithSuccess($user, 'Login successfully', 'LOGIN_API_SUCCESS', [
+            'content-type' => 'application/json',
+            'authorization' => $token
+        ]);
     }
 }
 

@@ -18,14 +18,17 @@ class VehicleTypeSeeder extends Seeder
             [
                 'name' => 'toyota',
                 'desc' => '12 seats',
+                'created_at' => now()
             ],
             [
                 'name' => 'hiace',
                 'desc' => '15 seats',
+                'created_at' => now()
             ],
             [
                 'name' => 'coaster',
                 'desc' => '34 seats',
+                'created_at' => now()
             ],
         ]);
     }
