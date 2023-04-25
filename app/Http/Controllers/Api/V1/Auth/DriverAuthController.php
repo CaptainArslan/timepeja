@@ -19,7 +19,7 @@ class DriverAuthController extends BaseController
      */
     public function __construct()
     {
-        // $this->middleware('auth:api', ['except' => ['login', 'register', 'getVerificationCode', 'forgetPassword']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register', 'getVerificationCode', 'forgetPassword']]);
     }
 
     /**
@@ -130,7 +130,7 @@ class DriverAuthController extends BaseController
         if (!$user) {
             return $this->respondWithError('User not Found');
         }
-        $user->makeHidden('password');
+        // $user->makeHidden('password');
 
         return $this->respondWithSuccess($user, 'Login successfully', 'LOGIN_API_SUCCESS', [
             'content-type' => 'application/json',

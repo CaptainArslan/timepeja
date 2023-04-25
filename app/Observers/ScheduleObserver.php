@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Schedule;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 class ScheduleObserver
@@ -23,7 +24,7 @@ class ScheduleObserver
      */
     public function created(Schedule $schedule)
     {
-        // Log::info('Schedule id ' . $schedule->id . ' for date ' . $schedule->date . ' is created at ' . date('Y-m-d'));
+        Log::info('Schedule id ' . $schedule->id . ' for date ' . $schedule->date . ' is created at ' . date('Y-m-d'));
     }
 
     /**
@@ -34,7 +35,7 @@ class ScheduleObserver
      */
     public function updated(Schedule $schedule)
     {
-        // Log::info('Schedule id ' . $schedule->id . ' for date ' . $schedule->date . ' is updated at ' . date('Y-m-d'));
+        Log::info('Schedule id ' . $schedule->id . ' for date ' . $schedule->date . ' is updated at ' . date('Y-m-d'));
     }
 
     /**
@@ -45,7 +46,7 @@ class ScheduleObserver
      */
     public function deleted(Schedule $schedule)
     {
-        // Log::info('Schedule id ' . $schedule->id . ' for date ' . $schedule->date . ' is deleted at ' . date('Y-m-d'));
+        Log::info('Schedule id ' . $schedule->id . ' for date ' . $schedule->date . ' is deleted at ' . date('Y-m-d'));
     }
 
     /**
@@ -56,7 +57,7 @@ class ScheduleObserver
      */
     public function restored(Schedule $schedule)
     {
-        // Log::info('Schedule id ' . $schedule->id . ' for date ' . $schedule->date . ' is restored at ' . date('Y-m-d'));
+        Log::info('Schedule id ' . $schedule->id . ' for date ' . $schedule->date . ' is restored at ' . date('Y-m-d'));
     }
 
     /**
@@ -67,6 +68,6 @@ class ScheduleObserver
      */
     public function forceDeleted(Schedule $schedule)
     {
-        // Log::info('Schedule id ' . $schedule->id . ' for date ' . $schedule->date . ' is forcefuly deleted at ' . date('Y-m-d'));
+        Log::info('Schedule id ' . $schedule->id . ' for date ' . $schedule->date . ' is forcefuly deleted at ' . date('Y-m-d'));
     }
 }

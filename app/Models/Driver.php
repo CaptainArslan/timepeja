@@ -20,6 +20,8 @@ class Driver extends Authenticatable implements JWTSubject
     public const STATUS_ACTIVE = true;
     public const STATUS_INACTIVE = false;
 
+    public const DRIVER_LIMIT_PER_PAGE = 10;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -93,7 +95,9 @@ class Driver extends Authenticatable implements JWTSubject
      */
     public function getJWTCustomClaims()
     {
-        return [];
+        return [
+            'exp' => now()->addMonth(1)->timestamp, // Set token expiration to 7 days from now
+        ];
     }
 
 
