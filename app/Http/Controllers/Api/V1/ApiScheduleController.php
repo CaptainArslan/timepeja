@@ -258,8 +258,8 @@ class ApiScheduleController extends BaseController
      */
     public function getOrganizationData(): JsonResponse
     {
-        $manager = auth('manager')->user();
         try {
+            $manager = auth('manager')->user();
             $data = [];
             $routes = Route::where('o_id', $manager->o_id)
                 ->where('status', Route::STATUS_ACTIVE)

@@ -15,7 +15,6 @@ class ScheduleObserver
      */
     public $afterCommit = true;
 
-
     /**
      * Handle the Schedule "created" event.
      *
@@ -32,6 +31,9 @@ class ScheduleObserver
         }
         if (Cache::has('CREATED_SCHEDULE_')) {
             Cache::forget('CREATED_SCHEDULE_' . $schedule->o_id);
+        }
+        if (Cache::has('SCREEN_WRAPPER_')) {
+            Cache::forget('SCREEN_WRAPPER_' . $schedule->o_id);
         }
         Log::info('Schedule id ' . $schedule->id . ' for date ' . $schedule->date . ' is created at ' . date('Y-m-d'));
     }
@@ -53,6 +55,9 @@ class ScheduleObserver
         if (Cache::has('CREATED_SCHEDULE_')) {
             Cache::forget('CREATED_SCHEDULE_' . $schedule->o_id);
         }
+        if (Cache::has('SCREEN_WRAPPER_')) {
+            Cache::forget('SCREEN_WRAPPER_' . $schedule->o_id);
+        }
         Log::info('Schedule id ' . $schedule->id . ' for date ' . $schedule->date . ' is updated at ' . date('Y-m-d'));
     }
 
@@ -72,6 +77,9 @@ class ScheduleObserver
         }
         if (Cache::has('CREATED_SCHEDULE_')) {
             Cache::forget('CREATED_SCHEDULE_' . $schedule->o_id);
+        }
+        if (Cache::has('SCREEN_WRAPPER_')) {
+            Cache::forget('SCREEN_WRAPPER_' . $schedule->o_id);
         }
         Log::info('Schedule id ' . $schedule->id . ' for date ' . $schedule->date . ' is deleted at ' . date('Y-m-d'));
     }
@@ -93,6 +101,9 @@ class ScheduleObserver
         if (Cache::has('CREATED_SCHEDULE_')) {
             Cache::forget('CREATED_SCHEDULE_' . $schedule->o_id);
         }
+        if (Cache::has('SCREEN_WRAPPER_')) {
+            Cache::forget('SCREEN_WRAPPER_' . $schedule->o_id);
+        }
         Log::info('Schedule id ' . $schedule->id . ' for date ' . $schedule->date . ' is restored at ' . date('Y-m-d'));
     }
 
@@ -112,6 +123,9 @@ class ScheduleObserver
         }
         if (Cache::has('CREATED_SCHEDULE_')) {
             Cache::forget('CREATED_SCHEDULE_' . $schedule->o_id);
+        }
+        if (Cache::has('SCREEN_WRAPPER_')) {
+            Cache::forget('SCREEN_WRAPPER_' . $schedule->o_id);
         }
         Log::info('Schedule id ' . $schedule->id . ' for date ' . $schedule->date . ' is forcefuly deleted at ' . date('Y-m-d'));
     }

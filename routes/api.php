@@ -36,9 +36,8 @@ Route::group(['middleware' => 'api'], function () {
         // Manager Auth Middleware with jwt
         Route::middleware(['jwt.verify:manager'])->group(function () {
             Route::get('/profile', [ManagerAuthController::class, 'profile']);
-            // Route::post('/create-schedule', [ScheduleController::class, 'create']);
-
             Route::post('/profile/upload', [ApiManagerController::class, 'profileUpload']);
+            // Route::post('/create-schedule', [ScheduleController::class, 'create']);
 
             // Schedule Api
             Route::apiResource('/schedule', ApiScheduleController::class);
@@ -54,6 +53,9 @@ Route::group(['middleware' => 'api'], function () {
             Route::apiResource('/vehicle', ApiVehicleController::class);
             // Route Api
             Route::apiResource('/route', ApiRouteController::class);
+
+            //main screen wrapper
+            Route::get('/main-screen-wrapper', [ApiManagerController::class, 'mainScreenWrapper']);
         });
     });
 
