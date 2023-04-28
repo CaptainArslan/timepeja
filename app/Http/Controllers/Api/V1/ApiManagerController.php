@@ -96,7 +96,7 @@ class ApiManagerController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function profileUpload(Request $request): jsonResponse
+    public function profileUpload(Request $request)
     {
         $validator = Validator::make(
             $request->all(),
@@ -118,7 +118,7 @@ class ApiManagerController extends BaseController
         try {
             $manager = auth('manager')->user();
 
-            if ($request->hasFile('profile_picture')) {
+            if ($request->hasFile('profile_picture') && $manager->picture_name != null) {
                 removeImage($manager->picture_name, '/managers/profiles/');
             }
             $image = uploadImage($request->file('profile_picture'), '/managers/profiles/');
