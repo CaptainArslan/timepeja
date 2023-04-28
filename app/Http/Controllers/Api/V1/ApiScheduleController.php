@@ -11,10 +11,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Api\V1\BaseController;
+use Dflydev\DotAccessData\Data;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Facades\Cache;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ApiScheduleController extends BaseController
@@ -278,7 +279,7 @@ class ApiScheduleController extends BaseController
                 ->select('id', 'name')
                 ->get();
 
-            $published = Schedule::with('organizations:id,name')
+            $schedules = Schedule::with('organizations:id,name')
                 ->with('routes:id,name,number,from,to')
                 ->with('vehicles:id,number')
                 ->with('drivers:id,name')
@@ -288,23 +289,37 @@ class ApiScheduleController extends BaseController
                 ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time', 'status', 'created_at')
                 ->get();
 
-            // $published = $schedules->filter(function ($schedule) {
-            //     return $schedule->status === Schedule::STATUS_PUBLISHED;
-            // });
+            $published = $schedules->filter(function ($schedule) {
+                return $schedule->status === Schedule::STATUS_PUBLISHED;
+            });
 
-            // $created = $schedules->filter(function ($schedule) {
-            //     return $schedule->status === Schedule::STATUS_DRAFT;
-            // });
+            $created = $schedules->filter(function ($schedule) {
+                return $schedule->status === Schedule::STATUS_DRAFT;
+            });
 
-            $created = Schedule::with('organizations:id,name')
-                ->with('routes:id,name,number,from,to')
-                ->with('vehicles:id,number')
-                ->with('drivers:id,name')
-                ->where('o_id', $manager->o_id)
-                ->whereDate('date', date('Y-m-d'))
-                ->where('status', Schedule::STATUS_DRAFT)
-                ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time', 'status', 'created_at')
-                ->get();
+            $published = $published->toArray();
+            $created = $created->toArray();
+
+
+            // $published = Schedule::with('organizations:id,name')
+            //     ->with('routes:id,name,number,from,to')
+            //     ->with('vehicles:id,number')
+            //     ->with('drivers:id,name')
+            //     ->where('o_id', $manager->o_id)
+            //     ->whereDate('date', date('Y-m-d'))
+            //     ->where('status', Schedule::STATUS_PUBLISHED)
+            //     ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time', 'status', 'created_at')
+            //     ->get();
+
+            // $created = Schedule::with('organizations:id,name')
+            //     ->with('routes:id,name,number,from,to')
+            //     ->with('vehicles:id,number')
+            //     ->with('drivers:id,name')
+            //     ->where('o_id', $manager->o_id)
+            //     ->whereDate('date', date('Y-m-d'))
+            //     ->where('status', Schedule::STATUS_DRAFT)
+            //     ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time', 'status', 'created_at')
+            //     ->get();
 
             $data = [
                 'routes' => $routes,
@@ -316,9 +331,7 @@ class ApiScheduleController extends BaseController
         } catch (ModelNotFoundException $e) {
             throw new NotFoundHttpException('User not found' . $e->getMessage());
         }
-        if (!$manager->o_id) {
-            return $this->respondWithError('Organization id is required');
-        }
+
         return $this->respondWithSuccess(
             $data,
             'Organization route, vehicle, driver data, published and created schedule',

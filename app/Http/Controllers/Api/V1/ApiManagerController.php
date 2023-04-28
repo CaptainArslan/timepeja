@@ -90,7 +90,7 @@ class ApiManagerController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function profileUpload(Request $request): JsonResponse
+    public function profileUpload(Request $request)
     {
         $validator = Validator::make(
             $request->all(),
@@ -118,13 +118,14 @@ class ApiManagerController extends BaseController
             $image = uploadImage($request->file('profile_picture'), '/managers/profiles/');
 
             $manager->picture = $image;
+            $data = $manager->select('id', 'picture')->first();
             if ($manager->save()) {
-                return $this->respondWithSuccess($manager->picture, 'Profile Uploaded', 'PROFILE_UPLOADED');
+                return $this->respondWithSuccess($data, 'Profile Updated', 'PROFILE_UPDATED');
             } else {
-                return $this->respondWithError('Profile not uploaded');
+                return $this->respondWithError('Profile not Updated');
             }
         } catch (\Throwable $th) {
-            return $this->respondWithError('Error Occured while profile uploading');
+            return $this->respondWithError('Error Occured while profile Updated');
         }
 
         // return $this->respondWithSuccess(null, 'Profile Uploaded', 'PROFILE_UPLOADED');
