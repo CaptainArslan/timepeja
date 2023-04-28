@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Api\V1\BaseController;
-use Dflydev\DotAccessData\Data;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -253,11 +252,9 @@ class ApiScheduleController extends BaseController
     }
 
     /**
-     * Undocumented function
+     * Get organization data
      *
-     * @param Request $request
-     * @param [type] $o_id
-     * @return void
+     * @return JsonResponse
      */
     public function getOrganizationData(): JsonResponse
     {
@@ -285,51 +282,34 @@ class ApiScheduleController extends BaseController
                 ->with('drivers:id,name')
                 ->where('o_id', $manager->o_id)
                 ->whereDate('date', date('Y-m-d'))
-                ->whereIn('status', [Schedule::STATUS_PUBLISHED, Schedule::STATUS_DRAFT])
                 ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time', 'status', 'created_at')
                 ->get();
+            // Initialize two empty arrays
+            $publishedSchedules = [];
+            $draftSchedules = [];
 
-            $published = $schedules->filter(function ($schedule) {
-                return $schedule->status === Schedule::STATUS_PUBLISHED;
-            });
-
-            $created = $schedules->filter(function ($schedule) {
-                return $schedule->status === Schedule::STATUS_DRAFT;
-            });
-
-            $published = $published->toArray();
-            $created = $created->toArray();
-
-
-            // $published = Schedule::with('organizations:id,name')
-            //     ->with('routes:id,name,number,from,to')
-            //     ->with('vehicles:id,number')
-            //     ->with('drivers:id,name')
-            //     ->where('o_id', $manager->o_id)
-            //     ->whereDate('date', date('Y-m-d'))
-            //     ->where('status', Schedule::STATUS_PUBLISHED)
-            //     ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time', 'status', 'created_at')
-            //     ->get();
-
-            // $created = Schedule::with('organizations:id,name')
-            //     ->with('routes:id,name,number,from,to')
-            //     ->with('vehicles:id,number')
-            //     ->with('drivers:id,name')
-            //     ->where('o_id', $manager->o_id)
-            //     ->whereDate('date', date('Y-m-d'))
-            //     ->where('status', Schedule::STATUS_DRAFT)
-            //     ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time', 'status', 'created_at')
-            //     ->get();
+            // Loop through the schedules
+            // Loop through each schedule and add it to the appropriate array based on its status
+            foreach ($schedules as $schedule) {
+                if ($schedule->status == Schedule::STATUS_PUBLISHED) {
+                    $publishedSchedules[] = $schedule;
+                } else {
+                    $draftSchedules[] = $schedule;
+                }
+            }
 
             $data = [
                 'routes' => $routes,
                 'vehicles' => $vehicles,
                 'drivers' => $drivers,
-                'published_schedule' => $published,
-                'created_schedule' => $created
+                'published_schedule' => $publishedSchedules,
+                'created_schedule' => $draftSchedules
             ];
+
+            // store data in cache
+            Cache::put('ORGANIZATION_ROUTE_VEHICLE_DRIVER_SCHEDULE_DATA_' . $manager->o_id, $data, 60 * 60 * 24);
         } catch (ModelNotFoundException $e) {
-            throw new NotFoundHttpException('User not found' . $e->getMessage());
+            throw new NotFoundHttpException('Data not found ' . $e->getMessage());
         }
 
         return $this->respondWithSuccess(
@@ -441,6 +421,12 @@ class ApiScheduleController extends BaseController
         }
     }
 
+    /**
+     * published publish schedule by date
+     *
+     * @param [type] $date
+     * @return JsonResponse
+     */
     public function getPublishedScheduleByDate($date): JsonResponse
     {
         $validator = Validator::make(['date' => $date], [
@@ -463,14 +449,23 @@ class ApiScheduleController extends BaseController
                 ->where('o_id', $manager->o_id)
                 ->whereDate('date', $date)
                 ->where('status', Schedule::STATUS_PUBLISHED)
-                // ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time', 'status', 'is_delay', 'trip_status', 'created_at', 'updated_at', 'delayed_reason')
+                ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time', 'status')
                 ->get();
+
+            Cache::put('PUBLISHED_SCHEDULE_' . $manager->o_id, $schedules, now()->addDay(1));
+
             return $this->respondWithSuccess($schedules, 'Schedule by date', 'SCHEDULE_BY_DATE');
         } catch (\Throwable $th) {
             return $this->respondWithError('An error occurred while fetching schedules for this date.' . $th->getMessage());
         }
     }
 
+    /**
+     * get create schedule by date
+     *
+     * @param [type] $date
+     * @return JsonResponse
+     */
     public function getCreatedScheduleByDate($date): JsonResponse
     {
         $validator = Validator::make(['date' => $date], [
@@ -494,11 +489,15 @@ class ApiScheduleController extends BaseController
                 ->where('o_id', $manager->o_id)
                 ->whereDate('date', $date)
                 ->where('status', Schedule::STATUS_DRAFT)
-                // ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time', 'status', 'is_delay', 'trip_status', 'created_at', 'updated_at', 'delayed_reason')
+                ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time', 'status')
                 ->get();
+
+            // store in cache
+            Cache::put('CREATED_SCHEDULE_' . $manager->o_id, $schedules, now()->addDay(1));
+
             return $this->respondWithSuccess($schedules, 'Schedule by date', 'SCHEDULE_BY_DATE');
         } catch (\Throwable $th) {
-            return $this->respondWithError('An error occurred while fetching schedules for this date.');
+            return $this->respondWithError('An error occurred while fetching schedules for this date.' . $th->getMessage());
         }
     }
 }

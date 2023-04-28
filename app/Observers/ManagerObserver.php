@@ -6,6 +6,7 @@ use App\Models\Manager;
 use App\Mail\OrgRegisterationEmail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Cache;
 
 class ManagerObserver
 {
@@ -17,22 +18,7 @@ class ManagerObserver
      */
     public function created(Manager $manager)
     {
-        $details = [
-            'title' => 'Mail from Stoppick',
-            'name' => $manager->name,
-            'email' => $manager->email,
-            'phone' => $manager->phone,
-            'otp' => $manager->otp,
-            'body' => '',
-        ];
-
-        try {
-            Mail::to($manager->email)->send(new OrgRegisterationEmail($details));
-            Log::info('Email send succcesffuly');
-        } catch (\Exception $e) {
-            // Handle the exception here
-            Log::info('Error Occured \n ' . $e->getMessage());
-        }
+        // Send email to the manager
         Log::info('Manager created: ' . $manager->name);
     }
 
