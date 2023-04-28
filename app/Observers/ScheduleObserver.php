@@ -24,6 +24,15 @@ class ScheduleObserver
      */
     public function created(Schedule $schedule)
     {
+        if (Cache::has('ORGANIZATION_ROUTE_VEHICLE_DRIVER_SCHEDULE_DATA_')) {
+            Cache::forget('ORGANIZATION_ROUTE_VEHICLE_DRIVER_SCHEDULE_DATA_' . $schedule->o_id);
+        }
+        if (Cache::has('PUBLISHED_SCHEDULE_')) {
+            Cache::forget('PUBLISHED_SCHEDULE_' . $schedule->o_id);
+        }
+        if (Cache::has('CREATED_SCHEDULE_')) {
+            Cache::forget('CREATED_SCHEDULE_' . $schedule->o_id);
+        }
         Log::info('Schedule id ' . $schedule->id . ' for date ' . $schedule->date . ' is created at ' . date('Y-m-d'));
     }
 
@@ -35,6 +44,15 @@ class ScheduleObserver
      */
     public function updated(Schedule $schedule)
     {
+        if (Cache::has('ORGANIZATION_ROUTE_VEHICLE_DRIVER_SCHEDULE_DATA_')) {
+            Cache::forget('ORGANIZATION_ROUTE_VEHICLE_DRIVER_SCHEDULE_DATA_' . $schedule->o_id);
+        }
+        if (Cache::has('PUBLISHED_SCHEDULE_')) {
+            Cache::forget('PUBLISHED_SCHEDULE_' . $schedule->o_id);
+        }
+        if (Cache::has('CREATED_SCHEDULE_')) {
+            Cache::forget('CREATED_SCHEDULE_' . $schedule->o_id);
+        }
         Log::info('Schedule id ' . $schedule->id . ' for date ' . $schedule->date . ' is updated at ' . date('Y-m-d'));
     }
 
@@ -46,6 +64,15 @@ class ScheduleObserver
      */
     public function deleted(Schedule $schedule)
     {
+        if (Cache::has('ORGANIZATION_ROUTE_VEHICLE_DRIVER_SCHEDULE_DATA_')) {
+            Cache::forget('ORGANIZATION_ROUTE_VEHICLE_DRIVER_SCHEDULE_DATA_' . $schedule->o_id);
+        }
+        if (Cache::has('PUBLISHED_SCHEDULE_')) {
+            Cache::forget('PUBLISHED_SCHEDULE_' . $schedule->o_id);
+        }
+        if (Cache::has('CREATED_SCHEDULE_')) {
+            Cache::forget('CREATED_SCHEDULE_' . $schedule->o_id);
+        }
         Log::info('Schedule id ' . $schedule->id . ' for date ' . $schedule->date . ' is deleted at ' . date('Y-m-d'));
     }
 
@@ -57,6 +84,15 @@ class ScheduleObserver
      */
     public function restored(Schedule $schedule)
     {
+        if (Cache::has('ORGANIZATION_ROUTE_VEHICLE_DRIVER_SCHEDULE_DATA_')) {
+            Cache::forget('ORGANIZATION_ROUTE_VEHICLE_DRIVER_SCHEDULE_DATA_' . $schedule->o_id);
+        }
+        if (Cache::has('PUBLISHED_SCHEDULE_')) {
+            Cache::forget('PUBLISHED_SCHEDULE_' . $schedule->o_id);
+        }
+        if (Cache::has('CREATED_SCHEDULE_')) {
+            Cache::forget('CREATED_SCHEDULE_' . $schedule->o_id);
+        }
         Log::info('Schedule id ' . $schedule->id . ' for date ' . $schedule->date . ' is restored at ' . date('Y-m-d'));
     }
 
@@ -68,6 +104,15 @@ class ScheduleObserver
      */
     public function forceDeleted(Schedule $schedule)
     {
+        if (Cache::has('ORGANIZATION_ROUTE_VEHICLE_DRIVER_SCHEDULE_DATA_')) {
+            Cache::forget('ORGANIZATION_ROUTE_VEHICLE_DRIVER_SCHEDULE_DATA_' . $schedule->o_id);
+        }
+        if (Cache::has('PUBLISHED_SCHEDULE_')) {
+            Cache::forget('PUBLISHED_SCHEDULE_' . $schedule->o_id);
+        }
+        if (Cache::has('CREATED_SCHEDULE_')) {
+            Cache::forget('CREATED_SCHEDULE_' . $schedule->o_id);
+        }
         Log::info('Schedule id ' . $schedule->id . ' for date ' . $schedule->date . ' is forcefuly deleted at ' . date('Y-m-d'));
     }
 }
