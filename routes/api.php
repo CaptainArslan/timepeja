@@ -25,8 +25,10 @@ Route::group(['middleware' => 'api'], function () {
     Route::prefix('v1/manager')->name('manager.')->group(function () {
         // Manager Auth
         Route::post('/register', [ManagerAuthController::class, 'register']);
+
         Route::post('/login', [ManagerAuthController::class, 'login']);
         Route::post('/login/web', [ManagerAuthController::class, 'webLogin']);
+        
         Route::post('/get-code', [ManagerAuthController::class, 'getVerificationCode'])
             ->middleware('throttle:ratelimit');
         Route::post('/refresh', [ManagerAuthController::class, 'refresh']);

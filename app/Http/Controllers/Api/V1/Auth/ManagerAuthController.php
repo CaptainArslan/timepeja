@@ -74,13 +74,11 @@ class ManagerAuthController extends BaseController
         if (empty($manager->password)) {
             Manager::where('phone', $request->phone)->update([
                 'password' => Hash::make($request->password),
-                // ,
+                'status' => Manager::STATUS_ACTIVE,
             ]);
-            // $manager->makeHidden(['password']);
-            // $manager->makeHidden(['token']);
             return $this->respondWithSuccess($manager, 'Manager registered successfully', 'REGISTER_API_SUCCESS');
         } else {
-            return $this->respondWithError('Manager alreasy exist. Please login ');
+            return $this->respondWithError('Manager alreasy exist. Please login.');
         }
     }
 
