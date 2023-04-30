@@ -25,6 +25,9 @@ class ApiDriverController extends BaseController
             $driver = Driver::where('o_id', $manager->o_id)
                 ->where('status', Driver::STATUS_ACTIVE)
                 ->paginate(Driver::DRIVER_LIMIT_PER_PAGE);
+            if ($driver->isEmpty()) {
+                return $this->respondWithError('No Driver Found');
+            }
             return $this->respondWithSuccess($driver, 'Oganization All Driver', 'ORGANIZATION_DRIVER');
         } catch (\Throwable $th) {
             return $this->respondWithError('Error Occured while fetching organization driver');
@@ -174,9 +177,9 @@ class ApiDriverController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($id): JsonResponse
     {
-        //
+        return $this->respondWithError('Method not allowed');
     }
 
     /**
@@ -186,7 +189,7 @@ class ApiDriverController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id): JsonResponse
     {
         $validator = Validator::make(
             $request->all(),
@@ -325,6 +328,33 @@ class ApiDriverController extends BaseController
         } catch (ModelNotFoundException $e) {
             return $this->respondWithError('Driver id not found');
             throw new NotFoundHttpException('Driver id not found');
+        }
+    }
+
+    /**
+     * Search the specified resource from storage.
+     *
+     * @param  string  $string
+     * @return \Illuminate\Http\Response
+     */
+    public function search(): JsonResponse
+    {
+        try {
+            $string = request()->input('name');
+            $manager = auth('manager')->user();
+            $drivers = Driver::where('name', 'like', '%' . $string . '%')
+                // ->orWhere('phone', 'like', '%' . $string . '%')
+                // ->orWhere('cnic', 'like', '%' . $string . '%')
+                // ->orWhere('license_no', 'like', '%' . $string . '%')
+                ->where('o_id', $manager->o_id)
+                ->select('id', 'name')
+                ->get();
+            if ($drivers->isEmpty()) {
+                return $this->respondWithError('No data found');
+            }
+            return $this->respondWithSuccess($drivers, 'Drivers retrieved successfully', 'API_DRIVER_SEARCH_RESULT');
+        } catch (ModelNotFoundException $e) {
+            throw new NotFoundHttpException('Error occured while fetching data');
         }
     }
 }

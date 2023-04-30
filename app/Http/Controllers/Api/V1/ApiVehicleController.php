@@ -29,7 +29,9 @@ class ApiVehicleController extends BaseController
                     $query->select('id', 'name', 'desc');
                 })->where('status', Vehicle::STATUS_ACTIVE)
                 ->paginate(Vehicle::VEHICLE_LIMIT_PER_PAGE);
-
+            if ($vehicles->isEmpty()) {
+                return $this->respondWithError('No data found');
+            }
             return $this->respondWithSuccess($vehicles, 'Oganization All Vehicle', 'ORGANIZATION_VEHICLE');
         } catch (\Throwable $th) {
             return $this->respondWithError('Error Occured while fetching organization driver');
@@ -234,6 +236,35 @@ class ApiVehicleController extends BaseController
         } catch (ModelNotFoundException $e) {
             return $this->respondWithError('Vehicle id not found');
             throw new NotFoundHttpException('Vehicle id not found' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Search vehicle
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function search(): JsonResponse
+    {
+        try {
+            $string = request()->input('number');
+            $manager = auth('manager')->user();
+            $vehicles = Vehicle::where('number', 'LIKE', '%' . $string . '%')
+                // ->orWhere('o_id', 'LIKE', '%' . $string . '%')
+                // ->orWhere('v_type_id', 'LIKE', '%' . $string . '%')
+                // ->orWhere('status', 'LIKE', '%' . $string . '%')
+                // ->orWhere('created_at', 'LIKE', '%' . $string . '%')
+                // ->orWhere('updated_at', 'LIKE', '%' . $string . '%')
+                ->where('o_id', $manager->o_id)
+                ->select('id', 'number')
+                ->get();
+            if ($vehicles->isEmpty()) {
+                return $this->respondWithError('No Vehicle found');
+            }
+            return $this->respondWithSuccess($vehicles, 'Vehicle retrieved successfully', 'API_VEHICLE_SEARCH_RESULT');
+        } catch (ModelNotFoundException $th) {
+            throw new NotFoundHttpException('Error occured while fetching data');
         }
     }
 }

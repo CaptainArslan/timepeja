@@ -96,7 +96,7 @@ class ApiManagerController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function profileUpload(Request $request)
+    public function profileUpload(Request $request): jsonResponse
     {
         $validator = Validator::make(
             $request->all(),
