@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Models\Route;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -26,6 +25,9 @@ class ApiRouteController extends BaseController
             $routes = Route::where('o_id', $manager->o_id)
                 ->where('status', Route::STATUS_ACTIVE)
                 ->paginate(Route::ROUTE_LIMIT_PER_PAGE);
+            if ($routes->isEmpty()) {
+                return $this->respondWithError('No data found');
+            }
             return $this->respondWithSuccess($routes, 'Organization Routes', 'ORGANIZATION_ROUTES');
         } catch (\Throwable $th) {
             return $this->respondWithError('Error Occured while fetching organization driver');
@@ -38,9 +40,9 @@ class ApiRouteController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(): jsonResponse
     {
-        //
+        return $this->respondWithError('Method not allowed');
     }
 
     /**
@@ -49,7 +51,7 @@ class ApiRouteController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request): jsonResponse
     {
         $validator = Validator::make($request->all(), [
             'number' => ['required', 'int', 'unique:routes,number'],
@@ -145,7 +147,7 @@ class ApiRouteController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id): jsonResponse
     {
         $validator = Validator::make(['id' => $id], [
             'id' => ['required', 'numeric', 'exists:routes,id']
@@ -177,9 +179,9 @@ class ApiRouteController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($id): jsonResponse
     {
-        //
+        return $this->respondWithError('Method not allowed', 'API_METHOD_NOT_ALLOWED');
     }
 
     /**
@@ -189,7 +191,7 @@ class ApiRouteController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id): jsonResponse
     {
         try {
             $route = Route::findOrFail($id);
@@ -255,7 +257,7 @@ class ApiRouteController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($id): jsonResponse
     {
         $validator = Validator::make(['id' => $id], [
             'id' => 'required', 'numeric', 'exists:routes,id'
@@ -275,6 +277,38 @@ class ApiRouteController extends BaseController
         } catch (ModelNotFoundException $e) {
             return $this->respondWithError('Route id not found');
             // throw new NotFoundHttpException('Driver id not found');
+        }
+    }
+
+    /**
+     * Search routes.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function search(): jsonResponse
+    {
+        try {
+            $string = request()->input('string');
+            $manager = auth('manager')->user();
+            $routes = Route::where('name', 'LIKE', '%' . $string . '%')
+                ->orWhere('number', 'LIKE', '%' . $string . '%')
+                ->orWhere('from', 'LIKE', '%' . $string . '%')
+                ->orWhere('to', 'LIKE', '%' . $string . '%')
+                // ->orWhere('from_longitude', 'LIKE', '%' . $string . '%')
+                // ->orWhere('from_latitude', 'LIKE', '%' . $string . '%')
+                // ->orWhere('to_longitude', 'LIKE', '%' . $string . '%')
+                // ->orWhere('to_latitude', 'LIKE', '%' . $string . '%')
+                ->where('o_id', $manager->o_id)
+                ->select('id', 'name')
+                ->get();
+            // ->paginate(Route::ROUTE_LIMIT_PER_PAGE);
+            if ($routes->isEmpty()) {
+                return $this->respondWithError('No Vehicle found');
+            }
+            return $this->respondWithSuccess($routes, 'Routes retrieved successfully', 'API_ROUTE_SEARCH_RESULT');
+        } catch (ModelNotFoundException $e) {
+            throw new NotFoundHttpException('No routes found');
         }
     }
 }

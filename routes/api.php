@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\V1\ApiDriverController as ApiDriverController;
 use App\Http\Controllers\Api\V1\ApiManagerController as ApiManagerController;
 use App\Http\Controllers\Api\V1\ApiRouteController;
 use App\Http\Controllers\Api\V1\ApiVehicleController;
+use App\Http\Controllers\Api\V1\LogReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,10 +26,8 @@ Route::group(['middleware' => 'api'], function () {
     Route::prefix('v1/manager')->name('manager.')->group(function () {
         // Manager Auth
         Route::post('/register', [ManagerAuthController::class, 'register']);
-
         Route::post('/login', [ManagerAuthController::class, 'login']);
         Route::post('/login/web', [ManagerAuthController::class, 'webLogin']);
-        
         Route::post('/get-code', [ManagerAuthController::class, 'getVerificationCode'])
             ->middleware('throttle:ratelimit');
         Route::post('/refresh', [ManagerAuthController::class, 'refresh']);
@@ -50,11 +49,19 @@ Route::group(['middleware' => 'api'], function () {
             Route::get('schedules/created/{date}', [ApiScheduleController::class, 'getCreatedScheduleByDate']);
 
             // Driver Api
-            Route::apiResource('/driver', ApiDriverController::class);
+            Route::resource('/driver', ApiDriverController::class);
+            Route::get('/search/driver', [ApiDriverController::class, 'search']);
+
             // Vehicle Api
-            Route::apiResource('/vehicle', ApiVehicleController::class);
+            Route::resource('/vehicle', ApiVehicleController::class);
+            Route::get('/search/vehicle', [ApiVehicleController::class, 'search']);
+
             // Route Api
-            Route::apiResource('/route', ApiRouteController::class);
+            Route::resource('/route', ApiRouteController::class);
+            Route::get('/search/route', [ApiRouteController::class, 'search']);
+
+            // Log Report Api
+            Route::post('/logreport', [LogReportController::class, 'index']);
 
             //main screen wrapper
             Route::get('/main-screen-wrapper', [ApiManagerController::class, 'mainScreenWrapper']);

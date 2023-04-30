@@ -35,6 +35,9 @@ class ApiScheduleController extends BaseController
                 ->with('drivers:id,name')
                 // ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time', 'status', 'is_delay', 'trip_status', 'created_at', 'updated_at', 'delayed_reason')
                 ->get();
+            if ($schedule->isEmpty()) {
+                return $this->respondWithError('No data found');
+            }
             return $this->respondWithSuccess($schedule, 'Oganization All Schedule', 'ORGANIZATION_SCHEDULE');
         } catch (\Throwable $th) {
             return $this->respondWithError('Error Occured while fetching organization schedule');
