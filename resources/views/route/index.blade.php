@@ -36,9 +36,7 @@
                             <select class="form-control" data-toggle="select2" name="o_id" data-width="100%" id="organization">
                                 <option value="" selected>Select</option>
                                 @forelse ($organizations as $organization)
-                                <option value="{{ $organization->id }}" {{ $organization->id == request()->input('o_id') ? 'selected' : '' }}>
-                                    {{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}
-                                </option>
+                                <option value="{{ $organization->id }}" {{ $organization->id == request()->input('o_id') ? 'selected' : '' }}>{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
                                 @empty
                                 <option value="">Please select</option>
                                 @endforelse
@@ -56,11 +54,11 @@
                         </div> -->
                         <div class="col-md-3">
                             <label for="date-1">From</label>
-                            <input class="form-control" type="date" name="from">
+                            <input class="form-control" type="date" name="from" value="{{ request()->input('from', old('from')) }}">
                         </div>
                         <div class="col-md-3">
                             <label for="date">To</label>
-                            <input class="form-control" type="date" name="to">
+                            <input class="form-control" type="date" name="to" value="{{ request()->input('to', old('to')) }}">
                         </div>
                         <div class="col-md-1">
                             <label for="route_list"></label>
@@ -165,7 +163,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="route_no" class="form-label">Route No</label>
-                        <input type="text" name="route_no" data-toggle="input-mask" data-mask-format="00000000000" class="form-control" onchange="setRouteName()" required>
+                        <input type="text" name="route_no" id="route_no" data-toggle="input-mask" data-mask-format="00000000000" class="form-control" onchange="setRouteName()" required>
                     </div>
                     <div class="mb-3">
                         <label for="from" class="form-label">From</label>
@@ -272,7 +270,7 @@
             initializeSelect2(".select2_form", "#addRouteForm")
         });
 
-         // this function is call when edit route modal open
+        // this function is call when edit route modal open
         $('#editRouteModal').on('shown.bs.modal', function() {
             initializeSelect2(".select2", "#editModalform")
         });
@@ -351,16 +349,16 @@
         $('#edit_route_name').val(routeno + '  ' + from + '  TO  ' + to);
     }
 
-    function showToast(message) {
-        var toast = $('<div class="toast"></div>');
-        toast.text(message);
-        $('body').append(toast);
-        setTimeout(function() {
-            toast.fadeOut(500, function() {
-                toast.remove();
-            });
-        }, 3000);
-    }
+    // function showToast(message) {
+    //     var toast = $('<div class="toast"></div>');
+    //     toast.text(message);
+    //     $('body').append(toast);
+    //     setTimeout(function() {
+    //         toast.fadeOut(500, function() {
+    //             toast.remove();
+    //         });
+    //     }, 3000);
+    // }
     // <b> <span class=" text-danger">15</span> - Gujranwala <span class="text-success"> TO </span> Lahore </b>
 </script>
 

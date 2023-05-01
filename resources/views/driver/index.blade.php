@@ -38,7 +38,7 @@
                         <div class="col-md-5">
                             <label for="organization">Select Oganization</label>
                             <select class="form-control filterselect2" id="organization" name="o_id" data-toggle="select2" data-width="100%">
-                                <option value="">Select</option>
+                                <option value="" selected>Select</option>
                                 @forelse ($organizations as $organization)
                                 <option value="{{ $organization->id }}" {{ $organization->id == request()->input('o_id') ? 'selected' : '' }}>{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
                                 @empty
