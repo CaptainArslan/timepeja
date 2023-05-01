@@ -32,7 +32,7 @@ class OrgRegisterationEmail extends Mailable
      */
     public function build()
     {
-        return $this->subject('Mail from Timepejao')
+        return $this->subject('Mail from Stoppick')
             ->markdown('emails.registeration');
     }
 }

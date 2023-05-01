@@ -33,7 +33,7 @@ class RouteFactory extends Factory
             'to_longitude' => $this->faker->longitude,
             'to_latitude' => $this->faker->latitude,
             'status' => Route::STATUS_ACTIVE,
-            'created_at' => Carbon::now(),
+            'created_at' => time(),
         ];
     }
 }
