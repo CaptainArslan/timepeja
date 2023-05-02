@@ -25,9 +25,9 @@ class ApiRouteController extends BaseController
             $routes = Route::where('o_id', $manager->o_id)
                 ->where('status', Route::STATUS_ACTIVE)
                 ->paginate(Route::ROUTE_LIMIT_PER_PAGE);
-            if ($routes->isEmpty()) {
-                return $this->respondWithError('No data found');
-            }
+            // if ($routes->isEmpty()) {
+            //     return $this->respondWithError('No data found');
+            // }
             return $this->respondWithSuccess($routes, 'Organization Routes', 'ORGANIZATION_ROUTES');
         } catch (\Throwable $th) {
             return $this->respondWithError('Error Occured while fetching organization driver');

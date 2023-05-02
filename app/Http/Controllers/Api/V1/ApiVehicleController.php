@@ -29,9 +29,9 @@ class ApiVehicleController extends BaseController
                     $query->select('id', 'name', 'desc');
                 })->where('status', Vehicle::STATUS_ACTIVE)
                 ->paginate(Vehicle::VEHICLE_LIMIT_PER_PAGE);
-            if ($vehicles->isEmpty()) {
-                return $this->respondWithError('No data found');
-            }
+            // if ($vehicles->isEmpty()) {
+            //     return $this->respondWithError('No data found');
+            // }
             return $this->respondWithSuccess($vehicles, 'Oganization All Vehicle', 'ORGANIZATION_VEHICLE');
         } catch (\Throwable $th) {
             return $this->respondWithError('Error Occured while fetching organization driver');

@@ -4,10 +4,11 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Models\Driver;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Api\V1\BaseController;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ApiDriverController extends BaseController
@@ -21,17 +22,13 @@ class ApiDriverController extends BaseController
     {
         try {
             $manager = auth('manager')->user();
-            // DRIVER_LIMIT_PER_PAGE
             $driver = Driver::where('o_id', $manager->o_id)
                 ->where('status', Driver::STATUS_ACTIVE)
                 ->paginate(Driver::DRIVER_LIMIT_PER_PAGE);
-            if ($driver->isEmpty()) {
-                return $this->respondWithError('No Driver Found');
-            }
             return $this->respondWithSuccess($driver, 'Oganization All Driver', 'ORGANIZATION_DRIVER');
         } catch (\Throwable $th) {
-            return $this->respondWithError('Error Occured while fetching organization driver');
-            throw $th;
+            // throw $th;
+            return $this->respondWithError('Error Occured while fetching organization driver' . $th->getMessage());
         }
     }
 
@@ -57,12 +54,17 @@ class ApiDriverController extends BaseController
             // 'o_id' => ['required', 'string'],
             'name' => ['required', 'string'],
             'phone' => ['required', 'string', 'unique:drivers,phone'],
-            'cnic' => ['required', 'string', 'regex:/^[0-9+]{5}-[0-9+]{7}-[0-9]{1}$/', 'unique:drivers,cnic'],
+            'cnic' => [
+                'required',
+                'string',
+                'unique:drivers,cnic',
+                // 'regex:/^[0-9+]{5}-[0-9+]{7}-[0-9]{1}$/',
+            ],
             'license_no' => [
                 'required',
                 'string',
-                'regex:/^\d{10}-[A-Za-z]{3}+$/',
-                'unique:drivers,license_no'
+                'unique:drivers,license_no',
+                // 'regex:/^\d{10}-[A-Za-z]{3}+$/',
             ],
             'cnic_front' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
             'cnic_back' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
@@ -98,12 +100,10 @@ class ApiDriverController extends BaseController
         ]);
 
         if ($validator->fails()) {
-            // return $this->respondWithError(implode(', ', $validator->errors()->all()));
             return $this->respondWithError($validator->errors()->first());
         }
 
         $manager = auth('manager')->user();
-        // return $this->respondWithError($manager);
         $otp = rand(1000, 9999);
         $data = [
             'o_id'                      => $manager->o_id,
@@ -177,8 +177,9 @@ class ApiDriverController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id): JsonResponse
+    public function edit(Request $request, $id)
     {
+        return $request->all();
         return $this->respondWithError('Method not allowed');
     }
 
@@ -191,87 +192,92 @@ class ApiDriverController extends BaseController
      */
     public function update(Request $request, $id): JsonResponse
     {
-        $validator = Validator::make(
-            $request->all(),
-            [
-                // 'id' => ['exists:drivers,id', 'required'],
-                'name' => ['required', 'string'],
-                'phone' => ['required', 'string', 'unique:drivers,phone, ' . $id],
-                'cnic' => [
-                    'required',
-                    'string',
-                    'unique:drivers,cnic,' . $id,
-                    'regex:/^[0-9+]{5}-[0-9+]{7}-[0-9]{1}$/'
-                ],
-                'license_no' => [
-                    'required',
-                    'string',
-                    'unique:drivers,license_no,' . $id,
-                    'regex:/^\d{10}-[A-Za-z]{3}+$/'
-                ],
-                'cnic_front' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
-                'cnic_back' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
-                'license_front' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
-                'license_back' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
-            ],
-            [
-                'o_id.required' => 'Organization required',
-                'name.required' => 'Name required',
-                'phone.required' => 'Phone required',
-                'phone.unique' => 'Phone already exists',
-                'cnic.required' => 'CNIC required',
-                'cnic.unique' => 'CNIC already exists',
-                'cnic.regex' => 'CNIC format is invalid',
-                'license_no.required' => 'License required',
-                'license_no.unique' => 'License already exists',
-                'license_no.regex' => 'License format is invalid, must be 10 digit number and 3 character string eg 1234567890-ABC',
-                'cnic_front.required' => 'CNIC front required',
-                'cnic_front.image' => 'CNIC front must be an image',
-                'cnic_front.mimes' => 'CNIC front must be a file of type: jpeg, png, jpg, gif, svg',
-                'cnic_front.max' => 'CNIC front may not be greater than 2048 kilobytes',
-                'cnic_back.required' => 'CNIC back required',
-                'cnic_back.image' => 'CNIC back must be an image',
-                'cnic_back.mimes' => 'CNIC back must be a file of type: jpeg, png, jpg, gif, svg',
-                'cnic_back.max' => 'CNIC back may not be greater than 2048 kilobytes',
-                'license_front.required' => 'License front required',
-                'license_front.image' => 'License front must be an image',
-                'license_front.mimes' => 'License front must be a file of type: jpeg, png, jpg, gif, svg',
-                'license_front.max' => 'License front may not be greater than 2048 kilobytes',
-                'license_back.required' => 'License back required',
-                'license_back.image' => 'License back must be an image',
-                'license_back.mimes' => 'License back must be a file of type: jpeg, png, jpg, gif, svg',
-                'license_back.max' => 'License back may not be greater than 2048 kilobytes',
-            ]
-        );
-
-        if ($validator->fails()) {
-            return $this->respondWithError($validator->errors()->first());
-        }
+        // return $request->all();
         try {
-            $driver = Driver::find($id);
-            // $manager = auth('manager')->user();
-            // $driver->o_id = $manager->o_id;
-            // $driver->u_id = $manager->id;
+            $driver = Driver::findOrFail($id);
 
+            $validator = Validator::make(
+                $request->all(),
+                [
+                    'name' => ['required', 'string'],
+                    'phone' => [
+                        'required',
+                        'string',
+                        'unique:drivers,phone,' . $id,
+                        // Rule::unique('drivers')->ignore($id)
+                    ],
+                    'cnic' => [
+                        'required',
+                        'string',
+                        'unique:drivers,cnic,' . $id,
+                        // 'regex:/^[0-9+]{5}-[0-9+]{7}-[0-9]{1}$/',
+                        // Rule::unique('drivers')->ignore($id),
+                    ],
+                    'license_no' => [
+                        'required',
+                        'string',
+                        'unique:drivers,license_no,' . $id,
+                        // 'regex:/^\d{10}-[A-Za-z]{3}+$/'
+                        // Rule::unique('drivers')->ignore($id),
+                    ],
+                    'cnic_front' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+                    'cnic_back' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+                    'license_front' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+                    'license_back' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+                ],
+                [
+                    'o_id.required' => 'Organization required',
+                    'name.required' => 'Name required',
+                    'phone.required' => 'Phone required',
+                    'phone.unique' => 'Phone already exists',
+                    'cnic.required' => 'CNIC required',
+                    'cnic.unique' => 'CNIC already exists',
+                    'cnic.regex' => 'CNIC format is invalid',
+                    'license_no.required' => 'License required',
+                    'license_no.unique' => 'License already exists',
+                    'license_no.regex' => 'License format is invalid, must be 10 digit number and 3 character string eg 1234567890-ABC',
+                    'cnic_front.required' => 'CNIC front required',
+                    'cnic_front.image' => 'CNIC front must be an image',
+                    'cnic_front.mimes' => 'CNIC front must be a file of type: jpeg, png, jpg, gif, svg',
+                    'cnic_front.max' => 'CNIC front may not be greater than 2048 kilobytes',
+                    'cnic_back.required' => 'CNIC back required',
+                    'cnic_back.image' => 'CNIC back must be an image',
+                    'cnic_back.mimes' => 'CNIC back must be a file of type: jpeg, png, jpg, gif, svg',
+                    'cnic_back.max' => 'CNIC back may not be greater than 2048 kilobytes',
+                    'license_front.required' => 'License front required',
+                    'license_front.image' => 'License front must be an image',
+                    'license_front.mimes' => 'License front must be a file of type: jpeg, png, jpg, gif, svg',
+                    'license_front.max' => 'License front may not be greater than 2048 kilobytes',
+                    'license_back.required' => 'License back required',
+                    'license_back.image' => 'License back must be an image',
+                    'license_back.mimes' => 'License back must be a file of type: jpeg, png, jpg, gif, svg',
+                    'license_back.max' => 'License back may not be greater than 2048 kilobytes',
+                ]
+            );
+
+            if ($validator->fails()) {
+                return $this->respondWithError($validator->errors()->first());
+            }
+            // update values
             $driver->name = $request->input('name');
             $driver->phone = $request->input('phone');
             $driver->cnic = $request->input('cnic');
             $driver->license_no = $request->input('license_no');
 
             // ----- these function are to remove old picture from the folder
-            if ($request->hasFile('cnic_front')) {
+            if ($request->hasFile('cnic_front') && $driver->cnic_front_pic_name != null) {
                 removeImage($driver->cnic_front_pic_name, 'drivers/cnic');
             }
 
-            if ($request->hasFile('cnic_back')) {
+            if ($request->hasFile('cnic_back') && $driver->cnic_back_pic_name != null) {
                 removeImage($driver->cnic_back_pic_name, 'drivers/cnic');
             }
 
-            if ($request->hasFile('license_front')) {
+            if ($request->hasFile('license_front') && $driver->license_no_front_pic_name != null) {
                 removeImage($driver->license_no_front_pic_name, 'drivers/license');
             }
 
-            if ($request->hasFile('license_back')) {
+            if ($request->hasFile('license_back') && $driver->license_no_back_pic_name != null) {
                 removeImage($driver->license_no_back_pic_name, 'drivers/license');
             }
 
@@ -298,7 +304,8 @@ class ApiDriverController extends BaseController
             }
             return $this->respondWithSuccess($driver, 'Driver updated successfully', 'API_DRIVER_UPDATED');
         } catch (ModelNotFoundException $e) {
-            throw new NotFoundHttpException('Driver id not found');
+            return $this->respondWithError('Driver id not found');
+            // throw new NotFoundHttpException('Driver id not found');
         }
     }
 
