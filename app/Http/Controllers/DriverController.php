@@ -8,7 +8,6 @@ use App\Models\Organization;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\Driver\DriverStoreRequest;
 use App\Http\Requests\Driver\DriverUpdateRequest;
 use App\Http\Requests\Driver\DriverMultiDeleteRequest;
@@ -42,19 +41,23 @@ class DriverController extends Controller
         ]);
     }
 
-
+    /**
+     * Function to filter records
+     *
+     * @param Request $request
+     * @return void
+     */
     public function filter($request)
     {
         $request->validate([
-            'o_id' => ['nullable', 'numeric'],
-            'from' => ['required', 'date'],
-            'to' => ['required', 'date', 'after_or_equal:from'],
+            'o_id' => ['nullable', 'numeric', 'exists:organizations,id'],
+            'from' => ['nullable', 'date'],
+            'to' => ['nullable', 'date', 'after:from'],
         ], [
-            'from.required' => 'Start date required',
-            'from.date' => 'Start date must be a date',
-            'to.required' => 'End date required',
-            'to.date' => 'End date must be a date',
-            'to.after_or_equal' => 'End date must be after or equal to start date',
+            'o_id.exists' => "The selected organization doesn't exist.",
+            'from.date' => "The registration from date must be a valid date.",
+            'to.date' => "The registration to date must be a valid date.",
+            'to.after' => "The registration to date must be a date after registration from.",
         ]);
         // Get the input values from the request
         $o_id = $request->input('o_id');
@@ -245,6 +248,12 @@ class DriverController extends Controller
         }
     }
 
+    /**
+     * function to delete multiple drivers
+     *
+     * @param DriverMultiDeleteRequest $request
+     * @return void
+     */
     public function multiDelete(DriverMultiDeleteRequest $request)
     {
         try {
@@ -266,6 +275,11 @@ class DriverController extends Controller
         }
     }
 
+    /**
+     * function to get all the drivers
+     *
+     * @return void
+     */
     public function upcomingTrips(Request $request)
     {
         $trips = [];
@@ -281,6 +295,12 @@ class DriverController extends Controller
         ]);
     }
 
+    /**
+     * function to filter upcoming trips
+     *
+     * @param Request $request
+     * @return void
+     */
     public function filterUpcomingTrips($request)
     {
         $request->validate([

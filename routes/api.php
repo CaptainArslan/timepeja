@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\V1\ApiManagerController as ApiManagerController;
 use App\Http\Controllers\Api\V1\ApiRouteController;
 use App\Http\Controllers\Api\V1\ApiVehicleController;
 use App\Http\Controllers\Api\V1\LogReportController;
+use App\Http\Middleware\ConvertFormData;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,6 +51,7 @@ Route::group(['middleware' => 'api'], function () {
 
             // Driver Api
             Route::resource('/driver', ApiDriverController::class);
+            Route::put('/driver/{id}/update', [ApiDriverController::class, 'update']);
             Route::get('/search/driver', [ApiDriverController::class, 'search']);
 
             // Vehicle Api
