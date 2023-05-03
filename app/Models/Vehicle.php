@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Vehicle extends Model
 {
@@ -95,7 +96,7 @@ class Vehicle extends Model
      */
     public function getFrontPicNameAttribute()
     {
-        return $this->attributes['front_pic'] ;
+        return $this->attributes['front_pic'];
     }
 
     /**
@@ -117,7 +118,7 @@ class Vehicle extends Model
      */
     public function getBackPicNameAttribute()
     {
-        return $this->attributes['back_pic'] ;
+        return $this->attributes['back_pic'];
     }
 
     /**
@@ -139,6 +140,39 @@ class Vehicle extends Model
      */
     public function getNumberPicNameAttribute()
     {
-        return $this->attributes['number_pic'] ;
+        return $this->attributes['number_pic'];
+    }
+
+    /**
+     * Get the registration date of the vehicle.
+     *
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getRegDateAttribute()
+    {
+        return $this->attributes['reg_date'] ? date('d-m-Y', strtotime($this->attributes['reg_date'])) : null;
+    }
+
+    /**
+     * Get the created_at.
+     *
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getCreatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('Y-m-d');
+    }
+
+    /**
+     * Get the updated_at.
+     *
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getUpdatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('Y-m-d');
     }
 }

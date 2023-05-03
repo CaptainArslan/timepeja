@@ -54,7 +54,7 @@ class ApiRouteController extends BaseController
     public function store(Request $request): jsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'number' => ['required', 'int', 'unique:routes,number'],
+            'number' => ['required', 'int'],
             'name' => ['nullable', 'string'],
             'from' => ['required', 'string'],
             'from_longitude' => ['nullable', 'string'],
@@ -94,19 +94,20 @@ class ApiRouteController extends BaseController
             $route1 = new Route();
             $route1->u_id = $manager->id;
             $route1->o_id = $manager->o_id;
-            $route1->number = $request->input('number');
+            $route1->number = $request->number;
 
-            $route1->to = $request->input('to');
-            $route1->to_longitude = $request->input('to_longitude');
-            $route1->to_latitude = $request->input('to_latitude');
+            $route1->to = $request->to;
+            $route1->to_longitude = $request->to_longitude;
+            $route1->to_latitude = $request->to_latitude;
 
-            $route1->from = $request->input('from');
-            $route1->from_longitude = $request->input('from_longitude');
-            $route1->from_latitude = $request->input('from_latitude');
+            $route1->from = $request->from;
+            $route1->from_longitude = $request->from_longitude;
+            $route1->from_latitude = $request->from_latitude;
 
-            $route1->name = $request->input('number') . ' - ' . $request->input('from') . ' To ' . $request->input('to');
+            $route1->name = $request->number . ' - ' . $request->from . ' To ' . $request->to;
             if (!$route1->save()) {
-                throw new \Exception('Error occurred while creating 1st route.');
+                return $this->respondWithError('Error occurred while creating 1st route.');
+                // throw new \Exception('Error occurred while creating 1st route.');
             }
             $routes[] = $route1;
 
@@ -114,19 +115,20 @@ class ApiRouteController extends BaseController
             $route2 = new Route();
             $route2->u_id = $manager->id;
             $route2->o_id = $manager->o_id;
-            $route2->number = $request->input('number');
+            $route2->number = $request->number;
 
-            $route2->to = $request->input('from');
-            $route2->to_longitude = $request->input('from_longitude');
-            $route2->to_latitude = $request->input('from_latitude');
+            $route2->to = $request->from;
+            $route2->to_longitude = $request->from_longitude;
+            $route2->to_latitude = $request->from_latitude;
 
-            $route2->from = $request->input('to');
-            $route2->from_longitude = $request->input('to_longitude');
-            $route2->from_latitude = $request->input('to_latitude');
+            $route2->from = $request->to;
+            $route2->from_longitude = $request->to_longitude;
+            $route2->from_latitude = $request->to_latitude;
 
-            $route2->name = $request->input('number') . ' - ' . $request->input('to') . ' To ' . $request->input('from');
+            $route2->name = $request->number . ' - ' . $request->to . ' To ' . $request->from;
             if (!$route2->save()) {
-                throw new \Exception('Error occurred while creating 2nd route.');
+                return $this->respondWithError('Error occurred while creating 2nd route.');
+                // throw new \Exception('Error occurred while creating 2nd route.');
             }
             $routes[] = $route2;
 
@@ -191,14 +193,14 @@ class ApiRouteController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id): jsonResponse
+    public function update(Request $request, $id)
     {
         try {
             $route = Route::findOrFail($id);
             $validator = Validator::make(
                 $request->all(),
                 [
-                    'number' => ['required', 'string', 'unique:routes,number,' . $id],
+                    'number' => ['required', 'string',],
                     'name' => ['nullable', 'string'],
                     'from' => ['required', 'string'],
                     'from_longitude' => ['nullable', 'string'],
@@ -231,20 +233,58 @@ class ApiRouteController extends BaseController
                 return $this->respondWithError($validator->errors()->first());
             }
 
+            try {
+                DB::beginTransaction();
 
-            $route->number = $request->input('number');
-            $route->from = $request->input('from');
-            $route->from_longitude = $request->input('from_longitude');
-            $route->from_latitude = $request->input('from_latitude');
-            $route->to = $request->input('to');
-            $route->to_longitude = $request->input('to_longitude');
-            $route->to_latitude = $request->input('to_latitude');
-            $route->name =  $request->input('number') . ' - ' . $request->input('to') . ' To ' . $request->input('from');
-            if (!$route->save()) {
-                throw new \Exception('Error occurred while updating route.');
+                $routes = [];
+                $data = Route::where('number', $route->number)
+                    ->where('o_id', $route->o_id)
+                    ->where('status', Route::STATUS_ACTIVE)
+                    ->get();
+                if (!$data) {
+                    return $this->respondWithError('Route not found');
+                }
+
+                $route1 = $data[0];
+                $route1->number = $request->number;
+                $route1->from = $request->from;
+                $route1->from_longitude = $request->from_longitude;
+                $route1->from_latitude = $request->from_latitude;
+                $route1->to = $request->to;
+                $route1->to_longitude = $request->to_longitude;
+                $route1->to_latitude = $request->to_latitude;
+                $route1->name =  $request->number . ' - ' . $request->to . ' To ' . $request->from;
+                $route1Save = $route1->save();
+                if (!$route1Save) {
+                    return $this->respondWithError('Error occurred while updating route 1.');
+                }
+                $routes[] = $route1;
+
+                $route2 = $data[1];
+                $route2->number = $request->number;
+                $route2->to = $request->from;
+                $route2->to_longitude = $request->from_longitude;
+                $route2->to_latitude = $request->from_latitude;
+                $route2->from = $request->to;
+                $route2->from_longitude = $request->to_longitude;
+                $route2->from_latitude = $request->to_latitude;
+                $route2->name = $request->number . ' - ' . $request->from . ' To ' . $request->to;
+                $route2Save =  $route2->save();
+                if (!$route2Save) {
+                    return $this->respondWithError('Error occurred while updating route 2.');
+                }
+                $routes[] = $route2;
+                if ($route1Save && $route2Save) {
+                    DB::commit();
+                    return $this->respondWithSuccess($routes, 'Route updated successfully', 'API_ROUTE_UPDATED');
+                } else {
+                    DB::rollBack();
+                    return $this->respondWithError('Error occurred while updating routes.');
+                }
+            } catch (\Throwable $th) {
+                DB::rollBack();
+                throw $th;
             }
-
-            return $this->respondWithSuccess($route, 'Route updated successfully', 'API_ROUTE_UPDATED');
         } catch (ModelNotFoundException $e) {
             return $this->respondWithError('Route id not found');
             // throw new NotFoundHttpException('Route id not found');
@@ -273,7 +313,7 @@ class ApiRouteController extends BaseController
         try {
             $route = Route::findOrFail($id);
             $route->delete();
-            return $this->respondWithSuccess($route, 'Route deleted successfully', 'API_ROUTE_DELETED');
+            return $this->respondWithDelete('Route deleted successfully', 'API_ROUTE_DELETED');
         } catch (ModelNotFoundException $e) {
             return $this->respondWithError('Route id not found');
             // throw new NotFoundHttpException('Driver id not found');
@@ -309,6 +349,26 @@ class ApiRouteController extends BaseController
             return $this->respondWithSuccess($routes, 'Routes retrieved successfully', 'API_ROUTE_SEARCH_RESULT');
         } catch (ModelNotFoundException $e) {
             throw new NotFoundHttpException('No routes found');
+        }
+    }
+
+    /**
+     * Get route.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function getRoute(): jsonResponse
+    {
+        try {
+            $manager = auth('manager')->user();
+            $routes = Route::where('o_id', $manager->o_id)
+                ->where('status', Route::STATUS_ACTIVE)
+                ->get();
+            return $this->respondWithSuccess($routes, 'Organization Routes', 'ORGANIZATION_ROUTES');
+        } catch (\Throwable $th) {
+            return $this->respondWithError('Error Occured while fetching organization driver');
+            throw $th;
         }
     }
 }

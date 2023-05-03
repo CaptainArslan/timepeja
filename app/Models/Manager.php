@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Carbon;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class Manager extends Authenticatable implements JWTSubject
@@ -181,5 +182,27 @@ class Manager extends Authenticatable implements JWTSubject
     public function getPictureNameAttribute()
     {
         return $this->attributes['picture'];
+    }
+
+    /**
+     * Get the created_at.
+     *
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getCreatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('Y-m-d');
+    }
+
+    /**
+     * Get the updated_at.
+     *
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getUpdatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('Y-m-d');
     }
 }

@@ -25,7 +25,7 @@ class CreateVehiclesTable extends Migration
             $table->string('front_pic')->nullable();
             $table->string('back_pic')->nullable();
             $table->string('number_pic')->nullable();
-            
+
             // Optional fields
             $table->string('reg_date')->nullable();
             $table->string('expiry_date')->nullable();

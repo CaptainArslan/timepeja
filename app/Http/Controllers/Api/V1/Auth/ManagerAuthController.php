@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api\V1\Auth;
 
 use App\Models\Manager;
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
@@ -19,7 +18,18 @@ class ManagerAuthController extends BaseController
      */
     public function __construct()
     {
-        $this->middleware('auth:manager', ['except' => ['login', 'register', 'getVerificationCode', 'forgetPassword', 'webLogin']]);
+        $this->middleware(
+            'auth:manager',
+            [
+                'except' => [
+                    'login',
+                    'register',
+                    'getVerificationCode',
+                    'forgetPassword',
+                    'webLogin'
+                ]
+            ]
+        );
     }
 
     /**
@@ -62,23 +72,26 @@ class ManagerAuthController extends BaseController
         if ($validator->fails()) {
             return $this->respondWithError($validator->errors()->first());
         }
+        try {
+            $manager = Manager::where('phone', $request->phone)
+                ->where('otp', $request->otp)
+                ->first();
 
-        $manager = Manager::where('phone', $request->phone)
-            ->where('otp', $request->otp)
-            ->first();
+            if (!$manager) {
+                return $this->respondWithError("Invalid phone number or verification code");
+            }
 
-        if (!$manager) {
-            return $this->respondWithError("Invalid phone number or verification code");
-        }
-
-        if (empty($manager->password)) {
-            Manager::where('phone', $request->phone)->update([
-                'password' => Hash::make($request->password),
-                'status' => Manager::STATUS_ACTIVE,
-            ]);
-            return $this->respondWithSuccess($manager, 'Manager registered successfully', 'REGISTER_API_SUCCESS');
-        } else {
-            return $this->respondWithError('Manager alreasy exist. Please login.');
+            if (empty($manager->password)) {
+                $manager::where('phone', $request->phone)->update([
+                    'password' => Hash::make($request->password),
+                    'status' => Manager::STATUS_ACTIVE,
+                ]);
+                return $this->respondWithSuccess($manager, 'Manager registered successfully', 'REGISTER_API_SUCCESS');
+            } else {
+                return $this->respondWithError('Manager alreasy exist. Please login.');
+            }
+        } catch (\Throwable $th) {
+            throw $th;
         }
     }
 
@@ -97,7 +110,6 @@ class ManagerAuthController extends BaseController
                 'required',
                 'string',
                 'between:8,25',
-                // 'regex:/^(?=.*[a-z])(?=.*[A- Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'
             ],
         ], [
             'phone.required' => 'Phone number is required',
@@ -114,24 +126,25 @@ class ManagerAuthController extends BaseController
             return $this->respondWithError($validator->errors()->first());
         }
 
-        $credentials = $request->only(['phone', 'password']);
+        try {
+            $credentials = $request->only(['phone', 'password']);
 
-        if (!$token = auth('manager')->attempt($credentials)) {
-            return $this->respondWithError('Invalid phone number or password');
+            if (!$token = auth('manager')->attempt($credentials)) {
+                return $this->respondWithError('Invalid phone number or password');
+            }
+
+            $user = auth('manager')->user();
+            if (!$user) {
+                return $this->respondWithError('User not Found');
+            }
+
+            return $this->respondWithSuccess($user, 'Login successfully', 'LOGIN_API_SUCCESS', [
+                'content-type' => 'application/json',
+                'authorization' => $token
+            ]);
+        } catch (\Throwable $th) {
+            throw $th;
         }
-
-        $user = auth('manager')->user();
-        if (!$user) {
-            return $this->respondWithError('User not Found');
-        }
-        $user->makeHidden('password');
-
-        return $this->respondWithSuccess($user, 'Login successfully', 'LOGIN_API_SUCCESS', [
-            'content-type' => 'application/json',
-            // 'uid' => $user->email,
-            // 'access-token' => $user->token,
-            'authorization' => $token
-        ]);
     }
 
     /**
@@ -156,18 +169,22 @@ class ManagerAuthController extends BaseController
             return $this->respondWithError($validator->errors()->first());
         }
 
-        $manager = Manager::where('phone', $fields['phone'])->first();
-        if (!empty($manager)) {
-            $manager = Manager::find($manager->id);
-            $manager->otp = rand(1000, 9999);
-            $save = $manager->save();
-            if ($save) {
-                return $this->respondWithSuccess($manager->otp, 'Otp Sent Successfully', 'API_GET_CODE');
+        try {
+            $manager = Manager::where('phone', $fields['phone'])->first();
+            if (!empty($manager)) {
+                $manager->otp = rand(1000, 9999);
+                $save = $manager->save();
+                if ($save) {
+                    $data = $manager->only('id', 'name', 'phone', 'otp');
+                    return $this->respondWithSuccess($data, 'Otp Sent Successfully', 'API_GET_CODE');
+                } else {
+                    return $this->respondWithError('Error Occured while sending otp');
+                }
             } else {
-                return $this->respondWithError('Error Occured while sending otp');
+                return $this->respondWithError('Invalid Phone number provided');
             }
-        } else {
-            return $this->respondWithError('Invalid Phone number provided');
+        } catch (\Throwable $th) {
+            throw $th;
         }
     }
 
@@ -200,22 +217,24 @@ class ManagerAuthController extends BaseController
             return $this->respondWithError($validator->errors()->first());
         }
 
-        $manager = Manager::where('phone', $request->phone)
-            ->where('otp', $request->otp)
-            ->first();
+        try {
+            $manager = Manager::where('phone', $request->phone)
+                ->where('otp', $request->otp)
+                ->first();
 
-        if (!$manager) {
-            return $this->respondWithError('invalid phone or verification code');
+            if (!$manager) {
+                return $this->respondWithError('invalid phone or verification code');
+            }
+
+            $manager->password = Hash::make($request->password);
+            $save = $manager->save();
+            if (!$save) {
+                return $this->respondWithError('Error Occured while updating password');
+            }
+            return $this->respondWithSuccess($manager, 'Password Updated Successfully', 'PASSWORD_UPDATE');
+        } catch (\Throwable $th) {
+            throw $th;
         }
-
-        $manager->where('phone', $request->phone)
-            ->where('otp', $request->otp)
-            ->update([
-                'password' => Hash::make($request->password),
-            ]);
-        $manager->makeHidden('password');
-
-        return $this->respondWithSuccess($manager, 'Password Updated Successfully', 'PASSWORD_UPDATE');
     }
 
     /**
@@ -225,15 +244,19 @@ class ManagerAuthController extends BaseController
      */
     public function profile(Request $request): JsonResponse
     {
-        return $this->respondWithSuccess(
-            auth('manager')->user(),
-            // ->load('organization')
-            'Manager profile',
-            'MANAGER_PROFILE'
-        );
-        // return response()->json(
-        //     auth('manager')->user() // ->load('organization')
-        // );
+        try {
+            $data = $this->respondWithSuccess(
+                auth('manager')->user(),
+                'Manager profile',
+                'MANAGER_PROFILE'
+            );
+            if (!$data) {
+                $this->respondWithError('Error Occured while fetching profile');
+            }
+            return $data;
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 
     /**
@@ -244,7 +267,7 @@ class ManagerAuthController extends BaseController
     public function logout(): JsonResponse
     {
         auth('manager')->logout();
-        return $this->respondWithSuccess(null, 'Successfully logged out', 'LOGOUT');
+        return $this->respondWithSuccess(null, 'Successfully logged out', 'API_LOGOUT');
     }
 
     /**
@@ -288,32 +311,26 @@ class ManagerAuthController extends BaseController
         if ($validator->fails()) {
             return $this->respondWithError($validator->errors()->first());
         }
+        try {
+            $credentials = $request->only(['phone', 'password']);
 
-        $credentials = $request->only(['phone', 'password']);
+            if (!$token = auth('manager')->attempt($credentials)) {
+                return $this->respondWithError('Invalid phone number or password');
+            }
 
-        if (!$token = auth('manager')->attempt($credentials)) {
-            return $this->respondWithError('Invalid phone number or password');
+            $user = auth('manager')->user();
+            if (!$user) {
+                return $this->respondWithError('User not Found');
+            }
+
+            $user['token'] = $token;
+
+            return $this->respondWithSuccess($user, 'Login successfully', 'LOGIN_API_SUCCESS', [
+                'content-type' => 'application/json',
+                'authorization' => $token
+            ]);
+        } catch (\Throwable $th) {
+            throw $th;
         }
-
-        $user = auth('manager')->user();
-        if (!$user) {
-            return $this->respondWithError('User not Found');
-        }
-        $user->makeHidden('password');
-
-        $user['token'] = $token;
-
-        return $this->respondWithSuccess($user, 'Login successfully', 'LOGIN_API_SUCCESS', [
-            'content-type' => 'application/json',
-            'authorization' => $token
-        ]);
     }
 }
-
-// this query is for to load load data from organization with its type
-// $user = auth('api')->user()->load(['organization' => function ($query) {
-//     $query->select('id', 'name', 'branch_name', 'branch_code', 'email', 'phone', 'address', 'o_type_id');
-//     $query->with(['organizationType' => function ($query) {
-//         $query->select('id', 'name', 'desc');
-//     }]);
-// }]);
