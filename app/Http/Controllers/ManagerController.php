@@ -6,17 +6,12 @@ use App\Models\State;
 use App\Models\Manager;
 use App\Models\Schedule;
 use App\Models\Financials;
-use Illuminate\Support\Str;
 use App\Models\Organization;
 use Illuminate\Http\Request;
 use App\Models\OrganizationType;
 use Illuminate\Support\Facades\DB;
-use App\Mail\OrgRegisterationEmail;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\ManagerStoreRequest;
-use App\Jobs\SendOrgRegisterEmailJob;
 
 class ManagerController extends Controller
 {

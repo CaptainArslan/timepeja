@@ -33,11 +33,7 @@ class ApiScheduleController extends BaseController
                 ->with('routes:id,name,number,from,to')
                 ->with('vehicles:id,number')
                 ->with('drivers:id,name')
-                // ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time', 'status', 'is_delay', 'trip_status', 'created_at', 'updated_at', 'delayed_reason')
                 ->get();
-            // if ($schedule->isEmpty()) {
-            //     return $this->respondWithError('No data found');
-            // }
             return $this->respondWithSuccess($schedule, 'Oganization All Schedule', 'ORGANIZATION_SCHEDULE');
         } catch (\Throwable $th) {
             return $this->respondWithError('Error Occured while fetching organization schedule');
@@ -90,31 +86,37 @@ class ApiScheduleController extends BaseController
 
         if ($validator->fails()) {
             return $this->respondWithError($validator->errors()->first());
-            // return $this->respondWithSuccess($validator->errors()->all(), 'message', 'Validation Error');
         }
 
-        $manager = auth('manager')->user();
+        try {
+            $manager = auth('manager')->user();
 
-        $schedule = new Schedule();
-        $schedule->o_id = $manager->o_id;
-        $schedule->u_id = $manager->id;
-        $schedule->route_id = intval($request->input('route_id'));
-        $schedule->v_id = intval($request->input('v_id'));
-        $schedule->d_id = intval($request->input('d_id'));
-        $schedule->date = $request->input('date');
-        $schedule->time = $request->input('time');
-        $schedule->status = Schedule::STATUS_DRAFT;
-        $save = $schedule->save();
-        if (!$save) {
-            return $this->respondWithError('Error Occured while creating schedule');
+            $schedule = new Schedule();
+            $schedule->o_id = $manager->o_id;
+            $schedule->u_id = $manager->id;
+            $schedule->route_id = $request->route_id;
+            $schedule->v_id = $request->v_id;
+            $schedule->d_id = $request->d_id;
+            $schedule->date = $request->date;
+            $schedule->time = $request->time;
+            $schedule->status = Schedule::STATUS_DRAFT;
+            $save = $schedule->save();
+
+            if (!$save) {
+                return $this->respondWithError('Error Occured while creating schedule');
+            }
+
+            $data = $schedule->load([
+                'organizations:id,name',
+                'routes:id,name,number,from,to',
+                'vehicles:id,number',
+                'drivers:id,name'
+            ]);
+
+            return $this->respondWithSuccess($data, 'Schedule Creadted Successfully', 'SCHEDULE_CREATED');
+        } catch (\Throwable $th) {
+            throw $th;
         }
-        $data = $schedule->load([
-            'organizations:id,name',
-            'routes:id,name,number,from,to',
-            'vehicles:id,number',
-            'drivers:id,name'
-        ]);
-        return $this->respondWithSuccess($data, 'Schedule Creadted Successfully', 'SCHEDULE_CREATED');
     }
 
     /**
@@ -126,10 +128,11 @@ class ApiScheduleController extends BaseController
     public function show($id): JsonResponse
     {
         $validator = Validator::make(['id' => $id], [
-            'id' => ['exists:schedules,id', 'required']
+            'id' => ['required', 'int', 'exists:schedules,id']
         ], [
+            'id.required' => 'Schedule id is required',
+            'id.int' => 'Schedule id in integer required',
             'id.exists' => 'Invalid schedule id',
-            'id.required' => 'Schedule id is required'
         ]);
 
         if ($validator->fails()) {
@@ -146,8 +149,7 @@ class ApiScheduleController extends BaseController
 
             return $this->respondWithSuccess($schedule, 'Get schedule', 'API_GET_SCHEDULE');
         } catch (ModelNotFoundException $e) {
-            return $this->respondWithError('Schedule id not found');
-            throw new NotFoundHttpException('Schedule id not found');
+            return $this->respondWithError('Schedule id not found' . $e->getMessage());
         }
     }
 
@@ -204,11 +206,11 @@ class ApiScheduleController extends BaseController
         try {
             // $schedule->o_id = $request->input('o_id');
             $schedule = Schedule::findOrFail($id);
-            $schedule->route_id = intval($request->input('route_id'));
-            $schedule->v_id = intval($request->input('v_id'));
-            $schedule->d_id = intval($request->input('d_id'));
-            $schedule->date = $request->input('date');
-            $schedule->time = $request->input('time');
+            $schedule->route_id = $request->route_id;
+            $schedule->v_id = $request->v_id;
+            $schedule->d_id = $request->d_id;
+            $schedule->date = $request->date;
+            $schedule->time = $request->time;
             $schedule->save();
 
             $data = $schedule->load([
@@ -220,8 +222,8 @@ class ApiScheduleController extends BaseController
 
             return $this->respondWithSuccess($data, 'Schedule updated successfully', 'SCHEDULE_UPDATED');
         } catch (ModelNotFoundException $e) {
-            throw new NotFoundHttpException('Schedule id not found');
-            return $this->respondWithError('Invalid Schedule id');
+            return $this->respondWithError('Invalid Schedule id' . $e->getMessage());
+            // throw new NotFoundHttpException('Schedule id not found');
         }
     }
 
@@ -247,10 +249,10 @@ class ApiScheduleController extends BaseController
         try {
             $schedule = Schedule::findOrFail($id);
             $schedule->delete();
-            return $this->respondWithSuccess($schedule->id, 'Schedule deleted successfully', 'API_SCHEDULE_DELETED');
+            return $this->respondWithDelete('Schedule deleted successfully', 'API_SCHEDULE_DELETED');
         } catch (ModelNotFoundException $e) {
-            return $this->respondWithError('Invalid Schedule id');
-            throw new NotFoundHttpException('Schedule id not found');
+            return $this->respondWithError('Schedule id not found');
+            // throw new NotFoundHttpException('Schedule id not found' . $e->getMessage());
         }
     }
 
@@ -279,13 +281,13 @@ class ApiScheduleController extends BaseController
                 ->select('id', 'name')
                 ->get();
 
-            $schedules = Schedule::with('organizations:id,name')
+            $schedules = Schedule::where('o_id', $manager->o_id)
+                ->where('date', date('Y-m-d'))
+                ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time', 'status', 'created_at')
+                ->with('organizations:id,name')
                 ->with('routes:id,name,number,from,to')
                 ->with('vehicles:id,number')
                 ->with('drivers:id,name')
-                ->where('o_id', $manager->o_id)
-                ->whereDate('date', date('Y-m-d'))
-                ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time', 'status', 'created_at')
                 ->get();
             // Initialize two empty arrays
             $publishedSchedules = [];
@@ -311,15 +313,15 @@ class ApiScheduleController extends BaseController
 
             // store data in cache
             Cache::put('ORGANIZATION_ROUTE_VEHICLE_DRIVER_SCHEDULE_DATA_' . $manager->o_id, $data, 60 * 60 * 24);
+
+            return $this->respondWithSuccess(
+                $data,
+                'Organization route, vehicle, driver data, published and created schedule',
+                'ORGANIZATION_ROUTE_VEHICLE_DRIVER_DATA_SCHEDULE'
+            );
         } catch (ModelNotFoundException $e) {
             throw new NotFoundHttpException('Data not found ' . $e->getMessage());
         }
-
-        return $this->respondWithSuccess(
-            $data,
-            'Organization route, vehicle, driver data, published and created schedule',
-            'ORGANIZATION_ROUTE_VEHICLE_DRIVER_DATA_SCHEDULE'
-        );
     }
 
     /**
@@ -340,10 +342,7 @@ class ApiScheduleController extends BaseController
         ]);
 
         if ($validator->fails()) {
-            // $errors = $validator->errors()->all();
-            // return $this->respondWithError(implode(", ", $errors));
             return $this->respondWithError($validator->errors()->first());
-            // return $this->respondWithError('Invalid schedule id');
         }
 
         $ScheduleIds = (array) $request->input('Schedule_ids');
@@ -367,7 +366,7 @@ class ApiScheduleController extends BaseController
                 }
             });
 
-            return $this->respondWithSuccess($updatedScheduleIds, 'Schedules published successfully', 'PUBLISH_SCHEDULE');
+            return $this->respondWithSuccess(null, 'Schedules published successfully', 'PUBLISH_SCHEDULE');
         } catch (Exception $e) {
             return $this->respondWithError($e->getMessage());
         }
@@ -418,7 +417,7 @@ class ApiScheduleController extends BaseController
                 }
             });
 
-            return $this->respondWithSuccess($updatedScheduleIds, 'Schedules draft successfully', 'DRAFT_SCHEDULE');
+            return $this->respondWithSuccess(null, 'Schedules draft successfully', 'DRAFT_SCHEDULE');
         } catch (Exception $e) {
             return $this->respondWithError($e->getMessage());
         }
@@ -450,7 +449,7 @@ class ApiScheduleController extends BaseController
                 ->with('vehicles:id,number')
                 ->with('drivers:id,name')
                 ->where('o_id', $manager->o_id)
-                ->whereDate('date', $date)
+                ->where('date', $date)
                 ->where('status', Schedule::STATUS_PUBLISHED)
                 ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time', 'status')
                 ->get();
@@ -490,7 +489,7 @@ class ApiScheduleController extends BaseController
                 ->with('vehicles:id,number')
                 ->with('drivers:id,name')
                 ->where('o_id', $manager->o_id)
-                ->whereDate('date', $date)
+                ->where('date', $date)
                 ->where('status', Schedule::STATUS_DRAFT)
                 ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time', 'status')
                 ->get();

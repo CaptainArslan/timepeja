@@ -21,7 +21,7 @@ class ApiVehicleController extends BaseController
         try {
             $manager = auth('manager')->user();
             $vehicles = Vehicle::where('o_id', $manager->o_id)
-                ->select('id', 'o_id', 'v_type_id', 'number', 'front_pic', 'number_pic', 'status')
+                ->select('id', 'o_id', 'v_type_id', 'number', 'front_pic', 'number_pic', 'status', 'created_at', 'updated_at')
                 // ->with('organizations', function ($query) {
                 //     $query->select('id', 'name', 'branch_name', 'address', 'phone', 'email');
                 // })
@@ -219,7 +219,7 @@ class ApiVehicleController extends BaseController
     public function destroy($id): JsonResponse
     {
         $validator = Validator::make(['id' => $id], [
-            'id' => ['exists:vehicles,id', 'required']
+            'id' => ['required', 'int', 'exists:vehicles,id']
         ], [
             'id.exists' => 'Invalid vehicle id',
             'id.required' => 'vehicle id is required'
@@ -232,7 +232,7 @@ class ApiVehicleController extends BaseController
         try {
             $vehicle = Vehicle::findOrFail($id);
             $vehicle->delete();
-            return $this->respondWithSuccess($vehicle, 'Vehicle deleted successfully', 'API_VEHICLE_DELETED');
+            return $this->respondWithDelete('Vehicle deleted successfully', 'API_VEHICLE_DELETED');
         } catch (ModelNotFoundException $e) {
             return $this->respondWithError('Vehicle id not found');
             throw new NotFoundHttpException('Vehicle id not found' . $e->getMessage());
@@ -265,6 +265,29 @@ class ApiVehicleController extends BaseController
             return $this->respondWithSuccess($vehicles, 'Vehicle retrieved successfully', 'API_VEHICLE_SEARCH_RESULT');
         } catch (ModelNotFoundException $th) {
             throw new NotFoundHttpException('Error occured while fetching data');
+        }
+    }
+
+    /**
+     * Get vehicle types
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getVehicle()
+    {
+        try {
+            $manager = auth('manager')->user();
+            $vehicles = Vehicle::where('o_id', $manager->o_id)
+                ->select('id', 'o_id', 'v_type_id', 'number', 'front_pic', 'number_pic', 'status', 'created_at', 'updated_at')
+                ->with('vehiclesTypes', function ($query) {
+                    $query->select('id', 'name');
+                })
+                ->where('status', Vehicle::STATUS_ACTIVE)
+                ->get();
+            return $this->respondWithSuccess($vehicles, 'Oganization All Vehicle', 'ORGANIZATION_VEHICLE');
+        } catch (\Throwable $th) {
+            return $this->respondWithError('Error Occured while fetching organization driver');
+            throw $th;
         }
     }
 }

@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\V1\ApiManagerController as ApiManagerController;
 use App\Http\Controllers\Api\V1\ApiRouteController;
 use App\Http\Controllers\Api\V1\ApiVehicleController;
 use App\Http\Controllers\Api\V1\LogReportController;
+use App\Http\Controllers\Api\V1\MediaController;
 use App\Http\Middleware\ConvertFormData;
 
 /*
@@ -41,6 +42,8 @@ Route::group(['middleware' => 'api'], function () {
             Route::post('/profile/upload', [ApiManagerController::class, 'profileUpload']);
             // Route::post('/create-schedule', [ScheduleController::class, 'create']);
 
+            Route::post('upload-media', [MediaController::class, 'uploadMedia']);
+
             // Schedule Api
             Route::apiResource('/schedule', ApiScheduleController::class);
             Route::get('/get-organization-data', [ApiScheduleController::class, 'getOrganizationData']);
@@ -51,15 +54,18 @@ Route::group(['middleware' => 'api'], function () {
 
             // Driver Api
             Route::resource('/driver', ApiDriverController::class);
+            Route::get('web/driver', [ApiDriverController::class ,'getDriver']);
             Route::put('/driver/{id}/update', [ApiDriverController::class, 'update']);
             Route::get('/search/driver', [ApiDriverController::class, 'search']);
 
             // Vehicle Api
             Route::resource('/vehicle', ApiVehicleController::class);
+            Route::get('web/vehicle', [ApiVehicleController::class, 'getVehicle']);
             Route::get('/search/vehicle', [ApiVehicleController::class, 'search']);
 
             // Route Api
             Route::resource('/route', ApiRouteController::class);
+            Route::get('web/route', [ApiRouteController::class, 'getRoute']);
             Route::get('/search/route', [ApiRouteController::class, 'search']);
 
             // Log Report Api

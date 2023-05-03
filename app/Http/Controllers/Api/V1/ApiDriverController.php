@@ -27,7 +27,6 @@ class ApiDriverController extends BaseController
                 ->paginate(Driver::DRIVER_LIMIT_PER_PAGE);
             return $this->respondWithSuccess($driver, 'Oganization All Driver', 'ORGANIZATION_DRIVER');
         } catch (\Throwable $th) {
-            // throw $th;
             return $this->respondWithError('Error Occured while fetching organization driver' . $th->getMessage());
         }
     }
@@ -331,10 +330,10 @@ class ApiDriverController extends BaseController
         try {
             $driver = Driver::findOrFail($id);
             $driver->delete();
-            return $this->respondWithSuccess($driver, 'Driver deleted successfully', 'API_DRIVER_DELETED');
+            return $this->respondWithDelete('Driver deleted successfully', 'API_DRIVER_DELETED');
         } catch (ModelNotFoundException $e) {
             return $this->respondWithError('Driver id not found');
-            throw new NotFoundHttpException('Driver id not found');
+            // throw new NotFoundHttpException('Driver id not found');
         }
     }
 
@@ -362,6 +361,19 @@ class ApiDriverController extends BaseController
             return $this->respondWithSuccess($drivers, 'Drivers retrieved successfully', 'API_DRIVER_SEARCH_RESULT');
         } catch (ModelNotFoundException $e) {
             throw new NotFoundHttpException('Error occured while fetching data');
+        }
+    }
+
+    public function getDriver(): JsonResponse
+    {
+        try {
+            $manager = auth('manager')->user();
+            $driver = Driver::where('o_id', $manager->o_id)
+                ->where('status', Driver::STATUS_ACTIVE)
+                ->get();
+            return $this->respondWithSuccess($driver, 'Oganization All Driver', 'ORGANIZATION_DRIVER');
+        } catch (\Throwable $th) {
+            return $this->respondWithError('Error Occured while fetching organization driver' . $th->getMessage());
         }
     }
 }

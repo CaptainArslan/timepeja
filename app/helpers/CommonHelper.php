@@ -82,7 +82,7 @@ function makeCnicFormat($cnic_number)
  *
  *@throws \Exception if the image is invalid or an error occurs during the upload process
  */
-function uploadImage($image, $folderName)
+function uploadImage($image, $folderName, $defaultName = null)
 {
     // Check if the image is valid
     if (!$image->isValid()) {
@@ -92,7 +92,7 @@ function uploadImage($image, $folderName)
     $extension = $image->getClientOriginalExtension();
 
     // Generate a unique filename for the image
-    $filename = uniqid() . '_' . time() . '.' . $extension;
+    $filename = uniqid() . '_' . time()  . '_' . $defaultName . '.' . $extension;
 
     if (!is_dir(public_path('uploads/' . $folderName))) {
         // create the directory if it does not exist
