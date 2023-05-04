@@ -42,6 +42,7 @@ class VehicleController extends Controller
             }])
             ->latest()
             ->take(10)
+            ->orderBy('id', 'DESC')
             ->get(); // Select only the id and name columns from the vehicles table
 
         // dd($vehicles->toArray());

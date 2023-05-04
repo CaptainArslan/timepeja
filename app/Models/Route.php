@@ -50,6 +50,16 @@ class Route extends Model
     ];
 
     /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        //
+    ];
+
+
+    /**
      * organization relation with routes
      *
      * @return  [type]  [return description]

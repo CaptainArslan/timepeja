@@ -104,6 +104,7 @@ class ApiVehicleController extends BaseController
             $vehicle->number   = $request->number;
             $vehicle->front_pic   = $request->front_pic;
             $vehicle->number_pic   = $request->number_pic;
+            $vehicle->status = Vehicle::STATUS_ACTIVE;
 
             if ($vehicle->save()) {
                 return $this->respondWithSuccess($vehicle, 'Vehicle created successfully', 'VEHICLE_CREATED');
@@ -111,7 +112,7 @@ class ApiVehicleController extends BaseController
                 return $this->respondWithError('Error occured while creating vehicle');
             }
         } catch (\Throwable $th) {
-            return $this->respondWithError('Error Occured hiwle vehicle creation');
+            return $this->respondWithError('Error Occured while vehicle creation');
             throw $th;
         }
     }
