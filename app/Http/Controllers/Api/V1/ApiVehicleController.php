@@ -4,9 +4,10 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Models\Vehicle;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ApiVehicleController extends BaseController
@@ -60,8 +61,20 @@ class ApiVehicleController extends BaseController
         $validator = Validator::make($request->all(), [
             'v_type_id' => ['required', 'numeric', 'exists:vehicle_types,id'],
             'number' => ['required', 'string', 'unique:vehicles,number'],
-            'front_pic' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
-            'number_pic' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+            'front_pic' => [
+                'required',
+                'string'
+                // 'image',
+                // 'mimes:jpeg,png,jpg,gif,svg',
+                // 'max:2048'
+            ],
+            'number_pic' => [
+                'required',
+                'string'
+                // 'image',
+                // 'mimes:jpeg,png,jpg,gif,svg',
+                // 'max:2048'
+            ],
         ], [
             'o_id.required' => 'Organization required',
             'v_type_id.required' => 'Vehicle type id required',
@@ -79,27 +92,28 @@ class ApiVehicleController extends BaseController
         ]);
 
         if ($validator->fails()) {
-            return $this->respondWithError($validator->errors()->first());
+            return $this->respondWithError(implode(',', $validator->errors()->all()));
         }
 
-        $manager = auth('manager')->user();
-        $vehicle = new Vehicle();
-        $vehicle->u_id  = $manager->id;
-        $vehicle->o_id   = $manager->o_id;
-        $vehicle->v_type_id    = $request->v_type_id;
-        $vehicle->number   = $request->number;
-        $vehicle->front_pic   = ($request->file('front_pic'))
-            ? uploadImage($request->file('front_pic'), 'vehicles') : null;
-        $vehicle->number_pic   = ($request->file('number_pic'))
-            ? uploadImage($request->file('number_pic'), 'vehicles') : null;
+        try {
+            $manager = auth('manager')->user();
+            $vehicle = new Vehicle();
+            $vehicle->u_id  = $manager->id;
+            $vehicle->o_id   = $manager->o_id;
+            $vehicle->v_type_id    = $request->v_type_id;
+            $vehicle->number   = $request->number;
+            $vehicle->front_pic   = $request->front_pic;
+            $vehicle->number_pic   = $request->number_pic;
 
-        if ($vehicle->save()) {
-            return $this->respondWithSuccess($vehicle, 'Vehicle created successfully', 'VEHICLE_CREATED');
-        } else {
-            return $this->respondWithError('Error occured while creating vehicle');
+            if ($vehicle->save()) {
+                return $this->respondWithSuccess($vehicle, 'Vehicle created successfully', 'VEHICLE_CREATED');
+            } else {
+                return $this->respondWithError('Error occured while creating vehicle');
+            }
+        } catch (\Throwable $th) {
+            return $this->respondWithError('Error Occured hiwle vehicle creation');
+            throw $th;
         }
-
-        // ($imageNumber) ?  uploadImage($imageNumber, 'vehicles') : null;
     }
 
     /**
@@ -159,9 +173,21 @@ class ApiVehicleController extends BaseController
     {
         $validator = Validator::make($request->all(), [
             'v_type_id' => ['required', 'numeric', 'exists:vehicle_types,id'],
-            'number' => ['required', 'string', 'unique:vehicles,number' . $id],
-            'front_pic' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
-            'number_pic' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+            'number' => ['required', 'string', Rule::unique('vehicles')->ignore($id)],
+            'front_pic' => [
+                'required',
+                'string'
+                // 'image',
+                // 'mimes:jpeg,png,jpg,gif,svg',
+                // 'max:2048'
+            ],
+            'number_pic' => [
+                'required',
+                'string'
+                // 'image',
+                // 'mimes:jpeg,png,jpg,gif,svg',
+                // 'max:2048'
+            ],
         ], [
             'o_id.required' => 'Organization required',
             'v_type_id.required' => 'Vehicle type id required',
@@ -185,20 +211,18 @@ class ApiVehicleController extends BaseController
         try {
             $vehicle = Vehicle::findorFail($id);
 
-            if ($request->hasFile('front_pic')) {
+            if ($request->has('front_pic') && $vehicle->front_pic_name != null) {
                 removeImage($vehicle->front_pic_name, 'vehicles');
             }
 
-            if ($request->hasFile('number_pic')) {
+            if ($request->has('number_pic') && $vehicle->number_pic_name != null) {
                 removeImage($vehicle->number_pic_name, 'vehicles');
             }
 
             $vehicle->v_type_id    = $request->v_type_id;
             $vehicle->number   = $request->number;
-            $vehicle->front_pic   = ($request->file('front_pic'))
-                ? uploadImage($request->file('front_pic'), 'vehicles') : null;
-            $vehicle->number_pic   = ($request->file('number_pic'))
-                ? uploadImage($request->file('number_pic'), 'vehicles') : null;
+            $vehicle->front_pic   = ($request->has('front_pic')) ? $request->front_pic : $vehicle->front_pic_name;
+            $vehicle->number_pic   = ($request->has('number_pic')) ? $request->number_pic : $vehicle->number_pic_name;
 
             if ($vehicle->save()) {
                 return $this->respondWithSuccess($vehicle, 'Vehicle updated successfully', 'VEHICLE_UPDATED');

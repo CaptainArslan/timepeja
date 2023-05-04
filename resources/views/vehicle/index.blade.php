@@ -112,7 +112,7 @@
                                 <td>{{ formatTime($vehicle->created_at)  }}</td>
                                 <td>{{$vehicle->organizations['name'] ?? '' }}</td>
                                 <td>{{$vehicle->vehiclesTypes['name'] ?? ''}}</td>
-                                <td>{{$vehicle->number}}</td>
+                                <td> {{ $vehicle->id }} {{$vehicle->number}}</td>
                                 <td>
                                     <img src="{{ $vehicle->front_pic }}" alt="front_pic" style="width: 50px; height: 50px; object-fit: contain;">
                                 </td>
