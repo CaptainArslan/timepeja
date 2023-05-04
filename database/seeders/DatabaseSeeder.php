@@ -43,10 +43,10 @@ class DatabaseSeeder extends Seeder
             VehicleTypeSeeder::class,
             OrganizationSeeder::class,
             ManagerSeeder::class,
-            // RouteSeeder::class,
-            // VehicleSeeder::class,
-            // DriverSeeder::class,
-            // ScheduleSeeder::class,
+            RouteSeeder::class,
+            VehicleSeeder::class,
+            DriverSeeder::class,
+            ScheduleSeeder::class,
             // TripSeeder::class
         ]);
     }

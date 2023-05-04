@@ -65,10 +65,34 @@ class ApiDriverController extends BaseController
                 'unique:drivers,license_no',
                 // 'regex:/^\d{10}-[A-Za-z]{3}+$/',
             ],
-            'cnic_front' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
-            'cnic_back' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
-            'license_front' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
-            'license_back' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+            'cnic_front' => [
+                'required',
+                'string'
+                // 'image',
+                // 'mimes:jpeg,png,jpg,gif,svg',
+                // 'max:2048'
+            ],
+            'cnic_back' => [
+                'required',
+                'string'
+                // 'image',
+                // 'mimes:jpeg,png,jpg,gif,svg',
+                // 'max:2048'
+            ],
+            'license_front' => [
+                'required',
+                'string'
+                // 'image',
+                // 'mimes:jpeg,png,jpg,gif,svg',
+                // 'max:2048'
+            ],
+            'license_back' => [
+                'required',
+                'string'
+                // 'image',
+                // 'mimes:jpeg,png,jpg,gif,svg',
+                // 'max:2048'
+            ],
         ], [
             'o_id.required' => 'Organization required',
             'name.required' => 'Name required',
@@ -114,21 +138,10 @@ class ApiDriverController extends BaseController
             'otp'                       => $otp,
             'profile_picture'           => null,
             'address'                   => null,
-            'cnic_front_pic'            => ($request->file('cnic_front'))
-                ? uploadImage($request->file('cnic_front'), 'drivers/cnic')
-                : null,
-            'cnic_back_pic'             => ($request->file('cnic_back')) ?
-                uploadImage($request->file('cnic_back'), 'drivers/cnic') :
-                null,
-            'license_no_front_pic'      => ($request->file('license_front')) ?
-                uploadImage($request->file('license_front'), 'drivers/license') :
-                null,
-            'license_no_back_pic'       => ($request->file('license_back')) ?
-                uploadImage($request->file('license_back'), 'drivers/license') :
-                null,
-            // 'status'                    => ($request->status)
-            //     ? Driver::STATUS_ACTIVE
-            //     : Driver::STATUS_INACTIVE,
+            'cnic_front_pic'            => $request->cnic_front,
+            'cnic_back_pic'             => $request->cnic_back,
+            'license_no_front_pic'      => $request->license_front,
+            'license_no_back_pic'       => $request->license_back,
         ];
         $save = Driver::create($data);
         if (!$save) {
@@ -364,6 +377,11 @@ class ApiDriverController extends BaseController
         }
     }
 
+    /**
+     * Undocumented function
+     *
+     * @return JsonResponse
+     */
     public function getDriver(): JsonResponse
     {
         try {
