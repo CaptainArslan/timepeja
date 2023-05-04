@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Models\Driver;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Api\V1\BaseController;
@@ -189,7 +188,7 @@ class ApiDriverController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Request $request, $id)
+    public function edit(Request $request, $id): JsonResponse
     {
         return $request->all();
         return $this->respondWithError('Method not allowed');
@@ -232,10 +231,34 @@ class ApiDriverController extends BaseController
                         // 'regex:/^\d{10}-[A-Za-z]{3}+$/'
                         // Rule::unique('drivers')->ignore($id),
                     ],
-                    'cnic_front' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
-                    'cnic_back' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
-                    'license_front' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
-                    'license_back' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+                    'cnic_front' => [
+                        'required',
+                        'string'
+                        // 'image',
+                        // 'mimes:jpeg,png,jpg,gif,svg',
+                        // 'max:2048'
+                    ],
+                    'cnic_back' => [
+                        'required',
+                        'string'
+                        // 'image',
+                        // 'mimes:jpeg,png,jpg,gif,svg',
+                        // 'max:2048'
+                    ],
+                    'license_front' => [
+                        'required',
+                        'string'
+                        // 'image',
+                        // 'mimes:jpeg,png,jpg,gif,svg',
+                        // 'max:2048'
+                    ],
+                    'license_back' => [
+                        'required',
+                        'string'
+                        // 'image',
+                        // 'mimes:jpeg,png,jpg,gif,svg',
+                        // 'max:2048'
+                    ],
                 ],
                 [
                     'o_id.required' => 'Organization required',
@@ -271,49 +294,54 @@ class ApiDriverController extends BaseController
                 return $this->respondWithError($validator->errors()->first());
             }
             // update values
-            $driver->name = $request->input('name');
-            $driver->phone = $request->input('phone');
-            $driver->cnic = $request->input('cnic');
-            $driver->license_no = $request->input('license_no');
+            $driver->name = $request->name;
+            $driver->phone = $request->phone;
+            $driver->cnic = $request->cnic;
+            $driver->license_no = $request->license_no;
 
             // ----- these function are to remove old picture from the folder
-            if ($request->hasFile('cnic_front') && $driver->cnic_front_pic_name != null) {
+            if ($request->has('cnic_front') && $driver->cnic_front_pic_name != null) {
                 removeImage($driver->cnic_front_pic_name, 'drivers/cnic');
             }
 
-            if ($request->hasFile('cnic_back') && $driver->cnic_back_pic_name != null) {
+            if ($request->has('cnic_back') && $driver->cnic_back_pic_name != null) {
                 removeImage($driver->cnic_back_pic_name, 'drivers/cnic');
             }
 
-            if ($request->hasFile('license_front') && $driver->license_no_front_pic_name != null) {
+            if ($request->has('license_front') && $driver->license_no_front_pic_name != null) {
                 removeImage($driver->license_no_front_pic_name, 'drivers/license');
             }
 
-            if ($request->hasFile('license_back') && $driver->license_no_back_pic_name != null) {
+            if ($request->has('license_back') && $driver->license_no_back_pic_name != null) {
                 removeImage($driver->license_no_back_pic_name, 'drivers/license');
             }
 
-            $driver->cnic_front_pic = ($request->file('cnic_front')) ?
-                uploadImage($request->file('cnic_front'), 'drivers/cnic')
+            $driver->cnic_front_pic = ($request->has('cnic_front')) ?
+                $request->cnic_front
                 : $driver->cnic_front_pic_name;
-            $driver->cnic_back_pic =  ($request->file('cnic_back')) ?
-                uploadImage($request->file('cnic_back'), 'drivers/cnic') :
+            $driver->cnic_back_pic =  ($request->has('cnic_back')) ?
+                $request->cnic_back :
                 $driver->cnic_back_pic_name;
 
-            $driver->license_no_front_pic =  ($request->file('license_front')) ?
-                uploadImage($request->file('license_front'), 'drivers/license') :
+            $driver->license_no_front_pic =  ($request->has('license_front')) ?
+                $request->license_front :
                 $driver->license_no_front_pic_name;
-            $driver->license_no_back_pic = ($request->file('license_back')) ?
-                uploadImage($request->file('license_back'), 'drivers/license') :
+            $driver->license_no_back_pic = ($request->has('license_back')) ?
+                $request->license_back :
                 $driver->license_no_back_pic_name;
+            $save = $driver->save();
 
-            if ($driver->save()) {
-                return redirect()->route('driver.index')
-                    ->with('success', 'Driver updated successfully.');
-            } else {
-                return redirect()->route('driver.index')
-                    ->with('error', 'Error occured while driver updation .');
+            if (!$save) {
+                return $this->respondWithError('Error Occured while updating');
             }
+
+            // if ($driver->save()) {
+            //     return redirect()->route('driver.index')
+            //         ->with('success', 'Driver updated successfully.');
+            // } else {
+            //     return redirect()->route('driver.index')
+            //         ->with('error', 'Error occured while driver updation .');
+            // }
             return $this->respondWithSuccess($driver, 'Driver updated successfully', 'API_DRIVER_UPDATED');
         } catch (ModelNotFoundException $e) {
             return $this->respondWithError('Driver id not found');
@@ -378,7 +406,7 @@ class ApiDriverController extends BaseController
     }
 
     /**
-     * Undocumented function
+     * get driver wihtout pagination for manager web
      *
      * @return JsonResponse
      */
