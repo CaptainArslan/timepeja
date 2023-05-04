@@ -57,6 +57,24 @@ class Vehicle extends Model
         'status' => 'boolean'
     ];
 
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        'no_of_seat',
+        'back_pic',
+        'reg_date',
+        'expiry_date',
+        'model_no',
+        'brand_name',
+        'color',
+        'chassis_no',
+        'engine_no',
+        'car_accessories'
+    ];
+
 
     // ----------------------------------------------------------------
     // -------------------------- Relations ---------------------------

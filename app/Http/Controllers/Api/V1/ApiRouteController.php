@@ -344,7 +344,7 @@ class ApiRouteController extends BaseController
                 ->get();
             // ->paginate(Route::ROUTE_LIMIT_PER_PAGE);
             if ($routes->isEmpty()) {
-                return $this->respondWithError('No Vehicle found');
+                return $this->respondWithError('No Route found');
             }
             return $this->respondWithSuccess($routes, 'Routes retrieved successfully', 'API_ROUTE_SEARCH_RESULT');
         } catch (ModelNotFoundException $e) {
