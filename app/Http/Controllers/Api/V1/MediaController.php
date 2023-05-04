@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Models\OtherMedia;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class MediaController extends BaseController
@@ -19,16 +21,15 @@ class MediaController extends BaseController
         $validator = Validator::make(
             $request->all(),
             [
-                'image' => ['required'],
-                'image.*' => ['required', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
                 'type' => ['required', 'string'],
+                'image.*' => ['required', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
             ],
             [
                 'image.required' => 'Please upload an image',
                 'image.*.mimes' => 'Only jpeg, png, jpg, gif, and svg formats are allowed',
                 'image.*.max' => 'The image may not be greater than 2 MB in size',
-                'type.required' => 'Please select an image type',
-                'type.string' => 'The image type must be a string',
+                'type.required' => 'Please select type',
+                'type.string' => 'The type must be a string',
             ]
         );
 
@@ -36,38 +37,50 @@ class MediaController extends BaseController
             return $this->respondWithError($validator->errors()->first());
         }
 
-        $allowed_types = ['manager_profile', 'vehicle', 'driver_cnic', 'driver_license', 'driver_profile', 'passenger_profile'];
-        if (!in_array($request->type, $allowed_types)) {
-            return $this->respondWithError('Invalid type');
+        $images = $request->file('image');
+        if (!$images) {
+            return $this->respondWithError('No image files found');
         }
 
+        $types = [
+            'vehicle' => 'vehicles/',
+            'driver_cnic' => 'drivers/cnic',
+            'driver_profile' => 'drivers/profile',
+            'driver_license' => 'drivers/license',
+            'manager_profile' => 'managers/profiles',
+        ];
+        $uploaded = [];
         try {
-            $name = [];
-            foreach ($request->file('image') as $image) {
-                switch ($request->type) {
-                    case 'manager_profile':
-                        $name[] = uploadImage($image, 'managers/profiles/', 'profile');
-                        break;
-                    case 'vehicle':
-                        $name[] = uploadImage($image, 'vehicles/', 'vehicle');
-                        break;
-                    case 'driver_cnic':
-                        $name[] = uploadImage($image, 'drivers/cnic', 'cnic');
-                        break;
-                    case 'driver_license':
-                        $name[] = uploadImage($image, 'drivers/license', 'license');
-                        break;
-                    case 'driver_profile':
-                        $name[] = uploadImage($image, 'drivers/profile', 'profile');
-                        break;
-                    default:
-                        return $this->respondWithError('Invalid image type');
+            DB::beginTransaction();
+
+            foreach ($images as $image) {
+                $type = $request->type;
+                if (!isset($types[$type])) {
+                    return $this->respondWithError('Invalid image type: ' . $type);
                 }
+                $directory = $types[$type];
+                $name = uploadImage($image, $directory, $request->type);
+                if (!isset($name)) {
+                    return $this->respondWithError('Error ooccured while uploading');
+                }
+
+                $othermedia = new OtherMedia();
+                $othermedia->type = $request->type;
+                $othermedia->image_url = $name;
+                $save = $othermedia->save();
+                if (!$save) {
+                    return $this->respondWithError('Error ooccured while uploading');
+                    // throw new \Exception('Error Occured while image uploading');
+                }
+                $uploaded[] = $othermedia;
             }
 
-            return $this->respondWithSuccess($name, 'Image uploaded successfully', 'API_IMAGE_UPLOAD_SUCCESS');
+            DB::commit();
         } catch (\Throwable $th) {
+            DB::rollBack();
             return $this->respondWithError($th->getMessage());
         }
+
+        return $this->respondWithSuccess($uploaded, 'Image uploaded successfully', 'API_IMAGE_UPLOAD_SUCCESS');
     }
 }

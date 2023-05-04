@@ -26,17 +26,17 @@ class CreateSchedulesTable extends Migration
             $table->enum('status', [
                 Schedule::STATUS_DRAFT,
                 Schedule::STATUS_PUBLISHED
-                ])->default('draft');
+            ])->default(Schedule::STATUS_DRAFT);
             $table->time('start_time')->nullable();
             $table->time('end_time')->nullable();
 
-            $table->tinyInteger('is_delay')->nullable();
+            $table->tinyInteger('is_delay')->default(Schedule::TRIP_NOTDELAYED);
 
             $table->enum('trip_status', [
                 Schedule::TRIP_STATUS_UPCOMING,
                 Schedule::TRIP_STATUS_INPROGRESS,
                 Schedule::TRIP_STATUS_COMPLETED,
-                ]);
+            ]);
             $table->timestamps();
             $table->text('delayed_reason')->nullable();
             $table->softDeletes();
