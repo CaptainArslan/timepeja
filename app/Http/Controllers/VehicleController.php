@@ -35,14 +35,14 @@ class VehicleController extends Controller
         $organizations = Organization::get();
         $vehicle_types = VehicleType::get();
         $vehicles = Vehicle::with(['organizations' => function ($query) {
-            $query->select('id', 'name'); // Select the id and name columns from the organizations table
+            $query->select('id', 'name')->orderBy('id', 'DESC'); // Select the id and name columns from the organizations table
         }])
             ->with(['vehiclesTypes' => function ($query) {
                 $query->select('id', 'name'); // Select the id and name columns from the vehicles_types table
             }])
             ->latest()
             ->take(10)
-            ->orderBy('id', 'DESC')
+
             ->get(); // Select only the id and name columns from the vehicles table
 
         // dd($vehicles->toArray());

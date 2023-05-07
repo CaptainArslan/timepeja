@@ -515,17 +515,17 @@ class ApiDriverController extends BaseController
             'license_no'                => $request->license_no,
             'otp'                       => $otp,
             'cnic_front_pic'            => ($request->file('cnic_front')) ?
-                uploadImage($request->file('cnic_front'), 'drivers/cnic')
+                uploadImage($request->file('cnic_front'), 'drivers/cnic', 'driver_cnic')
                 : null,
             'cnic_back_pic'             => ($request->file('cnic_back')) ?
-                uploadImage($request->file('cnic_back'), 'drivers/cnic') :
+                uploadImage($request->file('cnic_back'), 'drivers/cnic', 'driver_cnic') :
                 null,
             'license_no_front_pic'      => ($request->file('license_front')) ?
-                uploadImage($request->file('license_front'), 'drivers/license') :
+                uploadImage($request->file('license_front'), 'drivers/license', 'driver_license') :
                 null,
             // $request->license_front,
             'license_no_back_pic'       => ($request->file('license_back')) ?
-                uploadImage($request->file('license_back'), 'drivers/license') :
+                uploadImage($request->file('license_back'), 'drivers/license', 'driver_license') :
                 null,
             // $request->license_back,
         ];
@@ -544,7 +544,7 @@ class ApiDriverController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function updateWeb(Request $request, $id)
+    public function updateWeb(Request $request, $id): JsonResponse
     {
         // return $request->all();
         try {
@@ -575,25 +575,25 @@ class ApiDriverController extends BaseController
                         // Rule::unique('drivers')->ignore($id),
                     ],
                     'cnic_front' => [
-                        'required',
+                        // 'required',
                         'image',
                         'mimes:jpeg,png,jpg,gif,svg',
                         'max:2048'
                     ],
                     'cnic_back' => [
-                        'required',
+                        // 'required',
                         'image',
                         'mimes:jpeg,png,jpg,gif,svg',
                         'max:2048'
                     ],
                     'license_front' => [
-                        'required',
+                        // 'required',
                         'image',
                         'mimes:jpeg,png,jpg,gif,svg',
                         'max:2048'
                     ],
                     'license_back' => [
-                        'required',
+                        // 'required',
                         'image',
                         'mimes:jpeg,png,jpg,gif,svg',
                         'max:2048'
@@ -655,19 +655,21 @@ class ApiDriverController extends BaseController
                 removeImage($driver->license_no_back_pic_name, 'drivers/license');
             }
 
-            $driver->cnic_front_pic = ($request->has('cnic_front')) ?
-                $request->cnic_front
+            $driver->cnic_front_pic =
+                ($request->file('cnic_front')) ?
+                uploadImage($request->file('cnic_front'), 'drivers/cnic', 'driver_cnic')
                 : $driver->cnic_front_pic_name;
-            $driver->cnic_back_pic =  ($request->has('cnic_back')) ?
-                $request->cnic_back :
+            $driver->cnic_back_pic =  ($request->file('cnic_back')) ?
+                uploadImage($request->file('cnic_back'), 'drivers/cnic', 'driver_cnic') :
                 $driver->cnic_back_pic_name;
 
-            $driver->license_no_front_pic =  ($request->has('license_front')) ?
-                $request->license_front :
+            $driver->license_no_front_pic =  ($request->file('license_front')) ?
+                uploadImage($request->file('license_front'), 'drivers/license', 'driver_license') :
                 $driver->license_no_front_pic_name;
-            $driver->license_no_back_pic = ($request->has('license_back')) ?
-                $request->license_back :
+            $driver->license_no_back_pic = ($request->file('license_back')) ?
+                uploadImage($request->file('license_back'), 'drivers/license', 'driver_license') :
                 $driver->license_no_back_pic_name;
+
             $save = $driver->save();
 
             if (!$save) {

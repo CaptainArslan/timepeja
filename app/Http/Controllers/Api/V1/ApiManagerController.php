@@ -121,7 +121,7 @@ class ApiManagerController extends BaseController
             if ($request->hasFile('profile_picture') && $manager->picture_name != null) {
                 removeImage($manager->picture_name, '/managers/profiles/');
             }
-            $image = uploadImage($request->file('profile_picture'), '/managers/profiles/');
+            $image = uploadImage($request->file('profile_picture'), '/managers/profiles/', 'profile');
 
             $manager->picture = $image;
             $data = $manager->select('id', 'picture')->first();
@@ -129,6 +129,139 @@ class ApiManagerController extends BaseController
                 return $this->respondWithSuccess($data, 'Profile Updated', 'PROFILE_UPDATED');
             } else {
                 return $this->respondWithError('Profile not Updated');
+            }
+        } catch (\Throwable $th) {
+            return $this->respondWithError('Error Occured while profile Updated');
+        }
+
+        // return $this->respondWithSuccess(null, 'Profile Uploaded', 'PROFILE_UPLOADED');
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function profileUpdate(Request $request)
+    {
+        $manager = auth('manager')->user();
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'name' => ['required', 'string', 'max:255'],
+                'phone' => ['required', 'string', 'max:255', 'unique:managers,phone,' . $manager->id],
+                'address' => ['required', 'string', 'max:255'],
+                'picture' => [
+                    'string',
+                    // 'required',
+                    // 'image',
+                    // 'mimes:jpeg,png,jpg,gif',
+                    // 'max:2048'
+                ],
+            ],
+            [
+                'name.required' => 'Full name is required',
+                'name.string' => 'Name must be in string',
+
+                'phone.required' => 'Phone is required',
+                'phone.string' => 'phone must be in string',
+
+                'address.required' => 'Address is required',
+                'address.string' => 'address must be in string',
+
+                'picture.required' => 'Profile Picture is required',
+                'picture.string' => 'address must be in string',
+                // 'picture.image' => 'Profile Picture must be an image',
+                // 'picture.mimes' => 'Profile Picture must be a file of type: jpeg, png, jpg, gif',
+                // 'picture.max' => 'Profile Picture may not be greater than 2048 kilobytes',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return $this->respondWithError(implode(",", $validator->errors()->all()));
+        }
+
+        try {
+            $manager->name = $request->name;
+            $manager->phone = $request->phone;
+            $manager->address = $request->address;
+
+            if ($request->has('picture') && $manager->picture_name != null) {
+                removeImage($manager->picture_name, '/managers/profiles/');
+            }
+
+            $manager->picture = $request->picture ? $request->picture : $manager->picture_name;
+
+            if ($manager->save()) {
+                // $data = $manager->select('id', 'picture')->first();
+                return $this->respondWithSuccess($manager, 'Profile Updated', 'PROFILE_UPDATED');
+            } else {
+                return $this->respondWithError('Error Occured while profile Updated');
+            }
+        } catch (\Throwable $th) {
+            return $this->respondWithError('Error Occured while profile Updated');
+        }
+
+        // return $this->respondWithSuccess(null, 'Profile Uploaded', 'PROFILE_UPLOADED');
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function profileUpdateWeb(Request $request)
+    {
+        $manager = auth('manager')->user();
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'name' => ['required', 'string', 'max:255'],
+                'phone' => ['required', 'string', 'max:255', 'unique:managers,phone,' . $manager->id],
+                'address' => ['required', 'string', 'max:255'],
+                'picture' => [
+                    // 'required',
+                    'image',
+                    'mimes:jpeg,png,jpg,gif',
+                    'max:2048'
+                ],
+            ],
+            [
+                'name.required' => 'Full name is required',
+                'name.string' => 'Name must be in string',
+
+                'phone.required' => 'Phone is required',
+                'phone.string' => 'phone must be in string',
+
+                'address.required' => 'Address is required',
+                'address.string' => 'address must be in string',
+
+                'picture.image' => 'Profile Picture must be an image',
+                'picture.mimes' => 'Profile Picture must be a file of type: jpeg, png, jpg, gif',
+                'picture.max' => 'Profile Picture may not be greater than 2048 kilobytes',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return $this->respondWithError(implode(",", $validator->errors()->all()));
+        }
+
+        try {
+            $manager->name = $request->name;
+            $manager->phone = $request->phone;
+            $manager->address = $request->address;
+
+            if ($request->has('picture') && $manager->picture_name != null) {
+                removeImage($manager->picture_name, '/managers/profiles/');
+            }
+
+            $manager->picture = $request->hasFile('picture')  ? uploadImage($request->file('picture'), '/managers/profiles', 'manager_profile') : $manager->picture_name;
+
+            if ($manager->save()) {
+                // $data = $manager->select('id', 'picture')->first();
+                return $this->respondWithSuccess($manager, 'Profile Updated', 'PROFILE_UPDATED');
+            } else {
+                return $this->respondWithError('Error Occured while profile Updated');
             }
         } catch (\Throwable $th) {
             return $this->respondWithError('Error Occured while profile Updated');
@@ -171,7 +304,6 @@ class ApiManagerController extends BaseController
 
             // store data in cache
             Cache::put('SCREEN_WRAPPER_' . $manager->o_id, $data, now()->addDay(1));
-
         } catch (ModelNotFoundException $e) {
             throw new NotFoundHttpException('Data not found ' . $e->getMessage());
         }

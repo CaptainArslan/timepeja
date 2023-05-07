@@ -8,6 +8,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use PhpParser\Node\Stmt\Return_;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ApiRouteController extends BaseController
@@ -85,6 +86,15 @@ class ApiRouteController extends BaseController
         }
 
         $manager = auth('manager')->user();
+
+        $routeNumCheck = Route::where('o_id', $manager->id)
+            ->where('number', $request->number)
+            ->count();
+
+        if ($routeNumCheck > 1) {
+            return $this->respondWithError('Route Number Already exist');
+        }
+
         try {
             DB::beginTransaction();
 
@@ -197,6 +207,7 @@ class ApiRouteController extends BaseController
     {
         try {
             $route = Route::findOrFail($id);
+
             $validator = Validator::make(
                 $request->all(),
                 [
@@ -230,7 +241,7 @@ class ApiRouteController extends BaseController
             );
 
             if ($validator->fails()) {
-                return $this->respondWithError($validator->errors()->first());
+                return $this->respondWithError(implode(",", $validator->errors()->all()));
             }
 
             try {
@@ -241,6 +252,7 @@ class ApiRouteController extends BaseController
                     ->where('o_id', $route->o_id)
                     ->where('status', Route::STATUS_ACTIVE)
                     ->get();
+
                 if (!$data) {
                     return $this->respondWithError('Route not found');
                 }
