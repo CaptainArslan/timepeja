@@ -56,7 +56,7 @@ class MediaController extends BaseController
             foreach ($images as $image) {
                 $type = $request->type;
                 if (!isset($types[$type])) {
-                    return $this->respondWithError('Invalid image type: ' . $type);
+                    return $this->respondWithError('Invalid type: ' . $type);
                 }
                 $directory = $types[$type];
                 $name = uploadImage($image, $directory, $request->type);

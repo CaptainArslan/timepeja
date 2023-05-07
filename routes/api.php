@@ -10,7 +10,7 @@ use App\Http\Controllers\Api\V1\ApiRouteController;
 use App\Http\Controllers\Api\V1\ApiVehicleController;
 use App\Http\Controllers\Api\V1\LogReportController;
 use App\Http\Controllers\Api\V1\MediaController;
-use App\Http\Middleware\ConvertFormData;
+use App\Http\Controllers\Api\V1\VehicletypeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,6 +32,7 @@ Route::group(['middleware' => 'api'], function () {
         Route::post('/login/web', [ManagerAuthController::class, 'webLogin']);
         Route::post('/get-code', [ManagerAuthController::class, 'getVerificationCode'])
             ->middleware('throttle:ratelimit');
+            
         Route::post('/refresh', [ManagerAuthController::class, 'refresh']);
         Route::post('/logout', [ManagerAuthController::class, 'logout']);
         Route::post('/forget-password', [ManagerAuthController::class, 'forgetPassword']);
@@ -40,6 +41,8 @@ Route::group(['middleware' => 'api'], function () {
         Route::middleware(['jwt.verify:manager'])->group(function () {
             Route::get('/profile', [ManagerAuthController::class, 'profile']);
             Route::post('/profile/upload', [ApiManagerController::class, 'profileUpload']);
+            Route::put('/profile/update', [ApiManagerController::class, 'profileUpdate']);
+            Route::put('/profile/web/update', [ApiManagerController::class, 'profileUpdateWeb']);
             // Route::post('/create-schedule', [ScheduleController::class, 'create']);
 
             Route::post('upload-media', [MediaController::class, 'uploadMedia']);
@@ -52,16 +55,23 @@ Route::group(['middleware' => 'api'], function () {
             Route::get('schedules/published/{date}', [ApiScheduleController::class, 'getPublishedScheduleByDate']);
             Route::get('schedules/created/{date}', [ApiScheduleController::class, 'getCreatedScheduleByDate']);
 
+            Route::get('vehicle-types', [VehicleTypeController::class, 'index']);
+
             // Driver Api
             Route::resource('/driver', ApiDriverController::class);
-            Route::get('web/driver', [ApiDriverController::class ,'getDriver']);
-            // Route::put('/driver/{id}/update', [ApiDriverController::class, 'update']);
             Route::get('/search/driver', [ApiDriverController::class, 'search']);
+            // Driver api for web
+            Route::get('web/driver', [ApiDriverController::class ,'getDriver']);
+            Route::post('web/driver', [ApiDriverController::class ,'storeWeb']);
+            Route::put('web/driver/{id}', [ApiDriverController::class ,'updateWeb']);
 
             // Vehicle Api
             Route::resource('/vehicle', ApiVehicleController::class);
-            Route::get('web/vehicle', [ApiVehicleController::class, 'getVehicle']);
             Route::get('/search/vehicle', [ApiVehicleController::class, 'search']);
+            // Vehicle apo for web
+            Route::get('web/vehicle', [ApiVehicleController::class, 'getVehicle']);
+            Route::post('web/vehicle', [ApiVehicleController::class, 'storeWeb']);
+            Route::put('web/vehicle/{id}', [ApiVehicleController::class, 'updateWeb']);
 
             // Route Api
             Route::resource('/route', ApiRouteController::class);
