@@ -55,6 +55,8 @@ Route::group(['middleware' => 'api'], function () {
             // Driver Api
             Route::resource('/driver', ApiDriverController::class);
             Route::get('web/driver', [ApiDriverController::class ,'getDriver']);
+            Route::post('web/driver', [ApiDriverController::class ,'storeWeb']);
+            Route::put('web/driver/{id}', [ApiDriverController::class ,'updateWeb']);
             // Route::put('/driver/{id}/update', [ApiDriverController::class, 'update']);
             Route::get('/search/driver', [ApiDriverController::class, 'search']);
 
