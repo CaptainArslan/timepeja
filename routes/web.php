@@ -126,9 +126,12 @@ Route::group(['middleware' => 'auth'], function () {
         Route::match(['get', 'post'], '/pastuser', [ManagerController::class, 'pastUser'])->name('pastuser');
     });
 
-    Route::get('/profile', function () {
+    /* Route::get('/profile', function () {
         return view('auth.profile');
-    })->name('profile');
+    })->name('profile'); */
+    Route::get('/profile',[HomeController::class,'authProfile'])->name('profile');
+    // updating auth personal info
+    Route::post('/profile/change-personal-info',[HomeController::class,'changeAuthInfo'])->name('auth.change.profile');
 
     // Route::get('/transpot/schedule', function () { return view('manager.transport_scheduled'); })->name('transpot.schedule');
     // Route::get('/awaiting/approval', function () {

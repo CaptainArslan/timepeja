@@ -14,7 +14,7 @@
                 <div class="page-title-right">
                     <ol class="breadcrumb m-0">
                         <li class="breadcrumb-item"><a href="javascript: void(0);">UBold</a></li>
-                        <li class="breadcrumb-item"><a href="javascript: void(0);">Contacts</a></li>
+                        <!-- <li class="breadcrumb-item"><a href="javascript: void(0);">Contacts</a></li> -->
                         <li class="breadcrumb-item active">Profile</li>
                     </ol>
                 </div>
@@ -30,27 +30,27 @@
                 <div class="card-body">
                     <img src="/images/users/user-1.jpg" class="rounded-circle avatar-lg img-thumbnail" alt="profile-image">
 
-                    <h4 class="mb-0">Geneva McKnight</h4>
-                    <p class="text-muted">@webdesigner</p>
+                    <h4 class="mb-0">{{auth()->user()->user_name}}</h4>
+                    <p class="text-muted">{{auth()->user()->email}}</p>
 
-                    <button type="button" type="button" class="btn btn-success btn-xs waves-effect mb-2 waves-light">Follow</button>
-                    <button type="button" type="button" class="btn btn-danger btn-xs waves-effect mb-2 waves-light">Message</button>
+                   <!--  <button type="button" type="button" class="btn btn-success btn-xs waves-effect mb-2 waves-light">Follow</button>
+                    <button type="button" type="button" class="btn btn-danger btn-xs waves-effect mb-2 waves-light">Message</button> -->
 
                     <div class="text-start mt-3">
-                        <h4 class="font-13 text-uppercase">About Me :</h4>
+                        <!-- <h4 class="font-13 text-uppercase">About Me :</h4>
                         <p class="text-muted font-13 mb-3">
                             Hi I'm Johnathn Deo,has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type.
-                        </p>
-                        <p class="text-muted mb-2 font-13"><strong>Full Name :</strong> <span class="ms-2">Geneva D. McKnight</span></p>
+                        </p> -->
+                        <p class="text-muted mb-2 font-13"><strong>Full Name :</strong> <span class="ms-2">{{auth()->user()->full_name}}</span></p>
 
-                        <p class="text-muted mb-2 font-13"><strong>Mobile :</strong><span class="ms-2">(123) 123 1234</span></p>
+                        <p class="text-muted mb-2 font-13"><strong>Mobile :</strong><span class="ms-2">{{auth()->user()->phone}}</span></p>
 
-                        <p class="text-muted mb-2 font-13"><strong>Email :</strong> <span class="ms-2">user@email.domain</span></p>
+                        <p class="text-muted mb-2 font-13"><strong>Email :</strong> <span class="ms-2">{{auth()->user()->email}}</span></p>
 
-                        <p class="text-muted mb-1 font-13"><strong>Location :</strong> <span class="ms-2">USA</span></p>
+                        <!-- <p class="text-muted mb-1 font-13"><strong>Location :</strong> <span class="ms-2">USA</span></p> -->
                     </div>
 
-                    <ul class="social-list list-inline mt-3 mb-0">
+                 <!--    <ul class="social-list list-inline mt-3 mb-0">
                         <li class="list-inline-item">
                             <a href="javascript: void(0);" class="social-list-item border-primary text-primary"><i class="mdi mdi-facebook"></i></a>
                         </li>
@@ -63,11 +63,11 @@
                         <li class="list-inline-item">
                             <a href="javascript: void(0);" class="social-list-item border-secondary text-secondary"><i class="mdi mdi-github"></i></a>
                         </li>
-                    </ul>
+                    </ul> -->
                 </div>
             </div> <!-- end card -->
 
-            <div class="card">
+           <!--  <div class="card">
                 <div class="card-body">
                     <h4 class="header-title mb-3">Inbox</h4>
 
@@ -130,9 +130,10 @@
                                 <a href="javascript:(0);" class="btn btn-sm btn-link text-info font-13"> Reply </a>
                             </p>
                         </div>
-                    </div> <!-- end inbox-widget -->
+                    </div> 
                 </div>
-            </div> <!-- end card-->
+            </div>  -->
+            <!-- end card-->
 
         </div> <!-- end col-->
 
@@ -140,7 +141,7 @@
             <div class="card">
                 <div class="card-body">
                     <ul class="nav nav-pills nav-fill navtab-bg">
-                        <li class="nav-item">
+                       <!--  <li class="nav-item">
                             <a href="#aboutme" data-bs-toggle="tab" aria-expanded="false" class="nav-link">
                                 About Me
                             </a>
@@ -149,15 +150,20 @@
                             <a href="#timeline" data-bs-toggle="tab" aria-expanded="true" class="nav-link active">
                                 Timeline
                             </a>
-                        </li>
-                        <li class="nav-item">
+                        </li> -->
+                       <!--  <li class="nav-item">
                             <a href="#settings" data-bs-toggle="tab" aria-expanded="false" class="nav-link">
                                 Settings
+                            </a>
+                        </li> -->
+                        <li class="nav-item">
+                            <a href="#" data-bs-toggle="tab" aria-expanded="false" class="nav-link">
+                                Update Profile
                             </a>
                         </li>
                     </ul>
                     <div class="tab-content">
-                        <div class="tab-pane" id="aboutme">
+                        <!-- <div class="tab-pane" id="aboutme">
 
                             <h5 class="mb-4 text-uppercase"><i class="mdi mdi-briefcase me-1"></i>
                                 Experience</h5>
@@ -253,12 +259,10 @@
                                 </table>
                             </div>
 
-                        </div> <!-- end tab-pane -->
-                        <!-- end about me section content -->
+                        </div> 
 
                         <div class="tab-pane show active" id="timeline">
 
-                            <!-- comment box -->
                             <form action="#" class="comment-area-box mt-2 mb-3">
                                 <span class="input-icon">
                                     <textarea rows="3" class="form-control" placeholder="Write something..."></textarea>
@@ -275,9 +279,7 @@
                                     </div>
                                 </div>
                             </form>
-                            <!-- end comment box -->
-
-                            <!-- Story Box-->
+                           
                             <div class="border border-light p-2 mb-3">
                                 <div class="d-flex align-items-start">
                                     <img class="me-2 avatar-sm rounded-circle" src="/images/users/user-3.jpg" alt="Generic placeholder image">
@@ -299,7 +301,7 @@
                                 </div>
                             </div>
 
-                            <!-- Story Box-->
+          
                             <div class="border border-light p-2 mb-3">
                                 <div class="d-flex align-items-start">
                                     <img class="me-2 avatar-sm rounded-circle" src="/images/users/user-4.jpg" alt="Generic placeholder image">
@@ -354,7 +356,7 @@
                                 </div>
                             </div>
 
-                            <!-- Story Box-->
+                   
                             <div class="border border-light p-2 mb-3">
                                 <div class="d-flex align-items-start">
                                     <img class="me-2 avatar-sm rounded-circle" src="/images/users/user-6.jpg" alt="Generic placeholder image">
@@ -372,54 +374,55 @@
                                 <a href="javascript:void(0);" class="text-danger"><i class="mdi mdi-spin mdi-loading me-1"></i> Load more </a>
                             </div>
 
-                        </div>
-                        <!-- end timeline content-->
-
-                        <div class="tab-pane" id="settings">
-                            <form>
+                        </div> -->
+                    
+<!-- class="tab-pane" -->
+                        <div  id="settings">
+                            <form action="{{route('auth.change.profile')}}" method="POST">
+                                @csrf
                                 <h5 class="mb-4 text-uppercase"><i class="mdi mdi-account-circle me-1"></i> Personal Info</h5>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label for="firstname" class="form-label">First Name</label>
-                                            <input type="text" class="form-control" id="firstname" placeholder="Enter first name">
+                                            <label for="fullname" class="form-label">Full Name</label>
+                                            <input type="text" class="form-control" id="fullname" name="full_name" value="{{auth()->user()->full_name}}" placeholder="Enter first name">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label for="lastname" class="form-label">Last Name</label>
-                                            <input type="text" class="form-control" id="lastname" placeholder="Enter last name">
+                                            <label for="phone" class="form-label">Phone No</label>
+                                            <input type="number" class="form-control" id="phone" name="phone" placeholder="Enter Phone No">
                                         </div>
-                                    </div> <!-- end col -->
-                                </div> <!-- end row -->
+                                    </div> 
+                                </div> 
 
-                                <div class="row">
+                                <!-- <div class="row">
                                     <div class="col-12">
                                         <div class="mb-3">
                                             <label for="userbio" class="form-label">Bio</label>
                                             <textarea class="form-control" id="userbio" rows="4" placeholder="Write something..."></textarea>
                                         </div>
-                                    </div> <!-- end col -->
-                                </div> <!-- end row -->
+                                    </div> 
+                                </div> --> 
 
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label for="useremail" class="form-label">Email Address</label>
-                                            <input type="email" class="form-control" id="useremail" placeholder="Enter email">
+                                            <input type="email" class="form-control" id="useremail" name="email" value="{{auth()->user()->email}}" placeholder="Enter email">
                                             <span class="form-text text-muted"><small>If you want to change email please <a href="javascript: void(0);">click</a> here.</small></span>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label for="userpassword" class="form-label">Password</label>
-                                            <input type="password" class="form-control" id="userpassword" placeholder="Enter password">
+                                            <input type="password" class="form-control" id="userpassword" name="password" placeholder="Enter password">
                                             <span class="form-text text-muted"><small>If you want to change password please <a href="javascript: void(0);">click</a> here.</small></span>
                                         </div>
-                                    </div> <!-- end col -->
-                                </div> <!-- end row -->
+                                    </div> 
+                                </div> 
 
-                                <h5 class="mb-3 text-uppercase bg-light p-2"><i class="mdi mdi-office-building me-1"></i> Company Info</h5>
+                               <!--  <h5 class="mb-3 text-uppercase bg-light p-2"><i class="mdi mdi-office-building me-1"></i> Company Info</h5>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="mb-3">
@@ -432,8 +435,8 @@
                                             <label for="cwebsite" class="form-label">Website</label>
                                             <input type="text" class="form-control" id="cwebsite" placeholder="Enter website url">
                                         </div>
-                                    </div> <!-- end col -->
-                                </div> <!-- end row -->
+                                    </div> 
+                                </div> 
 
                                 <h5 class="mb-3 text-uppercase bg-light p-2"><i class="mdi mdi-earth me-1"></i> Social</h5>
                                 <div class="row">
@@ -454,8 +457,8 @@
                                                 <input type="text" class="form-control" id="social-tw" placeholder="Username">
                                             </div>
                                         </div>
-                                    </div> <!-- end col -->
-                                </div> <!-- end row -->
+                                    </div> 
+                                </div> 
 
                                 <div class="row">
                                     <div class="col-md-6">
@@ -475,10 +478,10 @@
                                                 <input type="text" class="form-control" id="social-lin" placeholder="Url">
                                             </div>
                                         </div>
-                                    </div> <!-- end col -->
-                                </div> <!-- end row -->
+                                    </div> 
+                                </div> --> 
 
-                                <div class="row">
+                               <!--  <div class="row">
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label for="social-sky" class="form-label">Skype</label>
@@ -496,23 +499,21 @@
                                                 <input type="text" class="form-control" id="social-gh" placeholder="Username">
                                             </div>
                                         </div>
-                                    </div> <!-- end col -->
-                                </div> <!-- end row -->
+                                    </div> 
+                                </div> --> 
 
                                 <div class="text-end">
-                                    <button type="button" type="submit" class="btn btn-success waves-effect waves-light mt-2"><i class="mdi mdi-content-save"></i> Save</button>
+                                    <button type="submit" class="btn btn-success waves-effect waves-light mt-2"><i class="mdi mdi-content-save"></i> Update</button>
                                 </div>
                             </form>
                         </div>
-                        <!-- end settings content-->
-
-                    </div> <!-- end tab-content -->
+                        
+                    </div> 
                 </div>
-            </div> <!-- end card-->
-
-        </div> <!-- end col -->
+            </div> 
+        </div> 
     </div>
-    <!-- end row-->
+
 
 </div>
 <!-- end page title -->
