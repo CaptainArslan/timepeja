@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\CommonController;
-use App\Models\TransportManager;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
@@ -11,8 +10,6 @@ use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\SettingController;
-use App\Models\Schedule;
-
 
 /*
 |--------------------------------------------------------------------------
@@ -116,7 +113,7 @@ Route::group(['middleware' => 'auth'], function () {
    /**
      * [Setting]
      */
-    Route::resource('setting',SettingController::class);
+    Route::match(['get', 'put'],'setting',[SettingController::class, 'updateOrCreate'])->name('setting.google');
 
     /**
      * [user Approval]
@@ -134,8 +131,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/profile',[HomeController::class,'profile'])->name('profile');
     Route::put( '/profile/{user}',[HomeController::class,'updateProfile'])->name('profile.update');
     // Route::post('/profile/change-personal-info',[HomeController::class,'changeAuthInfo'])->name('auth.change.profile');
-
-    
 
     // Route::get('/transpot/schedule', function () { return view('manager.transport_scheduled'); })->name('transpot.schedule');
     // Route::get('/awaiting/approval', function () {

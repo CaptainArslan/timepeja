@@ -15,12 +15,13 @@ class CreateSettingsTable extends Migration
     {
         Schema::create('settings', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('r_id')->index('r_id')->nullable();
-            $table->foreign('r_id')->references('id')->on('users')->onDelete('cascade');
+            $table->unsignedBigInteger('u_id')->index('u_id')->nullable();
+            $table->foreign('u_id')->references('id')->on('users')->onDelete('cascade');
             $table->text('credentials')->nullable();
+            $table->text('platform');
             $table->boolean('status')->default(0);
-            $table->softDeletes();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
