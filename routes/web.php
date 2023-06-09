@@ -10,7 +10,9 @@ use App\Http\Controllers\DriverController;
 use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\SettingController;
 use App\Models\Schedule;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -115,6 +117,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::prefix('log')->name('log.')->group(function () {
         Route::match(['get', 'post'], '/reports', [ManagerController::class, 'logReport'])->name('reports');
     });
+
+   /**
+     * [Setting]
+     */
+    Route::resource('setting',SettingController::class);
 
     /**
      * [user Approval]

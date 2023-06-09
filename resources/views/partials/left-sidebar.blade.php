@@ -248,6 +248,21 @@
                         </ul>
                     </div>
                 </li>
+                <!-- Settings -->
+                <li>
+                    <a href="#sidebarTickets" data-bs-toggle="collapse">
+                        <i class="fas fa-dollar-sign"></i>
+                        <span> Setting </span>
+                        <span class="menu-arrow"></span>
+                    </a>
+                    <div class="collapse" id="sidebarTickets">
+                        <ul class="nav-second-level">
+                            <li>
+                                <a href="{{ route('setting.index') }}">To Add Google Api</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
                 <!-- <li>
                     <a href="#sidebarhistory" data-bs-toggle="collapse">
                         <i class="fas fa-history"></i>
