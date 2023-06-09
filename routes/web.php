@@ -75,6 +75,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/delete', [VehicleController::class, 'destroy'])->name('delete');
         Route::post('multi-delete', [VehicleController::class, 'multiDelete'])->name('multiDelete');
     });
+
     Route::get('/active-vehicle', function () {
         return view('manager.active_vehicle');
     })->name('active_vehicle');
@@ -120,7 +121,14 @@ Route::group(['middleware' => 'auth'], function () {
         Route::match(['get', 'post'], '/pastuser', [ManagerController::class, 'pastUser'])->name('pastuser');
     });
 
-    Route::get('/profile', function () { return view('auth.profile'); })->name('profile');
+    /* Route::get('/profile', function () {
+        return view('auth.profile');
+    })->name('profile'); */
+    Route::get('/profile',[HomeController::class,'profile'])->name('profile');
+    Route::put( '/profile/{user}',[HomeController::class,'updateProfile'])->name('profile.update');
+    // Route::post('/profile/change-personal-info',[HomeController::class,'changeAuthInfo'])->name('auth.change.profile');
+
+    
 
     // Route::get('/transpot/schedule', function () { return view('manager.transport_scheduled'); })->name('transpot.schedule');
     // Route::get('/awaiting/approval', function () {
