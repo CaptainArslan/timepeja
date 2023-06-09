@@ -27,7 +27,7 @@ $(document).ready(function () {
     $(".current-time").val(formatted_time);
 
     // When a parent  checkbox is clicked
-    $(".parent_checkbox").click(function () {
+    $(".parent_checkbox").change(function () {
         // If the parent checkbox is checked
         if ($(this).is(":checked")) {
             // Check all child checkboxes
@@ -38,8 +38,8 @@ $(document).ready(function () {
         }
     });
 
-    // When a child checkbox is clicked
-    $(".child_checkbox").click(function () {
+    // When a child checkbox is changeed
+    $(".child_checkbox").change(function () {
         // If the child checkbox is unchecked
         if (!$(this).is(":checked")) {
             // Uncheck the parent checkbox
@@ -53,6 +53,13 @@ $(document).ready(function () {
             $(".parent_checkbox").prop("checked", true);
         }
     });
+
+    // this is for to add asterick for all the required fields
+
+    var now = new Date();
+    var currentDateTime = now.toISOString().substring(0, 16);
+    // $(".currentDateTime").val(currentDateTime);
+    $(".currentDateTime").prop("min", currentDateTime);
 });
 
 //Name Validation for character and whitespaces
@@ -231,5 +238,53 @@ function formSubmitConfirmation(formIds) {
                 form.submit();
             }
         });
+    });
+}
+
+/**
+ * this function reset the dropify image preview
+ * @param {*} imageUrl
+ * @param {*} inputId
+ * @returns
+ */
+function resetPreviewDropify(imageUrl, inputId) {
+    // alert(imageUrl + '   ' + inputId);
+    let imagenUrl = imageUrl;
+    let drEvent = $(inputId).dropify({
+        defaultFile: imagenUrl,
+    });
+    drEvent = drEvent.data("dropify");
+    drEvent.resetPreview();
+    drEvent.clearElement();
+    drEvent.settings.defaultFile = imagenUrl;
+    drEvent.destroy();
+    drEvent.init();
+}
+
+// this function is use to show the success message
+function showSuccess( message = "Success created" ) {
+    $.toast({
+        heading: "Success",
+        text: message,
+        icon: "success",
+        position: "top-right",
+        loader: false,
+        bgColor: "#1abc9c",
+        hideAfter: 5000,
+        stack: 5,
+    });
+}
+
+// this function is use to show the error message
+function showError( message = "Error Occured!") {
+    $.toast({
+        heading: "Error",
+        text: message,
+        icon: "success",
+        position: "top-right",
+        loader: false,
+        bgColor: "#f1556c",
+        hideAfter: 5000,
+        stack: 5,
     });
 }

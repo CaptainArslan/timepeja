@@ -2,18 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Trip;
-use App\Models\User;
 use App\Models\State;
 use App\Models\Manager;
 use App\Models\Schedule;
 use App\Models\Financials;
-use Illuminate\Support\Str;
 use App\Models\Organization;
 use Illuminate\Http\Request;
 use App\Models\OrganizationType;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\ManagerStoreRequest;
 
 class ManagerController extends Controller
 {
@@ -27,15 +25,22 @@ class ManagerController extends Controller
         $organization_types = OrganizationType::get();
         $states = State::where('ctry_id', 167)->get();
         $org_dropdowns = Organization::get();
-        // $managers_count = Manager::count();
-
-        $organizations = Organization::with('manager', 'city', 'state', 'organizationType')
-            ->orderBY('id', 'DESC')
-            ->take(10)
-            ->get();
-        // dd($organizations->toArray());
         if ($request->has('filter')) {
             $organizations =  $this->filterManager($request);
+        } else {
+            $organizations = Organization::with('organizationType')
+                ->with('city', function ($query) {
+                    $query->select('id', 'name');
+                })
+                ->with('state', function ($query) {
+                    $query->select('id', 'name');
+                })
+                ->with('manager', function ($query) {
+                    $query->select('id', 'o_id', 'name', 'email', 'phone', 'otp', 'picture');
+                })
+                ->orderBY('id', 'DESC')
+                ->take(10)
+                ->get();
         }
 
         return view('manager.index', [
@@ -118,61 +123,13 @@ class ManagerController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ManagerStoreRequest $request)
     {
-        // dd($request->all());
-        $this->validate($request, [
-            'org_name' => ['required', 'string', 'max:255'],
-            'org_type ' => 'nullable|numeric',
-            'org_email' => 'required|email|unique:organizations,email',
-            'org_phone' => 'required|regex:/^03\d{2}-\d{7}$/',
-            'org_state' => 'required|numeric',
-            'org_city' => 'required|numeric',
-
-            'org_head_name' => ['required', 'string', 'max:255'],
-            'org_head_phone' => 'required|regex:/^03\d{2}-\d{7}$/',
-            'org_head_email' => 'required|email|unique:organizations,head_email',
-
-            'man_name' => ['required', 'string', 'max:255'],
-            'man_email' => 'nullable|email|unique:managers,email',
-            'man_phone' => 'required|unique:managers,phone',
-            'man_pic' => 'nullable|mimes:jpg,png',
-
-            'wallet' => 'required',
-            'payment' => 'required',
-
-            'org_amount' => 'nullable|numeric',
-            'org_trail_start_date' => 'nullable|date',
-            'org_trail_end_date' => 'nullable|date',
-
-            'driver_amount' => 'nullable|numeric',
-            'driver_trial_start_date' => 'nullable|date',
-            'driver_trial_end_date' => 'nullable|date',
-
-            'passenger_amount' => 'nullable|numeric',
-            'passenger_trail_start_date' => 'nullable|date',
-            'passenger_trail_end_date' => 'nullable|date',
-        ], [
-            'org_name.required' => 'Organization name required!',
-            'org_type.required' => 'Organization Organization type required!',
-            'org_email.required' => 'Organization email required',
-            'org_phone.required' => 'Organization phone required!',
-            'org_state.required' => 'Organization state required!',
-            'org_city.required' => 'Organization city required!',
-
-            'org_head_name.required' => 'Organization head name required!',
-            'org_head_phone.required' => 'Organization head phone required!',
-            'org_head_email.required' => 'Organization head email required!',
-
-            'man_name.required' => 'Manager name required!',
-            'man_email.required' => 'Manager email required!',
-            'man_email.unique' => 'Manager email already taken!',
-            'man_phone.required' => 'Manager phone required!',
-        ]);
-
         $user = Auth::user();
         $error = false;
         DB::beginTransaction();
+        $otp = rand(1000, 9999);
+        $orgEmail = $request->input('org_email');
         // $users = new User();
         // $users->user_name    = $request->input('man_name');
         // $users->email        = $request->input('man_email');
@@ -181,15 +138,19 @@ class ManagerController extends Controller
         // $users->phone        = $request->input('man_phone');
         // $users_save          = $users->save();
         // if ($users_save) {
+        // } else {
+        //     $error = true;
+        // }
         $org = new Organization();
         $org->u_id          = $user->id;
         $org->name          = $request->input('org_name');
         $org->branch_name   = $request->input('org_branch_name');
         $org->branch_code   = $request->input('org_branch_code');
         $org->o_type_id     = $request->input('org_type');
-        $org->email         = $request->input('org_email');
+        $org->email         = $orgEmail;
         $org->phone         = $request->input('org_phone');
         $org->address       = $request->input('org_address');
+        $org->code          = substr(uniqid(), -8);
         $org->s_id          = $request->input('org_state');
         $org->c_id          = $request->input('org_city');
         $org->head_name     = $request->input('org_head_name');
@@ -200,14 +161,14 @@ class ManagerController extends Controller
         if ($org_save) {
             $manager = new Manager();
             $manager->o_id          = $org->id;
-            $manager->uid           = Str::random(60); //substr(uniqid(), 4);
+            $manager->u_id          = $user->id;
             $manager->name          = $request->input('man_name');
             $manager->email         = $request->input('man_email');
             $manager->phone         = $request->input('man_phone');
             $manager->address       = $request->input('man_address');
-            $manager->otp           = rand(1000, 9999);
+            $manager->otp           = $otp;
             $manager->picture       = ($request->file('man_pic'))
-                ? uploadImage($request->file('man_pic'), 'managers/')
+                ? uploadImage($request->file('man_pic'), 'managers/profiles/')
                 : null;
             $manager_save = $manager->save();
             if ($manager_save) {
@@ -244,11 +205,11 @@ class ManagerController extends Controller
         } else {
             $error = true;
         }
-        // } else {
-        //     $error = true;
-        // }
         if (!$error) {
             DB::commit();
+
+            emailsendingJob($orgEmail, $org);
+
             return redirect()->route('manager.index')
                 ->with('success', 'Organization created successfully.');
         } else {

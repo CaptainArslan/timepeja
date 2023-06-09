@@ -17,19 +17,23 @@ class RouteFactory extends Factory
      */
     public function definition()
     {
+        $from = $this->faker->city();
+        $to = $this->faker->city();
+        $number = rand(1000, 9999);
+        $name = $number . '-' . $from . '-' . $to;
         return [
             'o_id' => Organization::inRandomOrder()->first()->id,
             'u_id' => 1,
-            'name' => $this->faker->name,
-            'number' => rand(1000, 9999),
-            'from' => $this->faker->city(),
+            'name' => $name,
+            'number' => $number,
+            'from' => $from,
             'from_longitude' => $this->faker->longitude,
             'from_latitude' => $this->faker->latitude,
-            'to' => $this->faker->city(),
+            'to' => $to,
             'to_longitude' => $this->faker->longitude,
             'to_latitude' => $this->faker->latitude,
             'status' => Route::STATUS_ACTIVE,
-            'created_at' => Carbon::now(),
+            'created_at' => time(),
         ];
     }
 }

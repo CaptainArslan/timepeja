@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Carbon;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -14,12 +15,19 @@ class Driver extends Authenticatable implements JWTSubject
     use SoftDeletes;
     use Notifiable;
 
-    public const STATUS_ONLINE = 1;
-    public const STATUS_OFFLINE = 0;
+    public const STATUS_ONLINE = true;
+    public const STATUS_OFFLINE = false;
 
-    public const STATUS_ACTIVE = 1;
-    public const STATUS_INACTIVE = 0;
+    public const STATUS_ACTIVE = true;
+    public const STATUS_INACTIVE = false;
 
+    public const DRIVER_LIMIT_PER_PAGE = 10;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<string>
+     */
     protected $fillable = [
         'o_id',
         'u_id',
@@ -41,6 +49,18 @@ class Driver extends Authenticatable implements JWTSubject
         'status',
         'online_status',
         'address',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'o_id' => 'integer',
+        'u_id' => 'integer',
+        'status' => 'boolean',
+        'online_status' => 'boolean'
     ];
 
     /**
@@ -76,7 +96,9 @@ class Driver extends Authenticatable implements JWTSubject
      */
     public function getJWTCustomClaims()
     {
-        return [];
+        return [
+            'exp' => now()->addMonth(1)->timestamp, // Set token expiration to 7 days from now
+        ];
     }
 
 
@@ -142,6 +164,28 @@ class Driver extends Authenticatable implements JWTSubject
     public function getPhoneAttribute($value)
     {
         return substr($value, 0, 4) . '-' . substr($value, 4, 8);
+    }
+
+    /**
+     * Set the phone number attribute.
+     *
+     * @param  string  $value
+     * @return void
+     */
+    public function setLicenseNoAttribute($value)
+    {
+        $this->attributes['license_no'] = str_replace('-', '', $value);
+    }
+
+    /**
+     * Get the license_no number attribute.
+     *
+     * @param  string  $value
+     * @return string
+     */
+    public function getLicenseNoAttribute($value)
+    {
+        return substr($value, 0, 10) . '-' . substr($value, 11, 3);
     }
 
     /**
@@ -253,5 +297,27 @@ class Driver extends Authenticatable implements JWTSubject
     public function getLicenseNoBackPicNameAttribute()
     {
         return $this->attributes['license_no_back_pic'];
+    }
+
+    /**
+     * Get the created_at.
+     *
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getCreatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('Y-m-d');
+    }
+
+    /**
+     * Get the updated_at.
+     *
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getUpdatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('Y-m-d');
     }
 }

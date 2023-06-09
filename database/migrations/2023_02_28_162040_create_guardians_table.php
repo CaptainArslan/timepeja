@@ -28,7 +28,7 @@ class CreateGuardiansTable extends Migration
             $table->string('cnic_back_pic')->nullable();
             $table->string('image')->nullable();
             $table->string('relation')->nullable();
-            $table->integer('status');
+            $table->boolean('status');
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

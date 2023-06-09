@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Carbon;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class Manager extends Authenticatable implements JWTSubject
@@ -17,8 +18,8 @@ class Manager extends Authenticatable implements JWTSubject
     protected $table = 'managers';
     protected $appends = ['picture'];
 
-    public const STATUS_ACTIVE = 0;
-    public const STATUS_INACTIVE = 1;
+    public const STATUS_ACTIVE = true;
+    public const STATUS_INACTIVE = false;
 
     protected $fillable = [
         'id',
@@ -29,6 +30,17 @@ class Manager extends Authenticatable implements JWTSubject
         'phone',
         'picture',
         'address'
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'o_id' => 'integer',
+        'u_id' => 'integer',
+        'status' => 'boolean',
     ];
 
     /**
@@ -158,6 +170,39 @@ class Manager extends Authenticatable implements JWTSubject
      */
     public function getPictureAttribute()
     {
-        return $this->attributes['picture'] ? asset('uploads/managers/' . $this->attributes['picture']) : null;
+        return $this->attributes['picture'] ? asset('uploads/managers/profiles/' . $this->attributes['picture']) : null;
+    }
+
+    /**
+     * Get the front picture name of the vehicle.
+     *
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getPictureNameAttribute()
+    {
+        return $this->attributes['picture'];
+    }
+
+    /**
+     * Get the created_at.
+     *
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getCreatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('Y-m-d');
+    }
+
+    /**
+     * Get the updated_at.
+     *
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getUpdatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('Y-m-d');
     }
 }

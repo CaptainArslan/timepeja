@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Add Drivers')
+@section('title', 'Drivers | Timepejao')
 <!-- start page title -->
 @section('page_css')
 @include('partials.datatable_css')
@@ -32,13 +32,13 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <form action="{{ route('driver.index') }}" id="filterselect2" method="post" >
+                <form action="{{ route('driver.index') }}" id="filterselect2" method="post">
                     @csrf
                     <div class="row">
                         <div class="col-md-5">
                             <label for="organization">Select Oganization</label>
                             <select class="form-control filterselect2" id="organization" name="o_id" data-toggle="select2" data-width="100%">
-                                <option value="">Select</option>
+                                <option value="" selected>Select</option>
                                 @forelse ($organizations as $organization)
                                 <option value="{{ $organization->id }}" {{ $organization->id == request()->input('o_id') ? 'selected' : '' }}>{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
                                 @empty
@@ -94,7 +94,7 @@
                             <!-- selection show here -->
                         </div>
                         <div class="col-1">
-                            <button class="btn btn-danger">Delete</button>
+                            <button class="btn btn-danger" id="btnMultilDelete" disabled="disabled">Delete</button>
                         </div>
                     </div>
                 </div>
@@ -135,15 +135,16 @@
                                 <td> {{ $driver->phone }} </td>
                                 <td> {{ $driver->cnic }} </td>
                                 <td> {{ $driver->license_no }} </td>
-                                <td> <img src="{{ $driver->cnic_front_pic }}" alt="cnic front" height="50" width="50"> </td>
-                                <td> <img src="{{ $driver->cnic_back_pic }}" alt="cnic back" height="50" width="50"> </td>
-                                <td> <img src="{{ $driver->license_no_front_pic }}" alt="licsence front" height="50" width="50"> </td>
-                                <td> <img src="{{ $driver->license_no_back_pic }}" alt="License Back" height="50" width="50"> </td>
+                                <td> <img src="{{ $driver->cnic_front_pic }}" alt="cnic front" style="width: 50px; height: 50px; object-fit: contain;"> </td>
+                                <td> <img src="{{ $driver->cnic_back_pic }}" alt="cnic back" style="width: 50px; height: 50px; object-fit: contain;"> </td>
+                                <td> <img src="{{ $driver->license_no_front_pic }}" alt="licsence front" style="width: 50px; height: 50px; object-fit: contain;"> </td>
+                                <td> <img src="{{ $driver->license_no_back_pic }}" alt="License Back" style="width: 50px; height: 50px; object-fit: contain;"> </td>
                                 <td>
                                     <span class="badge  @if($driver->status) bg-success @else bg-danger @endif ">
                                         @if($driver->status) Active @else Deactive @endif</span>
                                 </td>
                                 <td>
+                                    <input type="hidden" class="db_id" value="{{ $driver->id }}">
                                     <input type="hidden" class="db_org_name" value="{{ $driver->organization['id'] }}">
                                     <input type="hidden" class="db_name" value="{{ $driver->name }}">
                                     <input type="hidden" class="db_phone" value="{{ $driver->phone }}">
@@ -246,7 +247,7 @@
                                     <div class="col-lg-6">
                                         <div class="mb-3">
                                             <label for="license" class="form-label">License Number</label>
-                                            <input type="text" id="license" name="license" class="form-control" value="{{ old('license') }}" data-toggle="input-mask" data-mask-format="0000000000-AAA" required>
+                                            <input type="text" id="license" name="license_no" class="form-control" value="{{ old('license_no') }}" data-toggle="input-mask" data-mask-format="0000000000-AAA" required>
                                             <span class="text-danger" id="license_error"></span>
                                         </div>
                                         <div class="mb-3">
@@ -480,20 +481,41 @@
         //         }
         //     });
         // });
+
+
+        // Listen for changes to child and parent checkboxes
+        $('.child_checkbox, .parent_checkbox').on('change', function() {
+            // Check if any checkboxes are checked
+            if ($('.child_checkbox:checked, .parent_checkbox:checked').length > 0) {
+                // At least one checkbox is checked
+                $('#btnMultilDelete').prop('disabled', false);
+            } else {
+                // No checkboxes are checked
+                $('#btnMultilDelete').prop('disabled', true);
+            }
+        });
+
+
     });
 
 
     function fillEditForm(param) {
-        let id = $(param).data('id');
-        let _this = $(param).parent('tr');
-        // $('#edit_driver_form').attr('action', '/driver/' + id);
-        $('#edit_id').val(id);
+        let _this = $(param).parents('tr');
+        console.log(_this.find('.db_cnic_front_pic').val());
+        $('#edit_id').val(_this.find('.db_id').val());
         $('#edit_org_name').val(_this.find('.db_org_name').val()).trigger('change');
         $('#edit_name').val(_this.find('.db_name').val());
         $('#edit_phone').val(_this.find('.db_phone').val());
         $('#edit_cnic').val(_this.find('.db_cnic').val());
         $('#edit_license').val(_this.find('.db_license').val());
         $('#edit_status').val(_this.find('.db_status').val()).trigger('change');
+
+        // alert(_this.find('.db_cnic_front_pic').val());
+
+        resetPreviewDropify(_this.find('.db_cnic_front_pic').val(), "#edit_cnic_front");
+        resetPreviewDropify(_this.find('.db_cnic_back_pic').val(), "#edit_cnic_back");
+        resetPreviewDropify(_this.find('.db_license_no_front_pic').val(), "#edit_license_front");
+        resetPreviewDropify(_this.find('.db_license_no_back_pic').val(), "#edit_license_back");
     }
 
     function validateForm() {
@@ -593,19 +615,29 @@
             }
         });
     }
+
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
+    // function countCheckboxChecked() {
+    //     // alert($('.child_checkbox:checked').length)
+    //     if ($('.child_checkbox:checked, .parent_checkbox:checked').length > 0) {
+    //         $('#btnMultilDelete').prop('disabled', false);
+    //     } else {
+    //         $('#btnMultilDelete').prop('disabled', true);
+    //     }
+    // }
 </script>
 <script src="{{ asset('/libs/select2/js/select2.min.js') }}"></script>
 <!-- Plugins js-->
-<script src="/libs/twitter-bootstrap-wizard/jquery.bootstrap.wizard.min.js"></script>
+<!-- <script src="/libs/twitter-bootstrap-wizard/jquery.bootstrap.wizard.min.js"></script> -->
 <!-- Plugins js -->
 <script src="/libs/dropzone/min/dropzone.min.js"></script>
 <script src="/libs/dropify/js/dropify.min.js"></script>
 
 <!-- Init js-->
 <script src="/js/pages/form-fileuploads.init.js"></script>
-
-<!-- Init js-->
-<script src="/js/pages/form-wizard.init.js"></script>
-<!-- Init js-->
 
 @endsection

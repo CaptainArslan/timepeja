@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,9 +12,17 @@ class Route extends Model
     use HasFactory;
     use SoftDeletes;
 
-    const STATUS_ACTIVE = 1;
-    const STATUS_INACTIVE = 0;
+    public const STATUS_ACTIVE = true;
+    public const STATUS_INACTIVE = false;
 
+    // for pagination
+    public const ROUTE_LIMIT_PER_PAGE = 10;
+
+    /**
+     * array for fillable
+     *
+     * @var array
+     */
     protected $fillable = [
         'o_id',
         'u_id',
@@ -29,6 +38,28 @@ class Route extends Model
     ];
 
     /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'o_id' => 'integer',
+        'u_id' => 'integer',
+        'number' => 'integer',
+        'status' => 'boolean'
+    ];
+
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        //
+    ];
+
+
+    /**
      * organization relation with routes
      *
      * @return  [type]  [return description]
@@ -36,5 +67,99 @@ class Route extends Model
     public function organizations()
     {
         return $this->belongsTo(Organization::class, 'o_id', 'id');
+    }
+
+
+
+    // ----------------------------------------------------------------
+    // ------------------ Accessors & Mutator -------------------------
+    // ----------------------------------------------------------------
+
+    /**
+     * Set the name attribute.
+     *
+     * @param  string  $value
+     * @return void
+     */
+    public function setNameAttribute($value)
+    {
+        $this->attributes['name'] = ucwords(strtolower($value));
+    }
+
+    /**
+     * Get the name attribute.
+     *
+     * @param  string  $value
+     * @return string
+     */
+    public function getNameAttribute($value)
+    {
+        return ucwords(strtolower($value));
+    }
+
+    /**
+     * Set the from attribute.
+     *
+     * @param  string  $value
+     * @return void
+     */
+    public function setFromAttribute($value)
+    {
+        $this->attributes['from'] = ucwords(strtolower($value));
+    }
+
+    /**
+     * Get the from attribute.
+     *
+     * @param  string  $value
+     * @return string
+     */
+    public function getFromAttribute($value)
+    {
+        return ucwords(strtolower($value));
+    }
+
+    /**
+     * Set the to attribute.
+     *
+     * @param  string  $value
+     * @return void
+     */
+    public function setToAttribute($value)
+    {
+        $this->attributes['to'] = ucwords(strtolower($value));
+    }
+
+    /**
+     * Get the to attribute.
+     *
+     * @param  string  $value
+     * @return string
+     */
+    public function getToAttribute($value)
+    {
+        return ucwords(strtolower($value));
+    }
+
+    /**
+     * Get the created_at.
+     *
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getCreatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('Y-m-d');
+    }
+
+    /**
+     * Get the updated_at.
+     *
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getUpdatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('Y-m-d');
     }
 }

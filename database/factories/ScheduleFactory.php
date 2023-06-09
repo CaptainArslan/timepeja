@@ -23,6 +23,7 @@ class ScheduleFactory extends Factory
             Schedule::TRIP_ISDELAYED,
             Schedule::TRIP_NOTDELAYED
         ]);
+
         $delayReason = $isDelayed == Schedule::TRIP_ISDELAYED ? $this->faker->sentence() : null;
 
         return [
@@ -33,7 +34,10 @@ class ScheduleFactory extends Factory
             'd_id' => Driver::inRandomOrder()->first()->id,
             'date' => Carbon::now(),
             'time' => $this->faker->time(),
-            'status' => Schedule::STATUS_DRAFT,
+            'status' => $this->faker->randomElement([
+                Schedule::STATUS_DRAFT,
+                Schedule::STATUS_PUBLISHED
+            ]),
             'start_time' => $this->faker->time(),
             'end_time' => $this->faker->time(),
             'trip_status' => $this->faker->randomElement([

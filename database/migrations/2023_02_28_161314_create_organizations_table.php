@@ -22,6 +22,7 @@ class CreateOrganizationsTable extends Migration
             $table->unsignedBigInteger('o_type_id')->index('o_type_id')->nullable();
             $table->string('email');
             $table->string('phone');
+            $table->string('code');
             $table->unsignedBigInteger('s_id')->nullable();
             $table->unsignedBigInteger('c_id')->nullable();
             $table->string('address');
@@ -29,7 +30,7 @@ class CreateOrganizationsTable extends Migration
             $table->string('head_email');
             $table->string('head_phone');
             $table->string('head_address')->nullable();
-            $table->integer('status');
+            $table->boolean('status');
             $table->timestamps();
             $table->softDeletes();
             $table->foreign('o_type_id')->references('id')->on('organization_types');

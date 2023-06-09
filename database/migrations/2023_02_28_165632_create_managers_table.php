@@ -17,7 +17,7 @@ class CreateManagersTable extends Migration
         Schema::create('managers', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('o_id')->index('o_id');
-            $table->string('uid');
+            $table->string('u_id');
             $table->string('name');
             $table->string('email')->unique()->nullable();
             $table->string('phone')->unique();
