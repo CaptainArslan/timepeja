@@ -2,19 +2,29 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Vehicle extends Model
 {
     use HasFactory;
     use SoftDeletes;
 
-    public const STATUS_ACTIVE = 1;
-    public const STATUS_DEACTIVE = 0;
+    protected $table = 'vehicles';
 
+    public const STATUS_ACTIVE = true;
+    public const STATUS_DEACTIVE = false;
 
+    // for pagination
+    public const VEHICLE_LIMIT_PER_PAGE = 10;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
     protected $fillable = [
         'o_id',
         'u_id',
@@ -34,7 +44,41 @@ class Vehicle extends Model
         'car_accessories',
         'status'
     ];
-    protected $table = 'vehicles';
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'o_id' => 'integer',
+        'u_id' => 'integer',
+        'v_type_id' => 'integer',
+        'status' => 'boolean'
+    ];
+
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        'no_of_seat',
+        'back_pic',
+        'reg_date',
+        'expiry_date',
+        'model_no',
+        'brand_name',
+        'color',
+        'chassis_no',
+        'engine_no',
+        'car_accessories'
+    ];
+
+
+    // ----------------------------------------------------------------
+    // -------------------------- Relations ---------------------------
+    // ----------------------------------------------------------------
 
     public function organizations()
     {
@@ -70,7 +114,7 @@ class Vehicle extends Model
      */
     public function getFrontPicNameAttribute()
     {
-        return $this->attributes['front_pic'] ;
+        return $this->attributes['front_pic'];
     }
 
     /**
@@ -92,7 +136,7 @@ class Vehicle extends Model
      */
     public function getBackPicNameAttribute()
     {
-        return $this->attributes['back_pic'] ;
+        return $this->attributes['back_pic'];
     }
 
     /**
@@ -114,6 +158,39 @@ class Vehicle extends Model
      */
     public function getNumberPicNameAttribute()
     {
-        return $this->attributes['number_pic'] ;
+        return $this->attributes['number_pic'];
+    }
+
+    /**
+     * Get the registration date of the vehicle.
+     *
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getRegDateAttribute()
+    {
+        return $this->attributes['reg_date'] ? date('d-m-Y', strtotime($this->attributes['reg_date'])) : null;
+    }
+
+    /**
+     * Get the created_at.
+     *
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getCreatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('Y-m-d');
+    }
+
+    /**
+     * Get the updated_at.
+     *
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getUpdatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('Y-m-d');
     }
 }

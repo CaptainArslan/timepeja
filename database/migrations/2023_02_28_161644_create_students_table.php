@@ -29,7 +29,7 @@ class CreateStudentsTable extends Migration
             $table->string('discipline')->nullable();
             $table->string('degree_duration')->nullable();
             $table->string('unique_id');
-            $table->integer('status');
+            $table->boolean('status');
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

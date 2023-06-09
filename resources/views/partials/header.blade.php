@@ -19,10 +19,10 @@
                 </a>
             </li>
 
-            <li class="dropdown d-none d-lg-inline-block topbar-dropdown">
-                <!-- <a class="nav-link dropdown-toggle arrow-none waves-effect waves-light" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
+            <!-- <li class="dropdown d-none d-lg-inline-block topbar-dropdown">
+                <a class="nav-link dropdown-toggle arrow-none waves-effect waves-light" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
                     <i class="fe-grid noti-icon"></i>
-                </a> -->
+                </a>
                 <div class="dropdown-menu dropdown-lg dropdown-menu-end">
 
                     <div class="p-lg-1">
@@ -71,7 +71,7 @@
                     </div>
 
                 </div>
-            </li>
+            </li> -->
 
             <li class="dropdown notification-list topbar-dropdown">
                 <a class="nav-link dropdown-toggle waves-effect waves-light" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
@@ -176,7 +176,7 @@
                 <div class="dropdown-menu dropdown-menu-end profile-dropdown ">
                     <!-- item-->
                     <div class="dropdown-header noti-title">
-                        <h6 class="text-overflow m-0">Welcome !</h6>
+                        <h6 class="text-overflow m-0">Welcome {{ (auth()->user()) ? auth()->user()->full_name : '' }}!</h6>
                     </div>
 
                     <!-- item-->

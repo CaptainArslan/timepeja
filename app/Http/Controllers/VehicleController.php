@@ -35,13 +35,14 @@ class VehicleController extends Controller
         $organizations = Organization::get();
         $vehicle_types = VehicleType::get();
         $vehicles = Vehicle::with(['organizations' => function ($query) {
-            $query->select('id', 'name'); // Select the id and name columns from the organizations table
+            $query->select('id', 'name')->orderBy('id', 'DESC'); // Select the id and name columns from the organizations table
         }])
             ->with(['vehiclesTypes' => function ($query) {
                 $query->select('id', 'name'); // Select the id and name columns from the vehicles_types table
             }])
-            ->orderBy('id', 'DESC')
+            ->latest()
             ->take(10)
+
             ->get(); // Select only the id and name columns from the vehicles table
 
         // dd($vehicles->toArray());
@@ -101,8 +102,6 @@ class VehicleController extends Controller
         // Return the filtered records to the view
         return $records;
     }
-
-
 
     /**
      * Show the form for creating a new resource.
@@ -296,7 +295,7 @@ class VehicleController extends Controller
                 ->with('success', 'Vehicles deleted successfully.');
         } catch (\Exception $e) {
             return redirect()->route('vehicle.index')
-                ->with('error', 'Error occured while Vehicle deletion.');
+                ->with('error', 'Error occured while Vehicle deletion.' . $e->getMessage());
         }
     }
 }

@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Schedule extends Model
 {
@@ -18,8 +19,8 @@ class Schedule extends Model
     public const TRIP_STATUS_INPROGRESS = 'in-progress';
     public const TRIP_STATUS_COMPLETED = 'completed';
 
-    public const TRIP_NOTDELAYED = 0;
-    public const TRIP_ISDELAYED = 1;
+    public const TRIP_NOTDELAYED = false;
+    public const TRIP_ISDELAYED = true;
 
     protected $table = 'schedules';
 
@@ -34,10 +35,30 @@ class Schedule extends Model
         'status'
     ];
 
+
     /**
-     * [organizations description]
+     * The attributes that should be cast.
      *
-     * @return  [type]  [return description]
+     * @var array
+     */
+    protected $casts = [
+        'o_id' => 'integer',
+        'u_id' => 'integer',
+        'route_id' => 'integer',
+        'v_id' => 'integer',
+        'd_id' => 'integer',
+    ];
+
+
+
+    // ----------------------------------------------------------------
+    // -------------------------- Relations ---------------------------
+    // ----------------------------------------------------------------
+
+    /**
+     * relation with organization
+     *
+     * @return  [type]  return relation
      */
     public function organizations()
     {
@@ -45,9 +66,9 @@ class Schedule extends Model
     }
 
     /**
-     * [routes description]
+     * relation with route
      *
-     * @return  [type]  [return description]
+     * @return  [type]  return relation
      */
     public function routes()
     {
@@ -55,9 +76,9 @@ class Schedule extends Model
     }
 
     /**
-     * [vehicles description]
+     * RELATION WITH VEHICLE
      *
-     * @return  [type]  [return description]
+     * @return  [type]  return relation
      */
     public function vehicles()
     {
@@ -65,9 +86,9 @@ class Schedule extends Model
     }
 
     /**
-     * [drivers description]
+     * relation with driver
      *
-     * @return  [type]  [return description]
+     * @return  [type]  return relation
      */
     public function drivers()
     {
@@ -75,12 +96,40 @@ class Schedule extends Model
     }
 
     /**
-     * [users description]
+     * relation with user
      *
      * @return  [type]  [return description]
      */
+
     public function users()
     {
         return $this->belongsTo(User::class, 'u_id', 'id');
+    }
+
+
+    // ----------------------------------------------------------------
+    // ------------------ Accessors & Mutator -------------------------
+    // ----------------------------------------------------------------
+
+    /**
+     * Get the created_at.
+     *
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getCreatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('Y-m-d');
+    }
+
+    /**
+     * Get the updated_at.
+     *
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getUpdatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('Y-m-d');
     }
 }

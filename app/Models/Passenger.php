@@ -19,9 +19,14 @@ class Passenger extends Authenticatable implements JWTSubject
 
     protected $table = 'passengers';
 
-    public const STATUS_ACTIVE = 1;
-    public const STATUS_DEACTIVE = 0;
+    public const STATUS_ACTIVE = true;
+    public const STATUS_DEACTIVE = false;
 
+    /**
+     * array for fillable
+     *
+     * @var array
+     */
     protected $fillable = [
         'id',
         'name',
@@ -52,6 +57,15 @@ class Passenger extends Authenticatable implements JWTSubject
         'town',
         'status',
         'remember_token',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'email_verified_at' => 'datetime',
     ];
 
     // ----------------------------------------------------------------
