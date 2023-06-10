@@ -24,7 +24,9 @@ use App\Http\Controllers\SettingController;
 
 //User Roles
 // Route::resource('roles', 'RoleController');
-Route::get('/', function () { return redirect()->route('login'); })->name('login');
+Route::get('/', function () {
+    return redirect()->route('login'); 
+});
 Route::get('/register', function () { return view('auth.register'); })->name('register');
 Auth::routes();
 
