@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\CommonController;
-use App\Models\TransportManager;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
@@ -10,7 +9,7 @@ use App\Http\Controllers\DriverController;
 use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\ScheduleController;
-use App\Models\Schedule;
+use App\Http\Controllers\SettingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -75,6 +74,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/delete', [VehicleController::class, 'destroy'])->name('delete');
         Route::post('multi-delete', [VehicleController::class, 'multiDelete'])->name('multiDelete');
     });
+
     Route::get('/active-vehicle', function () {
         return view('manager.active_vehicle');
     })->name('active_vehicle');
@@ -110,6 +110,11 @@ Route::group(['middleware' => 'auth'], function () {
         Route::match(['get', 'post'], '/reports', [ManagerController::class, 'logReport'])->name('reports');
     });
 
+   /**
+     * [Setting]
+     */
+    Route::match(['get', 'put'],'setting',[SettingController::class, 'updateOrCreate'])->name('setting.google');
+
     /**
      * [user Approval]
      */
@@ -120,7 +125,12 @@ Route::group(['middleware' => 'auth'], function () {
         Route::match(['get', 'post'], '/pastuser', [ManagerController::class, 'pastUser'])->name('pastuser');
     });
 
-    Route::get('/profile', function () { return view('auth.profile'); })->name('profile');
+    /* Route::get('/profile', function () {
+        return view('auth.profile');
+    })->name('profile'); */
+    Route::get('/profile',[HomeController::class,'profile'])->name('profile');
+    Route::put( '/profile/{user}',[HomeController::class,'updateProfile'])->name('profile.update');
+    // Route::post('/profile/change-personal-info',[HomeController::class,'changeAuthInfo'])->name('auth.change.profile');
 
     // Route::get('/transpot/schedule', function () { return view('manager.transport_scheduled'); })->name('transpot.schedule');
     // Route::get('/awaiting/approval', function () {

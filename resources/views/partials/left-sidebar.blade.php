@@ -229,21 +229,35 @@
                                 <a href="{{ route('trans_routes')}}">Transport Routes</a>
                         </ul>
                     </div>
-
                 </li>
                 <li>
-                    <a href="#sidebarTickets" data-bs-toggle="collapse">
+                    <a href="#reports" data-bs-toggle="collapse">
                         <i class="fas fa-dollar-sign"></i>
                         <span> Reports </span>
                         <span class="menu-arrow"></span>
                     </a>
-                    <div class="collapse" id="sidebarTickets">
+                    <div class="collapse" id="reports">
                         <ul class="nav-second-level">
                             <li>
                                 <a href="{{ route('revenue') }}">Revenue</a>
                             </li>
                             <li>
                                 <a href="{{ route('expense') }}">Expense</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <!-- Settings -->
+                <li>
+                    <a href="#settings" data-bs-toggle="collapse">
+                        <i class="fas fa-cogs"></i>
+                        <span> Setting </span>
+                        <span class="menu-arrow"></span>
+                    </a>
+                    <div class="collapse" id="settings">
+                        <ul class="nav-second-level">
+                            <li>
+                                <a href="{{ route('setting.google') }}">Google Map Api</a>
                             </li>
                         </ul>
                     </div>

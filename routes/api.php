@@ -82,7 +82,8 @@ Route::group(['middleware' => 'api'], function () {
             Route::post('/logreport', [LogReportController::class, 'index']);
 
             //main screen wrapper
-            Route::get('/main-screen-wrapper', [ApiManagerController::class, 'mainScreenWrapper']);
+            Route::get('/main-screen-wrapper', [ApiManagerController::class, 'wrapper']);
+            Route::get('/log-report-wrapper', [ApiManagerController::class, 'wrapper']);
         });
     });
 

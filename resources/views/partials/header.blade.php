@@ -170,7 +170,7 @@
                 <a class="nav-link dropdown-toggle nav-user me-0 waves-effect waves-light" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
                     <img src="{{asset('images/users/user-1.jpg')}}" alt="user-image" class="rounded-circle">
                     <span class="pro-user-name ms-1">
-                    {{ (auth()->user()) ? auth()->user()->full_name : '' }} <i class="mdi mdi-chevron-down"></i>
+                        {{auth()->user()->user_name}} <i class="mdi mdi-chevron-down"></i>
                     </span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end profile-dropdown ">
