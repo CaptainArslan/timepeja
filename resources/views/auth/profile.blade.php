@@ -56,7 +56,6 @@
                     <div class="tab-content">
                         <!-- class="tab-pane" -->
                         <div id="settings">
-                            {{ asset('uploads/managers/profiles/'.auth()->user()->image)}}
                             <form action="{{route('profile.update', auth()->user()->id)}}" method="POST" enctype="multipart/form-data">
                                 @method('PUT')
                                 @csrf
