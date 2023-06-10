@@ -276,7 +276,7 @@ class ApiManagerController extends BaseController
      * @param Request $request
      * @return void
      */
-    public function mainScreenWrapper(): jsonResponse
+    public function wrapper(): jsonResponse
     {
         try {
             $manager = auth('manager')->user();
