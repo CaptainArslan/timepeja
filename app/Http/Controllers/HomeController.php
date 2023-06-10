@@ -76,8 +76,8 @@ class HomeController extends Controller
         }
 
         $image = ($request->file('profile_image')) ?
-        uploadImage($request->file('profile_image'), 'managers/profiles', 'manager_profile')
-        : Auth::user()->image;
+            uploadImage($request->file('profile_image'), 'managers/profiles', 'manager_profile')
+            : Auth::user()->image;
 
         $userData = [
             'full_name' => $request->input('full_name'),
@@ -90,11 +90,10 @@ class HomeController extends Controller
             $userData['password'] = Hash::make($request->input('password'));
         }
 
-        dd($image);
-        // if ($user->update($userData)) {
-        //     return redirect()->route('profile')->with('success', 'Profile updated successfully.');
-        // }
+        if ($user->update($userData)) {
+            return redirect()->route('profile')->with('success', 'Profile updated successfully.');
+        }
 
-        // return redirect()->route('profile')->with('error', 'Error occurred while updating profile.');
+        return redirect()->route('profile')->with('error', 'Error occurred while updating profile.');
     }
 }
