@@ -276,11 +276,11 @@ class ApiVehicleController extends BaseController
             $string = request()->input('number');
             $manager = auth('manager')->user();
             $vehicles = Vehicle::where('number', 'LIKE', '%' . $string . '%')
-                // ->orWhere('o_id', 'LIKE', '%' . $string . '%')
-                // ->orWhere('v_type_id', 'LIKE', '%' . $string . '%')
-                // ->orWhere('status', 'LIKE', '%' . $string . '%')
-                // ->orWhere('created_at', 'LIKE', '%' . $string . '%')
-                // ->orWhere('updated_at', 'LIKE', '%' . $string . '%')
+                ->orWhere('o_id', 'LIKE', '%' . $string . '%')
+                ->orWhere('v_type_id', 'LIKE', '%' . $string . '%')
+                ->orWhere('status', 'LIKE', '%' . $string . '%')
+                ->orWhere('created_at', 'LIKE', '%' . $string . '%')
+                ->orWhere('updated_at', 'LIKE', '%' . $string . '%')
                 ->where('o_id', $manager->o_id)
                 ->select('id', 'number')
                 ->get();

@@ -131,7 +131,7 @@ Route::group(['middleware' => 'auth'], function () {
         return view('auth.profile');
     })->name('profile'); */
     Route::get('/profile',[HomeController::class,'profile'])->name('profile');
-    Route::put( '/profile/{user}',[HomeController::class,'updateProfile'])->name('profile.update');
+    Route::put( '/profile/{id}',[HomeController::class,'updateProfile'])->name('profile.update');
     // Route::post('/profile/change-personal-info',[HomeController::class,'changeAuthInfo'])->name('auth.change.profile');
 
     // Route::get('/transpot/schedule', function () { return view('manager.transport_scheduled'); })->name('transpot.schedule');
