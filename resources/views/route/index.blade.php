@@ -21,6 +21,7 @@
         </div>
     </div>
 </div>
+
 <!-- end page title -->
 <!-- Filters -->
 <div class="row">
@@ -260,11 +261,19 @@
 <!-- Init js-->
 <script src="{{ asset('/js/pages/form-advanced.init.js') }}"></script>
 
+<script src="https://maps.googleapis.com/maps/api/js?key={{getGoogleApi()}}&libraries=places"></script>
+<script>
+    const autocomplete = new google.maps.places.Autocomplete(
+        document.getElementById('from'), {
+            types: ['geocode']
+        } // Restrict the results to geographic locations
+    );
+</script>
 @include('partials.datatable_js')
+
 
 <script>
     $(document).ready(function() {
-
         // this function is call when add route modal open
         $('#addRouteModal').on('shown.bs.modal', function() {
             initializeSelect2(".select2_form", "#addRouteForm")
