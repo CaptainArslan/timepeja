@@ -273,7 +273,7 @@ class ApiVehicleController extends BaseController
     public function search(): JsonResponse
     {
         try {
-            $string = request()->input('number');
+            $string = request()->input('string');
             $manager = auth('manager')->user();
             $vehicles = Vehicle::where('number', 'LIKE', '%' . $string . '%')
                 ->orWhere('o_id', 'LIKE', '%' . $string . '%')
