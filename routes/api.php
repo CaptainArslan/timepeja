@@ -45,16 +45,26 @@ Route::group(['middleware' => 'api'], function () {
             Route::put('/profile/web/update', [ApiManagerController::class, 'profileUpdateWeb']);
             // Route::post('/create-schedule', [ScheduleController::class, 'create']);
 
+            // Upload Media Api
             Route::post('upload-media', [MediaController::class, 'uploadMedia']);
 
-            // Schedule Api
-            Route::apiResource('/schedule', ApiScheduleController::class);
+            // Get all organization data
             Route::get('/get-organization-data', [ApiScheduleController::class, 'getOrganizationData']);
-            Route::put('schedules/publish', [ApiScheduleController::class, 'publish']);
-            Route::put('schedules/draft', [ApiScheduleController::class, 'draft']);
-            Route::get('schedules/published/{date}', [ApiScheduleController::class, 'getPublishedScheduleByDate']);
-            Route::get('schedules/created/{date}', [ApiScheduleController::class, 'getCreatedScheduleByDate']);
+            
+            // Schedule Api
+            Route::group(['prefix'=>'schedule'], function(){
+                Route::apiResource('/', ApiScheduleController::class);
+                Route::post('/replicate', [ApiScheduleController::class, 'replicate']);
+            });
 
+            Route::group(['prefix'=>'schedules'], function(){
+                Route::put('/publish', [ApiScheduleController::class, 'publish']);
+                Route::put('/draft', [ApiScheduleController::class, 'draft']);
+                Route::get('/published/{date}', [ApiScheduleController::class, 'getPublishedScheduleByDate']);
+                Route::get('/created/{date}', [ApiScheduleController::class, 'getCreatedScheduleByDate']);
+            });
+
+            // Vehicle Type
             Route::get('vehicle-types', [VehicleTypeController::class, 'index']);
 
             // Driver Api
@@ -79,7 +89,7 @@ Route::group(['middleware' => 'api'], function () {
             Route::get('/search/route', [ApiRouteController::class, 'search']);
 
             // Log Report Api
-            Route::post('/logreport', [LogReportController::class, 'index']);
+            Route::get('/logreport', [LogReportController::class, 'index']);
 
             //main screen wrapper
             Route::get('/main-screen-wrapper', [ApiManagerController::class, 'wrapper']);

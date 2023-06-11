@@ -336,7 +336,7 @@ class ScheduleController extends Controller
     }
 
     /**
-     * Undocumented function
+     * replicate sungle schedule
      *
      * @param [object] $schedule
      * @param [object] $user
@@ -362,15 +362,15 @@ class ScheduleController extends Controller
     }
 
     /**
-     * Undocumented function
+     * Replicate single schedule
      *
      * @param [type] $request
      * @return void
      */
     public function replicateSchedule($request)
     {
-        $schedule_ids = explode(",", $request->schedule_ids);
         $user = Auth::user();
+        $schedule_ids = explode(",", $request->schedule_ids);
         $schedules = Schedule::whereIn('id', $schedule_ids)->get();
         $date = $request->date;
 

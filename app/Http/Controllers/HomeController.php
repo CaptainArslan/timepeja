@@ -36,22 +36,14 @@ class HomeController extends Controller
         return view('auth.profile');
     }
 
-    public function updateProfile(Request $request, User $user)
+    public function updateProfile(Request $request, $id)
     {
         $request->validate([
             'full_name' => ['required', 'string'],
             'phone' => ['required'],
             'email' => ['required', 'string', 'email'],
-            'old_password' => ['nullable', 'string', function ($attribute, $value, $fail) use ($user, $request) {
-                if ($request->filled('old_password') && !Hash::check($value, $user->password)) {
-                    $fail('The :attribute is incorrect.');
-                }
-            }],
-            'password' => ['nullable', 'string', 'min:8', 'max:15', 'confirmed', function () use ($request) {
-                if ($request->filled('old_password')) {
-                    return ['required'];
-                }
-            }],
+            'old_password' => ['nullable', 'string'],
+            'password' => ['nullable', 'string', 'min:8', 'max:15', 'confirmed'],
             'profile_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
         ], [
             'full_name.required' => 'The full name field is required.',
@@ -70,7 +62,6 @@ class HomeController extends Controller
             'profile_image.max' => 'Profile may not be greater than 2048 kilobytes',
         ]);
 
-
         if ($request->hasFile('profile_image')) {
             removeImage(Auth::user()->image, 'managers/profiles');
         }
@@ -79,16 +70,23 @@ class HomeController extends Controller
             uploadImage($request->file('profile_image'), 'managers/profiles', 'manager_profile')
             : Auth::user()->image;
 
+            $user = User::findOrFail($id);
+            var_dump(Hash::check($request->password, $user->password));
+            exit;
+            if ($request->filled('old_password') && Hash::check($request->password, $user->password)){
+                if ($request->filled('password')) {
+                    $userData['password'] = Hash::make($request->input('password'));
+                }
+            }else{
+                return redirect()->route('profile')->with('error', 'Incorrect Old Password.');
+            }
+
         $userData = [
             'full_name' => $request->input('full_name'),
             'phone' => $request->input('phone'),
             'email' => $request->input('email'),
-            'image' => $image,
+            'image' => 0,
         ];
-
-        if ($request->filled('password')) {
-            $userData['password'] = Hash::make($request->input('password'));
-        }
 
         if ($user->update($userData)) {
             return redirect()->route('profile')->with('success', 'Profile updated successfully.');

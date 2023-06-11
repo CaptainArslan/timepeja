@@ -34,7 +34,7 @@
                     @if (auth()->user()->image)
                     {{ asset('uploads/managers/profiles/'.auth()->user()->image)}}
                     @else
-                    {{ asset('uploads/managers/profiles/placeholder.jpeg')}}
+                    {{ asset('uploads/managers/profiles/placeholder.jpg')}}
                     @endif
                     " class="rounded-circle avatar-lg img-thumbnail" alt="profile-image">
 
