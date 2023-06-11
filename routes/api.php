@@ -32,17 +32,20 @@ Route::group(['middleware' => 'api'], function () {
         Route::post('/login/web', [ManagerAuthController::class, 'webLogin']);
         Route::post('/get-code', [ManagerAuthController::class, 'getVerificationCode'])
             ->middleware('throttle:ratelimit');
-            
+
         Route::post('/refresh', [ManagerAuthController::class, 'refresh']);
         Route::post('/logout', [ManagerAuthController::class, 'logout']);
         Route::post('/forget-password', [ManagerAuthController::class, 'forgetPassword']);
 
         // Manager Auth Middleware with jwt
         Route::middleware(['jwt.verify:manager'])->group(function () {
-            Route::get('/profile', [ManagerAuthController::class, 'profile']);
-            Route::post('/profile/upload', [ApiManagerController::class, 'profileUpload']);
-            Route::put('/profile/update', [ApiManagerController::class, 'profileUpdate']);
-            Route::put('/profile/web/update', [ApiManagerController::class, 'profileUpdateWeb']);
+            Route::group(['prefix' => 'profile'], function () {
+                Route::get('/', [ManagerAuthController::class, 'profile']);
+                Route::post('/upload', [ApiManagerController::class, 'profileUpload']);
+                Route::put('/update', [ApiManagerController::class, 'profileUpdate']);
+                Route::put('/web/update', [ApiManagerController::class, 'profileUpdateWeb']);
+            });
+
             // Route::post('/create-schedule', [ScheduleController::class, 'create']);
 
             // Upload Media Api
@@ -50,14 +53,14 @@ Route::group(['middleware' => 'api'], function () {
 
             // Get all organization data
             Route::get('/get-organization-data', [ApiScheduleController::class, 'getOrganizationData']);
-            
+
             // Schedule Api
-            Route::group(['prefix'=>'schedule'], function(){
+            Route::group(['prefix' => 'schedule'], function () {
                 Route::apiResource('/', ApiScheduleController::class);
                 Route::post('/replicate', [ApiScheduleController::class, 'replicate']);
             });
 
-            Route::group(['prefix'=>'schedules'], function(){
+            Route::group(['prefix' => 'schedules'], function () {
                 Route::put('/publish', [ApiScheduleController::class, 'publish']);
                 Route::put('/draft', [ApiScheduleController::class, 'draft']);
                 Route::get('/published/{date}', [ApiScheduleController::class, 'getPublishedScheduleByDate']);
@@ -71,17 +74,22 @@ Route::group(['middleware' => 'api'], function () {
             Route::resource('/driver', ApiDriverController::class);
             Route::get('/search/driver', [ApiDriverController::class, 'search']);
             // Driver api for web
-            Route::get('web/driver', [ApiDriverController::class ,'getDriver']);
-            Route::post('web/driver', [ApiDriverController::class ,'storeWeb']);
-            Route::put('web/driver/{id}', [ApiDriverController::class ,'updateWeb']);
+            Route::group(['prefix' => 'web/driver'], function () {
+                Route::get('/', [ApiDriverController::class, 'getDriver']);
+                Route::post('/', [ApiDriverController::class, 'storeWeb']);
+                Route::put('/{id}', [ApiDriverController::class, 'updateWeb']);
+            });
+
 
             // Vehicle Api
             Route::resource('/vehicle', ApiVehicleController::class);
             Route::get('/search/vehicle', [ApiVehicleController::class, 'search']);
             // Vehicle apo for web
-            Route::get('web/vehicle', [ApiVehicleController::class, 'getVehicle']);
-            Route::post('web/vehicle', [ApiVehicleController::class, 'storeWeb']);
-            Route::put('web/vehicle/{id}', [ApiVehicleController::class, 'updateWeb']);
+            Route::group(['prefix' => 'web/vehicle'], function () {
+                Route::get('/', [ApiVehicleController::class, 'getVehicle']);
+                Route::post('/', [ApiVehicleController::class, 'storeWeb']);
+                Route::put('/{id}', [ApiVehicleController::class, 'updateWeb']);
+            });
 
             // Route Api
             Route::resource('/route', ApiRouteController::class);
