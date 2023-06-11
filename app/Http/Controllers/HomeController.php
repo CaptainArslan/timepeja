@@ -38,6 +38,7 @@ class HomeController extends Controller
 
     public function updateProfile(Request $request, User $user)
     {
+        // return $request;
         $request->validate([
             'full_name' => ['required', 'string'],
             'phone' => ['required'],
@@ -75,22 +76,22 @@ class HomeController extends Controller
             removeImage(Auth::user()->image, 'managers/profiles');
         }
 
-        $image = ($request->file('profile_image')) ?
-            uploadImage($request->file('profile_image'), 'managers/profiles', 'manager_profile')
-            : Auth::user()->image;
-
-        $userData = [
-            'full_name' => $request->input('full_name'),
-            'phone' => $request->input('phone'),
-            'email' => $request->input('email'),
-            'image' => $image,
-        ];
+       $image = ($request->file('profile_image')) ?
+                uploadImage($request->file('profile_image'), 'managers/profiles', 'manager_profile')
+                : Auth::user()->image;
 
         if ($request->filled('password')) {
             $userData['password'] = Hash::make($request->input('password'));
         }
 
-        if ($user->update($userData)) {
+        $userData = [
+            'full_name' => $request->input('full_name'),
+            'phone' => $request->input('phone'),
+            'email' => $request->input('email'),
+            'image' => $image
+        ];
+
+        if ($user->where('id',Auth::user()->id)->update($userData)) {
             return redirect()->route('profile')->with('success', 'Profile updated successfully.');
         }
 
