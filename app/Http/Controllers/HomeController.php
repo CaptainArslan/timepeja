@@ -36,8 +36,9 @@ class HomeController extends Controller
         return view('auth.profile');
     }
 
-    public function updateProfile(Request $request, $id)
+    public function updateProfile(Request $request, User $user)
     {
+        // return $request;
         $request->validate([
             'full_name' => ['required', 'string'],
             'phone' => ['required'],
@@ -66,29 +67,22 @@ class HomeController extends Controller
             removeImage(Auth::user()->image, 'managers/profiles');
         }
 
-        $image = ($request->file('profile_image')) ?
-            uploadImage($request->file('profile_image'), 'managers/profiles', 'manager_profile')
-            : Auth::user()->image;
+       $image = ($request->file('profile_image')) ?
+                uploadImage($request->file('profile_image'), 'managers/profiles', 'manager_profile')
+                : Auth::user()->image;
 
-            $user = User::findOrFail($id);
-            var_dump(Hash::check($request->password, $user->password));
-            exit;
-            if ($request->filled('old_password') && Hash::check($request->password, $user->password)){
-                if ($request->filled('password')) {
-                    $userData['password'] = Hash::make($request->input('password'));
-                }
-            }else{
-                return redirect()->route('profile')->with('error', 'Incorrect Old Password.');
-            }
+        if ($request->filled('password')) {
+            $userData['password'] = Hash::make($request->input('password'));
+        }
 
         $userData = [
             'full_name' => $request->input('full_name'),
             'phone' => $request->input('phone'),
             'email' => $request->input('email'),
-            'image' => 0,
+            'image' => $image,
         ];
 
-        if ($user->update($userData)) {
+        if ($user->where('id',Auth::user()->id)->update($userData)) {
             return redirect()->route('profile')->with('success', 'Profile updated successfully.');
         }
 
