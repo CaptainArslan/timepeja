@@ -36,7 +36,7 @@
                     @else
                     {{ asset('uploads/managers/profiles/placeholder.jpg')}}
                     @endif
-                    " class="rounded-circle avatar-lg img-thumbnail" alt="profile-image">
+                    " class="rounded-circle avatar-lg img-thumbnail" style="object-fit: contain;" alt="profile-image">
 
                     <h4 class="mb-0">{{auth()->user()->user_name}}</h4>
                     <p class="text-muted">{{auth()->user()->email}}</p>
