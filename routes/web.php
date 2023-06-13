@@ -127,8 +127,15 @@ Route::group(['middleware' => 'auth'], function () {
         Route::match(['get', 'post'], '/pastuser', [ManagerController::class, 'pastUser'])->name('pastuser');
     });
 
+    /**
+     * [Admin Profile]
+     */
     Route::get('/profile',[HomeController::class,'profile'])->name('profile');
     Route::put( '/profile/{user}',[HomeController::class,'updateProfile'])->name('profile.update');
+
+    Route::get('/pdf', function () {
+        return view('pdf.logreport');
+    });
 
     // Route::get('/transpot/schedule', function () { return view('manager.transport_scheduled'); })->name('transpot.schedule');
     // Route::get('/awaiting/approval', function () {
