@@ -12,6 +12,7 @@ use App\Models\OrganizationType;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\ManagerStoreRequest;
+use PDF;
 
 class ManagerController extends Controller
 {
@@ -310,13 +311,21 @@ class ManagerController extends Controller
             }
             if ($request->has('export')) {
                 $reports = $this->filterReport($request);
-                // dd($reports->toArray());
+                // converting report to array to get furthur data
+                $report  = $reports->toArray();
                 $request = $request->all();
                 $user = Auth::user();
-                return view('manager.report.export.index', [
-                    'reports' => $reports,
-                    'request' => $request,
-                ]);
+                $data = [
+                    'report' => $report,
+                    'request' => $request
+                ];
+
+                $pdf = PDF::loadview('manager.report.export.pdf_popup',$data);
+                return $pdf->download('history_report.pdf');
+                // return view('manager.report.export.index', [
+                //     'reports' => $reports,
+                //     'request' => $request,
+                // ]);
             }
         }
         $organizations = Organization::get();
