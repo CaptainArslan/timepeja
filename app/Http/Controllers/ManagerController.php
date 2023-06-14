@@ -321,6 +321,14 @@ class ManagerController extends Controller
                 ];
 
                 $pdf = PDF::loadview('manager.report.export.pdf_popup',$data);
+                // $pdf->setOptions([
+                //     'dpi' => 150,
+                //     'defaultFont' => 'Arial',
+                //     'isRemoteEnabled' => true,
+                //     'isHtml5ParserEnabled' => true,
+                // ]);
+            
+                // $pdf->getDomPDF()->get_canvas()->rotate(90); // Rotate the PD
                 return $pdf->download('history_report.pdf');
                 // return view('manager.report.export.index', [
                 //     'reports' => $reports,
