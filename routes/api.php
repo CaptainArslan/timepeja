@@ -10,7 +10,9 @@ use App\Http\Controllers\Api\V1\ApiRouteController;
 use App\Http\Controllers\Api\V1\ApiVehicleController;
 use App\Http\Controllers\Api\V1\LogReportController;
 use App\Http\Controllers\Api\V1\MediaController;
+use App\Http\Controllers\Api\V1\PdfController;
 use App\Http\Controllers\Api\V1\VehicletypeController;
+use App\Models\Pdf;
 
 /*
 |--------------------------------------------------------------------------
@@ -98,6 +100,7 @@ Route::group(['middleware' => 'api'], function () {
 
             // Log Report Api
             Route::get('/logreport', [LogReportController::class, 'index']);
+            Route::get('/logreport/pdf', [PdfController::class, 'logReport']);
 
             //main screen wrapper
             Route::get('/main-screen-wrapper', [ApiManagerController::class, 'wrapper']);

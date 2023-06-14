@@ -503,6 +503,12 @@ class ApiScheduleController extends BaseController
         }
     }
 
+    /**
+     * this function is to replicate schedule
+     *
+     * @param Request $request
+     * @return void
+     */
     public function replicate(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -536,6 +542,14 @@ class ApiScheduleController extends BaseController
         }
     }
 
+    /**
+     * replicate single schedule
+     *
+     * @param [type] $schedule
+     * @param [type] $user
+     * @param [type] $date
+     * @return void
+     */
     private function replicateSingleSchedule($schedule, $user, $date)
     {
         $newSchedule = Schedule::create([
