@@ -100,7 +100,7 @@
                         <button type="submit" id="btn_published" class="btn btn-danger">Publish</button>
                     </div>
                 </div>
-                <div class="card-body table-container">
+                <div class="card-body table-container table-responsive">
                     <table id="schedule-table" class="table table-striped dt-responsive nowrap w-100">
                         <thead>
                             <tr>
@@ -194,9 +194,13 @@
                             $('#vehicle').val(null).trigger('change');
                             $('#driver').val(null).trigger('change');
                             $('#time').val('');
-                            $('#add_schedule').text('Submit');
+                            // $('#add_schedule').text('Submit');
                             $('#add_schedule').prop('disabled', false);
                         }
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle error
+                        console.log('AJAX request error:', status, error);
                     }
                 });
             } else {
