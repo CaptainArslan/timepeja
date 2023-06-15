@@ -30,4 +30,5 @@ class Pdf extends Model
      * @var array<int, string>
      */
     protected $hidden = [];
+
 }
