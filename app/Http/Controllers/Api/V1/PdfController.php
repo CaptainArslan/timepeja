@@ -86,13 +86,13 @@ class PdfController extends Controller
             $pdf = PDF::loadview('manager.report.export.logreport', $data);
             $pdf->setPaper('A4', 'landscape');
 
-            $filename = uniqid() . time() . 'history_report.pdf'; // Generate a unique filename
+            $filename = uniqid() . time() . '_history_report.pdf'; // Generate a unique filename
             $filePath = public_path('uploads/pdf/' . $filename); // Get the full file path
 
             $pdf->save($filePath); // Save the PDF to the specified folder
 
             $pdfModel = new ModelsPdf();
-            $pdfModel->url = $filePath;
+            $pdfModel->url = asset('/uploads/pdf/' . $filename);
 
             if ($pdfModel->save()) {
                 return $this->respondWithSuccess($pdfModel, 'Log report fetched successfully', 'LOG_REPORT_FETCHED_SUCCESSFULLY');
