@@ -30,6 +30,14 @@ function check_user_type() {
         html = student_university();
         empty_form();
         $('#student_university_form_container').append(html);
+    } else if(type == 'student_guardian') {
+        html = guardian_student_form_school();
+        empty_form();
+        $('#guradian_student_school_form_container').append(html);
+    } else if(type == 'employee_guardian') {
+        html = employee_form();
+        empty_form();
+        $('#employee_guradian_form_container').append(html)
     } else {
         empty_form();
     }
@@ -99,7 +107,20 @@ function student_school() {
                         <label for="simpleinput" class="form-label">Student Card</label>
                         <input type="file" class="form-control">
                     </div>
-                </div> 
+                </div>
+                
+                <div class="col-lg-4">
+                    <div class="mb-3">
+                        <label for="date-1">Transport Start Date</label>
+                        <input class="form-control transport-start-date" type="date" name="transport-start-date-school" value="{{ now()->format('Y-m-d') }}">
+                    </div>    
+                </div>
+                <div class="col-lg-4">
+                    <div class="mb-3">
+                        <label for="date">Transport End Date</label>
+                        <input class="form-control transport-end-date-university" type="date" name="transport-end-date-school" value="{{ now()->format('Y-m-d') }}">
+                    </div>
+                </div>
             </div>
         </form>`;
 }
@@ -149,6 +170,18 @@ function student_college() {
                                 <input type="file" class="form-control">
                             </div>
                         </div> 
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label for="date-1">Transport Start Date</label>
+                                <input class="form-control transport-start-date-university" type="date" name="transport-start-date-university" value="{{ now()->format('Y-m-d') }}">
+                            </div>    
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label for="date-2">Transport End Date</label>
+                                <input class="form-control transport-end-date-university" type="date" name="transport-end-date-university" value="{{ now()->format('Y-m-d') }}">
+                            </div>
+                        </div>
                     </div>
                 </form>`;
 }
@@ -204,6 +237,18 @@ function student_university() {
                                 <input type="file" class="form-control">
                             </div>
                         </div> 
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label for="date-1">Transport Start Date</label>
+                                <input class="form-control transport-start-date-university" type="date" name="transport-start-date-university" value="{{ now()->format('Y-m-d') }}">
+                            </div>    
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label for="date">Transport End Date</label>
+                                <input class="form-control transport-end-date-university" type="date" name="transport-end-date-university" value="{{ now()->format('Y-m-d') }}">
+                            </div>
+                        </div>
                     </div>
                 </form>`;
 }
@@ -235,10 +280,66 @@ function employee_form() {
                                 <input type="file" class="form-control">
                             </div>
                         </div> 
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label for="date-1">Transport Start Date</label>
+                                <input class="form-control transport-start-date-university" type="date" name="transport-start-date-university" value="{{ now()->format('Y-m-d') }}">
+                            </div>    
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label for="date">Transport End Date</label>
+                                <input class="form-control transport-end-date-university" type="date" name="transport-end-date-university" value="{{ now()->format('Y-m-d') }}">
+                            </div>
+                        </div>
                     </div>
                 </form>`;
 }
 
-function guardian_student_form(){
+function guardian_student_form_school(){
+
+    return ` <form>
+                    <div class="row">
+                        <div class="h5">Student Information</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label for="simpleinput" class="form-label">Mr</label>
+                                <input type="text" name="guardian_student_name" class="form-control">
+                            </div>
+                        </div> 
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label for="simpleinput" class="form-label">Phone Number</label>
+                                <input type="number" name="guardian_student_phone_no" class="form-control">
+                            </div>
+                        </div> 
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label for="simpleinput" class="form-label">Email Address (optional)</label>
+                                <input type="text" name="guardian_student_email" class="form-control">
+                            </div>
+                        </div> 
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label for="simpleinput" class="form-label">Home Address</label>
+                                <input type="text" class="form-control">
+                            </div>
+                        </div> 
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label for="date-1">Transport Start Date</label>
+                                <input class="form-control transport-start-date-guardian" type="date" name="transport-start-date-guardian" value="{{ now()->format('Y-m-d') }}">
+                            </div>    
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label for="date">Transport End Date</label>
+                                <input class="form-control transport-start-end-guardian" type="date" name="transport-end-date-guardian" value="{{ now()->format('Y-m-d') }}">
+                            </div>
+                        </div>
+                    </div>
+                </form>`;
     
 }
