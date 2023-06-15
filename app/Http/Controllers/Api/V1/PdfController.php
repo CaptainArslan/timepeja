@@ -87,7 +87,7 @@ class PdfController extends Controller
             $pdf->setPaper('A4', 'landscape');
 
             $filename = uniqid() . time() . 'history_report.pdf'; // Generate a unique filename
-            $filePath = public_path('upload/pdf/' . $filename); // Get the full file path
+            $filePath = public_path('uploads/pdf/' . $filename); // Get the full file path
 
             $pdf->save($filePath); // Save the PDF to the specified folder
 
