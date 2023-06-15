@@ -83,7 +83,7 @@ class PdfController extends Controller
                 'request' => $request->all()
             ];
 
-            $pdf = PDF::loadView('manager.report.export.pdf_popup', $data);
+            $pdf = PDF::loadview('manager.report.export.logreport', $data);
             $pdf->setPaper('A4', 'landscape');
 
             $filename = uniqid() . time() . 'history_report.pdf'; // Generate a unique filename
