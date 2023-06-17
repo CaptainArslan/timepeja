@@ -19,7 +19,7 @@ class LogReportController extends BaseController
             'type' => ['required', 'string'],
             'from' => ['nullable', 'date'],
             'to' => ['nullable', 'date', 'after_or_equal:from'],
-            'record_ids' => ['required', 'array'],
+            'record_ids' => ['required'],
             'record_ids.*' => ['integer'],
         ], [
             'type.required' => 'Type is required',

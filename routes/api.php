@@ -1,18 +1,19 @@
 <?php
 
+use App\Models\Pdf;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\V1\PdfController;
+use App\Http\Controllers\Api\V1\MediaController;
+use App\Http\Controllers\Api\V1\ApiRouteController;
+use App\Http\Controllers\Api\V1\LogReportController;
+use App\Http\Controllers\Api\V1\ApiVehicleController;
 use App\Http\Controllers\Api\V1\ApiScheduleController;
+use App\Http\Controllers\Api\V1\VehicletypeController;
+use App\Http\Controllers\Api\V1\OrganizationController;
 use App\Http\Controllers\Api\V1\Auth\DriverAuthController;
 use App\Http\Controllers\Api\V1\Auth\ManagerAuthController;
 use App\Http\Controllers\Api\V1\ApiDriverController as ApiDriverController;
 use App\Http\Controllers\Api\V1\ApiManagerController as ApiManagerController;
-use App\Http\Controllers\Api\V1\ApiRouteController;
-use App\Http\Controllers\Api\V1\ApiVehicleController;
-use App\Http\Controllers\Api\V1\LogReportController;
-use App\Http\Controllers\Api\V1\MediaController;
-use App\Http\Controllers\Api\V1\PdfController;
-use App\Http\Controllers\Api\V1\VehicletypeController;
-use App\Models\Pdf;
 
 /*
 |--------------------------------------------------------------------------
@@ -93,13 +94,16 @@ Route::group(['middleware' => 'api'], function () {
                 Route::put('/{id}', [ApiVehicleController::class, 'updateWeb']);
             });
 
+            // Organization Api
+            Route::get('/get-all-organizations', [OrganizationController::class, 'index']);
+
             // Route Api
             Route::resource('/route', ApiRouteController::class);
             Route::get('web/route', [ApiRouteController::class, 'getRoute']);
             Route::get('/search/route', [ApiRouteController::class, 'search']);
 
             // Log Report Api
-            Route::get('/logreport', [LogReportController::class, 'index']);
+            Route::post('/logreport', [LogReportController::class, 'index']);
             Route::get('/logreport/pdf', [PdfController::class, 'logReport']);
 
             //main screen wrapper
