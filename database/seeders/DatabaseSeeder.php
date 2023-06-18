@@ -48,6 +48,7 @@ class DatabaseSeeder extends Seeder
             DriverSeeder::class,
             ScheduleSeeder::class,
             // TripSeeder::class
+            PassengerSeeder::class
         ]);
     }
 }
