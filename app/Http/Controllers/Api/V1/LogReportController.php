@@ -76,14 +76,18 @@ class LogReportController extends BaseController
                 ->orderby('trip_status', 'desc')
                 ->get();
 
+
             $download_url = '';
 
             if ($result->isNotEmpty()) {
                 $download_url = $this->creatdPdf($request, $result);
             }
+            $data = [
+                'logreport' => $result,
+                'download_url' => $download_url
+            ];
 
-            return $this->respondWithSuccessLogReport($result, $download_url, 'Log report fetched successfully', 'LOG_REPORT_FETCHED_SUCCESSFULLY');
-            // return $this->respondWithSuccess($result, 'Log report fetched successfully', 'LOG_REPORT_FETCHED_SUCCESSFULLY');
+            return $this->respondWithSuccess($data, 'Log report fetched successfully', 'LOG_REPORT_FETCHED_SUCCESSFULLY');
         } catch (\Throwable $th) {
             throw $th;
         }
