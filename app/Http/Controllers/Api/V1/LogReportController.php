@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Models\Schedule;
+use PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Pdf as ModelsPdf;
 
 class LogReportController extends BaseController
 {
@@ -64,17 +66,24 @@ class LogReportController extends BaseController
 
             $manager = auth('manager')->user();
 
+
             $result = $query->where('o_id', $manager->o_id)
-                // ->with('organizations:id,name')
+                // ->where('status', Schedule::STATUS_PUBLISHED)
+                ->with('organizations:id,name,branch_name,branch_code,email,phone,address,code')
                 ->with('routes:id,name,number,from,to')
                 ->with('vehicles:id,number')
                 ->with('drivers:id,name')
                 ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time as scheduled_time', 'start_time', 'end_time', 'is_delay', 'trip_status', 'delayed_reason')
                 ->orderby('trip_status', 'desc')
-                // ->orderby('date', 'desc')
                 ->get();
+            $download_url = 'www.google.com';
 
-            return $this->respondWithSuccess($result, 'Log report fetched successfully', 'LOG_REPORT_FETCHED_SUCCESSFULLY');
+            if ($result->isNotEmpty()) {
+                $download_url = $this->creatdPdf($request, $result);
+            }
+
+            return $this->respondWithSuccessLogReport($result, $download_url, 'Log report fetched successfully', 'LOG_REPORT_FETCHED_SUCCESSFULLY');
+            // return $this->respondWithSuccess($result, 'Log report fetched successfully', 'LOG_REPORT_FETCHED_SUCCESSFULLY');
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -144,5 +153,34 @@ class LogReportController extends BaseController
     public function destroy($id)
     {
         //
+    }
+
+    public function creatdPdf(Request $request, $data)
+    {
+        $data = [
+            'report' => $data->toArray(),
+            'request' => $request->all()
+        ];
+
+        $pdf = PDF::loadview('manager.report.export.logreport', $data);
+        $pdf->setPaper('A4', 'landscape');
+
+        $filename = date('Ymd_His') . '_history_report.pdf'; // Generate a unique filename
+        $filePath = public_path('uploads/pdf/' . $filename); // Get the full file path
+
+        $pdf->save($filePath); // Save the PDF to the specified folder
+
+        $pdfModel = new ModelsPdf();
+        $pdfModel->url = asset('/uploads/pdf/' . $filename);
+
+        if ($pdfModel->save()) {
+            return $this->respondWithSuccess($pdfModel, 'Pdf Created Successfully', 'LOG_REPORT_PDF_CREATED_SUCCESSFULLY');
+        } else {
+            // Delete the saved PDF file if model saving failed
+            if (file_exists($filePath)) {
+                unlink($filePath);
+            }
+            return $this->respondWithError('Error occurred while creating the PDF. Failed to save the model.');
+        }
     }
 }
