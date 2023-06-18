@@ -70,7 +70,7 @@
                 @forelse($report as $row)
                 <tr>
                     <td class="service">{{ formatDate($row['date']) }}</td>
-                    <td class="desc">{{ formatTime($row['time']) }}</td>
+                    <td class="desc">{{ formatTime($row['scheduled_time']) }}</td>
                     @if(request()->input('type') == 'driver')
                     <td>{{ $row['drivers']['name'] }}</td>
                     <td>{{ $row['vehicles']['number'] }}</td>
