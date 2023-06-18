@@ -185,7 +185,6 @@
                             if (response.message == 'created') {
                                 addRow(table, response.data);
                                 showSuccess();
-                                showError();
                             } else {
                                 addScheduleToTable();
                             }
@@ -197,9 +196,11 @@
                             // $('#add_schedule').text('Submit');
                             $('#add_schedule').prop('disabled', false);
                         }
+                        $('#add_schedule').text('submit');
                     },
                     error: function(xhr, status, error) {
-                        // Handle error
+                        // Handle                                 
+                        showError();
                         console.log('AJAX request error:', status, error);
                     }
                 });
