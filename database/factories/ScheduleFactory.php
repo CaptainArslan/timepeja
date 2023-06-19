@@ -32,7 +32,7 @@ class ScheduleFactory extends Factory
             'route_id' =>  Route::inRandomOrder()->first()->id,
             'v_id' => Vehicle::inRandomOrder()->first()->id,
             'd_id' => Driver::inRandomOrder()->first()->id,
-            'date' => Carbon::now(),
+            'date' => Carbon::now()->subDays(14),
             'time' => $this->faker->time(),
             'status' => $this->faker->randomElement([
                 Schedule::STATUS_DRAFT,

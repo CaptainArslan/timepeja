@@ -8,6 +8,13 @@
 <!-- App css -->
 <link href="{{ asset('css/app.min.css') }}" rel="stylesheet" type="text/css" id="app-style" />
 
+<script>
+    var google_credentials = '{{getGoogleApi()}}';
+</script>
+
+<script src='https://maps.googleapis.com/maps/api/js?key=AIzaSyAt6xg3Ba8_51kE43K4yOueNJVwb3cGF1w&libraries=places'></script>
+
+
 @include('partials.datatable_css')
 @endsection
 @section('content')
@@ -21,6 +28,7 @@
         </div>
     </div>
 </div>
+
 <!-- end page title -->
 <!-- Filters -->
 <div class="row">
@@ -171,7 +179,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="from" class="form-label">From Map</label>
-                        <div id="gmaps-basic" class="gmaps" style="max-height: 100px;"></div>
+                        <div id="from-map" class="gmaps" style="max-height: 200px;"></div>
                     </div>
                     <div class="mb-3">
                         <label for="to" class="form-label">To</label>
@@ -179,7 +187,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="from" class="form-label">Select from Map</label>
-                        <div id="gmaps-basic" class="gmaps" style="max-height: 100px;"></div>
+                        <div id="to-map" class="gmaps" style="max-height: 200px;"></div>
                     </div>
 
                     <div class="mb-3">
@@ -229,7 +237,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="from" class="form-label">From Map</label>
-                        <div id="gmaps-basic" class="gmaps" style="max-height: 100px;"></div>
+                        <div id="edit-from-map" class="gmaps" style="max-height: 100px;"></div>
                     </div>
                     <div class="mb-3">
                         <label for="to" class="form-label">To</label>
@@ -237,7 +245,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="from" class="form-label">Select from Map</label>
-                        <div id="gmaps-basic" class="gmaps" style="max-height: 100px;"></div>
+                        <div id="edit-to-map" class="gmaps" style="max-height: 100px;"></div>
                     </div>
 
                     <div class="mb-3">
@@ -256,15 +264,36 @@
 @endsection
 
 @section('page_js')
+<script>
+    let map;
+
+    async function initMap(id) {
+        const {
+            Map
+        } = await google.maps.importLibrary("maps");
+        map = new Map(document.getElementById(id), {
+            center: {
+                lat: 30.3753,
+                lng: 69.3451
+            },
+            zoom: 8,
+        });
+    }
+
+    initMap("from-map");
+    initMap("to-map");
+    initMap("edit-from-map");
+    initMap("edit-to-map");
+</script>
+
 <script src="{{ asset('/libs/select2/js/select2.min.js') }}"></script>
 <!-- Init js-->
 <script src="{{ asset('/js/pages/form-advanced.init.js') }}"></script>
-
 @include('partials.datatable_js')
+
 
 <script>
     $(document).ready(function() {
-
         // this function is call when add route modal open
         $('#addRouteModal').on('shown.bs.modal', function() {
             initializeSelect2(".select2_form", "#addRouteForm")

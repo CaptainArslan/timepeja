@@ -12,6 +12,7 @@ use App\Models\OrganizationType;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\ManagerStoreRequest;
+use PDF;
 
 class ManagerController extends Controller
 {
@@ -296,9 +297,9 @@ class ManagerController extends Controller
     public function logReport(Request $request)
     {
         $request->validate([
-            'o_id' => 'nullable|numeric',
-            'from' => 'nullable|date',
-            'to' => 'nullable|date|after:from',
+            'o_id' => ['nullable', 'numeric'],
+            'from' => ['nullable', 'date'],
+            'to' => ['nullable', 'date', 'after:from'],
         ], [
             'to.after' => "The registration to date must be a date after registration from.",
         ]);
@@ -310,13 +311,13 @@ class ManagerController extends Controller
             }
             if ($request->has('export')) {
                 $reports = $this->filterReport($request);
-                // dd($reports->toArray());
-                $request = $request->all();
-                $user = Auth::user();
-                return view('manager.report.export.index', [
-                    'reports' => $reports,
-                    'request' => $request,
-                ]);
+                $data = [
+                    'report' => $reports->toArray(),
+                    'request' => $request->all()
+                ];
+                $pdf = PDF::loadview('manager.report.export.logreport', $data);
+                $pdf->setPaper('A4', 'landscape');
+                return $pdf->download(time() . 'history_report.pdf');
             }
         }
         $organizations = Organization::get();
@@ -329,6 +330,12 @@ class ManagerController extends Controller
     }
 
 
+    /**
+     * This function is to filter record
+     *
+     * @param [type] $request
+     * @return void
+     */
     protected function filterReport($request)
     {
         $query = Schedule::query();
@@ -377,7 +384,7 @@ class ManagerController extends Controller
         });
 
         $result = $query->where('o_id', $request->o_id)
-            ->with('organizations:id,name,branch_name,branch_code,email,phone,address')
+            ->with('organizations:id,name,branch_name,branch_code,email,phone,address,code')
             ->with('routes:id,name,number,from,to')
             ->with('vehicles:id,number')
             ->with('drivers:id,name')
@@ -386,66 +393,6 @@ class ManagerController extends Controller
         return $result;
     }
 
-    // protected function filterReport($request)
-    // {
-    //     // dd($request->all());
-    //     // dd($request->selection[0]);
-    //     $query = Schedule::query();
-    //     if ($request->type == 'driver') {
-    //         if ($request->selection[0] == 'all') {
-    //             // return 'all';
-    //             $query->when($request->input('selection'), function ($query) use ($request) {
-    //                 $query->whereNotNull('d_id');
-    //             });
-    //         } else {
-    //             // return 'selection';
-    //             $query->when($request->input('selection'), function ($query) use ($request) {
-    //                 $query->whereIn('d_id', $request->input('selection'));
-    //             });
-    //         }
-    //     } elseif ($request->type == 'vehicle') {
-    //         if ($request->selection[0] == 'all') {
-    //             // return 'all';
-    //             $query->when($request->input('selection'), function ($query) use ($request) {
-    //                 $query->whereNotNull('v_id');
-    //             });
-    //         } else {
-    //             // return 'selection';
-    //             $query->when($request->input('selection'), function ($query) use ($request) {
-    //                 $query->whereIn('v_id', $request->input('selection'));
-    //             });
-    //         }
-    //     } elseif ($request->type == 'route') {
-    //         if ($request->selection[0] == 'all') {
-    //             // return 'all';
-    //             $query->when($request->input('selection'), function ($query) use ($request) {
-    //                 $query->whereNotNull('route_id');
-    //             });
-    //         } else {
-    //             // return 'selection';
-    //             $query->when($request->input('selection'), function ($query) use ($request) {
-    //                 $query->whereIn('route_id', $request->input('selection'));
-    //             });
-    //         }
-    //     }
-    //     // Add date range constraint if both dates are provided
-    //     $query->when($request->input('from') && $request->input('to'), function ($query) use ($request) {
-    //         $query->whereBetween('date', [$request->input('from'), $request->input('to')]);
-    //     })->when($request->input('from') && !$request->input('to'), function ($query) use ($request) {
-    //         $query->where('date', $request->input('from'));
-    //     })->when(!$request->input('from') && $request->input('to'), function ($query) use ($request) {
-    //         $query->where('date', $request->input('to'));
-    //     });
-
-    //     $result = $query->where('o_id', $request->o_id)
-    //         ->with('organizations:id,name')
-    //         ->with('routes:id,name,number,from,to')
-    //         ->with('vehicles:id,number')
-    //         ->with('drivers:id,name')
-    //         ->get();
-    //     // dd($result->toArray());
-    //     return $result;
-    // }
 
     /**
      * [awaitingApproval description]

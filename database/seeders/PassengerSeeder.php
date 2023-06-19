@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\Schedule;
+use App\Models\Passenger;
 use Illuminate\Database\Seeder;
 
-class ScheduleSeeder extends Seeder
+class PassengerSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -14,6 +14,6 @@ class ScheduleSeeder extends Seeder
      */
     public function run()
     {
-        Schedule::factory(1000)->create();
+        Passenger::factory(10)->create();
     }
 }

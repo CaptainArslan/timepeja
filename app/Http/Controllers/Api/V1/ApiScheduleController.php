@@ -37,7 +37,7 @@ class ApiScheduleController extends BaseController
             return $this->respondWithSuccess($schedule, 'Oganization All Schedule', 'ORGANIZATION_SCHEDULE');
         } catch (\Throwable $th) {
             return $this->respondWithError('Error Occured while fetching organization schedule');
-            throw $th;
+            // throw $th;
         }
     }
 
@@ -500,6 +500,71 @@ class ApiScheduleController extends BaseController
             return $this->respondWithSuccess($schedules, 'Schedule by date', 'SCHEDULE_BY_DATE');
         } catch (\Throwable $th) {
             return $this->respondWithError('An error occurred while fetching schedules for this date.' . $th->getMessage());
+        }
+    }
+
+    /**
+     * this function is to replicate schedule
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function replicate(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'schedule_ids' => ['required', 'array', 'exists:schedules,id'],
+            'date' => ['required', 'date'],
+        ], [
+            'schedule_ids.required' => 'Schedules ids required',
+            'schedule_ids.array' => 'Schedules ids must be an array',
+
+            'date.required' => 'Date is required',
+            'date.date' => 'Must have to be in date',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->respondWithError(implode(',', $validator->errors()->all()));
+        }
+
+
+        $manager = auth('manager')->user();
+        $schedules = Schedule::whereIn('id', $request->schedule_ids)->get();
+        $date = $request->date;
+        try {
+            DB::transaction(function () use ($schedules, $manager, $date) {
+                foreach ($schedules as $schedule) {
+                    $this->replicateSingleSchedule($schedule, $manager, $date);
+                }
+            });
+            return $this->respondWithSuccess([], 'Successfully replicated', 'REPLICATED_SUCCESSFULLY');
+        } catch (\Exception $e) {
+            return $this->respondWithError('Error Occrued while replicating scehdule');
+        }
+    }
+
+    /**
+     * replicate single schedule
+     *
+     * @param [type] $schedule
+     * @param [type] $user
+     * @param [type] $date
+     * @return void
+     */
+    private function replicateSingleSchedule($schedule, $user, $date)
+    {
+        $newSchedule = Schedule::create([
+            'u_id' => $user->id,
+            'date' => $date,
+            'o_id' => $schedule->o_id,
+            'v_id' => $schedule->v_id,
+            'd_id' => $schedule->d_id,
+            'time' => $schedule->time,
+            'route_id' => $schedule->route_id,
+            'status' => Schedule::STATUS_DRAFT
+        ]);
+
+        if (!$newSchedule) {
+            throw new \Exception('Error occurred while replicating schedule.');
         }
     }
 }

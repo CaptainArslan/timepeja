@@ -127,12 +127,15 @@ Route::group(['middleware' => 'auth'], function () {
         Route::match(['get', 'post'], '/pastuser', [ManagerController::class, 'pastUser'])->name('pastuser');
     });
 
-    /* Route::get('/profile', function () {
-        return view('auth.profile');
-    })->name('profile'); */
+    /**
+     * [Admin Profile]
+     */
     Route::get('/profile',[HomeController::class,'profile'])->name('profile');
     Route::put( '/profile/{user}',[HomeController::class,'updateProfile'])->name('profile.update');
-    // Route::post('/profile/change-personal-info',[HomeController::class,'changeAuthInfo'])->name('auth.change.profile');
+
+    // Route::get('/pdf', function () {
+    //     return view('pdf.logreport');
+    // });
 
     // Route::get('/transpot/schedule', function () { return view('manager.transport_scheduled'); })->name('transpot.schedule');
     // Route::get('/awaiting/approval', function () {
@@ -179,7 +182,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('get-schedule-route-driver-vehicle/{org_id}', [
         CommonController::class, 'getScheduleRouteDriverVehicle'
     ])->name('get_schedule_route_driver_vehicle');
-
     Route::post('schedule/delete/{id}', [ScheduleController::class, 'destroy'])->name('schedule.delete');
     Route::get('get-schedule', [ScheduleController::class, 'getSchedule'])->name('getSchedule');
     Route::get('get-driver-vehicle-route', [ScheduleController::class, 'getDriverVehicleRoute'])->name('getDriverVehicleRoute');

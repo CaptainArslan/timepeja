@@ -387,12 +387,12 @@ class ApiDriverController extends BaseController
     public function search(): JsonResponse
     {
         try {
-            $string = request()->input('name');
+            $string = request()->input('string');
             $manager = auth('manager')->user();
             $drivers = Driver::where('name', 'like', '%' . $string . '%')
-                // ->orWhere('phone', 'like', '%' . $string . '%')
-                // ->orWhere('cnic', 'like', '%' . $string . '%')
-                // ->orWhere('license_no', 'like', '%' . $string . '%')
+                ->orWhere('phone', 'like', '%' . $string . '%')
+                ->orWhere('cnic', 'like', '%' . $string . '%')
+                ->orWhere('license_no', 'like', '%' . $string . '%')
                 ->where('o_id', $manager->o_id)
                 ->select('id', 'name')
                 ->get();

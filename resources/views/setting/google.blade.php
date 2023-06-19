@@ -23,7 +23,7 @@
                     <div class="row">
                         <div class="col-md-10">
                             <label for="from">Google Map Api Key</label>
-                            <input class="form-control mt-2" type="text" value="{{ $settings->credentials }}" name="credentials">
+                            <input class="form-control mt-2" type="text" value="@if($settings){{$settings->credentials}}@endif" name="credentials">
                         </div>
                         <div class="col-md-1">
                             <label for="publish_schedule">.</label>

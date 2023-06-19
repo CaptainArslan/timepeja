@@ -123,4 +123,24 @@ class Passenger extends Authenticatable implements JWTSubject
     {
         return $this->belongsTo(State::class, 's_id', 'id');
     }
+
+    /**
+     * relation of passenger and request
+     *
+     * @return void
+     */
+    public function requests()
+    {
+        return $this->hasMany(Request::class, 'p_id', 'id');
+    }
+
+    /**
+     * passenger relation with organizations
+     *
+     * @return void
+     */
+    public function organization()
+    {
+        return $this->belongsTo(Organization::class, 'o_id', 'id');
+    }
 }
