@@ -172,6 +172,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/support', function () { return view('support.support'); })->name('support');
     Route::get('/support/chat', function () { return view('support.index'); })->name('support.chat');
     Route::get('/wallets', function () { return view('wallet.index'); })->name('wallet');
+    Route::get('/pdf-popup', function () { return view('manager.report.export.pdf_popup'); })->name('pdf.popup');
 
 
     /**
