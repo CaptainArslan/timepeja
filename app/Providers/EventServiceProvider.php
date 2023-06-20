@@ -6,12 +6,14 @@ use App\Models\Driver;
 use App\Models\Manager;
 use App\Models\Schedule;
 use App\Models\Organization;
+use App\Models\Vehicle;
 use App\Observers\DriverObserver;
 use App\Observers\ManagerObserver;
 use App\Observers\ScheduleObserver;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Auth\Events\Registered;
 use App\Observers\OrganizationObserver;
+use App\Observers\VehicleObserver;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
@@ -37,6 +39,7 @@ class EventServiceProvider extends ServiceProvider
     {
         Schedule::observe(ScheduleObserver::class);
         Driver::observe(DriverObserver::class);
+        Vehicle::observe(VehicleObserver::class);
         // Manager::observe(ManagerObserver::class);
         // Organization::observe(OrganizationObserver::class);
     }
