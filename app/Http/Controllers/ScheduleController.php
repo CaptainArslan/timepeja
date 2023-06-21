@@ -32,7 +32,7 @@ class ScheduleController extends Controller
      */
     public function create()
     {
-        $organizations = Organization::get();
+        $organizations = Organization::where('status', Organization::STATUS_ACTIVE)->get();
         $org_dropdowns = $organizations;
         return view('manager.schedule.create', [
             'organizations' => $organizations,
@@ -219,7 +219,7 @@ class ScheduleController extends Controller
         //         ->get();
         //     // dd($schedules->toArray());
         // }
-        $organizations = Organization::get();
+        $organizations = Organization::where('status', Organization::STATUS_ACTIVE)->get();
         $org_dropdowns = $organizations;
         return view('manager.schedule.index', compact('org_dropdowns', 'organizations', 'schedules'));
     }
