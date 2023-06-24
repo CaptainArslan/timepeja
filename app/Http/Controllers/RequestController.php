@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Request;
+use App\Models\Organization;
 use Illuminate\Http\Request;
 
 class RequestController extends Controller
@@ -14,7 +14,10 @@ class RequestController extends Controller
      */
     public function index()
     {
-        //
+        $organizations = Organization::where('status', Organization::STATUS_ACTIVE)->get();
+        return view('request.index', [
+            'organizations' => $organizations,
+        ]);
     }
 
     /**
@@ -41,10 +44,10 @@ class RequestController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Request  $request
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Request $request)
+    public function show($id)
     {
         //
     }
@@ -52,10 +55,10 @@ class RequestController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Request  $request
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Request $request)
+    public function edit($id)
     {
         //
     }
@@ -64,10 +67,10 @@ class RequestController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Request  $request
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Request $request)
+    public function update(Request $request, $id)
     {
         //
     }
@@ -75,10 +78,10 @@ class RequestController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Request  $request
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request)
+    public function destroy($id)
     {
         //
     }
