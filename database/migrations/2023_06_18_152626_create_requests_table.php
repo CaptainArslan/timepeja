@@ -17,29 +17,31 @@ class CreateRequestsTable extends Migration
     {
         Schema::create('requests', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('passenger_id')->constrained('passengers')->onDelete('cascade');
+            $table->foreignId('passenger_id')->nullable()->constrained('passengers')->onDelete('cascade');
             $table->foreignId('o_id')->constrained('organizations')->onDelete('cascade');
-            $table->string('name');
-            $table->string('phone');
-            $table->string('email');
-            $table->string('house_no');
-            $table->string('street_no');
-            $table->string('town');
+            $table->string('name')->nullable();
+            $table->string('phone')->nullable();
+            $table->string('email')->nullable();
+            $table->string('house_no')->nullable();
+            $table->string('street_no')->nullable();
+            $table->string('town')->nullable();
             $table->string('additional_detail')->nullable();
-            $table->string('city_id')->nullable();
+            $table->foreignId('city_id')->constrained('cities');
             $table->string('pickup_address')->nullable();
-            $table->string('pickup_city_id')->nullable();
+            $table->foreignId('pickup_city_id')->constrained('cities');
             $table->string('lattitude')->nullable();
             $table->string('longitude')->nullable();
-            $table->enum('request_types', [
+            $table->enum('type', [
                 Requests::REQUEST_STATUS_STUDENT,
                 Requests::REQUEST_STATUS_EMPLOYEE,
                 Requests::REQUEST_STATUS_GUARDIAN,
             ]);
-            $table->enum('student_type', [
+            $table->enum('sub_type', [
                 Requests::STUDENT_SCHOOL,
                 Requests::STUDENT_COLLEGE,
                 Requests::STUDENT_UNIVERSITY,
+                Requests::EMPLOYEE,
+                Requests::GUARDIAN,
             ])->nullable();
             $table->string('roll_no')->nullable();
             $table->string('class')->nullable();

@@ -22,6 +22,8 @@ class Requests extends Model
     public const STUDENT_SCHOOL = 'scchool';
     public const STUDENT_COLLEGE = 'college';
     public const STUDENT_UNIVERSITY = 'university';
+    public const EMPLOYEE = 'employee';
+    public const GUARDIAN = 'guarian';
 
 
     /**
