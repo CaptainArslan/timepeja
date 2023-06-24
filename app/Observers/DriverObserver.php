@@ -19,7 +19,7 @@ class DriverObserver
     public function created(Driver $driver)
     {
         // Transactional Handling
-        try{
+        try {
             DB::beginTransaction();
             //Add Location to Location History
             LocationHistory::create([
@@ -29,13 +29,11 @@ class DriverObserver
             ]);
             // If Created then commit to the Database
             DB::commit();
-        }catch (Exception $e)
-        {
+        } catch (Exception $e) {
             // If not commited then rollback
             DB::rollBack();
             throw $e;
         }
-
     }
 
     /**
@@ -47,19 +45,17 @@ class DriverObserver
     public function updated(Driver $driver)
     {
         // Transaction Handling
-        try{
+        try {
             DB::beginTransaction();
             //Update Current Location
-            $currentLocation = Location::where('d_id',$driver->id)->first();
+            $currentLocation = Location::where('d_id', $driver->id)->first();
             $currentLocation->update([
                 'latitude' => rand(),
                 'longitude' => rand()
             ]);
             // If satisfied then update the record in the datasbase after the actual record updation
             DB::commit();
-
-        }catch (Exception $e)
-        {
+        } catch (Exception $e) {
             DB::rollback();
             throw $e;
         }
@@ -74,14 +70,13 @@ class DriverObserver
     public function deleted(Driver $driver)
     {
         // Handling the transaction/record
-        try{
+        try {
             DB::beginTransaction();
             // Delete the record
-            Location::where('d_id',$driver->id)->delete();
+            Location::where('d_id', $driver->id)->delete();
             // if satisfied then commit this record to database
             DB::commit();
-        }catch (Exception $e)
-        {
+        } catch (Exception $e) {
             DB::rollback();
             throw $e;
         }
