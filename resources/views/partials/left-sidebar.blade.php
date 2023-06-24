@@ -207,26 +207,27 @@
                 <li>
                     <a href="#sidebarPassenger" data-bs-toggle="collapse">
                         <i class="fas fa-users"></i>
-                        <span> Passenger </span>
+                        <span> Request</span>
                         <span class="menu-arrow"></span>
                     </a>
                     <div class="collapse" id="sidebarPassenger">
                         <ul class="nav-second-level">
                             <li>
                                 <a href="{{ route('passenger') }}">
-                                    <span> Add Passengers </span>
+                                    <span> Add Request </span>
                                 </a>
                             </li>
                             <li>
                                 <a href="{{ route('passenger_list') }}">
-                                    <span> Passengers List </span>
+                                    <span> Request List </span>
                                 </a>
                             </li>
-                            <li>
+                            <!-- <li>
                                 <a href="{{ route('trans_schdule')}}">Transport Schedule</a>
                             </li>
                             <li>
                                 <a href="{{ route('trans_routes')}}">Transport Routes</a>
+                            </li> -->
                         </ul>
                     </div>
                 </li>

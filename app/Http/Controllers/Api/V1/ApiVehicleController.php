@@ -284,9 +284,9 @@ class ApiVehicleController extends BaseController
                 ->where('o_id', $manager->o_id)
                 ->select('id', 'number')
                 ->get();
-            if ($vehicles->isEmpty()) {
-                return $this->respondWithError('No Vehicle found');
-            }
+            // if ($vehicles->isEmpty()) {
+            //     return $this->respondWithError('No Vehicle found');
+            // }
             return $this->respondWithSuccess($vehicles, 'Vehicle retrieved successfully', 'API_VEHICLE_SEARCH_RESULT');
         } catch (ModelNotFoundException $th) {
             throw new NotFoundHttpException('Error occured while fetching data');

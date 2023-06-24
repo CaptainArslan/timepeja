@@ -396,9 +396,9 @@ class ApiDriverController extends BaseController
                 ->where('o_id', $manager->o_id)
                 ->select('id', 'name')
                 ->get();
-            if ($drivers->isEmpty()) {
-                return $this->respondWithError('No data found');
-            }
+            // if ($drivers->isEmpty()) {
+            //     return $this->respondWithError('No data found');
+            // }
             return $this->respondWithSuccess($drivers, 'Drivers retrieved successfully', 'API_DRIVER_SEARCH_RESULT');
         } catch (ModelNotFoundException $e) {
             throw new NotFoundHttpException('Error occured while fetching data');
