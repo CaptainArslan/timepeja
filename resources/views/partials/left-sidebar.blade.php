@@ -248,6 +248,20 @@
                         </ul>
                     </div>
                 </li>
+                <li>
+                    <a href="#passenger" data-bs-toggle="collapse">
+                        <i class="fas fa-dollar-sign"></i>
+                        <span> Passenger </span>
+                        <span class="menu-arrow"></span>
+                    </a>
+                    <div class="collapse" id="passenger">
+                        <ul class="nav-second-level">
+                            <li>
+                                <a href="">Passengers</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
                 <!-- Settings -->
                 <li>
                     <a href="#settings" data-bs-toggle="collapse">
