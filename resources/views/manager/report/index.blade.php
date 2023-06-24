@@ -75,7 +75,6 @@
         </div> <!-- end card-->
     </div> <!-- end col-->
 </div>
-
 @if(isset($_POST['filter']))
 <div class="row">
     <div class="col-12">
@@ -114,7 +113,8 @@
                         </div>
                     </div>
                     <div class="col-md-1">
-                        <button type="submit" name="export" value="export" class="btn btn-primary">Export</button>
+                        <!-- change the button type from submit to button -->
+                        <button type="submit" name="export" id="export" value="export" class="btn btn-primary">Export</button>
                     </div>
                 </div>
                 <div class="card-body">
@@ -185,6 +185,11 @@
      *
      * @return void
      */
+    $(document).ready(function() {
+        $('#export').click(function() {
+            window.open("{{route('pdf.popup')}}", 'Popup', 'width=1000,height=700');
+        });
+});
     function getOrgOption() {
         // alert('option');
         // $('#selection').empty();

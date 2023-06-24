@@ -22,7 +22,7 @@ class DriverController extends Controller
      */
     public function index(Request $request)
     {
-        $organizations = Organization::get();
+        $organizations = Organization::where('status', Organization::STATUS_ACTIVE)->get();
         $drivers = Driver::with(['organization' => function ($query) {
             $query->select('id', 'name', 'email');
         }])
@@ -93,7 +93,7 @@ class DriverController extends Controller
      */
     public function create(Request $request)
     {
-        $organizations = Organization::get();
+        $organizations = Organization::where('status', Organization::STATUS_ACTIVE)->get();
         $drivers = Driver::with('organizations')
             ->latest()
             ->take(10)
@@ -288,7 +288,7 @@ class DriverController extends Controller
                 $trips = $this->filterUpcomingTrips($request);
             }
         }
-        $organizations = Organization::get();
+        $organizations = Organization::where('status', Organization::STATUS_ACTIVE)->get();
         return view('driver.trips', [
             'organizations' => $organizations,
             'trips' => $trips

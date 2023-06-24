@@ -320,7 +320,7 @@ class ManagerController extends Controller
                 return $pdf->download(time() . 'history_report.pdf');
             }
         }
-        $organizations = Organization::get();
+        $organizations = Organization::where('status', Organization::STATUS_ACTIVE)->get();
         $org_dropdowns = $organizations;
         return view('manager.report.index', [
             'organizations' => $organizations,
@@ -401,7 +401,7 @@ class ManagerController extends Controller
      */
     public function awaitingApproval()
     {
-        $organizations = Organization::get();
+        $organizations = Organization::where('status', Organization::STATUS_ACTIVE)->get();
         $org_dropdowns = $organizations;
         return view('manager.approval.awaiting_approvals', [
             'organizations' => $organizations,
@@ -416,7 +416,7 @@ class ManagerController extends Controller
      */
     public function approvedUser()
     {
-        $organizations = Organization::get();
+        $organizations = Organization::where('status', Organization::STATUS_ACTIVE)->get();
         return view('manager.approval.approved_user', [
             'organizations' => $organizations
         ]);
@@ -429,7 +429,7 @@ class ManagerController extends Controller
      */
     public function disapprovedUser()
     {
-        $organizations = Organization::get();
+        $organizations = Organization::where('status', Organization::STATUS_ACTIVE)->get();
         return view('manager.approval.disapproved_user', [
             'organizations' => $organizations
         ]);
@@ -442,7 +442,7 @@ class ManagerController extends Controller
      */
     public function pastUser()
     {
-        $organizations = Organization::get();
+        $organizations = Organization::where('status', Organization::STATUS_ACTIVE)->get();
         return view('manager.approval.pastuser', [
             'organizations' => $organizations
         ]);

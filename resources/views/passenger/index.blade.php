@@ -3,6 +3,8 @@
 <!-- start page title -->
 @section('page_css')
 @include('partials.datatable_css')
+<link href="{{ asset('libs/select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
+<link href="{{ asset('css/app.min.css') }}" rel="stylesheet" type="text/css" id="app-style" />
 @endsection
 @section('content')
 <div class="row">
@@ -63,91 +65,29 @@
                 <button type="button" type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
             </div>
             <div class=" modal-body p-4">
-
-                <form>
+                <form action="#" method="post" enctype="multipart/form-data" id="request">
+                    @csrf
                     <div id="basicwizard">
-
-                        <ul class="nav nav-pills bg-light nav-justified form-wizard-header mb-4">
-                            <li class="nav-item">
-                                <a href="#basictab1" data-bs-toggle="tab" data-toggle="tab" class="nav-link rounded-0 pt-2 pb-2">
-                                    <i class="mdi mdi-account-circle me-1"></i>
-                                    <span class="d-none d-sm-inline">Account</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#basictab2" data-bs-toggle="tab" data-toggle="tab" class="nav-link rounded-0 pt-2 pb-2">
-                                    <i class="mdi mdi-face-profile me-1"></i>
-                                    <span class="d-none d-sm-inline">Profile</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#basictab3" data-bs-toggle="tab" data-toggle="tab" class="nav-link rounded-0 pt-2 pb-2">
-                                    <i class="mdi mdi-checkbox-marked-circle-outline me-1"></i>
-                                    <span class="d-none d-sm-inline">Finish</span>
-                                </a>
-                            </li>
-                        </ul>
-
                         <div class="tab-content b-0 mb-0 pt-0">
-                            <div class="tab-pane" id="basictab1">
-                                <div class="row">
-                                    <!-- Oganization detail -->
-                                    <div class="tab-pane" id="company">
-                                        <div class="row">
-                                            <div class="col-lg-6">
-                                                <div class="mb-3">
-                                                    <label for="org_name" class="form-label">Organization Name</label>
-                                                    <input type="text" id="org_name" name="org_name" value="{{ old('org_name') }}" class="form-control">
-                                                </div>
-
-                                                <div class="mb-3">
-                                                    <label for="in_name" class="form-label">Institute Name</label>
-                                                    <input type="text" id="in_name" class="form-control" value="{{ old('in_name') }}" name="" readonly>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="email" class="form-label">Email</label>
-                                                    <input type="email" id="email" class="form-control" value="{{ old('org_email') }}" name="" readonly>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-lg-6">
-                                                <div class="mb-3">
-                                                    <label for="org_branch_code" class="form-label">Branch code</label>
-                                                    <input type="number" id="org_branch_code" name="org_branch_code" value="{{ old('org_branch_code') }}" class="form-control">
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="tm_name" class="form-label">Transport Manager Name</label>
-                                                    <input type="text" id="tm_name" class="form-control" value="{{ old('tm_name') }}" name="" readonly>
-                                                </div>
-
-                                                <div class="mb-3">
-                                                    <label for="org_address" class="form-label">Address</label>
-                                                    <input class="form-control" id="org_address" name="org_address" value="{{ old('org_address') }}" readonly></input>
-                                                </div>
-                                            </div> <!-- end col -->
-                                        </div>
-                                    </div>
-                                </div> <!-- end row -->
-                            </div>
-
-                            <div class="tab-pane" id="basictab2">
-
+                            <div class="tab-pane active" id="basictab2">
                                 <div class="row">
                                     <div class="col-lg-4">
                                         <div class="mb-3">
                                             <label for="simpleinput" class="form-label">Text</label>
-                                            <select name="" id="" class="form-select">
-                                                <option value="">Select Organization</option>
-                                                <option value="pu">123 - pu - org Name</option>
-                                                <option value="uos">456 - UOS - org Name</option>
-                                                <option value="uog">789 - UOG - org Name</option>
+                                            <select name="o_id" id="org" class="form-select select2">
+                                                <option value="" selected>Select Organization</option>
+                                                @forelse ($organizations as $organization)
+                                                <option value="{{ $organization->id }}">{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
+                                                @empty
+                                                <option value="">Please select</option>
+                                                @endforelse
                                             </select>
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
                                         <div class="mb-3">
                                             <label for="user_type" class="form-label">User type Select</label>
-                                            <select name="" id="user_type" class="form-select">
+                                            <select name="user_type" id="user_type" class="form-select select2">
                                                 <option value="">Select</option>
                                                 <option value="student">student</option>
                                                 <option value="student_guardian">Student Guardian</option>
@@ -159,7 +99,7 @@
                                     <div class="col-lg-4">
                                         <div class="mb-3">
                                             <label for="further_user_type" class="form-label">Further type Select</label>
-                                            <select name="" id="further_user_type" class="form-select" disabled="disabled">
+                                            <select name="further_user_type" id="further_user_type" class="form-select select2" disabled="disabled">
                                                 <option value="">Select</option>
                                             </select>
                                         </div>
@@ -247,6 +187,12 @@
                                 <!-- Employee form -->
                                 <div class="employee_form_container">
                                 </div>
+                                <!-- Guardian student school -->
+                                <div class="guradian_student_school_form_container" id="guradian_student_school_form_container">
+                                </div>
+                                <!-- Employee Guardian Form container -->
+                                <div class="employee_guradian_form_container" id="employee_guradian_form_container">
+                                </div>
                                 <!-- guardian form -->
                                 <div class="guradian_form_container">
                                 </div>
@@ -256,200 +202,9 @@
                                 <!-- end row -->
                             </div>
 
-                            <div class="tab-pane" id="basictab3">
-
-                                <div class="row">
-                                    
-                                    <div class="col-lg-4">
-                                        <div class="mb-3">
-                                            <label for="simpleinput" class="form-label">Name</label>
-                                            <input type="text" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="mb-3">
-                                            <label for="simpleinput" class="form-label">Phone No</label>
-                                            <input type="number" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="mb-3">
-                                            <label for="simpleinput" class="form-label">Email Address</label>
-                                            <input type="text" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="mb-3">
-                                            <label for="simpleinput" class="form-label">Home Address</label>
-                                            <input type="text" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="mb-3">
-                                            <label for="simpleinput" class="form-label">House No.</label>
-                                            <input type="text" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="mb-3">
-                                            <label for="simpleinput" class="form-label">Street No.</label>
-                                            <input type="text" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="mb-3">
-                                            <label for="simpleinput" class="form-label">Town</label>
-                                            <input type="text" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="mb-3">
-                                            <label for="simpleinput" class="form-label">Additional Details / Nearby (Optional)</label>
-                                            <input type="text" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="mb-3">
-                                            <label for="simpleinput" class="form-label">City</label>
-                                            <input type="text" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="mb-3">
-                                            <label for="simpleinput" class="form-label">Transport Pick-UP Loaction</label>
-                                            <input type="text" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="mb-3">
-                                            <label for="simpleinput" class="form-label">Address</label>
-                                            <input type="text" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="mb-3">
-                                            <label for="simpleinput" class="form-label">City</label>
-                                            <input type="text" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="mb-3">
-                                            <label for="simpleinput" class="form-label">CNIC No.</label>
-                                            <input type="text" value="34101-2453274-9" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="mb-3">
-                                            <label for="user_type" class="form-label">Relation with Student</label>
-                                            <select name="" id="user_type" class="form-select">
-                                                <option value="">Choose your Relation</option>
-                                                <option value="">Father</option>
-                                                <option value="">Mother</option>
-                                                <option value="">Brother</option>
-                                                <option value="">Sister</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="mb-3">
-                                            <label for="simpleinput" class="form-label">Guardian Code</label>
-                                            <input type="number" class="form-control">
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="col-lg-4">
-                                        <div class="mb-3">
-                                            <label for="simpleinput" class="form-label">Name</label>
-                                            <input type="text" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="mb-3">
-                                            <label for="simpleinput" class="form-label">Phone No</label>
-                                            <input type="number" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="mb-3">
-                                            <label for="simpleinput" class="form-label">Email Address</label>
-                                            <input type="text" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="mb-3">
-                                            <label for="simpleinput" class="form-label">Home Address</label>
-                                            <input type="text" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="mb-3">
-                                            <label for="simpleinput" class="form-label">House No.</label>
-                                            <input type="text" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="mb-3">
-                                            <label for="simpleinput" class="form-label">Street No.</label>
-                                            <input type="text" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="mb-3">
-                                            <label for="simpleinput" class="form-label">Town</label>
-                                            <input type="text" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="mb-3">
-                                            <label for="simpleinput" class="form-label">Additional Details / Nearby (Optional)</label>
-                                            <input type="text" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="mb-3">
-                                            <label for="simpleinput" class="form-label">City</label>
-                                            <input type="text" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="mb-3">
-                                            <label for="simpleinput" class="form-label">Transport Pick-UP Loaction</label>
-                                            <input type="text" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="mb-3">
-                                            <label for="simpleinput" class="form-label">Address</label>
-                                            <input type="text" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="mb-3">
-                                            <label for="simpleinput" class="form-label">City</label>
-                                            <input type="text" class="form-control">
-                                        </div>
-                                    </div>
-                                </div>
-
-
-                                <!-- end row -->
-                            </div>
-
-                            <ul class="list-inline wizard mb-0">
-                                <li class="previous list-inline-item">
-                                    <a href="javascript: void(0);" class="btn btn-secondary">Previous</a>
-                                </li>
-                                <li class="next list-inline-item float-end">
-                                    <a href="javascript: void(0);" class="btn btn-secondary">Next</a>
-                                </li>
-                            </ul>
-
                         </div> <!-- tab-content -->
                     </div> <!-- end #basicwizard-->
                 </form>
-
-
-
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
@@ -457,11 +212,15 @@
 @endsection
 @section('page_js')
 @include('partials.datatable_js')
+<script src="{{ asset('/libs/select2/js/select2.min.js') }}"></script>
 <!-- Plugins js-->
-<script src="{{asset('/libs/twitter-bootstrap-wizard/jquery.bootstrap.wizard.min.js')}}"></script>
+<!-- <script src="{{asset('/libs/twitter-bootstrap-wizard/jquery.bootstrap.wizard.min.js')}}"></script> -->
 
 <!-- Init js-->
-<script src="{{asset('/js/pages/form-wizard.init.js')}}"></script>
+<!-- <script src="{{asset('/js/pages/form-wizard.init.js')}}"></script> -->
+<script>
+    initializeSelect2('.select2', '#request');
+</script>
 <script src="{{asset('/js/passenger.js')}}"></script>
 
 @endsection

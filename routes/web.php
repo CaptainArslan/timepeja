@@ -8,6 +8,7 @@ use App\Http\Controllers\RouteController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\ManagerController;
+use App\Http\Controllers\PassengerController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\SettingController;
 
@@ -151,8 +152,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/user/approval', function () {  return view('manager.approval.user_approval_form'); })->name('user.approval');
     Route::get('/history', function () { return view('manager.history'); })->name('history');
     Route::get('/transpot/users', function () {  return view('manager.users.transport_users'); })->name('transpot.users');
-    Route::get('/passenger', function () { return view('passenger.index'); })->name('passenger');
+
+    Route::get('/passenger', [PassengerController::class ,'index'])->name('passenger');
     Route::get('/passenger/list', function () { return view('passenger.passenger_list'); })->name('passenger_list');
+    
     Route::get('/trans_routes', function () { return view('passenger.trans_routes'); })->name('trans_routes');
     Route::get('/trans_schdule', function () { return view('passenger.trans_schdule'); })->name('trans_schdule');
     Route::get('driver/notification', function () { return view('driver.notification'); })->name('driver.notification');
@@ -161,9 +164,11 @@ Route::group(['middleware' => 'auth'], function () {
     // Route::get('/route', function () { return view('route.index');})->name('route');
     Route::get('/revenue', function () { return view('report.revenue'); })->name('revenue');
     Route::get('/expense', function () { return view('report.expense'); })->name('expense');
+
     Route::get('/history/Passenger-to-Passenger', function () { return view('history.passenger_to_passenger'); })->name('bus.passenger');
     Route::get('/history/Bus-Passenger', function () { return view('history.bus_passenger'); })->name('passenger.to.passenger');
     Route::get('/history/Customer-Trip', function () { return view('history.customer_trip'); })->name('customer.trip');
+    
     Route::get('/modules', function () { return view('admin.modules.index'); })->name('modules.index');
     Route::get('/module-groups', function () { return view('admin.module-groups.index'); })->name('module-groups.index');
     Route::get('/roles', function () { return view('admin.roles.index'); })->name('roles.index');
@@ -172,6 +177,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/support', function () { return view('support.support'); })->name('support');
     Route::get('/support/chat', function () { return view('support.index'); })->name('support.chat');
     Route::get('/wallets', function () { return view('wallet.index'); })->name('wallet');
+    Route::get('/pdf-popup', function () { return view('manager.report.export.pdf_popup'); })->name('pdf.popup');
 
 
     /**

@@ -27,7 +27,7 @@ class RouteController extends Controller
      */
     public function index(Request $request)
     {
-        $organizations = Organization::get();
+        $organizations = Organization::where('status', Organization::STATUS_ACTIVE)->get();
         $routes = Route::with('organizations')->orderBY('id', 'desc')
             ->take(10)
             ->get();
@@ -96,7 +96,7 @@ class RouteController extends Controller
      */
     public function create()
     {
-        $organizations = Organization::get();
+        $organizations = Organization::where('status', Organization::STATUS_ACTIVE)->get();
         $routes = Route::with('organizations')
             ->latest()
             ->take(10)

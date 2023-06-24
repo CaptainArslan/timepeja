@@ -32,7 +32,7 @@ class VehicleController extends Controller
      */
     public function index(Request $request)
     {
-        $organizations = Organization::get();
+        $organizations = Organization::where('status', Organization::STATUS_ACTIVE)->get();
         $vehicle_types = VehicleType::get();
         $vehicles = Vehicle::with(['organizations' => function ($query) {
             $query->select('id', 'name')->orderBy('id', 'DESC'); // Select the id and name columns from the organizations table
@@ -110,7 +110,7 @@ class VehicleController extends Controller
      */
     public function create()
     {
-        $organizations = Organization::get();
+        $organizations = Organization::where('status', Organization::STATUS_ACTIVE)->get();
         $vehicle_types = VehicleType::get();
         $vehicles = Vehicle::with('organizations', 'vehiclesTypes')
             ->latest()

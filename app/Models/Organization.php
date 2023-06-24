@@ -88,6 +88,16 @@ class Organization extends Model
         return $this->belongsTo(OrganizationType::class, 'o_type_id', 'id');
     }
 
+    /**
+     * organization relation with passenger
+     *
+     * @return void
+     */
+    public function passengers()
+    {
+        return $this->hasMany(Passenger::class, 'o_id', 'id');
+    }
+
 
 
     // ----------------------------------------------------------------
