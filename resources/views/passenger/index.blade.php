@@ -10,9 +10,38 @@
 <div class="row">
     <div class="col-12">
         <div class="page-title-box">
-            <h4 class="page-title">Add Passengers</h4>
+            <h4 class="page-title">Passengers</h4>
         </div>
     </div>
+</div>
+
+<!-- end page title -->
+<!-- Filters -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <!-- <h4 class="header-title">Select Organization</h4> -->
+                <form action="{{ route('routes.index') }}" method="post" enctype="multipart/form-data">
+                    @csrf
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label for="date-1">From</label>
+                            <input class="form-control" type="date" name="from" value="{{ request()->input('from', old('from')) }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="date">To</label>
+                            <input class="form-control" type="date" name="to" value="{{ request()->input('to', old('to')) }}">
+                        </div>
+                        <div class="col-md-1">
+                            <label for="route_list"></label>
+                            <button type="submit" class="btn btn-success" name="filter" id="route_list"> Submit </button>
+                        </div>
+                    </div> <!-- end row -->
+                </form>
+            </div> <!-- end card-body-->
+        </div> <!-- end card-->
+    </div> <!-- end col-->
 </div>
 
 <!-- end page title -->
