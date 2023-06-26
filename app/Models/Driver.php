@@ -97,7 +97,7 @@ class Driver extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [
-            'exp' => now()->addMonth(1)->timestamp, // Set token expiration to 7 days from now
+            'exp' => now()->addMonth(1)->timestamp, // Set token expiration to 30 days from now
         ];
     }
 

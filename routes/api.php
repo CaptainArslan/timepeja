@@ -14,6 +14,8 @@ use App\Http\Controllers\Api\V1\Auth\DriverAuthController;
 use App\Http\Controllers\Api\V1\Auth\ManagerAuthController;
 use App\Http\Controllers\Api\V1\ApiDriverController as ApiDriverController;
 use App\Http\Controllers\Api\V1\ApiManagerController as ApiManagerController;
+use App\Http\Controllers\Api\V1\Auth\PassengerAuthController;
+use App\Http\Controllers\Api\V1\PassengerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -60,7 +62,7 @@ Route::group(['middleware' => 'api'], function () {
             // Schedule Api
             Route::resource('/schedule', ApiScheduleController::class);
             Route::group(['prefix' => 'schedule'], function () {
-                
+
                 Route::post('/replicate', [ApiScheduleController::class, 'replicate']);
             });
 
@@ -113,6 +115,7 @@ Route::group(['middleware' => 'api'], function () {
         });
     });
 
+    // Driver Apis
     Route::prefix('v1/driver')->name('driver.')->group(function () {
         // Driver Auth
         Route::post('/register', [DriverAuthController::class, 'register']);
@@ -120,7 +123,6 @@ Route::group(['middleware' => 'api'], function () {
         Route::post('/get-code', [DriverAuthController::class, 'getVerificationCode'])
             ->middleware('throttle:ratelimit');
         Route::post('/refresh', [DriverAuthController::class, 'refresh']);
-        Route::post('/logout', [DriverAuthController::class, 'logout']);
         Route::post('/forget-password', [DriverAuthController::class, 'forgetPassword']);
 
         /**
@@ -128,6 +130,26 @@ Route::group(['middleware' => 'api'], function () {
          */
         Route::middleware(['jwt.verify:driver'])->group(function () {
             Route::get('/profile', [DriverAuthController::class, 'profile']);
+            Route::post('/logout', [DriverAuthController::class, 'logout']);
+        });
+    });
+
+    // Passenger apis
+    Route::prefix('v1/passenger')->name('passenger.')->group(function () {
+        // Driver Auth
+        Route::post('/register', [PassengerAuthController::class, 'register']);
+        Route::post('/login', [PassengerAuthController::class, 'login']);
+        Route::post('/get-code', [PassengerAuthController::class, 'getVerificationCode'])
+            ->middleware('throttle:ratelimit');
+        Route::post('/refresh', [PassengerAuthController::class, 'refresh']);
+        Route::post('/forget-password', [PassengerAuthController::class, 'forgetPassword']);
+
+        /**
+         * Driver Auth Middleware with jwt
+         */
+        Route::middleware(['jwt.verify:passenger'])->group(function () {
+            Route::get('/profile', [PassengerAuthController::class, 'profile']);
+            Route::post('/logout', [PassengerAuthController::class, 'logout']);
         });
     });
 });

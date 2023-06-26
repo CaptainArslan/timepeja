@@ -21,6 +21,7 @@ class Passenger extends Authenticatable implements JWTSubject
 
     public const STATUS_ACTIVE = true;
     public const STATUS_DEACTIVE = false;
+    public const PASSENGER_LIMIT_PER_PAGE = false;
 
     /**
      * array for fillable
@@ -28,19 +29,18 @@ class Passenger extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
-        'id',
         'name',
         'phone',
         'email',
         'email_verified_at',
         'password',
         'gender',
-        'type',
         'unique_id',
         'gaurd_code',
-        'register_type',
         'bio',
         'location',
+        'lattutude',
+        'longitude',
         'google',
         'google_id',
         'facebook',
@@ -48,15 +48,12 @@ class Passenger extends Authenticatable implements JWTSubject
         'twitter',
         'twitter_id',
         'image',
-        'token',
         'otp',
-        'house_no',
-        'near_by',
-        'c_id',
-        'street_no',
-        'town',
         'status',
         'remember_token',
+        'created_at',
+        'updated_at',
+        'deleted_at'
     ];
 
     /**
@@ -66,6 +63,18 @@ class Passenger extends Authenticatable implements JWTSubject
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'status' => 'boolean',
+    ];
+
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
+        'otp',
     ];
 
     // ----------------------------------------------------------------
@@ -90,7 +99,9 @@ class Passenger extends Authenticatable implements JWTSubject
      */
     public function getJWTCustomClaims()
     {
-        return [];
+        return [
+            'exp' => now()->addMonth(1)->timestamp, // Set token expiration to 30 days from now
+        ];
     }
 
 

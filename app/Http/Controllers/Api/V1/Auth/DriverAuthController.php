@@ -130,12 +130,9 @@ class DriverAuthController extends BaseController
         if (!$user) {
             return $this->respondWithError('User not Found');
         }
-        // $user->makeHidden('password');
 
         return $this->respondWithSuccess($user, 'Login successfully', 'LOGIN_API_SUCCESS', [
             'content-type' => 'application/json',
-            // 'uid' => $user->email,
-            // 'access-token' => $user->token,
             'Authorization' => $token
         ]);
     }
