@@ -21,10 +21,10 @@ class CreatePassengersTable extends Migration
             $table->bigIncrements('id');
             $table->string('name');
             $table->string('phone');
-            $table->string('email')->unique();
+            $table->string('email')->unique()->nullable();
             $table->timestamp('email_verified_at');
-            $table->string('password')->default(Hash::make('12345678'));
-            $table->enum('gender', ['male', 'female', 'other'])->default('male');
+            $table->string('password');
+            $table->enum('gender', ['male', 'female', 'other'])->nullable();
             // $table->enum('type', ['student','gaurdian','employee']);
             $table->string('unique_id')->unique();
             $table->string('gaurd_code')->unique();
@@ -47,7 +47,7 @@ class CreatePassengersTable extends Migration
             // $table->unsignedBigInteger('c_id')->index('c_id')->nullable();
             // $table->string('street_no');
             // $table->string('town');
-            $table->boolean('status');
+            $table->boolean('status')->default(true);
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

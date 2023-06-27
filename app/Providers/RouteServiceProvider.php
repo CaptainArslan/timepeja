@@ -64,7 +64,7 @@ class RouteServiceProvider extends ServiceProvider
             return Limit::perMinute(env('OTP_RATE_LIMIT'))->response(function () {
                 return response([
                     'success' => false,
-                    'message' => 'To Many Request. Please try again after 1 second'
+                    'message' => 'To Many Request. Please try again after some time'
                 ], 400);
             });
         });

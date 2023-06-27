@@ -3,6 +3,7 @@
 use App\Models\Driver;
 use App\Models\User;
 use App\Models\Manager;
+use App\Models\Passenger;
 
 return [
 
@@ -52,6 +53,10 @@ return [
             'driver' => 'jwt',
             'provider' => 'driversuser',
         ],
+        'passenger' => [
+            'driver' => 'jwt',
+            'provider' => 'passenger',
+        ],
     ],
 
     /*
@@ -83,6 +88,10 @@ return [
         'driversuser' => [
             'driver' => 'eloquent',
             'model' => Driver::class,
+        ],
+        'passenger' => [
+            'driver' => 'eloquent',
+            'model' => Passenger::class,
         ],
 
         // Default laravel provider

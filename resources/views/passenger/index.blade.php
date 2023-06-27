@@ -1,16 +1,23 @@
 @extends('layouts.app')
-@section('title', 'Add Passengers')
+@section('title', 'Passengers')
 <!-- start page title -->
 @section('page_css')
 @include('partials.datatable_css')
+<!-- Plugins css -->
+<link href="/libs/dropzone/min/dropzone.min.css" rel="stylesheet" type="text/css" />
+<link href="/libs/dropify/css/dropify.min.css" rel="stylesheet" type="text/css" />
 <link href="{{ asset('libs/select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ asset('css/app.min.css') }}" rel="stylesheet" type="text/css" id="app-style" />
 @endsection
 @section('content')
 <div class="row">
     <div class="col-12">
-        <div class="page-title-box">
+        <div class="page-title-box d-flex justify-content-between">
             <h4 class="page-title">Passengers</h4>
+            <div class="page-title">
+                <button type="button" type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#passengerModal">
+                    Add Passengers </button>
+            </div>
         </div>
     </div>
 </div>
@@ -25,11 +32,11 @@
                 <form action="{{ route('routes.index') }}" method="post" enctype="multipart/form-data">
                     @csrf
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <label for="date-1">From</label>
                             <input class="form-control" type="date" name="from" value="{{ request()->input('from', old('from')) }}">
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <label for="date">To</label>
                             <input class="form-control" type="date" name="to" value="{{ request()->input('to', old('to')) }}">
                         </div>
@@ -49,35 +56,45 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <button type="button" type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> Add </button>
+                <!-- <button type="button" type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#passengerModal"> Add </button> -->
+                <h3>Latest Passenger</h3>
             </div>
             <div class="card-body">
-                <h4 class="header-title">Latest Passenger</h4>
+                <!-- <h4 class="header-title">Latest Passenger</h4> -->
                 <table id="basic-datatable" class="table table-striped dt-responsive nowrap w-100">
                     <thead>
                         <tr>
-                            <th>Organization Name</th>
-                            <th>Passenger Type</th>
                             <th>Name</th>
-                            <th>School Name</th>
-                            <th>Roll No</th>
-                            <th>Gender</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>otp</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
+                        @forelse ($passengers as $passenger)
                         <tr>
-                            <td><b><a href="#">Tiger Nixon</a></b></td>
-                            <td>System Architect</td>
-                            <td>Edinburgh</td>
-                            <td>61</td>
-                            <td>2011/04/25</td>
-                            <td>$320,800</td>
+                            <td>{{ $passenger->name }}</td>
+                            <td>{{ $passenger->phone }}</td>
+                            <td>@if ($passenger->email)
+                                {{ $passenger->email }}
+                                @else
+                                N/A
+                                @endif
+                            </td>
+                            <td>{{ $passenger->otp }}</td>
                             <td>
-                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" class="tabledit-edit-button btn btn-success" style="float: none;" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><span class="mdi mdi-pencil"></span></button></div>
+                                <div class="btn-group btn-group-sm" style="float: none;"><button type="button" class="tabledit-edit-button btn btn-success" style="float: none;" data-bs-toggle="modal" data-bs-target="#passengerModal"><span class="mdi mdi-pencil"></span></button></div>
                                 <div class="btn-group btn-group-sm" style="float: none;"><button type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
                             </td>
                         </tr>
+                        @empty
+                        <tr align="center">
+                            <h4>No Passenger Found</h4>
+                        </tr>
+
+
+                        @endforelse
                     </tbody>
                 </table>
             </div> <!-- end card body-->
@@ -85,9 +102,10 @@
     </div><!-- end col-->
 </div>
 <!-- end row-->
+
 <!-- Modal -->
-<div class="modal fade " id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl">
+<div class="modal fade " id="passengerModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="passengerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-light">
                 <h4 class="modal-title" id="myCenterModalLabel">Add Passenger</h4>
@@ -100,135 +118,44 @@
                         <div class="tab-content b-0 mb-0 pt-0">
                             <div class="tab-pane active" id="basictab2">
                                 <div class="row">
-                                    <div class="col-lg-4">
+                                    <div class="col-lg-6">
                                         <div class="mb-3">
-                                            <label for="simpleinput" class="form-label">Text</label>
-                                            <select name="o_id" id="org" class="form-select select2">
-                                                <option value="" selected>Select Organization</option>
-                                                @forelse ($organizations as $organization)
-                                                <option value="{{ $organization->id }}">{{ $organization->branch_code }} - {{ $organization->name }} - {{ $organization->branch_name }}</option>
-                                                @empty
-                                                <option value="">Please select</option>
-                                                @endforelse
-                                            </select>
+                                            <label for="user_type" class="form-label">Name</label>
+                                            <input type="text" class="form-control" required>
                                         </div>
                                     </div>
-                                    <div class="col-lg-4">
+                                    <div class="col-lg-6">
                                         <div class="mb-3">
-                                            <label for="user_type" class="form-label">User type Select</label>
-                                            <select name="user_type" id="user_type" class="form-select select2">
-                                                <option value="">Select</option>
-                                                <option value="student">student</option>
-                                                <option value="student_guardian">Student Guardian</option>
-                                                <option value="employee">Employee</option>
-                                                <option value="employee_guardian">Employee Guardian</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="mb-3">
-                                            <label for="further_user_type" class="form-label">Further type Select</label>
-                                            <select name="further_user_type" id="further_user_type" class="form-select select2" disabled="disabled">
-                                                <option value="">Select</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="mb-3">
-                                            <label for="simpleinput" class="form-label">Name</label>
-                                            <input type="text" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="mb-3">
-                                            <label for="simpleinput" class="form-label">Phone No</label>
-                                            <input type="number" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="mb-3">
-                                            <label for="simpleinput" class="form-label">Email Address</label>
-                                            <input type="text" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="mb-3">
-                                            <label for="simpleinput" class="form-label">Home Address</label>
-                                            <input type="text" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="mb-3">
-                                            <label for="simpleinput" class="form-label">House No.</label>
-                                            <input type="text" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="mb-3">
-                                            <label for="simpleinput" class="form-label">Street No.</label>
-                                            <input type="text" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="mb-3">
-                                            <label for="simpleinput" class="form-label">Town</label>
-                                            <input type="text" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="mb-3">
-                                            <label for="simpleinput" class="form-label">Additional Details / Nearby (Optional)</label>
-                                            <input type="text" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="mb-3">
-                                            <label for="simpleinput" class="form-label">City</label>
-                                            <input type="text" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="mb-3">
-                                            <label for="simpleinput" class="form-label">Transport Pick-UP Loaction</label>
-                                            <input type="text" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="mb-3">
-                                            <label for="simpleinput" class="form-label">Address</label>
-                                            <input type="text" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="mb-3">
-                                            <label for="simpleinput" class="form-label">City</label>
-                                            <input type="text" class="form-control">
+                                            <label for="further_user_type" class="form-label">Phone</label>
+                                            <input type="text" class="form-control" required>
                                         </div>
                                     </div>
                                 </div>
-                                <!-- Student form container  -->
-                                <div class="student_school_form_container" id="student_school_form_container">
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="simpleinput" class="form-label ">Email</label>
+                                            <input type="text" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="simpleinput" class="form-label">Password </label>
+                                            <input type="number" class="form-control" required>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="student_college_form_container" id="student_college_form_container">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="mt-1 px-1">
+                                            <input type="file" accept="image/*" data-plugins="dropify" data-default-file="" name="cnic_back" id="cnic_back" data-allowed-file-extensions='png jpg jpeg' />
+                                            <p class="text-muted text-center mt-2 mb-0">Passenger Profile Image</p>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="student_university_form_container" id="student_university_form_container">
-                                </div>
-                                <!-- Employee form -->
-                                <div class="employee_form_container">
-                                </div>
-                                <!-- Guardian student school -->
-                                <div class="guradian_student_school_form_container" id="guradian_student_school_form_container">
-                                </div>
-                                <!-- Employee Guardian Form container -->
-                                <div class="employee_guradian_form_container" id="employee_guradian_form_container">
-                                </div>
-                                <!-- guardian form -->
-                                <div class="guradian_form_container">
-                                </div>
-                                <!-- <div class="text-end">
-                                    <button type="button" type="submit" class="btn btn-success waves-effect waves-light">Save</button>
-                                </div> -->
-                                <!-- end row -->
+                                <div class="text-end mt-2">
+                                    <button type="submit" class="btn btn-success waves-effect waves-light">Submit</button>
+                                </div> <!-- end row -->
                             </div>
 
                         </div> <!-- tab-content -->
@@ -242,14 +169,12 @@
 @section('page_js')
 @include('partials.datatable_js')
 <script src="{{ asset('/libs/select2/js/select2.min.js') }}"></script>
-<!-- Plugins js-->
-<!-- <script src="{{asset('/libs/twitter-bootstrap-wizard/jquery.bootstrap.wizard.min.js')}}"></script> -->
+
+<script src="/libs/dropzone/min/dropzone.min.js"></script>
+<script src="/libs/dropify/js/dropify.min.js"></script>
 
 <!-- Init js-->
-<!-- <script src="{{asset('/js/pages/form-wizard.init.js')}}"></script> -->
-<script>
-    initializeSelect2('.select2', '#request');
-</script>
-<script src="{{asset('/js/passenger.js')}}"></script>
+<script src="/js/pages/form-fileuploads.init.js"></script>
+<!-- <script src="{{asset('/js/passenger.js')}}"></script> -->
 
 @endsection

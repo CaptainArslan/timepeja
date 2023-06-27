@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Organization;
+use App\Models\Passenger;
 use Illuminate\Http\Request;
 
 class PassengerController extends Controller
@@ -14,9 +15,9 @@ class PassengerController extends Controller
      */
     public function index()
     {
-        $organizations = Organization::where('status', Organization::STATUS_ACTIVE)->get();
+        $passengers = Passenger::latest()->take(10)->get();
         return view('passenger.index', [
-            'organizations' => $organizations,
+            'passengers' => $passengers
         ]);
     }
 
