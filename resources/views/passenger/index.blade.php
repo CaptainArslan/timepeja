@@ -89,11 +89,6 @@
                             </td>
                         </tr>
                         @empty
-                        <tr align="center">
-                            <h4>No Passenger Found</h4>
-                        </tr>
-
-
                         @endforelse
                     </tbody>
                 </table>
@@ -127,7 +122,7 @@
                                     <div class="col-lg-6">
                                         <div class="mb-3">
                                             <label for="further_user_type" class="form-label">Phone</label>
-                                            <input type="text" class="form-control" required>
+                                            <input type="text" class="form-control" data-toggle="input-mask" data-mask-format="0000-0000000" maxlength="12" required>
                                         </div>
                                     </div>
                                 </div>
