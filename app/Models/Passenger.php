@@ -153,6 +153,29 @@ class Passenger extends Authenticatable implements JWTSubject
         return substr($value, 0, 4) . '-' . substr($value, 4, 8);
     }
 
+    /**
+     * Get the front picture of the cnic.
+     *
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getImageAttribute()
+    {
+        return $this->attributes['image'] ? asset('uploads/passenger/profile/' . $this->attributes['image']) : asset('uploads/placeholder.jpg');
+    }
+
+    /**
+     * Get the front picture name of the vehicle.
+     *
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getImageNameAttribute()
+    {
+        return $this->attributes['image'];
+    }
+
+
 
 
     // ----------------------------------------------------------------

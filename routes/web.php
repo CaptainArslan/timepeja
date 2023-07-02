@@ -108,6 +108,14 @@ Route::group(['middleware' => 'auth'], function () {
     });
 
     /**
+     * passenger
+     */
+    Route::prefix('passenger')->name('passenger.')->group(function () {
+        Route::get('/', [PassengerController::class ,'index'])->name('index');
+        Route::post('/store', [PassengerController::class ,'store'])->name('store');
+    });
+
+    /**
      * Log report
      */
     Route::prefix('log')->name('log.')->group(function () {
@@ -128,6 +136,8 @@ Route::group(['middleware' => 'auth'], function () {
         Route::match(['get', 'post'], '/disapproved', [ManagerController::class, 'disapprovedUser'])->name('disapproved');
         Route::match(['get', 'post'], '/pastuser', [ManagerController::class, 'pastUser'])->name('pastuser');
     });
+
+    
 
     /**
      * Admin Profile
@@ -161,10 +171,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/request', [RequestController::class ,'index'])->name('request');
     Route::get('/request/list', function () { return view('request.list'); })->name('request.list');
     
-    /**
-     * passenger
-     */
-    Route::get('/passenger', [PassengerController::class ,'index'])->name('passenger');
+   
     // Route::get('/passenger/list', function () { return view('passenger.passenger_list'); })->name('passenger_list');
     
     /**

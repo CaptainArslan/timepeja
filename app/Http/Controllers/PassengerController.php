@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PassengerStoreRequest;
 use App\Models\Organization;
 use App\Models\Passenger;
 use Illuminate\Http\Request;
@@ -15,7 +16,10 @@ class PassengerController extends Controller
      */
     public function index()
     {
-        $passengers = Passenger::latest()->take(10)->get();
+        $passengers = Passenger::orderBy('id', 'DESC')
+        ->take(10)
+        ->get();
+        // dd($passengers->toArray());
         return view('passenger.index', [
             'passengers' => $passengers
         ]);
@@ -37,9 +41,21 @@ class PassengerController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(PassengerStoreRequest $request)
     {
-        //
+        dd($request->all());
+        try {
+            $image = ($request->file('image')) ?
+            uploadImage($request->file('image'), 'passenger/profile')
+            : null;
+            $request->merge(['image' => $image]);
+            Passenger::create($request->all());
+            return redirect()->route('passenger.index')
+                ->with('success', 'Passenger Created Successfully');
+        } catch (\Throwable $th) {
+            return redirect()->route('passenger.index')
+                ->with('error', 'Error Occured while passenger creation');
+        }
     }
 
     /**
