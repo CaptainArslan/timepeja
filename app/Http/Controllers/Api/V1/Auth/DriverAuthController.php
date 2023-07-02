@@ -165,7 +165,8 @@ class DriverAuthController extends BaseController
             $driver->otp = rand(1000, 9999);
             $save = $driver->save();
             if ($save) {
-                return $this->respondWithSuccess($driver->otp, 'Otp Sent Successfully', 'API_GET_CODE');
+                $data = $driver->only('id', 'name', 'phone', 'otp');
+                return $this->respondWithSuccess($data, 'Otp Sent Successfully', 'API_GET_CODE');
             } else {
                 return $this->respondWithError('Error Occured while sending otp');
             }

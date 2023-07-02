@@ -6,6 +6,7 @@ use App\Http\Requests\PassengerStoreRequest;
 use App\Models\Organization;
 use App\Models\Passenger;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class PassengerController extends Controller
 {
@@ -17,9 +18,8 @@ class PassengerController extends Controller
     public function index()
     {
         $passengers = Passenger::orderBy('id', 'DESC')
-        ->take(10)
-        ->get();
-        // dd($passengers->toArray());
+            ->take(10)
+            ->get();
         return view('passenger.index', [
             'passengers' => $passengers
         ]);
@@ -43,12 +43,15 @@ class PassengerController extends Controller
      */
     public function store(PassengerStoreRequest $request)
     {
-        dd($request->all());
         try {
-            $image = ($request->file('image')) ?
-            uploadImage($request->file('image'), 'passenger/profile')
-            : null;
-            $request->merge(['image' => $image]);
+            $request->merge(['otp' => rand(1000, 9999)]);
+            $request->merge(['password' => Hash::make($request->password)]);
+
+            $request->merge(['image' => ($request->file('image')) ?
+                uploadImage($request->file('image'), 'passengers/profile')
+                : null]);
+
+
             Passenger::create($request->all());
             return redirect()->route('passenger.index')
                 ->with('success', 'Passenger Created Successfully');
