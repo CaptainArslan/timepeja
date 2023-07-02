@@ -42,6 +42,11 @@ class DriverStoreRequest extends FormRequest
         ];
     }
 
+    /**
+     * Custom messages
+     *
+     * @return array
+     */
     public function messages(): array
     {
         return [

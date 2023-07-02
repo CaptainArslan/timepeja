@@ -18,9 +18,10 @@ class PassengerFactory extends Factory
     {
         return [
             'name' => $this->faker->name(),
-            'phone' => '03' . $this->faker->regexify('/^[0-9+]{2}-[0-9+]{7}$/'),
+            'phone' => '03' . $this->faker->regexify('/^[0-9+]{9}$/'),
             'email' => $this->faker->safeEmail(),
             'password' => Hash::make('12345678'),
+            'otp' => rand(100000, 999999),
             'unique_id' => substr(uniqid(), -8),
             'gaurd_code' => substr(uniqid(), -8),
             'bio' => $this->faker->sentence(),

@@ -60,9 +60,9 @@
 
                 <!-- Passenger -->
                 <li>
-                    <a href="{{ route('passenger') }}">
+                    <a href="{{ route('passenger.index') }}">
                         <i class="fas fa-users"></i>
-                        <span> Passenger </span>
+                        <span> Passenger </span> 
                     </a>
                 </li>
 
