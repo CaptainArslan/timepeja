@@ -36,20 +36,20 @@
         <div class="card">
             <div class="card-body">
                 <!-- <h4 class="header-title">Select Organization</h4> -->
-                <form action="{{ route('routes.index') }}" method="post" enctype="multipart/form-data">
+                <form action="{{ route('passenger.index') }}" method="GET">
                     @csrf
                     <div class="row">
                         <div class="col-md-4">
                             <label for="date-1">From</label>
-                            <input class="form-control" type="date" name="from" value="{{ request()->input('from', old('from')) }}">
+                            <input class="form-control today-date" type="date" name="from" value="{{ request()->input('from', old('from')) }}">
                         </div>
                         <div class="col-md-4">
                             <label for="date">To</label>
-                            <input class="form-control" type="date" name="to" value="{{ request()->input('to', old('to')) }}">
+                            <input class="form-control today-date" type="date" name="to" value="{{ request()->input('to', old('to')) }}">
                         </div>
                         <div class="col-md-1">
-                            <label for="route_list"></label>
-                            <button type="submit" class="btn btn-success" name="filter" id="route_list"> Submit </button>
+                            <label for="passeger_list"></label>
+                            <button type="submit" class="btn btn-success" name="filter" id="passeger_list"> Submit </button>
                         </div>
                     </div> <!-- end row -->
                 </form>

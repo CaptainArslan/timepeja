@@ -16,11 +16,14 @@ class PassengerController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $passengers = Passenger::orderBy('id', 'DESC')
             ->take(10)
             ->get();
+        if ($request->has('filter')) {
+            $passengers = $this->filter($request);
+        }
         return view('passenger.index', [
             'passengers' => $passengers
         ]);
@@ -144,5 +147,45 @@ class PassengerController extends Controller
         } catch (\Exception $e) {
             return response()->json(['status' => 'error'], 500);
         }
+    }
+
+    /**
+     * Function to filter records
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function filter($request)
+    {
+        $request->validate([
+            'from' => ['nullable', 'date'],
+            'to' => [
+                'nullable',
+                'date',
+                // 'after:from'
+            ],
+        ], [
+            'from.date' => "The registration from date must be a valid date.",
+            'to.date' => "The registration to date must be a valid date.",
+            'to.after' => "The registration to date must be a date after registration from.",
+        ]);
+        // Get the input values from the request
+        $from = $request->input('from');
+        $to = $request->input('to');
+
+        // Get the filtered records
+        $records = Passenger::when($from && $to, function ($query) use ($from, $to) {
+            return $query->whereBetween('created_at', [$from, $to]);
+        })
+            ->when($from && !$to, function ($query) use ($from) {
+                return $query->whereDate('created_at', '>=', $from);
+            })
+            ->when($to && !$from, function ($query) use ($to) {
+                return $query->whereDate('created_at', '<=', $to);
+            })
+            ->get();
+
+        // Return the filtered records to the view
+        return $records;
     }
 }
