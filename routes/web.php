@@ -113,6 +113,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::prefix('passenger')->name('passenger.')->group(function () {
         Route::get('/', [PassengerController::class ,'index'])->name('index');
         Route::post('/store', [PassengerController::class ,'store'])->name('store');
+        Route::delete('/delete/{id}', [PassengerController::class, 'destroy'])->name('delete');
+        Route::put('/{id}', [PassengerController::class, 'update'])->name('update');
     });
 
     /**

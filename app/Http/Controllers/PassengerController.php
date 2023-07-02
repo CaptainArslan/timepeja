@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PassengerStoreRequest;
+use App\Http\Requests\PassengerUpdateRequest;
 use App\Models\Organization;
 use App\Models\Passenger;
 use Illuminate\Http\Request;
@@ -44,22 +45,35 @@ class PassengerController extends Controller
     public function store(PassengerStoreRequest $request)
     {
         try {
-            $request->merge(['otp' => rand(1000, 9999)]);
-            $request->merge(['password' => Hash::make($request->password)]);
+            $otp = rand(1000, 9999);
+            $password = Hash::make($request->password);
 
-            $request->merge(['image' => ($request->file('image')) ?
-                uploadImage($request->file('image'), 'passengers/profile')
-                : null]);
+            $imagePath = null;
+            if ($request->hasFile('image')) {
+                $image = $request->file('image');
+                $imagePath = uploadImage($image, 'passengers/profile', 'passenger_profile');
+            }
 
+            Passenger::create([
+                'name' => $request->name,
+                'phone' => $request->phone,
+                'email' => $request->email,
+                'password' => $password,
+                'image' => $imagePath,
+                'unique_id' => substr(uniqid(), -8),
+                'gaurd_code' => substr(uniqid(), -8)
+                // 'otp' => $otp,
+                // Add other fields from the request as needed
+            ]);
 
-            Passenger::create($request->all());
             return redirect()->route('passenger.index')
-                ->with('success', 'Passenger Created Successfully');
+                ->with('success', 'Passenger created successfully');
         } catch (\Throwable $th) {
             return redirect()->route('passenger.index')
-                ->with('error', 'Error Occured while passenger creation');
+                ->with('error', 'Error occurred while creating passenger');
         }
     }
+
 
     /**
      * Display the specified resource.
@@ -90,9 +104,28 @@ class PassengerController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(PassengerUpdateRequest $request, $id)
     {
-        //
+        $passenger = Passenger::findOrFail($request->id);
+        // ----- these function are to remove old picture from the folder
+        if ($request->hasFile('image')) {
+            removeImage($passenger->image_name, 'passengers/profile');
+        }
+
+        $passenger->image = ($request->file('image')) ?
+            uploadImage($request->file('image'), 'passengers/profile')
+            : $passenger->image_name;
+        $passenger->name = $request->name;
+        $passenger->email = $request->email;
+        $passenger->phone = $request->phone;
+        $passenger->save();
+        try {
+            return redirect()->route('passenger.index')
+                ->with('success', 'Passenger updated successfully');
+        } catch (\Throwable $th) {
+            return redirect()->route('passenger.index')
+                ->with('error', 'Error occurred while updating passenger');
+        }
     }
 
     /**
@@ -103,6 +136,13 @@ class PassengerController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            $passenger = Passenger::findOrFail($id);
+            $passenger->delete();
+
+            return response()->json(['status' => 'success']);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error'], 500);
+        }
     }
 }

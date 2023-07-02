@@ -241,11 +241,20 @@ class DriverController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-        if (Driver::where('id', $id)->delete()) {
+        try {
+            $driver = Driver::findOrFail($id);
+            $driver->delete();
+
             return response()->json(['status' => 'success']);
-        } else {
-            return response()->json(['status' => 'error']);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error'], 500);
         }
+
+        // if (Driver::where('id', $id)->delete()) {
+        //     return response()->json(['status' => 'success']);
+        // } else {
+        //     return response()->json(['status' => 'error']);
+        // }
     }
 
     /**

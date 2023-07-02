@@ -54,7 +54,7 @@ class PassengerAuthController extends Controller
             $passenger->phone = $request->phone;
             $passenger->unique_id = substr(uniqid(), -8);
             $passenger->gaurd_code = substr(uniqid(), -8);
-            $passenger->otp = rand(1000, 9999);
+            // $passenger->otp = rand(1000, 9999);
             $passenger->password = Hash::make($request->password);
             $passenger->save();
             return $this->respondWithSuccess($passenger, 'Passenger register successfully', 'PASSENGER_CREATED_SUCCESSFULLY');
