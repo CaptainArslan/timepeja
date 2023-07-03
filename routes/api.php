@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\V1\ApiDriverController as ApiDriverController;
 use App\Http\Controllers\Api\V1\ApiManagerController as ApiManagerController;
 use App\Http\Controllers\Api\V1\Auth\PassengerAuthController;
 use App\Http\Controllers\Api\V1\PassengerController;
+use App\Http\Controllers\Api\V1\PassengerRequestController;
 
 /*
 |--------------------------------------------------------------------------
@@ -97,6 +98,7 @@ Route::group(['middleware' => 'api'], function () {
                 Route::put('/{id}', [ApiVehicleController::class, 'updateWeb']);
             });
 
+
             // Organization Api
             Route::get('/get-all-organizations', [OrganizationController::class, 'index']);
 
@@ -150,6 +152,13 @@ Route::group(['middleware' => 'api'], function () {
         Route::middleware(['jwt.verify:passenger'])->group(function () {
             Route::get('/profile', [PassengerAuthController::class, 'profile']);
             Route::post('/logout', [PassengerAuthController::class, 'logout']);
+
+            // Passenger Request Api
+            Route::group(['prefix' => 'request'], function () {
+                Route::post('/', [PassengerRequestController::class, 'store']);
+                // Route::post('/', [ApiVehicleController::class, 'storeWeb']);
+                // Route::put('/{id}', [ApiVehicleController::class, 'updateWeb']);
+            });
         });
     });
 });
