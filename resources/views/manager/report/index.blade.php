@@ -185,11 +185,6 @@
      *
      * @return void
      */
-    $(document).ready(function() {
-        $('#export').click(function() {
-            window.open("{{route('pdf.popup')}}", 'Popup', 'width=1000,height=700');
-        });
-});
     function getOrgOption() {
         // alert('option');
         // $('#selection').empty();

@@ -15,9 +15,9 @@ class Requests extends Model
 
     protected $table = 'requests';
 
-    public const REQUEST_STATUS_STUDENT = 'student';
-    public const REQUEST_STATUS_EMPLOYEE = 'employee';
-    public const REQUEST_STATUS_GUARDIAN = 'guardian';
+    public const REQUEST_TYPE_STUDENT = 'student';
+    public const REQUEST_TYPE_EMPLOYEE = 'employee';
+    public const REQUEST_TYPE_GUARDIAN = 'guardian';
 
     public const REQUEST_STATUS_PENDING = 'pending';
     public const REQUEST_STATUS_APPROVE = 'approve';

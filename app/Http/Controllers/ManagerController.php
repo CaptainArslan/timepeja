@@ -384,11 +384,21 @@ class ManagerController extends Controller
         });
 
         $result = $query->where('o_id', $request->o_id)
+            // ->with('organizations:id,name,branch_name,branch_code,email,phone,address,code')
+            // ->with('routes:id,name,number,from,to')
+            // ->with('vehicles:id,number')
+            // ->with('drivers:id,name')
+            // ->get();
+            ->where('status', Schedule::STATUS_PUBLISHED)
             ->with('organizations:id,name,branch_name,branch_code,email,phone,address,code')
             ->with('routes:id,name,number,from,to')
             ->with('vehicles:id,number')
             ->with('drivers:id,name')
+            ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time as scheduled_time', 'start_time', 'end_time', 'is_delay', 'trip_status', 'delayed_reason')
+            ->orderby('trip_status', 'desc')
             ->get();
+
+
 
         return $result;
     }
