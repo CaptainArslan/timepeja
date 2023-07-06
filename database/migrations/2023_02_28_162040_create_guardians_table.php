@@ -17,19 +17,29 @@ class CreateGuardiansTable extends Migration
     public function up()
     {
         Schema::create('guardians', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->unsignedBigInteger('p_id')->index('p_id')->nullable();
-            $table->foreign('p_id')->references('id')->on('passengers');
-            $table->unsignedBigInteger('relation_id')->index('relation_id')->nullable();
-            // $table->foreign('s_id')->references('id')->on('students');
-            $table->string('guard_code')->nullable();
+            $table->id();
+            // $table->foreignId('request_id')->constrained('requests')->onDelete('cascade');
+            $table->foreignId('student_id')->constrained('students')->onDelete('cascade');
+            $table->foreignId('employee_id')->constrained('employees')->onDelete('cascade');
+            $table->string('name');
+            $table->string('phone');
+            $table->string('email');
+            $table->string('image');
+            $table->string('house_no');
+            $table->string('street_no')->nullable();
+            $table->string('town')->nullable();
+            $table->string('additional_detail')->nullable();
+            $table->string('city_id')->nullable();
             $table->string('cnic')->nullable();
-            $table->string('cnic_front_pic')->nullable();
-            $table->string('cnic_back_pic')->nullable();
-            $table->string('image')->nullable();
+            $table->string('cnic_front')->nullable();
+            $table->string('cnic_back')->nullable();
+            $table->string('guarian_code')->nullable();
+            $table->string('pickup_address')->nullable();
+            $table->string('pickup_city_id')->nullable();
+            $table->string('lattitude')->nullable();
+            $table->string('longitude')->nullable();
             $table->string('relation')->nullable();
-            $table->boolean('status');
-            $table->rememberToken();
+            $table->boolean('status')->default(true);
             $table->timestamps();
             $table->softDeletes();
         });

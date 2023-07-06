@@ -17,16 +17,22 @@ class CreateEmployeesTable extends Migration
     public function up()
     {
         Schema::create('employees', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->unsignedBigInteger('p_id')->index('p_id')->nullable();
-            $table->foreign('p_id')->references('id')->on('passengers');
-            $table->string('card_id')->nullable();
-            $table->string('card_id_pic')->nullable();
-            $table->string('discipline')->nullable();
-            $table->string('designaiton')->nullable();
-            $table->string('degree_duration')->nullable();
-            $table->boolean('status');
-            $table->rememberToken();
+            $table->id();
+            // $table->foreignId('request_id')->after('id')->constrained('requests')->onDelete('cascade');
+            $table->string('name');
+            $table->string('phone');
+            $table->string('email');
+            $table->string('image');
+            $table->string('house_no');
+            $table->string('street_no')->nullable();
+            $table->string('town')->nullable();
+            $table->string('additional_detail')->nullable();
+            $table->string('city_id')->nullable();
+            $table->string('pickup_address')->nullable();
+            $table->string('pickup_city_id')->nullable();
+            $table->string('lattitude')->nullable();
+            $table->string('longitude')->nullable();
+            $table->boolean('status')->default(true);
             $table->timestamps();
             $table->softDeletes();
         });
