@@ -30,6 +30,39 @@ class Requests extends Model
     public const EMPLOYEE = 'employee';
     public const GUARDIAN = 'guarian';
 
+    /**
+     * Fillabel for mass assignment
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'passenger_id',
+        'organization_id',
+        'roll_no',
+        'class',
+        'section',
+        'profile_card',
+        'descipline',
+        'designation',
+        'employee_comp_id',
+        'route_id',
+        'transport_start_time',
+        'transport_end_time',
+        'qualification',
+        'batch_year',
+        'degree_duration',
+        'type',
+        'status',
+        'created_at',
+        'updated_at',
+        'deleted_at'
+    ];
+
+
+    protected $cast = [
+        // 
+    ];
+
 
     /**
      * relation with route

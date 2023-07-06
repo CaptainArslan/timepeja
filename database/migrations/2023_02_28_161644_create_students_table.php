@@ -18,10 +18,10 @@ class CreateStudentsTable extends Migration
             $table->id();
             // $table->unsignedBigInteger('p_id')->index('p_id')->nullable();
             // $table->foreign('p_id')->references('id')->on('passengers');
-            $table->foreignId('request_id')->constrained('requests')->onDelete('cascade');
+            // $table->foreignId('request_id')->constrained('requests')->onDelete('cascade');
             $table->string('name');
-            $table->string('phone');
-            $table->string('email');
+            $table->string('phone')->nullable();
+            $table->string('email')->nullable();
             $table->string('image');
             $table->string('house_no');
             $table->string('street_no')->nullable();

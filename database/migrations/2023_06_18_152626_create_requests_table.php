@@ -24,7 +24,7 @@ class CreateRequestsTable extends Migration
             $table->longText('profile_card')->nullable();
             $table->string('descipline')->nullable();
             $table->string('designation')->nullable();
-            $table->string('empolyee_comp_id')->nullable();
+            $table->string('employee_comp_id')->nullable();
             $table->foreignId('route_id')->nullable()->constrained('routes')->onDelete('cascade');
             $table->date('transport_start_time')->nullable();
             $table->date('transport_end_time')->nullable();

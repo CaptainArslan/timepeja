@@ -17,7 +17,8 @@ class CreateGuardiansTable extends Migration
     public function up()
     {
         Schema::create('guardians', function (Blueprint $table) {
-            $table->foreignId('request_id')->constrained('requests')->onDelete('cascade');
+            $table->id();
+            // $table->foreignId('request_id')->constrained('requests')->onDelete('cascade');
             $table->foreignId('student_id')->constrained('students')->onDelete('cascade');
             $table->foreignId('employee_id')->constrained('employees')->onDelete('cascade');
             $table->string('name');
@@ -29,10 +30,15 @@ class CreateGuardiansTable extends Migration
             $table->string('town')->nullable();
             $table->string('additional_detail')->nullable();
             $table->string('city_id')->nullable();
+            $table->string('cnic')->nullable();
+            $table->string('cnic_front')->nullable();
+            $table->string('cnic_back')->nullable();
+            $table->string('guarian_code')->nullable();
             $table->string('pickup_address')->nullable();
             $table->string('pickup_city_id')->nullable();
             $table->string('lattitude')->nullable();
             $table->string('longitude')->nullable();
+            $table->string('relation')->nullable();
             $table->boolean('status')->default(true);
             $table->timestamps();
             $table->softDeletes();
