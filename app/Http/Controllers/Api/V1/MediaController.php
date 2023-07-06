@@ -48,6 +48,7 @@ class MediaController extends BaseController
             'driver_profile' => 'drivers/profile',
             'driver_license' => 'drivers/license',
             'manager_profile' => 'managers/profiles',
+            'passenger' => 'passengers',
         ];
         $uploaded = [];
         try {
