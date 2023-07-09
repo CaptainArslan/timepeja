@@ -32,23 +32,28 @@
                             <th>Name</th>
                             <th>School Name</th>
                             <th>Roll No</th>
-                            <th>Gender</th>
+                            <th></th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
+                        @forelse ($requests as $request)
                         <tr>
-                            <td><b><a href="#">Tiger Nixon</a></b></td>
-                            <td>System Architect</td>
+                            <td>{{ $request->organization['name'] }}</td>
+                            <td>{{ $request->type }}</td>
                             <td>Edinburgh</td>
                             <td>61</td>
-                            <td>2011/04/25</td>
-                            <td>$320,800</td>
+                            <td>{{ $request->roll_no }}</td>
+                            <td></td>
                             <td>
                                 <div class="btn-group btn-group-sm" style="float: none;"><button type="button" class="tabledit-edit-button btn btn-success" style="float: none;" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><span class="mdi mdi-pencil"></span></button></div>
                                 <div class="btn-group btn-group-sm" style="float: none;"><button type="button" class="tabledit-edit-button btn btn-danger" style="float: none;"><span class="mdi mdi-delete"></span></button></div>
                             </td>
                         </tr>
+
+                        @empty
+
+                        @endforelse
                     </tbody>
                 </table>
             </div> <!-- end card body-->

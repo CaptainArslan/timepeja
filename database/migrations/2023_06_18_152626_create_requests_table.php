@@ -26,8 +26,8 @@ class CreateRequestsTable extends Migration
             $table->string('designation')->nullable();
             $table->string('employee_comp_id')->nullable();
             $table->foreignId('route_id')->nullable()->constrained('routes')->onDelete('cascade');
-            $table->date('transport_start_time')->nullable();
-            $table->date('transport_end_time')->nullable();
+            $table->date('transport_start_date')->nullable();
+            $table->date('transport_end_date')->nullable();
             $table->string('qualification')->nullable();
             $table->integer('batch_year')->nullable();
             $table->integer('degree_duration')->nullable();
@@ -40,7 +40,7 @@ class CreateRequestsTable extends Migration
                 Requests::REQUEST_STATUS_PENDING,
                 Requests::REQUEST_STATUS_APPROVE,
                 Requests::REQUEST_STATUS_DISAPPROVE,
-                Requests::REQUEST_STATUS_MEET_PEROSONALLY,
+                Requests::REQUEST_STATUS_MEET_PERSONALLY,
             ])->default(Requests::REQUEST_STATUS_PENDING);
             // $table->string('name')->nullable();
             // $table->string('phone')->nullable();

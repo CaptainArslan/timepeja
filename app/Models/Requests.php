@@ -22,7 +22,7 @@ class Requests extends Model
     public const REQUEST_STATUS_PENDING = 'pending';
     public const REQUEST_STATUS_APPROVE = 'approve';
     public const REQUEST_STATUS_DISAPPROVE = 'disapprove';
-    public const REQUEST_STATUS_MEET_PEROSONALLY = 'meet-personally';
+    public const REQUEST_STATUS_MEET_PERSONALLY = 'meet-personally';
 
     public const STUDENT_SCHOOL = 'scchool';
     public const STUDENT_COLLEGE = 'college';
@@ -96,5 +96,37 @@ class Requests extends Model
     {
         // return $this->belongsTo(Organization::class, 'o_id', 'id');
         return $this->belongsTo(Organization::class);
+    }
+
+    /**
+     * relation with organization
+     *
+     * @return void
+     */
+    public function student()
+    {
+        // return $this->belongsTo(Organization::class, 'o_id', 'id');
+        return $this->belongsTo(Student::class);
+    }
+
+    /**
+     * relation with organization
+     *
+     * @return void
+     */
+    public function employee()
+    {
+        // return $this->belongsTo(Organization::class, 'o_id', 'id');
+        return $this->belongsTo(Employee::class);
+    }
+    /**
+     * relation with organization
+     *
+     * @return void
+     */
+    public function guardian()
+    {
+        // return $this->belongsTo(Organization::class, 'o_id', 'id');
+        return $this->belongsTo(Guardian::class);
     }
 }
