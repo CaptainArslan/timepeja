@@ -67,7 +67,7 @@ class MediaController extends BaseController
 
                 $othermedia = new OtherMedia();
                 $othermedia->type = $request->type;
-                $othermedia->image_url = $name;
+                $othermedia->image_url = asset('uploads/' . $directory . $name);
                 $save = $othermedia->save();
                 if (!$save) {
                     return $this->respondWithError('Error ooccured while uploading');
