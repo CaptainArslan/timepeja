@@ -2,19 +2,21 @@
 
 namespace Database\Seeders;
 
+
 use Illuminate\Database\Seeder;
 use Database\Seeders\RoleSeeder;
 use Database\Seeders\UserSeeder;
 use Database\Seeders\StateSeeder;
-use Database\Seeders\ModuleSeeder;
 use Database\Seeders\CountrySeeder;
-use Database\Seeders\ModuleUrlSeeder;
-use Database\Seeders\PermissionSeeder;
-use Database\Seeders\ModuleGroupSeeder;
 use Database\Seeders\VehicleTypeSeeder;
 use Database\Seeders\CitySeederChunkOne;
 use Database\Seeders\OrganizationSeeder;
 use Database\Seeders\OrganizationTypeSeeder;
+// use Database\Seeders\ModuleSeeder;
+// use Database\Seeders\ModuleUrlSeeder;
+// use Database\Seeders\PermissionSeeder;
+// use Database\Seeders\ModuleGroupSeeder;
+
 
 class DatabaseSeeder extends Seeder
 {
@@ -48,7 +50,11 @@ class DatabaseSeeder extends Seeder
             DriverSeeder::class,
             ScheduleSeeder::class,
             // TripSeeder::class
-            PassengerSeeder::class
+            PassengerSeeder::class,
+            RequestsSeeder::class,
+            StudentSeeder::class,
+            EmployeeSeeder::class,
+            GuardianSeeder::class,
         ]);
     }
 }

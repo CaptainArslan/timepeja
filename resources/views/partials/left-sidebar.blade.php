@@ -169,7 +169,7 @@
                 </li>
 
                 <!-- Reports -->
-                <li>
+                <!-- <li>
                     <a href="#reports" data-bs-toggle="collapse">
                         <i class=" fas fa-file-alt"></i>
                         <span> Reports </span>
@@ -185,10 +185,10 @@
                             </li>
                         </ul>
                     </div>
-                </li>
+                </li> -->
 
                 <!-- User Management -->
-                <li>
+                <!-- <li>
                     <a href="#usermanagement" data-bs-toggle="collapse">
                         <i class="fas fa-users-cog"></i>
                         <span> User Management </span>
@@ -213,7 +213,7 @@
                             </li>
                         </ul>
                     </div>
-                </li>
+                </li> -->
 
                 <!-- Settings -->
                 <li>

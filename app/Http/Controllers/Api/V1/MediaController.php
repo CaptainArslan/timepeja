@@ -44,11 +44,11 @@ class MediaController extends BaseController
 
         $types = [
             'vehicle' => 'vehicles/',
-            'driver_cnic' => 'drivers/cnic',
-            'driver_profile' => 'drivers/profile',
-            'driver_license' => 'drivers/license',
-            'manager_profile' => 'managers/profiles',
-            'passenger' => 'passengers',
+            'driver_cnic' => 'drivers/cnic/',
+            'driver_profile' => 'drivers/profile/',
+            'driver_license' => 'drivers/license/',
+            'manager_profile' => 'managers/profiles/',
+            'passenger' => 'passengers/',
         ];
         $uploaded = [];
         try {
@@ -67,7 +67,7 @@ class MediaController extends BaseController
 
                 $othermedia = new OtherMedia();
                 $othermedia->type = $request->type;
-                $othermedia->image_url = $name;
+                $othermedia->image_url = asset('uploads/' . $directory . $name);
                 $save = $othermedia->save();
                 if (!$save) {
                     return $this->respondWithError('Error ooccured while uploading');
