@@ -44,11 +44,11 @@ class MediaController extends BaseController
 
         $types = [
             'vehicle' => 'vehicles/',
-            'driver_cnic' => 'drivers/cnic',
-            'driver_profile' => 'drivers/profile',
-            'driver_license' => 'drivers/license',
-            'manager_profile' => 'managers/profiles',
-            'passenger' => 'passengers',
+            'driver_cnic' => 'drivers/cnic/',
+            'driver_profile' => 'drivers/profile/',
+            'driver_license' => 'drivers/license/',
+            'manager_profile' => 'managers/profiles/',
+            'passenger' => 'passengers/',
         ];
         $uploaded = [];
         try {
