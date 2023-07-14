@@ -696,7 +696,7 @@ class ApiDriverController extends BaseController
                 'report' => $drivers->toArray(),
                 // 'request' => $request->all()
             ];
-            $pdf = PDF::loadview('manager.report.export.logreport', $data);
+            $pdf = PDF::loadview('pdf.driver', $data);
             $pdf->setPaper('A4', 'landscape');
 
             $filename = date('Ymd_His') . '_Log_Report.pdf'; // Generate a unique filename
