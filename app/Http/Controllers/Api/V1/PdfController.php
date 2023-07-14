@@ -6,7 +6,6 @@ use App\Models\Schedule;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Pdf as ModelsPdf;
-use Faker\Core\Uuid;
 use Illuminate\Support\Facades\Validator;
 use PDF;
 
@@ -86,7 +85,7 @@ class PdfController extends Controller
             $pdf = PDF::loadview('manager.report.export.logreport', $data);
             $pdf->setPaper('A4', 'landscape');
 
-            $filename = date('Ymd_His') . '_history_report.pdf'; // Generate a unique filename
+            $filename = date('Ymd_His') . '_Log_Report.pdf'; // Generate a unique filename
             $filePath = public_path('uploads/pdf/' . $filename); // Get the full file path
 
             $pdf->save($filePath); // Save the PDF to the specified folder

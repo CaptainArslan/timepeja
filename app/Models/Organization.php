@@ -97,6 +97,16 @@ class Organization extends Model
     {
         return $this->hasMany(Passenger::class, 'o_id', 'id');
     }
+    
+    /**
+     * organization relation with drivers
+     *
+     * @return void
+     */
+    public function drivers()
+    {
+        return $this->hasMany(Driver::class, 'o_id', 'id');
+    }
 
 
 

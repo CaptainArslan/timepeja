@@ -32,6 +32,8 @@ use App\Http\Controllers\Api\V1\PassengerRequestController;
 
 Route::group(['middleware' => 'api'], function () {
     Route::prefix('v1/manager')->name('manager.')->group(function () {
+
+        Route::get('/drivers/pdf', [ApiDriverController::class, 'createPdf']);
         // Manager Auth
         Route::post('/register', [ManagerAuthController::class, 'register']);
         Route::post('/login', [ManagerAuthController::class, 'login']);
@@ -79,6 +81,8 @@ Route::group(['middleware' => 'api'], function () {
 
             // Driver Api
             Route::resource('/driver', ApiDriverController::class);
+            
+
             Route::get('/search/driver', [ApiDriverController::class, 'search']);
             // Driver api for web
             Route::group(['prefix' => 'web/driver'], function () {
