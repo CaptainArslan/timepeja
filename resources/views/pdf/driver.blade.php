@@ -21,12 +21,12 @@
         </div>
         <div id="project">
 
-            {{-- <div>
+            <div>
                 <h5>{{ $drivers[0]['organization']['code'] }} {{ $drivers[0]['organization']['name'] }}, {{ $drivers[0]['organization']['branch_name'] }}, city<h5></h5>
             </div>
             <div><span>ADDRESS</span>{{ $drivers[0]['organization']['address'] }}</div>
             <div><span>EMAIL</span> {{ $drivers[0]['organization']['email'] }}</div>
-            <div><span>PHONE</span> {{ $drivers[0]['organization']['phone'] }}</div> --}}
+            <div><span>PHONE</span> {{ $drivers[0]['organization']['phone'] }}</div> 
             <!-- <div><span>FROM</span>{{ formatDate(request()->input('from')) }}</div>
             <div><span>TO</span>{{ formatDate(request()->input('to')) }}</div> -->
         </div>
@@ -51,6 +51,7 @@
             </thead>
             <tbody>
                 <tr>
+                    <td></td>
                     <td></td>
                     <td></td>
                     <td></td>
