@@ -26,7 +26,7 @@ class OrganizationFactory extends Factory
             'email' => $this->faker->safeEmail(),
             'phone' => '03' . $this->faker->regexify('/^[0-9+]{2}-[0-9+]{7}$/'),
             'code' => substr(uniqid(), -8),
-            'address' => Str::random(5),
+            'address' => $this->faker->address(),
             's_id' => State::inRandomOrder()->first()->id,
             'c_id' => City::inRandomOrder()->first()->id,
             'head_name' => 'Test 1',
