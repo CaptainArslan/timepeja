@@ -21,12 +21,12 @@
         </div>
         <div id="project">
 
-            <div>
+            {{-- <div>
                 <h5>{{ $drivers[0]['organization']['code'] }} {{ $drivers[0]['organization']['name'] }}, {{ $drivers[0]['organization']['branch_name'] }}, city<h5></h5>
             </div>
             <div><span>ADDRESS</span>{{ $drivers[0]['organization']['address'] }}</div>
             <div><span>EMAIL</span> {{ $drivers[0]['organization']['email'] }}</div>
-            <div><span>PHONE</span> {{ $drivers[0]['organization']['phone'] }}</div>
+            <div><span>PHONE</span> {{ $drivers[0]['organization']['phone'] }}</div> --}}
             <!-- <div><span>FROM</span>{{ formatDate(request()->input('from')) }}</div>
             <div><span>TO</span>{{ formatDate(request()->input('to')) }}</div> -->
         </div>
@@ -50,22 +50,14 @@
                 </tr>
             </thead>
             <tbody>
-                @forelse($drivers as $row)
                 <tr>
-                    <td>{{ formatDate($row['created_at']) }}</td>
-                    <td>{{ $row['id'] }}</td>
-                    <td>{{ $row['name'] }}</td>
-                    <td>{{ $row['phone'] }}</td>
-                    <td>{{ $row['cnic'] }}</td>
-                    <td>{{ $row['license_no'] }}</td>
-                    <td>@if ($row['status'])
-                        Active
-                    @else
-                        Deactive
-                    @endif</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
                 </tr>
-                @empty
-                @endforelse
             </tbody>
         </table>
     </main>
