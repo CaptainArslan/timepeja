@@ -168,7 +168,7 @@ class Manager extends Authenticatable implements JWTSubject
      *
      * @return  [image with path]  [this function will return the manager image with full path]
      */
-    public function getPictureAttribute()
+    public function getPictureAttribute($value)
     {
         if (filter_var($value, FILTER_VALIDATE_URL)) {
             $value = $this->attributes['picture'];

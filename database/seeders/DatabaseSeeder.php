@@ -54,7 +54,7 @@ class DatabaseSeeder extends Seeder
             RequestsSeeder::class,
             StudentSeeder::class,
             EmployeeSeeder::class,
-            GuardianSeeder::class,
+            // GuardianSeeder::class,
         ]);
     }
 }
