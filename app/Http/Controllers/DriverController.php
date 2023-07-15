@@ -263,7 +263,7 @@ class DriverController extends Controller
      * @param DriverMultiDeleteRequest $request
      * @return void
      */
-    public function multiDelete(DriverMultiDeleteRequest $request)
+    public function multiDeleteAndPrint(DriverMultiDeleteRequest $request)
     {
         try {
             // 2 is the number of queries to be executed
