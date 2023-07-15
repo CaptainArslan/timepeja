@@ -78,7 +78,7 @@
 
 <!-- Table -->
 <div class="row">
-    <form action="{{ route('driver.multiDelete') }}" method="POST" id="driverForm">
+    <form action="{{ route('driver.multiDeleteAndPrint') }}" method="POST" id="driverForm">
         @csrf
         <div class="col-12 table-responsive">
             <div class="card">
@@ -93,8 +93,9 @@
                         <div class="col-8">
                             <!-- selection show here -->
                         </div>
-                        <div class="col-1">
+                        <div class="col-2 d-flex justify-content-around">
                             <button class="btn btn-danger" id="btnMultilDelete" disabled="disabled">Delete</button>
+                            <button class="btn btn-primary"> <i class="fas fa-print"></i> </button>
                         </div>
                     </div>
                 </div>
