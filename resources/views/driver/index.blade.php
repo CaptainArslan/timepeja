@@ -78,7 +78,7 @@
 
 <!-- Table -->
 <div class="row">
-    <form action="{{ route('driver.multiDeleteAndPrint') }}" method="POST" id="driverForm">
+    <form action="{{ route('driver.multiDelete') }}" method="POST" id="driverForm">
         @csrf
         <div class="col-12 table-responsive">
             <div class="card">

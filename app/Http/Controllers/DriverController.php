@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use PDF;
 use App\Models\Driver;
 use App\Models\Schedule;
 use App\Models\Organization;
@@ -12,10 +13,11 @@ use App\Http\Requests\Driver\DriverStoreRequest;
 use App\Http\Requests\Driver\DriverUpdateRequest;
 use App\Http\Requests\Driver\DriverMultiDeleteRequest;
 
+
 class DriverController extends Controller
 {
     /**
-     * Undocumented function
+     * Index function
      *
      * @param Request $request
      * @return void
@@ -78,7 +80,7 @@ class DriverController extends Controller
                 return $query->whereDate('created_at', '<=', $to);
             })
             ->with('organization', function ($query) {
-                $query->select('id', 'name'); // Select the id and name columns from the organizations table
+                $query->select('id', 'name', 'branch_name', 'branch_code', 'email', 'phone', 'address', 'code'); // Select the id and name columns from the organizations table
             })
             ->get();
 
@@ -263,7 +265,7 @@ class DriverController extends Controller
      * @param DriverMultiDeleteRequest $request
      * @return void
      */
-    public function multiDeleteAndPrint(DriverMultiDeleteRequest $request)
+    public function multiDelete(DriverMultiDeleteRequest $request)
     {
         try {
             // 2 is the number of queries to be executed
@@ -354,5 +356,33 @@ class DriverController extends Controller
             ->with('drivers:id,name')
             ->get();
         return $trips;
+    }
+
+
+    /**
+     * Print PDF for to print the driver
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function printPdf(Request $request)
+    {
+        if (empty($request->o_id) && empty($request->from) && empty($request->to)) {
+            $drivers = Driver::with('organization:id,name,branch_name,branch_code,email,phone,address,code')
+                ->latest()
+                ->take(10)
+                ->get();
+        } else {
+            $drivers = $this->filter($request);
+        }
+
+        $data = [
+            'drivers' => $drivers->toArray(),
+            'request' => $request->all()
+        ];
+
+        $pdf = PDF::loadview('driver.export.driverpdf', $data);
+        $pdf->setPaper('A4', 'landscape');
+        return $pdf->download(time() . 'Log_Report.pdf');
     }
 }
