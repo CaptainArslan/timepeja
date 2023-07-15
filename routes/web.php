@@ -60,7 +60,8 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/store', [DriverController::class, 'store'])->name('store');
         Route::post('/edit', [DriverController::class, 'edit'])->name('edit');
         Route::post('/delete/{id}', [DriverController::class, 'destroy'])->name('delete');
-        Route::post('multidelete', [DriverController::class, 'multiDeleteAndPrint'])->name('multiDeleteAndPrint');
+        Route::post('/multidelete', [DriverController::class, 'multiDelete'])->name('multiDelete');
+        Route::post('/pdf', [DriverController::class, 'printPdf'])->name('printPdf');
         Route::match(['get', 'post'], 'upcoming-trips', [DriverController::class, 'upcomingTrips'])->name('upcomingTrips');
 
         Route::get('get-org-driver/{id}', [CommonController::class, 'getDrivers'])->name('get-driver');
