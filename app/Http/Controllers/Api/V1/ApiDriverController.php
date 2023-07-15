@@ -693,8 +693,8 @@ class ApiDriverController extends BaseController
                 ->with('organization:id,name,branch_name,branch_code,email,phone,address,code')
                 ->get();
             $data = [
-                'report' => $drivers->toArray(),
-                // 'request' => $request->all()
+                'drivers' => $drivers->toArray(),
+                'request' => $request->all()
             ];
             $pdf = PDF::loadview('pdf.driver', $data);
             $pdf->setPaper('A4', 'landscape');
@@ -718,9 +718,9 @@ class ApiDriverController extends BaseController
             }
         } catch (\Throwable $th) {
             // Delete the saved PDF file if an exception occurred
-            if (file_exists($filePath)) {
-                unlink($filePath);
-            }
+            // if (file_exists($filePath)) {
+            //     unlink($filePath);
+            // }
             return $this->respondWithError('Error occurred while creating the PDF: ' . $th->getMessage());
         }
 
