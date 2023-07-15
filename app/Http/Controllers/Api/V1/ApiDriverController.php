@@ -699,7 +699,7 @@ class ApiDriverController extends BaseController
             $pdf = PDF::loadview('pdf.driver', $data);
             $pdf->setPaper('A4', 'landscape');
 
-            $filename = date('Ymd_His') . '_Log_Report.pdf'; // Generate a unique filename
+            $filename = date('Ymd_His') . '_Driver_Report.pdf'; // Generate a unique filename
             $filePath = public_path('uploads/pdf/' . $filename); // Get the full file path
 
             $pdf->save($filePath); // Save the PDF to the specified folder
