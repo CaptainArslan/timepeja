@@ -85,6 +85,11 @@ class Vehicle extends Model
         return $this->belongsTo(Organization::class, 'o_id', 'id');
     }
 
+    public function vehiclesType()
+    {
+        return $this->belongsTo(VehicleType::class, 'v_type_id', 'id');
+    }
+
     public function vehiclesTypes()
     {
         return $this->belongsTo(VehicleType::class, 'v_type_id', 'id');
@@ -101,9 +106,15 @@ class Vehicle extends Model
      * @param  string  $value
      * @return string|null
      */
-    public function getFrontPicAttribute()
+    public function getFrontPicAttribute($value)
     {
-        return $this->attributes['front_pic'] ? asset('uploads/vehicles/' . $this->attributes['front_pic']) : null;
+        if (filter_var($value, FILTER_VALIDATE_URL)) {
+            $value = $this->attributes['front_pic'];
+        } else {
+            $value = asset('uploads/vehicles/placeholder.jpg');
+        }
+        return $value;
+        // return $this->attributes['front_pic'] ? asset('uploads/vehicles/' . $this->attributes['front_pic']) : asset('uploads/vehicles/placeholder.jpg');
     }
 
     /**
@@ -114,7 +125,20 @@ class Vehicle extends Model
      */
     public function getFrontPicNameAttribute()
     {
-        return $this->attributes['front_pic'];
+        $url = $this->attributes['front_pic'] ?? null;
+
+        // Extract the image name from the URL if it's present
+        if ($url && filter_var($url, FILTER_VALIDATE_URL)) {
+            $path = parse_url($url, PHP_URL_PATH);
+            $name = basename($path);
+
+            return $name;
+        }
+
+        // Return the simple name if it's already present
+        return $this->attributes['front_pic'] ?? null;
+
+        // return $this->attributes['front_pic'];
     }
 
     /**
@@ -123,9 +147,15 @@ class Vehicle extends Model
      * @param  string  $value
      * @return string|null
      */
-    public function getBackPicAttribute()
+    public function getBackPicAttribute($value)
     {
-        return $this->attributes['back_pic'] ? asset('uploads/vehicles/' . $this->attributes['back_pic']) : null;
+        if (filter_var($value, FILTER_VALIDATE_URL)) {
+            $value = $this->attributes['front_pic'];
+        } else {
+            $value = asset('uploads/vehicles/placeholder.jpg');
+        }
+        return $value;
+        // return $this->attributes['back_pic'] ? asset('uploads/vehicles/' . $this->attributes['back_pic']) : asset('uploads/vehicles/placeholder.jpg');
     }
 
     /**
@@ -136,7 +166,19 @@ class Vehicle extends Model
      */
     public function getBackPicNameAttribute()
     {
-        return $this->attributes['back_pic'];
+        $url = $this->attributes['back_pic'] ?? null;
+
+        // Extract the image name from the URL if it's present
+        if ($url && filter_var($url, FILTER_VALIDATE_URL)) {
+            $path = parse_url($url, PHP_URL_PATH);
+            $name = basename($path);
+
+            return $name;
+        }
+
+        // Return the simple name if it's already present
+        return $this->attributes['back_pic'] ?? null;
+        // return $this->attributes['back_pic'];
     }
 
     /**
@@ -145,9 +187,15 @@ class Vehicle extends Model
      * @param  string  $value
      * @return string|null
      */
-    public function getNumberPicAttribute()
+    public function getNumberPicAttribute($value)
     {
-        return $this->attributes['number_pic'] ? asset('uploads/vehicles/' . $this->attributes['number_pic']) : null;
+        if (filter_var($value, FILTER_VALIDATE_URL)) {
+            $value = $this->attributes['front_pic'];
+        } else {
+            $value = asset('uploads/vehicles/placeholder.jpg');
+        }
+        return $value;
+        // return $this->attributes['number_pic'] ? asset('uploads/vehicles/' . $this->attributes['number_pic']) : asset('uploads/vehicles/placeholder.jpg');
     }
 
     /**
@@ -158,7 +206,19 @@ class Vehicle extends Model
      */
     public function getNumberPicNameAttribute()
     {
-        return $this->attributes['number_pic'];
+        $url = $this->attributes['number_pic'] ?? null;
+
+        // Extract the image name from the URL if it's present
+        if ($url && filter_var($url, FILTER_VALIDATE_URL)) {
+            $path = parse_url($url, PHP_URL_PATH);
+            $name = basename($path);
+
+            return $name;
+        }
+
+        // Return the simple name if it's already present
+        return $this->attributes['number_pic'] ?? null;
+        // return $this->attributes['number_pic'];
     }
 
     /**
@@ -169,28 +229,28 @@ class Vehicle extends Model
      */
     public function getRegDateAttribute()
     {
-        return $this->attributes['reg_date'] ? date('d-m-Y', strtotime($this->attributes['reg_date'])) : null;
+        return $this->attributes['reg_date'] ? date('d-m-Y', strtotime($this->attributes['reg_date'])) : asset('uploads/vehicles/placeholder.jpg');
     }
 
-    /**
-     * Get the created_at.
-     *
-     * @param  string  $value
-     * @return string|null
-     */
-    public function getCreatedAtAttribute($value)
-    {
-        return Carbon::parse($value)->format('Y-m-d');
-    }
+    // /**
+    //  * Get the created_at.
+    //  *
+    //  * @param  string  $value
+    //  * @return string|null
+    //  */
+    // public function getCreatedAtAttribute($value)
+    // {
+    //     return Carbon::parse($value)->format('Y-m-d');
+    // }
 
-    /**
-     * Get the updated_at.
-     *
-     * @param  string  $value
-     * @return string|null
-     */
-    public function getUpdatedAtAttribute($value)
-    {
-        return Carbon::parse($value)->format('Y-m-d');
-    }
+    // /**
+    //  * Get the updated_at.
+    //  *
+    //  * @param  string  $value
+    //  * @return string|null
+    //  */
+    // public function getUpdatedAtAttribute($value)
+    // {
+    //     return Carbon::parse($value)->format('Y-m-d');
+    // }
 }
