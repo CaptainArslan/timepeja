@@ -1,0 +1,16 @@
+[15-Jul-2023 13:47:20 Asia/Karachi] PHP Fatal error:  Uncaught ReflectionException: Class view does not exist in /home/timefsqn/public_html/staging/vendor/laravel/framework/src/Illuminate/Container/Container.php:877
+Stack trace:
+#0 /home/timefsqn/public_html/staging/vendor/laravel/framework/src/Illuminate/Container/Container.php(877): ReflectionClass->__construct('view')
+#1 /home/timefsqn/public_html/staging/vendor/laravel/framework/src/Illuminate/Container/Container.php(758): Illuminate\Container\Container->build('view')
+#2 /home/timefsqn/public_html/staging/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(851): Illuminate\Container\Container->resolve('view', Array, true)
+#3 /home/timefsqn/public_html/staging/vendor/laravel/framework/src/Illuminate/Container/Container.php(694): Illuminate\Foundation\Application->resolve('view', Array)
+#4 /home/timefsqn/public_html/staging/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(836): Illuminate\Container\Container->make('view', Array)
+#5 /home/timefsqn/public_html/staging/vendor/lara in /home/timefsqn/public_html/staging/vendor/laravel/framework/src/Illuminate/Container/Container.php on line 879
+[15-Jul-2023 13:47:27 Asia/Karachi] PHP Fatal error:  Uncaught ReflectionException: Class view does not exist in /home/timefsqn/public_html/staging/vendor/laravel/framework/src/Illuminate/Container/Container.php:877
+Stack trace:
+#0 /home/timefsqn/public_html/staging/vendor/laravel/framework/src/Illuminate/Container/Container.php(877): ReflectionClass->__construct('view')
+#1 /home/timefsqn/public_html/staging/vendor/laravel/framework/src/Illuminate/Container/Container.php(758): Illuminate\Container\Container->build('view')
+#2 /home/timefsqn/public_html/staging/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(851): Illuminate\Container\Container->resolve('view', Array, true)
+#3 /home/timefsqn/public_html/staging/vendor/laravel/framework/src/Illuminate/Container/Container.php(694): Illuminate\Foundation\Application->resolve('view', Array)
+#4 /home/timefsqn/public_html/staging/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(836): Illuminate\Container\Container->make('view', Array)
+#5 /home/timefsqn/public_html/staging/vendor/lara in /home/timefsqn/public_html/staging/vendor/laravel/framework/src/Illuminate/Container/Container.php on line 879
