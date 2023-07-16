@@ -95,7 +95,10 @@ Route::group(['middleware' => 'api'], function () {
 
             // Vehicle Api
             Route::resource('/vehicle', ApiVehicleController::class);
+            Route::get('/vehicles/pdf', [ApiVehicleController::class, 'createPdf']);
             Route::get('/search/vehicle', [ApiVehicleController::class, 'search']);
+
+
             // Vehicle apo for web
             Route::group(['prefix' => 'web/vehicle'], function () {
                 Route::get('/', [ApiVehicleController::class, 'getVehicle']);
@@ -109,6 +112,7 @@ Route::group(['middleware' => 'api'], function () {
 
             // Route Api
             Route::resource('/route', ApiRouteController::class);
+            Route::get('/routes/pdf', [ApiRouteController::class, 'createPdf']);
             Route::get('web/route', [ApiRouteController::class, 'getRoute']);
             Route::get('/search/route', [ApiRouteController::class, 'search']);
 

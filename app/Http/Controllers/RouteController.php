@@ -28,7 +28,7 @@ class RouteController extends Controller
     public function index(Request $request)
     {
         $organizations = Organization::where('status', Organization::STATUS_ACTIVE)->get();
-        $routes = Route::with('organizations')->orderBY('id', 'desc')
+        $routes = Route::with('organization')->orderBY('id', 'desc')
             ->take(10)
             ->get();
 
@@ -79,7 +79,7 @@ class RouteController extends Controller
             ->when($to && !$from, function ($query) use ($to) {
                 return $query->whereDate('created_at', '<=', $to);
             })
-            ->with('organizations', function ($query) {
+            ->with('organization', function ($query) {
                 $query->select('id', 'name'); // Select the id and name columns from the organizations table
             })
             ->groupBy('number')
@@ -97,7 +97,7 @@ class RouteController extends Controller
     public function create()
     {
         $organizations = Organization::where('status', Organization::STATUS_ACTIVE)->get();
-        $routes = Route::with('organizations')
+        $routes = Route::with('organization')
             ->latest()
             ->take(10)
             ->get();
@@ -254,4 +254,5 @@ class RouteController extends Controller
             ]);
         }
     }
+    
 }

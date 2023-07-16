@@ -685,6 +685,12 @@ class ApiDriverController extends BaseController
         }
     }
 
+    /**
+     * Create Pdf for drivers
+     *
+     * @param Request $request
+     * @return void
+     */
     public function createPdf(Request $request)
     {
         try {
