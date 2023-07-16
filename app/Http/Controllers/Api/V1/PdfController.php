@@ -75,6 +75,7 @@ class PdfController extends Controller
                 ->with('routes:id,name,number,from,to')
                 ->with('vehicles:id,number')
                 ->with('drivers:id,name')
+                ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time as scheduled_time', 'start_time', 'end_time', 'is_delay', 'trip_status', 'delayed_reason')
                 ->get();
 
             $data = [
