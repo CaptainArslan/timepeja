@@ -69,6 +69,16 @@ class Route extends Model
         return $this->belongsTo(Organization::class, 'o_id', 'id');
     }
 
+    // /**
+    //  * organization relation with routes
+    //  *
+    //  * @return  [type]  [return description]
+    //  */
+    // public function organizations()
+    // {
+    //     return $this->belongsTo(Organization::class, 'o_id', 'id');
+    // }
+
 
 
     // ----------------------------------------------------------------
