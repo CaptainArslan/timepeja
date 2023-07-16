@@ -80,7 +80,7 @@ class Vehicle extends Model
     // -------------------------- Relations ---------------------------
     // ----------------------------------------------------------------
 
-    public function organizations()
+    public function organization()
     {
         return $this->belongsTo(Organization::class, 'o_id', 'id');
     }
