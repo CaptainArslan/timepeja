@@ -41,4 +41,24 @@ class Guardian extends Model
     protected $cast = [
         // 
     ];
+    
+    /**
+     * Student relation with request
+     *
+     * @return void
+     */
+    public function requests()
+    {
+        return $this->hasMany(Request::class);
+    }
+
+    /**
+     * Student relation with passenger
+     *
+     * @return void
+     */
+    public function passenger()
+    {
+        return $this->belongsTo(Passenger::class);
+    }
 }

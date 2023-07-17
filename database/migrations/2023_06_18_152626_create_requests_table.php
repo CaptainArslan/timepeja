@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Requests;
+use App\Models\Request as Requests;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -18,6 +18,8 @@ class CreateRequestsTable extends Migration
             $table->id();
             $table->foreignId('passenger_id')->nullable()->constrained('passengers')->onDelete('cascade');
             $table->foreignId('organization_id')->constrained('organizations')->onDelete('cascade');
+            $table->unsignedBigInteger('parent_id')->nullable();
+            $table->foreign('parent_id')->references('id')->on('requests')->onDelete('cascade');
             $table->string('roll_no')->nullable();
             $table->string('class')->nullable();
             $table->string('section')->nullable();

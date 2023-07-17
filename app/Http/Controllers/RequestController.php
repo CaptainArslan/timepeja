@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Requests;
+use App\Models\Request as CusomtRequest;
 use App\Models\Organization;
 use Illuminate\Http\Request;
 
@@ -16,7 +16,7 @@ class RequestController extends Controller
     public function index()
     {
         $organizations = Organization::where('status', Organization::STATUS_ACTIVE)->get();
-        $requests = Requests::with('organization:id,name')
+        $requests = CusomtRequest::with('organization:id,name')
             ->with('student')
             ->with('employee')
             ->with('guardian')

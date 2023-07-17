@@ -8,6 +8,7 @@ use Database\Seeders\RoleSeeder;
 use Database\Seeders\UserSeeder;
 use Database\Seeders\StateSeeder;
 use Database\Seeders\CountrySeeder;
+use Database\Seeders\RequestSeeder;
 use Database\Seeders\VehicleTypeSeeder;
 use Database\Seeders\CitySeederChunkOne;
 use Database\Seeders\OrganizationSeeder;
@@ -51,10 +52,6 @@ class DatabaseSeeder extends Seeder
             ScheduleSeeder::class,
             // TripSeeder::class
             PassengerSeeder::class,
-            RequestsSeeder::class,
-            StudentSeeder::class,
-            EmployeeSeeder::class,
-            // GuardianSeeder::class,
         ]);
     }
 }
