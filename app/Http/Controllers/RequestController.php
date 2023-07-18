@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Requests;
+use App\Models\Request as Requests;
 use App\Models\Organization;
 use Illuminate\Http\Request;
 
@@ -23,7 +23,7 @@ class RequestController extends Controller
             ->take(10)
             ->latest()
             ->get();
-        dd($requests->toArray());
+        // dd($requests->toArray());
         return view('request.index', [
             'organizations' => $organizations,
             'requests' => $requests,

@@ -26,7 +26,7 @@ class Guardian extends Model
         'cnic',
         'cnic_front',
         'cnic_back',
-        'guarian_code',
+        'guardian_code',
         'pickup_address',
         'pickup_city_id',
         'lattitude',
@@ -41,4 +41,34 @@ class Guardian extends Model
     protected $cast = [
         // 
     ];
+
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
+    public function requests()
+    {
+        return $this->hasMany(Request::class);
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
+    public function students()
+    {
+        return $this->belongsToMany(Student::class, 'student_guardians', 'guardian_id', 'student_id');
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
+    public function employees()
+    {
+        return $this->belongsToMany(Employee::class, 'employee_guardians', 'guardian_id', 'employee_id');
+    }
 }

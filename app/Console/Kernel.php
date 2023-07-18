@@ -2,14 +2,18 @@
 
 namespace App\Console;
 
+use Commands\ScheduleSeed;
+use Commands\MigrateInOrder;
+use App\Console\Commands\MakeModelSetup;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
 {
     protected $commands = [
-        Commands\MigrateInOrder::class,
-        Commands\ScheduleSeed::class,
+        // MigrateInOrder::class,
+        // ScheduleSeed::class,
+        MakeModelSetup::class,
     ];
     /**
      * Define the application's command schedule.

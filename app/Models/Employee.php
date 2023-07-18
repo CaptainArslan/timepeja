@@ -10,6 +10,10 @@ class Employee extends Model
     use HasFactory;
     protected $table = 'employees';
 
+    public const EMPLOYEE_STATUS_SCHOOL     = 'school';
+    public const EMPLOYEE_STATUS_COLLEGE    = 'college';
+    public const EMPLOYEE_STATUS_UNIVERSITY = 'university';
+
     protected $fillable = [
         'request_id',
         'name',
@@ -34,4 +38,24 @@ class Employee extends Model
     protected $cast = [
         // 
     ];
+
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
+    public function requests()
+    {
+        return $this->hasMany(Request::class);
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
+    public function guardians()
+    {
+        return $this->belongsToMany(Guardian::class, 'employee_guardians', 'employee_id', 'guardian_id');
+    }
 }

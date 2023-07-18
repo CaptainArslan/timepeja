@@ -11,6 +11,10 @@ class Student extends Model
 
     protected $table = 'students';
 
+    public const STUDENT_TYPE_SCHOOL = 'school';
+    public const STUDENT_TYPE_COLLEGE = 'college';
+    public const STUDENT_TYPE_UNIVERSITY = 'university';
+
     protected $fillable = [
         'request_id',
         'name',
@@ -36,4 +40,25 @@ class Student extends Model
     protected $cast = [
         // 
     ];
+
+
+    /**
+     * Student relation with request
+     *
+     * @return void
+     */
+    public function requests()
+    {
+        return $this->hasMany(Request::class);
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
+    public function guardians()
+    {
+        return $this->belongsToMany(Guardian::class, 'student_guardians', 'student_id', 'guardian_id');
+    }
 }

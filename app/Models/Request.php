@@ -7,7 +7,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Requests extends Model
+class Request extends Model
 {
     use HasFactory;
     use SoftDeletes;
@@ -58,75 +58,68 @@ class Requests extends Model
         'deleted_at'
     ];
 
-
     protected $cast = [
         // 
     ];
 
-
     /**
-     * relation with route
-     *
-     * @return void
-     */
-    public function route()
-    {
-        // return $this->belongsTo(Route::class, 'r_id', 'id');
-        return $this->belongsTo(Route::class);
-    }
-
-    /**
-     * relation with passenger
-     *
-     * @return void
-     */
-    public function passenger()
-    {
-        // return $this->belongsTo(Passenger::class, 'p_id', 'id');
-        return $this->belongsTo(Passenger::class);
-    }
-
-
-    /**
-     * relation with organization
+     * Undocumented function
      *
      * @return void
      */
     public function organization()
     {
-        // return $this->belongsTo(Organization::class, 'o_id', 'id');
         return $this->belongsTo(Organization::class);
     }
 
     /**
-     * relation with organization
+     * Undocumented function
+     *
+     * @return void
+     */
+    public function passenger()
+    {
+        return $this->belongsTo(Passenger::class);
+    }
+
+    /**
+     * Undocumented function
      *
      * @return void
      */
     public function student()
     {
-        // return $this->belongsTo(Organization::class, 'o_id', 'id');
         return $this->belongsTo(Student::class);
     }
 
     /**
-     * relation with organization
+     * Undocumented function
      *
      * @return void
      */
     public function employee()
     {
-        // return $this->belongsTo(Organization::class, 'o_id', 'id');
         return $this->belongsTo(Employee::class);
     }
+
     /**
-     * relation with organization
+     * Undocumented function
      *
      * @return void
      */
-    public function guardian()
+    public function guardians()
     {
-        // return $this->belongsTo(Organization::class, 'o_id', 'id');
-        return $this->belongsTo(Guardian::class);
+        // return $this->hasMany(Guardian::class);
+        return $this->belongsToMany(Guardian::class, 'request_guardians', 'request_id', 'guardian_id');
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
+    public function route()
+    {
+        return $this->belongsTo(Route::class);
     }
 }

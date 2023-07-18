@@ -1,11 +1,11 @@
 <?php
 
-use App\Models\Requests;
+use App\Models\Employee;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateStudentsTable extends Migration
+class CreateEmployeesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,32 +14,28 @@ class CreateStudentsTable extends Migration
      */
     public function up()
     {
-        Schema::create('students', function (Blueprint $table) {
+        Schema::create('employees', function (Blueprint $table) {
             $table->id();
-            // $table->unsignedBigInteger('p_id')->index('p_id')->nullable();
-            // $table->foreign('p_id')->references('id')->on('passengers');
             // $table->foreignId('request_id')->constrained('requests')->onDelete('cascade');
-            $table->string('name');
+            $table->string('name')->nullable();
             $table->string('phone')->nullable();
             $table->string('email')->nullable();
-            $table->string('image');
-            $table->string('house_no');
+            $table->string('house_no')->nullable();
             $table->string('street_no')->nullable();
             $table->string('town')->nullable();
-            $table->string('additional_detail')->nullable();
             $table->string('city_id')->nullable();
             $table->string('pickup_address')->nullable();
             $table->string('pickup_city_id')->nullable();
             $table->string('lattitude')->nullable();
             $table->string('longitude')->nullable();
-            $table->enum('type', [
-                Requests::STUDENT_SCHOOL,
-                Requests::STUDENT_COLLEGE,
-                Requests::STUDENT_UNIVERSITY,
+            $table->enum('status',[
+                Employee::EMPLOYEE_STATUS_SCHOOL,
+                Employee::EMPLOYEE_STATUS_COLLEGE,
+                Employee::EMPLOYEE_STATUS_UNIVERSITY
             ]);
-            $table->boolean('status')->default(true);
+            $table->string('image')->nullable();
+            $table->text('additional_detail')->nullable();
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
@@ -50,6 +46,6 @@ class CreateStudentsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('students');
+        Schema::dropIfExists('employees');
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Requests;
+use App\Models\Request as Requests;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -16,26 +16,28 @@ class CreateRequestsTable extends Migration
     {
         Schema::create('requests', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('passenger_id')->nullable()->constrained('passengers')->onDelete('cascade');
             $table->foreignId('organization_id')->constrained('organizations')->onDelete('cascade');
-            $table->string('roll_no')->nullable();
-            $table->string('class')->nullable();
-            $table->string('section')->nullable();
-            $table->longText('profile_card')->nullable();
-            $table->string('descipline')->nullable();
-            $table->string('designation')->nullable();
-            $table->string('employee_comp_id')->nullable();
-            $table->foreignId('route_id')->nullable()->constrained('routes')->onDelete('cascade');
-            $table->date('transport_start_date')->nullable();
-            $table->date('transport_end_date')->nullable();
-            $table->string('qualification')->nullable();
-            $table->integer('batch_year')->nullable();
-            $table->integer('degree_duration')->nullable();
+            $table->foreignId('passenger_id')->nullable()->constrained('passengers')->onDelete('cascade');
             $table->enum('type', [
                 Requests::REQUEST_TYPE_STUDENT,
                 Requests::REQUEST_TYPE_EMPLOYEE,
                 Requests::REQUEST_TYPE_GUARDIAN,
             ]);
+            $table->foreignId('student_id')->constrained('students')->onDelete('cascade');
+            $table->string('roll_no')->nullable();
+            $table->string('class')->nullable();
+            $table->string('section')->nullable();
+            $table->string('qualification')->nullable();
+            $table->integer('batch_year')->nullable();
+            $table->integer('degree_duration')->nullable();
+            $table->foreignId('employee_id')->constrained('employees')->onDelete('cascade');
+            $table->string('descipline')->nullable();
+            $table->string('designation')->nullable();
+            // $table->string('employee_comp_id')->nullable();
+            $table->longText('profile_card')->nullable();
+            $table->foreignId('route_id')->nullable()->constrained('routes')->onDelete('cascade');
+            $table->date('transport_start_date')->nullable();
+            $table->date('transport_end_date')->nullable();
             $table->enum('status', [
                 Requests::REQUEST_STATUS_PENDING,
                 Requests::REQUEST_STATUS_APPROVE,
