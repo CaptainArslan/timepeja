@@ -62,33 +62,64 @@ class Request extends Model
         // 
     ];
 
-    public function route()
-    {
-        return $this->belongsTo(Route::class);
-    }
-
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
     public function organization()
     {
         return $this->belongsTo(Organization::class);
     }
 
-    public function guardians()
-    {
-        return $this->hasMany(Guardian::class);
-    }
-
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
     public function passenger()
     {
         return $this->belongsTo(Passenger::class);
     }
 
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
     public function student()
     {
         return $this->belongsTo(Student::class);
     }
 
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
     public function employee()
     {
         return $this->belongsTo(Employee::class);
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
+    public function guardians()
+    {
+        // return $this->hasMany(Guardian::class);
+        return $this->belongsToMany(Guardian::class, 'request_guardians', 'request_id', 'guardian_id');
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
+    public function route()
+    {
+        return $this->belongsTo(Route::class);
     }
 }

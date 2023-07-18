@@ -41,39 +41,34 @@ class Guardian extends Model
     protected $cast = [
         // 
     ];
-    
-    // /**
-    //  * Student relation with request
-    //  *
-    //  * @return void
-    //  */
-    // public function requests()
-    // {
-    //     return $this->hasMany(Request::class);
-    // }
 
-    // /**
-    //  * Student relation with passenger
-    //  *
-    //  * @return void
-    //  */
-    // public function passenger()
-    // {
-    //     return $this->belongsTo(Passenger::class);
-    // }
-
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
     public function requests()
     {
-        return $this->hasMany(Request::class, 'guardian_id');
+        return $this->hasMany(Request::class);
     }
 
-    public function Students()
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
+    public function students()
     {
-        return $this->belongsToMany(Student::class, 'student_guardians');
+        return $this->belongsToMany(Student::class, 'student_guardians', 'guardian_id', 'student_id');
     }
 
-    public function Employees()
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
+    public function employees()
     {
-        return $this->belongsToMany(Employee::class, 'employee_guardians');
+        return $this->belongsToMany(Employee::class, 'employee_guardians', 'guardian_id', 'employee_id');
     }
 }

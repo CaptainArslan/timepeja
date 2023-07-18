@@ -105,7 +105,7 @@ class Passenger extends Authenticatable implements JWTSubject
     }
 
 
-    
+
 
     // ----------------------------------------------------------------
     // ------------------ Accessors & Mutator -------------------------
@@ -185,37 +185,7 @@ class Passenger extends Authenticatable implements JWTSubject
     // ----------------------------------------------------------------
 
     /**
-     * manager relation function with manager
-     *
-     * @return void
-     */
-    public function manager()
-    {
-        return $this->belongsTo(Manager::class, 'id', 'o_id');
-    }
-
-    /**
-     * city relation with organization
-     *
-     * @return  [relation]  [this function will return city that belogs to organizations]
-     */
-    public function city()
-    {
-        return $this->belongsTo(City::class, 'c_id', 'id');
-    }
-
-    /**
-     * state relation with organization
-     *
-     * @return  [type]  [this function will return state that belogs to organizations]
-     */
-    public function state()
-    {
-        return $this->belongsTo(State::class, 's_id', 'id');
-    }
-
-    /**
-     * relation of passenger and request
+     * relation of passenger and requests
      *
      * @return void
      */
@@ -223,24 +193,4 @@ class Passenger extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(Request::class);
     }
-
-    // /**
-    //  * passenger relation with organizations
-    //  *
-    //  * @return void
-    //  */
-    // public function organization()
-    // {
-    //     return $this->belongsTo(Organization::class, 'o_id', 'id');
-    // }
-
-    // /**
-    //  * Passenger realtion with student
-    //  *
-    //  * @return void
-    //  */
-    // public function student()
-    // {
-    //     return $this->hasOne(Student::class);
-    // }
 }

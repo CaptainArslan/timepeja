@@ -40,7 +40,7 @@ class Employee extends Model
     ];
 
     /**
-     * Student relation with request
+     * Undocumented function
      *
      * @return void
      */
@@ -49,23 +49,13 @@ class Employee extends Model
         return $this->hasMany(Request::class);
     }
 
-    // /**
-    //  * Student relation with passenger
-    //  *
-    //  * @return void
-    //  */
-    // public function passenger()
-    // {
-    //     return $this->belongsTo(Passenger::class);
-    // }
-
-    // /**
-    //  * Undocumented function
-    //  *
-    //  * @return void
-    //  */
-    // public function guardians()
-    // {
-    //     return $this->belongsToMany(Guardian::class, 'student_guardian', 'student_id', 'guardian_id');
-    // }
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
+    public function guardians()
+    {
+        return $this->belongsToMany(Guardian::class, 'employee_guardians', 'employee_id', 'guardian_id');
+    }
 }
