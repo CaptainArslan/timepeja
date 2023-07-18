@@ -72,6 +72,11 @@ class Request extends Model
         return $this->belongsTo(Organization::class);
     }
 
+    public function guardians()
+    {
+        return $this->hasMany(Guardian::class);
+    }
+
     public function passenger()
     {
         return $this->belongsTo(Passenger::class);
@@ -85,10 +90,5 @@ class Request extends Model
     public function employee()
     {
         return $this->belongsTo(Employee::class);
-    }
-
-    public function guardians()
-    {
-        return $this->hasMany(Guardian::class);
     }
 }

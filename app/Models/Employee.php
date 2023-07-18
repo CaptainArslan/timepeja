@@ -49,18 +49,23 @@ class Employee extends Model
         return $this->hasMany(Request::class);
     }
 
-    /**
-     * Student relation with passenger
-     *
-     * @return void
-     */
-    public function passenger()
-    {
-        return $this->belongsTo(Passenger::class);
-    }
+    // /**
+    //  * Student relation with passenger
+    //  *
+    //  * @return void
+    //  */
+    // public function passenger()
+    // {
+    //     return $this->belongsTo(Passenger::class);
+    // }
 
-    public function guardians()
-    {
-        return $this->belongsToMany(Guardian::class, 'student_guardian', 'student_id', 'guardian_id');
-    }
+    // /**
+    //  * Undocumented function
+    //  *
+    //  * @return void
+    //  */
+    // public function guardians()
+    // {
+    //     return $this->belongsToMany(Guardian::class, 'student_guardian', 'student_id', 'guardian_id');
+    // }
 }
