@@ -11,6 +11,10 @@ class Student extends Model
 
     protected $table = 'students';
 
+    public const STUDENT_TYPE_SCHOOL = 'school';
+    public const STUDENT_TYPE_COLLEGE = 'college';
+    public const STUDENT_TYPE_UNIVERSITY = 'university';
+
     protected $fillable = [
         'request_id',
         'name',

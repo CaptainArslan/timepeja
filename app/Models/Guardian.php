@@ -26,7 +26,7 @@ class Guardian extends Model
         'cnic',
         'cnic_front',
         'cnic_back',
-        'guarian_code',
+        'guardian_code',
         'pickup_address',
         'pickup_city_id',
         'lattitude',
