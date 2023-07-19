@@ -28,7 +28,7 @@ class CreateStudentsTable extends Migration
             $table->string('pickup_city_id')->nullable();
             $table->string('lattitude')->nullable();
             $table->string('longitude')->nullable();
-            $table->enum('type',[
+            $table->enum('further_type',[
                 Student::STUDENT_TYPE_SCHOOL,
                 Student::STUDENT_TYPE_COLLEGE,
                 Student::STUDENT_TYPE_UNIVERSITY

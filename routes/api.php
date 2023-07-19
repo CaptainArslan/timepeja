@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\V1\ApiManagerController as ApiManagerController;
 use App\Http\Controllers\Api\V1\Auth\PassengerAuthController;
 use App\Http\Controllers\Api\V1\PassengerController;
 use App\Http\Controllers\Api\V1\PassengerRequestController;
+use App\Http\Controllers\RequestController;
 
 /*
 |--------------------------------------------------------------------------
@@ -123,6 +124,8 @@ Route::group(['middleware' => 'api'], function () {
             //main screen wrapper
             Route::get('/main-screen-wrapper', [ApiManagerController::class, 'wrapper']);
             Route::get('/log-report-wrapper', [ApiManagerController::class, 'wrapper']);
+
+            Route::post('/request', [RequestController::class, 'store']);
         });
     });
 

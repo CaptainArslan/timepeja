@@ -36,26 +36,24 @@ class Request extends Model
      * @var array
      */
     protected $fillable = [
-        'passenger_id',
         'organization_id',
+        'passenger_id',
+        'type',
+        'student_id',
         'roll_no',
         'class',
         'section',
-        'profile_card',
-        'descipline',
-        'designation',
-        'employee_comp_id',
-        'route_id',
-        'transport_start_time',
-        'transport_end_time',
         'qualification',
         'batch_year',
         'degree_duration',
-        'type',
+        'employee_id',
+        'descipline',
+        'designation',
+        'profile_card',
+        'route_id',
+        'transport_start_date',
+        'transport_end_date',
         'status',
-        'created_at',
-        'updated_at',
-        'deleted_at'
     ];
 
     protected $cast = [

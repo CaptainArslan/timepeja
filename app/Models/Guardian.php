@@ -15,27 +15,24 @@ class Guardian extends Model
         'student_id',
         'employee_id',
         'name',
-        'phone',
-        'email',
         'image',
+        'phone',
         'house_no',
         'street_no',
         'town',
-        'additional_detail',
         'city_id',
         'cnic',
         'cnic_front',
         'cnic_back',
-        'guardian_code',
         'pickup_address',
         'pickup_city_id',
         'lattitude',
         'longitude',
         'relation',
         'status',
-        'created_at',
-        'updated_at',
-        'deleted_at'
+        'guardian_code',
+        'additional_detail',
+        
     ];
 
     protected $cast = [

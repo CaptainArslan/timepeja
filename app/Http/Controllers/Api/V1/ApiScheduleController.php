@@ -113,7 +113,7 @@ class ApiScheduleController extends BaseController
                 'drivers:id,name'
             ]);
 
-            return $this->respondWithSuccess($data, 'Schedule Creadted Successfully', 'SCHEDULE_CREATED');
+            return $this->respondWithSuccess($data, 'Schedule Created Successfully', 'SCHEDULE_CREATED');
         } catch (\Throwable $th) {
             throw $th;
         }

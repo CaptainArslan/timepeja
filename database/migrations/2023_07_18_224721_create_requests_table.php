@@ -23,14 +23,14 @@ class CreateRequestsTable extends Migration
                 Requests::REQUEST_TYPE_EMPLOYEE,
                 Requests::REQUEST_TYPE_GUARDIAN,
             ]);
-            $table->foreignId('student_id')->constrained('students')->onDelete('cascade');
+            $table->foreignId('student_id')->nullable()->constrained('students')->onDelete('cascade');
             $table->string('roll_no')->nullable();
             $table->string('class')->nullable();
             $table->string('section')->nullable();
             $table->string('qualification')->nullable();
             $table->integer('batch_year')->nullable();
             $table->integer('degree_duration')->nullable();
-            $table->foreignId('employee_id')->constrained('employees')->onDelete('cascade');
+            $table->foreignId('employee_id')->nullable()->constrained('employees')->onDelete('cascade');
             $table->string('descipline')->nullable();
             $table->string('designation')->nullable();
             // $table->string('employee_comp_id')->nullable();
