@@ -16,25 +16,20 @@ class Student extends Model
     public const STUDENT_TYPE_UNIVERSITY = 'university';
 
     protected $fillable = [
-        'request_id',
         'name',
         'phone',
         'email',
-        'image',
         'house_no',
         'street_no',
         'town',
-        'additional_detail',
         'city_id',
         'pickup_address',
         'pickup_city_id',
         'lattitude',
         'longitude',
-        'type',
-        'status',
-        'created_at',
-        'updated_at',
-        'deleted_at'
+        'further_type',
+        'image',
+        'additional_detail',
     ];
 
     protected $cast = [
