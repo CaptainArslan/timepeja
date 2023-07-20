@@ -8,6 +8,7 @@ use App\Models\Guardian;
 use App\Models\Passenger;
 use App\Models\Organization;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use App\Models\Request as Requests;
 use Illuminate\Support\Facades\Validator;
@@ -82,6 +83,20 @@ class RequestController extends BaseController
             'route_id' => ['nullable', 'numeric', 'exists:routes,id'],
             'transport_start_date' => ['nullable', 'date',],
             'transport_end_date' => ['nullable', 'date',],
+            'guardian_type' => ['nullable', 'string'],
+            'guardian_code' => ['nullable', 'string', Rule::requiredIf(function () use ($request) {
+                return $request->input('type') === 'guardian';
+            }),],
+            'cnic_no' => ['nullable', 'string', Rule::requiredIf(function () use ($request) {
+                return $request->input('type') === 'guardian';
+            }),],
+            'cnic_front' => ['nullable', 'string', Rule::requiredIf(function () use ($request) {
+                return $request->input('type') === 'guardian';
+            }),],
+            'cnic_back' => ['nullable', 'string', Rule::requiredIf(function () use ($request) {
+                return $request->input('type') === 'guardian';
+            }),],
+
         ], [
             'name.required' => 'Please enter your name.',
             'phone.required' => 'Please enter your phone number.',
@@ -103,6 +118,13 @@ class RequestController extends BaseController
 
         if ($request->has('unique_id')) {
             $passenger = Passenger::where('unique_id', $request->unique_id)->first();
+            if ($passenger) {
+                $passenger_id = $passenger->id;
+            } else {
+                return $this->respondWithError('Passenger unique Id not found.');
+            }
+        }else if ($request->has('guard_code')){
+            $passenger = Passenger::where('guard_code', $request->guard_code)->first();
             if ($passenger) {
                 $passenger_id = $passenger->id;
             } else {
@@ -137,6 +159,10 @@ class RequestController extends BaseController
             } elseif ($request->type == 'employee') {
                 $employee = $this->createEmployee($request);
                 $newRequestData['employee_id'] = $employee->id;
+            } elseif ($request->type == 'guardian') {
+                if ($request->guardian_type == 'student') {
+                } else if ($request->guardian_type == 'employee') {
+                }
             }
 
             $newRequest = Requests::create($newRequestData);
@@ -248,10 +274,30 @@ class RequestController extends BaseController
         return $employee;
     }
 
-    public function createGuardian($request)
+    public function createGuardian($request, $request_id, $student_id = null, $employee_id = null)
     {
         $guardian = new Guardian();
+        $guardian->request_id = $request_id;
+        $guardian->student_id = $student_id;
+        $guardian->employee_id = $employee_id;
         $guardian->name = $request->name;
+        $guardian->image = $request->image;
+        $guardian->phone = $request->phone;
+        $guardian->house_no = $request->house_no;
+        $guardian->street_no = $request->street_no;
+        $guardian->town = $request->town;
+        $guardian->city_id = $request->city_id;
+        $guardian->cnic = $request->cnic;
+        $guardian->cnic_front = $request->cnic_front;
+        $guardian->cnic_back = $request->cnic_back;
+        $guardian->pickup_address = $request->pickup_address;
+        $guardian->pickup_city_id = $request->pickup_city_id;
+        $guardian->lattitude = $request->lattitude;
+        $guardian->longitude = $request->longitude;
+        $guardian->relation = $request->relation;
+        $guardian->status = $request->status;
+        $guardian->guardian_code = $request->guardian_code;
+        $guardian->additional_detail = $request->additional_detail;
         $guardian->save();
         return $guardian;
     }
