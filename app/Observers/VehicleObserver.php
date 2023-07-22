@@ -5,7 +5,7 @@ namespace App\Observers;
 use Exception;
 use App\Models\Vehicle;
 use App\Models\LocationHistory;
-use illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\DB;
 
 class VehicleObserver
 {

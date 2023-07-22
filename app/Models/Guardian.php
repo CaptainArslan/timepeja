@@ -32,7 +32,6 @@ class Guardian extends Model
         'status',
         'guardian_code',
         'additional_detail',
-        
     ];
 
     protected $cast = [
