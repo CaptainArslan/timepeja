@@ -27,7 +27,7 @@ class CreatePassengersTable extends Migration
             $table->enum('gender', ['male', 'female', 'other'])->nullable();
             // $table->enum('type', ['student','gaurdian','employee']);
             $table->string('unique_id')->unique();
-            $table->string('gaurd_code')->unique();
+            // $table->string('guardian_code')->unique();
             // $table->enum('register_type', ['regular', 'social'])->default('');
             $table->text('bio')->nullable();
             // $table->string('location')->nullable();

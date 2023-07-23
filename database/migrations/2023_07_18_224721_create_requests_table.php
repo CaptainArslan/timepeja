@@ -21,9 +21,16 @@ class CreateRequestsTable extends Migration
             $table->enum('type', [
                 Requests::REQUEST_TYPE_STUDENT,
                 Requests::REQUEST_TYPE_EMPLOYEE,
-                Requests::REQUEST_TYPE_GUARDIAN,
+                Requests::REQUEST_TYPE_STUDENT_GUARDIAN,
+                Requests::REQUEST_TYPE_EMPLOYEE_GUARDIAN,
             ]);
+            $table->enum('further_type', [
+                Requests::STUDENT_SCHOOL,
+                Requests::STUDENT_COLLEGE,
+                Requests::STUDENT_UNIVERSITY,
+            ])->nullable();
             $table->foreignId('student_id')->nullable()->constrained('students')->onDelete('cascade');
+            $table->string('guardian_code');
             $table->string('roll_no')->nullable();
             $table->string('class')->nullable();
             $table->string('section')->nullable();
@@ -31,7 +38,7 @@ class CreateRequestsTable extends Migration
             $table->integer('batch_year')->nullable();
             $table->integer('degree_duration')->nullable();
             $table->foreignId('employee_id')->nullable()->constrained('employees')->onDelete('cascade');
-            $table->string('descipline')->nullable();
+            $table->string('discipline')->nullable();
             $table->string('designation')->nullable();
             // $table->string('employee_comp_id')->nullable();
             $table->longText('profile_card')->nullable();

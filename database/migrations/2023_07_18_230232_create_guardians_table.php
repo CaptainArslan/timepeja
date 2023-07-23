@@ -15,9 +15,9 @@ class CreateGuardiansTable extends Migration
     {
         Schema::create('guardians', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('request_id')->constrained('requests')->onDelete('cascade');
-            $table->foreignId('student_id')->nullable()->constrained('students')->onDelete('cascade');
-            $table->foreignId('employee_id')->nullable()->constrained('employees')->onDelete('cascade');
+            // $table->foreignId('request_id')->constrained('requests')->onDelete('cascade');
+            // $table->foreignId('student_id')->nullable()->constrained('students')->onDelete('cascade');
+            // $table->foreignId('employee_id')->nullable()->constrained('employees')->onDelete('cascade');
             $table->string('name')->nullable();
             $table->string('image')->nullable();
             $table->string('phone')->nullable();
@@ -33,8 +33,8 @@ class CreateGuardiansTable extends Migration
             $table->string('lattitude')->nullable();
             $table->string('longitude')->nullable();
             $table->string('relation')->nullable();
-            $table->enum('status',['active','deactive','pending'])->default('pending');
-            $table->string('guardian_code')->unique()->nullable();
+            // $table->enum('status', ['active', 'deactive', 'pending'])->default('pending');
+            $table->string('guardian_code')->nullable();
             $table->text('additional_detail')->nullable();
             $table->timestamps();
         });
