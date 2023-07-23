@@ -23,7 +23,7 @@ class PassengerFactory extends Factory
             'password' => Hash::make('12345678'),
             'otp' => rand(100000, 999999),
             'unique_id' => substr(uniqid(), -8),
-            'gaurd_code' => substr(uniqid(), -8),
+            // 'guardian_code' => substr(uniqid(), -8),
             'bio' => $this->faker->sentence(),
             // 'location' => $this->faker->longitude,
             // 'lattutude' => $this->faker->latitude,

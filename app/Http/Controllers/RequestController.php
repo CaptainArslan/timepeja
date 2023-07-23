@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use Faker\Core\Uuid;
 use App\Models\Student;
 use App\Models\Employee;
 use App\Models\Guardian;
 use App\Models\Passenger;
+use Illuminate\Support\Str;
 use App\Models\Organization;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -72,11 +74,11 @@ class RequestController extends BaseController
             'image' => ['nullable', 'string',],
             'addtitional_detail' => ['nullable', 'string',],
             'organization_id' => ['required', 'numeric', 'exists:organizations,id'],
-            'type' => ['required', 'string', 'in:student,employee,guardian'],
-            'roll_no' => ['required', 'string',],
-            'class' => ['required', 'string',],
-            'section' => ['required', 'string',],
-            'qualification' => ['required', 'string',],
+            'type' => ['required', 'string', 'in:student,employee,student_guardian,employee_guardian'],
+            'roll_no' => ['nullable', 'string',],
+            'class' => ['nullable', 'string',],
+            'section' => ['nullable', 'string',],
+            'qualification' => ['nullable', 'string',],
             'batch_year' => ['nullable', 'integer',],
             'degree_duration' => ['nullable', 'integer',],
             'profile_card' => ['nullable', 'string',],
@@ -84,19 +86,41 @@ class RequestController extends BaseController
             'transport_start_date' => ['nullable', 'date',],
             'transport_end_date' => ['nullable', 'date',],
             'guardian_type' => ['nullable', 'string'],
-            'guardian_code' => ['nullable', 'string', Rule::requiredIf(function () use ($request) {
-                return $request->input('type') === 'guardian';
-            }),],
-            'cnic_no' => ['nullable', 'string', Rule::requiredIf(function () use ($request) {
-                return $request->input('type') === 'guardian';
-            }),],
-            'cnic_front' => ['nullable', 'string', Rule::requiredIf(function () use ($request) {
-                return $request->input('type') === 'guardian';
-            }),],
-            'cnic_back' => ['nullable', 'string', Rule::requiredIf(function () use ($request) {
-                return $request->input('type') === 'guardian';
-            }),],
-
+            'guardian_code' => [
+                'nullable',
+                'string',
+                Rule::requiredIf(function () use ($request) {
+                    return in_array($request->input('type'), ['student_guardian', 'employee_guardian']);
+                }),
+            ],
+            'cnic_no' => [
+                'nullable',
+                'string',
+                Rule::requiredIf(function () use ($request) {
+                    return in_array($request->input('type'), ['student_guardian', 'employee_guardian']);
+                }),
+            ],
+            'cnic_front' => [
+                'nullable',
+                'string',
+                Rule::requiredIf(function () use ($request) {
+                    return in_array($request->input('type'), ['student_guardian', 'employee_guardian']);
+                }),
+            ],
+            'cnic_back' => [
+                'nullable',
+                'string',
+                Rule::requiredIf(function () use ($request) {
+                    return in_array($request->input('type'), ['student_guardian', 'employee_guardian']);
+                }),
+            ],
+            'relation' => [
+                'nullable',
+                'string',
+                Rule::requiredIf(function () use ($request) {
+                    return in_array($request->input('type'), ['student_guardian', 'employee_guardian']);
+                }),
+            ],
         ], [
             'name.required' => 'Please enter your name.',
             'phone.required' => 'Please enter your phone number.',
@@ -116,57 +140,65 @@ class RequestController extends BaseController
             return $this->respondWithError(implode(',', $validator->errors()->all()));
         }
 
-        if ($request->has('unique_id')) {
+        if ($request->has('unique_id') && !empty($request->unique_id)) {
             $passenger = Passenger::where('unique_id', $request->unique_id)->first();
+
             if ($passenger) {
                 $passenger_id = $passenger->id;
             } else {
                 return $this->respondWithError('Passenger unique Id not found.');
             }
-        }else if ($request->has('guard_code')){
-            $passenger = Passenger::where('guard_code', $request->guard_code)->first();
-            if ($passenger) {
-                $passenger_id = $passenger->id;
+        } else if ($request->has('guardian_code') && !empty($request->guardian_code)) {
+            $already_created_request = Requests::where('guardian_code', $request->guardian_code)->first();
+
+            if (!empty($already_created_request)) {
+                $already_request = $already_created_request;
+                // $already_created_request_id = $already_created_request->id;
             } else {
-                return $this->respondWithError('Passenger unique Id not found.');
+                return $this->respondWithError('Guardian code not found.');
             }
         }
-        try {
-            $newRequestData = [
-                'organization_id' => $request->organization_id,
-                'passenger_id' => $passenger_id,
-                'type' => $request->type,
-                'roll_no' => $request->roll_no,
-                'class' => $request->class,
-                'section' => $request->section,
-                'qualification' => $request->qualification,
-                'batch_year' => $request->batch_year,
-                'degree_duration' => $request->degree_duration,
-                'descipline' => $request->descipline,
-                'designation' => $request->designation,
-                'profile_card' => $request->profile_card,
-                'route_id' => $request->route_id,
-                'transport_start_date' => $request->transport_start_date,
-                'transport_end_date' => $request->transport_end_date,
-                'status' => Requests::REQUEST_STATUS_PENDING, // You can set the default value here or in the migration.
-            ];
 
-            DB::beginTransaction();
+        $newRequestData = $request->toArray();
+        if ($request->type == 'student') {
+            $student = $this->createStudent($request);
+            $newRequestData['student_id'] = $student->id;
+            $requestCreate = $this->createRequest($newRequestData, $passenger_id);
+        } elseif ($request->type == 'employee') {
+            $employee = $this->createEmployee($request);
+            $newRequestData['employee_id'] = $employee->id;
+            $requestCreate = $this->createRequest($newRequestData, $passenger_id);
+        } else if ($request->type == 'student_guardian') {
 
-            if ($request->type == 'student') {
-                $student = $this->createStudent($request);
-                $newRequestData['student_id'] = $student->id;
-            } elseif ($request->type == 'employee') {
-                $employee = $this->createEmployee($request);
-                $newRequestData['employee_id'] = $employee->id;
-            } elseif ($request->type == 'guardian') {
-                if ($request->guardian_type == 'student') {
-                } else if ($request->guardian_type == 'employee') {
-                }
+            $newRequestData['student_id'] = $already_request->student_id;
+
+            $count = Requests::where('student_id', $already_request->student_id)->count();
+            if ($count > 3) {
+                return $this->respondWithError('You can not add more than 3 guardians.');
             }
+            $guardian = $this->createGuardian($newRequestData);
+            $requestCreate = $this->createRequest($newRequestData, $already_request->passenger_id);
 
-            $newRequest = Requests::create($newRequestData);
+            $guardian->students()->attach($already_request->student_id);
+            $guardian->requests()->attach($requestCreate->id);
 
+            // $requestCreate->guardians()->attach($guardian->id); 
+        } elseif ($request->type == 'employee_guardian') {
+
+            $count = Requests::where('employee_id', $already_request->employee_id)->count();
+            if ($count > 3) {
+                return $this->respondWithError('You can not add more than 3 guardians.');
+            }
+            $newRequestData['employee_id'] = $already_request->employee_id;
+            $guardian = $this->createGuardian($newRequestData);
+            $requestCreate = $this->createRequest($newRequestData, $already_request->passenger_id);
+
+            $guardian->employees()->attach($already_request->employee_id);
+            $guardian->requests()->attach($requestCreate->id);
+        }
+
+        try {
+            DB::beginTransaction();
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollBack();
@@ -274,31 +306,66 @@ class RequestController extends BaseController
         return $employee;
     }
 
-    public function createGuardian($request, $request_id, $student_id = null, $employee_id = null)
+    /**
+     * Create Guardian
+     *
+     * @param [type] $request
+     * @return void
+     */
+    public function createGuardian($request)
     {
+
+        // dd($request);
         $guardian = new Guardian();
-        $guardian->request_id = $request_id;
-        $guardian->student_id = $student_id;
-        $guardian->employee_id = $employee_id;
-        $guardian->name = $request->name;
-        $guardian->image = $request->image;
-        $guardian->phone = $request->phone;
-        $guardian->house_no = $request->house_no;
-        $guardian->street_no = $request->street_no;
-        $guardian->town = $request->town;
-        $guardian->city_id = $request->city_id;
-        $guardian->cnic = $request->cnic;
-        $guardian->cnic_front = $request->cnic_front;
-        $guardian->cnic_back = $request->cnic_back;
-        $guardian->pickup_address = $request->pickup_address;
-        $guardian->pickup_city_id = $request->pickup_city_id;
-        $guardian->lattitude = $request->lattitude;
-        $guardian->longitude = $request->longitude;
-        $guardian->relation = $request->relation;
-        $guardian->status = $request->status;
-        $guardian->guardian_code = $request->guardian_code;
-        $guardian->additional_detail = $request->additional_detail;
+        // $guardian->request_id = $request_id;
+        // $guardian->student_id = isset($request['student_id']) ? $request['student_id'] : null;
+        // $guardian->employee_id = isset($request['employee_id']) ? $request['employee_id'] : null;
+        $guardian->name = $request['name'];
+        $guardian->image = $request['image'];
+        $guardian->phone = $request['phone'];
+        $guardian->house_no = $request['house_no'];
+        $guardian->street_no = $request['street_no'];
+        $guardian->town = $request['town'];
+        $guardian->city_id = $request['city_id'];
+        $guardian->cnic = $request['cnic_no'];
+        $guardian->cnic_front = $request['cnic_front'];
+        $guardian->cnic_back = $request['cnic_back'];
+        $guardian->pickup_address = $request['pickup_address'];
+        $guardian->pickup_city_id = $request['pickup_city_id'];
+        $guardian->lattitude = $request['lattitude'];
+        $guardian->longitude = $request['longitude'];
+        $guardian->relation = $request['relation'];
+        $guardian->guardian_code = $request['guardian_code'];
+        $guardian->additional_detail = $request['additional_detail'];
+        // $guardian->status = $request->status;
         $guardian->save();
         return $guardian;
+    }
+
+    public function createRequest($request, $passenger_id)
+    {
+        $newRequest = new Requests();
+        $newRequest->passenger_id = $passenger_id;
+        $newRequest->organization_id = $request['organization_id'];
+        $newRequest->guardian_code =  substr(uniqid(), -8);
+        $newRequest->student_id = isset($request['student_id']) ? $request['student_id'] : null;
+        $newRequest->employee_id = isset($request['employee_id']) ? $request['employee_id'] : null;
+        $newRequest->type = $request['type'];
+        $newRequest->further_type = $request['further_type'];
+        $newRequest->roll_no = $request['roll_no'];
+        $newRequest->class = $request['class'];
+        $newRequest->section = $request['section'];
+        $newRequest->qualification = $request['qualification'];
+        $newRequest->batch_year = $request['batch_year'];
+        $newRequest->degree_duration = $request['degree_duration'];
+        $newRequest->discipline = $request['discipline'];
+        $newRequest->designation = $request['designation'];
+        $newRequest->profile_card = $request['profile_card'];
+        $newRequest->route_id = $request['route_id'];
+        $newRequest->transport_start_date = $request['transport_start_date'];
+        $newRequest->transport_end_date = $request['transport_end_date'];
+        $newRequest->status = Requests::REQUEST_STATUS_PENDING;
+        $newRequest->save();
+        return $newRequest;
     }
 }

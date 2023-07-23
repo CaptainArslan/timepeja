@@ -11,9 +11,9 @@ class Guardian extends Model
     protected $table = 'guardians';
 
     protected $fillable = [
-        'request_id',
-        'student_id',
-        'employee_id',
+        // 'request_id',
+        // 'student_id',
+        // 'employee_id',
         'name',
         'image',
         'phone',
@@ -45,7 +45,8 @@ class Guardian extends Model
      */
     public function requests()
     {
-        return $this->hasMany(Request::class);
+        // return $this->hasMany(Request::class);
+        return $this->belongsToMany(Request::class, 'request_guardian', 'guardian_id', 'request_id');
     }
 
     /**
@@ -55,7 +56,7 @@ class Guardian extends Model
      */
     public function students()
     {
-        return $this->belongsToMany(Student::class, 'student_guardians', 'guardian_id', 'student_id');
+        return $this->belongsToMany(Student::class, 'student_guardian', 'guardian_id', 'student_id');
     }
 
     /**
@@ -65,6 +66,6 @@ class Guardian extends Model
      */
     public function employees()
     {
-        return $this->belongsToMany(Employee::class, 'employee_guardians', 'guardian_id', 'employee_id');
+        return $this->belongsToMany(Employee::class, 'employee_guardian', 'guardian_id', 'employee_id');
     }
 }

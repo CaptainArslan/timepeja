@@ -17,7 +17,8 @@ class Request extends Model
 
     public const REQUEST_TYPE_STUDENT = 'student';
     public const REQUEST_TYPE_EMPLOYEE = 'employee';
-    public const REQUEST_TYPE_GUARDIAN = 'guardian';
+    public const REQUEST_TYPE_STUDENT_GUARDIAN = 'student_guardian';
+    public const REQUEST_TYPE_EMPLOYEE_GUARDIAN = 'employee_guardian';
 
     public const REQUEST_STATUS_PENDING = 'pending';
     public const REQUEST_STATUS_APPROVE = 'approve';
@@ -108,7 +109,7 @@ class Request extends Model
     public function guardians()
     {
         // return $this->hasMany(Guardian::class);
-        return $this->belongsToMany(Guardian::class, 'request_guardians', 'request_id', 'guardian_id');
+        return $this->belongsToMany(Guardian::class, 'request_guardian', 'request_id', 'guardian_id');
     }
 
     /**
