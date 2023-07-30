@@ -56,6 +56,6 @@ class Employee extends Model
      */
     public function guardians()
     {
-        return $this->belongsToMany(Guardian::class, 'employee_guardians', 'employee_id', 'guardian_id');
+        return $this->belongsToMany(Guardian::class, 'employee_guardian', 'employee_id', 'guardian_id');
     }
 }
