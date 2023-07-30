@@ -22,7 +22,7 @@ class PassengerFactory extends Factory
             'email' => $this->faker->safeEmail(),
             'password' => Hash::make('12345678'),
             'otp' => rand(100000, 999999),
-            'unique_id' => substr(uniqid(), -8),
+            'unique_id' => substr(uniqid(), -3),
             // 'guardian_code' => substr(uniqid(), -8),
             'bio' => $this->faker->sentence(),
             // 'location' => $this->faker->longitude,

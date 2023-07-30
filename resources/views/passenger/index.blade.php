@@ -74,6 +74,7 @@
                             <th>Name</th>
                             <th>Phone</th>
                             <th>Email</th>
+                            <th>Unique id</th>
                             <th>otp</th>
                             <th>image</th>
                             <th>Action</th>
@@ -90,6 +91,7 @@
                                 N/A
                                 @endif
                             </td>
+                            <td>{{ $passenger->unique_id }}</td>
                             <td>{{ $passenger->otp }}</td>
                             <td><img src="{{ $passenger->image }}" alt="{{ $passenger->name }}" class="imagefit"></td>
                             <td>
