@@ -15,21 +15,19 @@ class Request extends Model
 
     protected $table = 'requests';
 
-    public const REQUEST_TYPE_STUDENT = 'student';
-    public const REQUEST_TYPE_EMPLOYEE = 'employee';
-    public const REQUEST_TYPE_STUDENT_GUARDIAN = 'student_guardian';
-    public const REQUEST_TYPE_EMPLOYEE_GUARDIAN = 'employee_guardian';
-
-    public const REQUEST_STATUS_PENDING = 'pending';
-    public const REQUEST_STATUS_APPROVE = 'approve';
-    public const REQUEST_STATUS_DISAPPROVE = 'disapprove';
-    public const REQUEST_STATUS_MEET_PERSONALLY = 'meet-personally';
-
-    public const STUDENT_SCHOOL = 'scchool';
-    public const STUDENT_COLLEGE = 'college';
-    public const STUDENT_UNIVERSITY = 'university';
+    public const STUDENT = 'student';
     public const EMPLOYEE = 'employee';
-    public const GUARDIAN = 'guarian';
+    public const STUDENT_GUARDIAN = 'student_guardian';
+    public const EMPLOYEE_GUARDIAN = 'employee_guardian';
+
+    public const STATUS_PENDING = 'pending';
+    public const STATUS_APPROVE = 'approve';
+    public const STATUS_DISAPPROVE = 'disapprove';
+    public const STATUS_MEET_PERSONALLY = 'meet-personally';
+    
+    public const SCHOOL = 'school';
+    public const COLLEGE = 'college';
+    public const UNIVERSITY = 'university';
 
     /**
      * Fillabel for mass assignment

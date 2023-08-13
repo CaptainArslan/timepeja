@@ -26,9 +26,9 @@ class Trip extends Model
      * @var array
      */
     protected $fillable = [
-        'o_id',
+        'organization_id',
         'u_id',
-        'sch_id',
+        'schedule_id',
         'delay_reason',
         'delay_time',
         'status',
@@ -40,8 +40,8 @@ class Trip extends Model
      * @var array
      */
     protected $casts = [
-        'o_id' => 'integer',
+        'organization_id' => 'integer',
         'u_id' => 'integer',
-        'sch_id' => 'integer',
+        'schedule_id' => 'integer',
     ];
 }
