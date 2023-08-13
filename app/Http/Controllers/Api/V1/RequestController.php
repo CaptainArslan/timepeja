@@ -26,15 +26,16 @@ class RequestController extends BaseController
         try {
             $manager_id = auth('manager')->user();
             $requests = Requests::with('organization:id,name')
-                ->with('student')
-                ->with('student.guardians')
-                ->with('student.guardians.requests')
-                ->with('employee')
-                ->with('employee.guardians')
-                ->with('employee.guardians.requests')
+                ->with('city')
+                ->with('route')
+                ->with('childRequests')
+                // ->with('student.guardians.requests')
+                // ->with('employee')
+                // ->with('employee.guardians')
+                // ->with('employee.guardians.requests')
                 ->where('organization_id', $manager_id->o_id)
-                ->take(10)
                 ->latest()
+                ->take(10)
                 ->get();
         } catch (\Throwable $th) {
             return $this->respondWithError('Error Occured while fetching request list' . $th->getMessage());

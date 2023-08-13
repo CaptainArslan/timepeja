@@ -18,7 +18,7 @@ class CreateRequestsTable extends Migration
             $table->id();
             $table->foreignId('organization_id')->constrained('organizations');
 
-            $table->foreignId('request_id')->nullable()->constrained('requests');
+            $table->foreignId('parent_request_id')->nullable()->constrained('requests');
             $table->enum('type', [
                 Requests::STUDENT,
                 Requests::EMPLOYEE,
@@ -40,7 +40,7 @@ class CreateRequestsTable extends Migration
             $table->string('phone');
             $table->foreignId('passenger_id')->nullable()->constrained('passengers');
             $table->string('email')->nullable();
-            $table->json('address')->nullable();
+            $table->string('address')->nullable();
             $table->string('pickup_address')->nullable();
             $table->string('house_no')->nullable();
             $table->string('street_no')->nullable();
@@ -56,6 +56,7 @@ class CreateRequestsTable extends Migration
             $table->integer('degree_duration')->nullable();
 
             $table->string('discipline')->nullable();
+            $table->string('qualification')->nullable();
 
             $table->string('employee_comp_id')->nullable();
             $table->string('designation')->nullable();
@@ -70,6 +71,8 @@ class CreateRequestsTable extends Migration
             $table->foreignId('route_id')->nullable()->constrained('routes')->onDelete('cascade');
             $table->date('transport_start_date')->nullable();
             $table->date('transport_end_date')->nullable();
+            $table->date('created_by')->nullable();
+            $table->date('created_user_id')->nullable();
             $table->enum('status', [
                 Requests::STATUS_PENDING,
                 Requests::STATUS_APPROVE,
