@@ -25,7 +25,7 @@ class DriverFactory extends Factory
             'email' => $this->faker->safeEmail(),
             'password' => Hash::make('12345678'),
             'phone' => '03' . $this->faker->regexify('/^[0-9+]{2}-[0-9+]{7}$/'),
-            'cnic' => $this->faker->regexify('/^[0-9+]{5}-[0-9+]{7}-[0-9]{1}$/'),
+            'cnic' => $this->faker->regexify('/^[0-9+]{13}$/'),
             'cnic_front_pic' => $this->faker->imageUrl(),
             'cnic_back_pic' => $this->faker->imageUrl(),
             'cnic_expiry_date' => Carbon::now(),

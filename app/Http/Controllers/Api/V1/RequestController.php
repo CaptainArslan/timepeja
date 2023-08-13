@@ -26,13 +26,16 @@ class RequestController extends BaseController
         try {
             $manager_id = auth('manager')->user();
             $requests = Requests::with('organization:id,name')
-                ->with('city')
-                ->with('route')
-                ->with('childRequests')
-                // ->with('student.guardians.requests')
-                // ->with('employee')
-                // ->with('employee.guardians')
-                // ->with('employee.guardians.requests')
+                ->with('city', function ($query) {
+                    $query->select('id', 'name');
+                })
+                ->with('route', function ($query) {
+                    $query->select('id', 'name');
+                })
+                ->withcount('childRequests')
+                ->with('passenger', function ($query) {
+                    $query->select('id', 'name', 'phone');
+                })
                 ->where('organization_id', $manager_id->o_id)
                 ->latest()
                 ->take(10)
