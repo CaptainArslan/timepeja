@@ -16,67 +16,69 @@ class CreateRequestsTable extends Migration
     {
         Schema::create('requests', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('organization_id')->constrained('organizations')->onDelete('cascade');
-            $table->foreignId('passenger_id')->nullable()->constrained('passengers')->onDelete('cascade');
+            $table->foreignId('organization_id')->constrained('organizations');
+
+            $table->foreignId('parent_request_id')->nullable()->constrained('requests');
             $table->enum('type', [
-                Requests::REQUEST_TYPE_STUDENT,
-                Requests::REQUEST_TYPE_EMPLOYEE,
-                Requests::REQUEST_TYPE_STUDENT_GUARDIAN,
-                Requests::REQUEST_TYPE_EMPLOYEE_GUARDIAN,
+                Requests::STUDENT,
+                Requests::EMPLOYEE,
+                Requests::STUDENT_GUARDIAN,
+                Requests::EMPLOYEE_GUARDIAN,
             ]);
-            $table->enum('further_type', [
-                Requests::STUDENT_SCHOOL,
-                Requests::STUDENT_COLLEGE,
-                Requests::STUDENT_UNIVERSITY,
+            $table->enum('student_type', [
+                Requests::SCHOOL,
+                Requests::COLLEGE,
+                Requests::UNIVERSITY,
             ])->nullable();
-            $table->foreignId('student_id')->nullable()->constrained('students')->onDelete('cascade');
-            $table->string('guardian_code');
+            $table->enum('gender', [
+                'male',
+                'female',
+                'other',
+            ])->default('male');
+
+            $table->string('name');
+            $table->string('phone');
+            $table->foreignId('passenger_id')->nullable()->constrained('passengers');
+            $table->string('email')->nullable();
+            $table->string('address')->nullable();
+            $table->string('pickup_address')->nullable();
+            $table->string('house_no')->nullable();
+            $table->string('street_no')->nullable();
+            $table->string('town')->nullable();
+            $table->string('lattitude')->nullable();
+            $table->string('longitude')->nullable();
+            $table->foreignId('pickup_city_id')->constrained('cities');
+            $table->string('additional_detail')->nullable();
             $table->string('roll_no')->nullable();
             $table->string('class')->nullable();
             $table->string('section')->nullable();
-            $table->string('qualification')->nullable();
             $table->integer('batch_year')->nullable();
             $table->integer('degree_duration')->nullable();
-            $table->foreignId('employee_id')->nullable()->constrained('employees')->onDelete('cascade');
+
             $table->string('discipline')->nullable();
+            $table->string('qualification')->nullable();
+
+            $table->string('employee_comp_id')->nullable();
             $table->string('designation')->nullable();
-            // $table->string('employee_comp_id')->nullable();
             $table->longText('profile_card')->nullable();
+
+            $table->string('cnic_no')->nullable();
+            $table->string('cnic_front_image')->nullable();
+            $table->string('cnic_back_image')->nullable();
+            $table->string('relation')->nullable();
+            $table->string('guardian_code')->nullable();
+
             $table->foreignId('route_id')->nullable()->constrained('routes')->onDelete('cascade');
             $table->date('transport_start_date')->nullable();
             $table->date('transport_end_date')->nullable();
+            $table->date('created_by')->nullable();
+            $table->date('created_user_id')->nullable();
             $table->enum('status', [
-                Requests::REQUEST_STATUS_PENDING,
-                Requests::REQUEST_STATUS_APPROVE,
-                Requests::REQUEST_STATUS_DISAPPROVE,
-                Requests::REQUEST_STATUS_MEET_PERSONALLY,
-            ])->default(Requests::REQUEST_STATUS_PENDING);
-            // $table->string('name')->nullable();
-            // $table->string('phone')->nullable();
-            // $table->string('email')->nullable();
-            // $table->string('house_no')->nullable();
-            // $table->string('street_no')->nullable();
-            // $table->string('town')->nullable();
-            // $table->string('additional_detail')->nullable();
-            // $table->foreignId('city_id')->constrained('cities');
-            // $table->string('pickup_address')->nullable();
-            // $table->foreignId('pickup_city_id')->constrained('cities');
-            // $table->string('lattitude')->nullable();
-            // $table->string('longitude')->nullable();
-
-            // $table->enum('sub_type', [
-            //     Requests::STUDENT_SCHOOL,
-            //     Requests::STUDENT_COLLEGE,
-            //     Requests::STUDENT_UNIVERSITY,
-            //     Requests::EMPLOYEE,
-            //     Requests::GUARDIAN,
-            // ])->nullable();
-
-            // $table->string('cnic_no')->nullable();
-            // $table->string('cnic_front_image')->nullable();
-            // $table->string('cnic_back_image')->nullable();
-            // $table->string('relation')->nullable();
-            // $table->string('guardian_code')->nullable();
+                Requests::STATUS_PENDING,
+                Requests::STATUS_APPROVE,
+                Requests::STATUS_DISAPPROVE,
+                Requests::STATUS_MEET_PERSONALLY,
+            ])->default(Requests::STATUS_PENDING);
             $table->timestamps();
             $table->softDeletes();
         });

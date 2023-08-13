@@ -15,21 +15,19 @@ class Request extends Model
 
     protected $table = 'requests';
 
-    public const REQUEST_TYPE_STUDENT = 'student';
-    public const REQUEST_TYPE_EMPLOYEE = 'employee';
-    public const REQUEST_TYPE_STUDENT_GUARDIAN = 'student_guardian';
-    public const REQUEST_TYPE_EMPLOYEE_GUARDIAN = 'employee_guardian';
-
-    public const REQUEST_STATUS_PENDING = 'pending';
-    public const REQUEST_STATUS_APPROVE = 'approve';
-    public const REQUEST_STATUS_DISAPPROVE = 'disapprove';
-    public const REQUEST_STATUS_MEET_PERSONALLY = 'meet-personally';
-
-    public const STUDENT_SCHOOL = 'scchool';
-    public const STUDENT_COLLEGE = 'college';
-    public const STUDENT_UNIVERSITY = 'university';
+    public const STUDENT = 'student';
     public const EMPLOYEE = 'employee';
-    public const GUARDIAN = 'guarian';
+    public const STUDENT_GUARDIAN = 'student_guardian';
+    public const EMPLOYEE_GUARDIAN = 'employee_guardian';
+
+    public const STATUS_PENDING = 'pending';
+    public const STATUS_APPROVE = 'approve';
+    public const STATUS_DISAPPROVE = 'disapprove';
+    public const STATUS_MEET_PERSONALLY = 'meet-personally';
+
+    public const SCHOOL = 'school';
+    public const COLLEGE = 'college';
+    public const UNIVERSITY = 'university';
 
     /**
      * Fillabel for mass assignment
@@ -37,32 +35,57 @@ class Request extends Model
      * @var array
      */
     protected $fillable = [
-        'organization_id',
-        'passenger_id',
-        'type',
-        'student_id',
-        'roll_no',
-        'class',
-        'section',
-        'qualification',
-        'batch_year',
-        'degree_duration',
-        'employee_id',
-        'descipline',
-        'designation',
-        'profile_card',
-        'route_id',
-        'transport_start_date',
-        'transport_end_date',
-        'status',
+        'organization_id', 
+        'parent_request_id', 
+        'type', 
+        'student_type', 
+        'gender', 
+        'name', 
+        'phone', 
+        'passenger_id', 
+        'email', 
+        'address', 
+        'pickup_address', 
+        'house_no', 
+        'street_no', 
+        'town', 
+        'lattitude', 
+        'longitude', 
+        'pickup_city_id', 
+        'additional_detail', 
+        'roll_no', 
+        'class', 
+        'section', 
+        'batch_year', 
+        'degree_duration', 
+        'discipline', 
+        'employee_comp_id', 
+        'designation', 
+        'profile_card', 
+        'cnic_no', 
+        'cnic_front_image', 
+        'cnic_back_image', 
+        'relation', 
+        'guardian_code', 
+        'route_id', 
+        'transport_start_date', 
+        'transport_end_date', 
+        'created_by', 
+        'created_user_id', 
+        'status', 
     ];
 
     protected $cast = [
         // 
     ];
+    
+    protected $hidden = [
+        'created_by',
+        'created_user_id',
+    ];
 
     /**
-     * Undocumented function
+     * get the request organization
      *
      * @return void
      */
@@ -72,7 +95,7 @@ class Request extends Model
     }
 
     /**
-     * Undocumented function
+     * get the request passenger
      *
      * @return void
      */
@@ -81,44 +104,64 @@ class Request extends Model
         return $this->belongsTo(Passenger::class);
     }
 
-    /**
-     * Undocumented function
-     *
-     * @return void
-     */
-    public function student()
-    {
-        return $this->belongsTo(Student::class);
-    }
+    // /**
+    //  * Undocumented function
+    //  *
+    //  * @return void
+    //  */
+    // public function student()
+    // {
+    //     return $this->belongsTo(Student::class);
+    // }
+
+    // /**
+    //  * Undocumented function
+    //  *
+    //  * @return void
+    //  */
+    // public function employee()
+    // {
+    //     return $this->belongsTo(Employee::class);
+    // }
+
+    // /**
+    //  * Undocumented function
+    //  *
+    //  * @return void
+    //  */
+    // public function guardians()
+    // {
+    //     // return $this->hasMany(Guardian::class);
+    //     return $this->belongsToMany(Guardian::class, 'request_guardian', 'request_id', 'guardian_id');
+    // }
 
     /**
-     * Undocumented function
-     *
-     * @return void
-     */
-    public function employee()
-    {
-        return $this->belongsTo(Employee::class);
-    }
-
-    /**
-     * Undocumented function
-     *
-     * @return void
-     */
-    public function guardians()
-    {
-        // return $this->hasMany(Guardian::class);
-        return $this->belongsToMany(Guardian::class, 'request_guardian', 'request_id', 'guardian_id');
-    }
-
-    /**
-     * Undocumented function
+     * get the request relation
      *
      * @return void
      */
     public function route()
     {
         return $this->belongsTo(Route::class);
+    }
+
+    /**
+     * GET ALL THE CHILD REQUESTS
+     *
+     * @return void
+     */
+    public function childRequests()
+    {
+        return $this->hasMany(Request::class, 'parent_request_id');
+    }
+
+    /**
+     * Get the city of the request
+     *
+     * @return void
+     */
+    public function city()
+    {
+        return $this->belongsTo(City::class);
     }
 }
