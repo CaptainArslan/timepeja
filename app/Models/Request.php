@@ -21,8 +21,8 @@ class Request extends Model
     public const EMPLOYEE_GUARDIAN = 'employee_guardian';
 
     public const STATUS_PENDING = 'pending';
-    public const STATUS_APPROVE = 'approve';
-    public const STATUS_DISAPPROVE = 'disapprove';
+    public const STATUS_APPROVE = 'approved';
+    public const STATUS_DISAPPROVE = 'disapproved';
     public const STATUS_MEET_PERSONALLY = 'meet-personally';
 
     public const SCHOOL = 'school';
