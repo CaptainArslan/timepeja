@@ -76,7 +76,7 @@ class Request extends Model
     ];
 
     protected $cast = [
-        // 
+        'child_requests_count' => 'integer',
     ];
     
     protected $hidden = [
