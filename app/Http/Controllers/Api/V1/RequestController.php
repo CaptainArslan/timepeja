@@ -25,26 +25,41 @@ class RequestController extends BaseController
     {
         try {
             $manager_id = auth('manager')->user();
-            $requests = Requests::with('organization:id,name')
-                ->with('city', function ($query) {
-                    $query->select('id', 'name');
-                })
-                ->with('route', function ($query) {
-                    $query->select('id', 'name');
-                })
-                ->withcount('childRequests')
-                ->with('passenger', function ($query) {
-                    $query->select('id', 'name', 'phone');
-                })
+
+            $allRequests = Requests::with('organization:id,name')
+                ->with('city:id,name')
+                ->with('route:id,name')
+                // ->with('childRequests')
+                ->with('passenger:id,name,phone')
                 ->where('organization_id', $manager_id->o_id)
+                ->whereIn('status', [Requests::STATUS_APPROVE, Requests::STATUS_PENDING]) // Include both statuses
+                ->withCount('childRequests')
                 ->latest()
-                ->take(10)
+                ->take(20) // You can adjust the number as needed
                 ->get();
+
+            $approvedRequests = [];
+            $pendingRequests = [];
+
+            foreach ($allRequests as $request) {
+                if ($request->status === Requests::STATUS_APPROVE) {
+                    $approvedRequests[] = $request;
+                } elseif ($request->status === Requests::STATUS_PENDING) {
+                    $pendingRequests[] = $request;
+                }
+            }
+
+            $response = [
+                'approved_requests' => $approvedRequests,
+                'pending_requests' => $pendingRequests,
+            ];
+
+            return $this->respondWithSuccess($response, 'Request Lists', 'REQUEST_LISTS');
         } catch (\Throwable $th) {
-            return $this->respondWithError('Error Occured while fetching request list' . $th->getMessage());
+            return $this->respondWithError('Error Occurred while fetching request list' . $th->getMessage());
         }
-        return $this->respondWithSuccess($requests, 'Request List', 'REQUEST_LIST');
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -370,7 +385,7 @@ class RequestController extends BaseController
         $newRequest->route_id = $request['route_id'];
         $newRequest->transport_start_date = $request['transport_start_date'];
         $newRequest->transport_end_date = $request['transport_end_date'];
-        $newRequest->status = Requests::REQUEST_STATUS_PENDING;
+        $newRequest->status = Requests::STATUS_PENDING;
         $newRequest->save();
         return $newRequest;
     }
