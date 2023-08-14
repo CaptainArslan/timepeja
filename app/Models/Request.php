@@ -75,7 +75,7 @@ class Request extends Model
         'status', 
     ];
 
-    protected $cast = [
+    protected $casts = [
         'child_requests_count' => 'integer',
         'organization_id' => 'integer',
         'passenger_id' => 'integer',
