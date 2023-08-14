@@ -77,11 +77,17 @@ class Request extends Model
 
     protected $cast = [
         'child_requests_count' => 'integer',
+        'organization_id' => 'integer',
+        'passenger_id' => 'integer',
+        'parent_request_id' => 'integer',
+        'route_id' => 'integer',
+        'pickup_city_id' => 'integer',
     ];
     
     protected $hidden = [
         'created_by',
         'created_user_id',
+        'deleted_at',
     ];
 
     /**
