@@ -374,6 +374,8 @@ class RequestController extends BaseController
 
         $request_id =  null;
 
+        $organization_id = $request->organization_id;
+
         if ($request->type === 'student_guardian' || $request->type === 'employee_guardian') {
             $parentRequest = Requests::where('guardian_code', $request->guardian_code)->first();
             $childRequestCount = $parentRequest->childRequests->count();
@@ -383,11 +385,13 @@ class RequestController extends BaseController
             }
 
             $request_id = $parentRequest->id;
+            $organization_id = $parentRequest->organization_id;
         }
 
         $data = $request->all();
         $data['guardian_code'] = substr(uniqid(), -8);
         $data['parent_request_id'] = $request_id;
+        $data['organization_id'] = $organization_id;
         $data['created_by'] = 'manager';
         $data['created_user_id'] = auth('manager')->user()->id;
         $data['status'] = Requests::STATUS_APPROVED;
