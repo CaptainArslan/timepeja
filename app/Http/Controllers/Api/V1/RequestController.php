@@ -409,7 +409,12 @@ class RequestController extends BaseController
      */
     public function show($id)
     {
-        //
+        try {
+            $requests = Requests::with('childRequests')->withCount('childRequests')->findOrFail($id);
+            return $this->respondWithSuccess($requests, 'Request Details', 'REQUEST_DETAILS');
+        } catch (\Throwable $th) {
+            return $this->respondWithError('Error Occured while fetching request details');
+        }
     }
 
     /**

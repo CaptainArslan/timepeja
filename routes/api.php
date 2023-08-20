@@ -130,7 +130,8 @@ Route::group(['middleware' => 'api'], function () {
             // get tranport user requests
             Route::get('/requests', [ApiRequestController::class, 'index']);
             Route::get('/requests/past', [ApiRequestController::class, 'past']);
-            Route::post('/request/create', [ApiRequestController::class, 'store']);
+            Route::post('/request/store', [ApiRequestController::class, 'store']);
+            Route::get('/request/{id}', [ApiRequestController::class, 'show']);
         });
     });
 
