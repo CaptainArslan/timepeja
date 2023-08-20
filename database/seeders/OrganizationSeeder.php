@@ -21,7 +21,7 @@ class OrganizationSeeder extends Seeder
      */
     public function run()
     {
-        Organization::factory(1)->create();
+        Organization::factory(10)->create();
         // DB::table('organizations')->delete();
         // Organization::insert([
         //     [

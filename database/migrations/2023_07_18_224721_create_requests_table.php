@@ -47,7 +47,7 @@ class CreateRequestsTable extends Migration
             $table->string('town')->nullable();
             $table->string('lattitude')->nullable();
             $table->string('longitude')->nullable();
-            $table->foreignId('pickup_city_id')->constrained('cities');
+            $table->foreignId('pickup_city_id')->nullable()->constrained('cities');
             $table->string('additional_detail')->nullable();
             $table->string('roll_no')->nullable();
             $table->string('class')->nullable();
@@ -71,8 +71,8 @@ class CreateRequestsTable extends Migration
             $table->foreignId('route_id')->nullable()->constrained('routes')->onDelete('cascade');
             $table->date('transport_start_date')->nullable();
             $table->date('transport_end_date')->nullable();
-            $table->date('created_by')->nullable();
-            $table->date('created_user_id')->nullable();
+            $table->string('created_by')->nullable();
+            $table->integer('created_user_id')->nullable();
             $table->enum('status', [
                 Requests::STATUS_PENDING,
                 Requests::STATUS_APPROVED,

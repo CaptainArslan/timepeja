@@ -29,50 +29,53 @@ class Request extends Model
     public const COLLEGE = 'college';
     public const UNIVERSITY = 'university';
 
+    public const MAX_GUARDIAN_ALLOWED = 3;
+
     /**
      * Fillabel for mass assignment
      *
      * @var array
      */
     protected $fillable = [
-        'organization_id', 
-        'parent_request_id', 
-        'type', 
-        'student_type', 
-        'gender', 
-        'name', 
-        'phone', 
-        'passenger_id', 
-        'email', 
-        'address', 
-        'pickup_address', 
-        'house_no', 
-        'street_no', 
-        'town', 
-        'lattitude', 
-        'longitude', 
-        'pickup_city_id', 
-        'additional_detail', 
-        'roll_no', 
-        'class', 
-        'section', 
-        'batch_year', 
-        'degree_duration', 
-        'discipline', 
-        'employee_comp_id', 
-        'designation', 
-        'profile_card', 
-        'cnic_no', 
-        'cnic_front_image', 
-        'cnic_back_image', 
-        'relation', 
-        'guardian_code', 
-        'route_id', 
-        'transport_start_date', 
-        'transport_end_date', 
-        'created_by', 
-        'created_user_id', 
-        'status', 
+        'organization_id',
+        'parent_request_id',
+        'type',
+        'student_type',
+        'gender',
+        'name',
+        'phone',
+        'passenger_id',
+        'email',
+        'address',
+        'pickup_address',
+        'house_no',
+        'street_no',
+        'town',
+        'lattitude',
+        'longitude',
+        'pickup_city_id',
+        'additional_detail',
+        'roll_no',
+        'class',
+        'section',
+        'qualification',
+        'batch_year',
+        'degree_duration',
+        'discipline',
+        'employee_comp_id',
+        'designation',
+        'profile_card',
+        'cnic_no',
+        'cnic_front_image',
+        'cnic_back_image',
+        'relation',
+        'guardian_code',
+        'route_id',
+        'transport_start_date',
+        'transport_end_date',
+        'created_by',
+        'created_user_id',
+        'status',
     ];
 
     protected $casts = [
@@ -83,7 +86,7 @@ class Request extends Model
         'route_id' => 'integer',
         'pickup_city_id' => 'integer',
     ];
-    
+
     protected $hidden = [
         'created_by',
         'created_user_id',
