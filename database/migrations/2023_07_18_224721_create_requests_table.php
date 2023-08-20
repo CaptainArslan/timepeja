@@ -18,7 +18,7 @@ class CreateRequestsTable extends Migration
             $table->id();
             $table->foreignId('organization_id')->constrained('organizations');
 
-            $table->foreignId('parent_request_id')->nullable()->constrained('requests');
+            $table->foreignId('parent_request_id')->nullable()->constrained('requests')->onDelete('cascade');
             $table->enum('type', [
                 Requests::STUDENT,
                 Requests::EMPLOYEE,
@@ -75,8 +75,8 @@ class CreateRequestsTable extends Migration
             $table->date('created_user_id')->nullable();
             $table->enum('status', [
                 Requests::STATUS_PENDING,
-                Requests::STATUS_APPROVE,
-                Requests::STATUS_DISAPPROVE,
+                Requests::STATUS_APPROVED,
+                Requests::STATUS_DISAPPROVED,
                 Requests::STATUS_MEET_PERSONALLY,
             ])->default(Requests::STATUS_PENDING);
             $table->timestamps();

@@ -127,7 +127,8 @@ Route::group(['middleware' => 'api'], function () {
             Route::get('/log-report-wrapper', [ApiManagerController::class, 'wrapper']);
 
             // get tranport user requests
-            Route::get('/request', [ApiRequestController::class, 'index']);
+            Route::get('/requests', [ApiRequestController::class, 'index']);
+            Route::get('/requests/past', [ApiRequestController::class, 'past']);
             Route::post('/request', [ApiRequestController::class, 'store']);
         });
     });

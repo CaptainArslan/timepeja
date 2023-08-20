@@ -32,17 +32,16 @@ class RequestController extends BaseController
                 // ->with('childRequests')
                 ->with('passenger:id,name,phone')
                 ->where('organization_id', $manager_id->o_id)
-                ->whereIn('status', [Requests::STATUS_APPROVE, Requests::STATUS_PENDING]) // Include both statuses
+                ->whereIn('status', [Requests::STATUS_APPROVED, Requests::STATUS_PENDING]) // Include both statuses
                 ->withCount('childRequests')
                 ->latest()
-                ->take(20) // You can adjust the number as needed
                 ->get();
 
             $approvedRequests = [];
             $pendingRequests = [];
 
             foreach ($allRequests as $request) {
-                if ($request->status === Requests::STATUS_APPROVE) {
+                if ($request->status === Requests::STATUS_APPROVED) {
                     $approvedRequests[] = $request;
                 } elseif ($request->status === Requests::STATUS_PENDING) {
                     $pendingRequests[] = $request;
@@ -271,6 +270,36 @@ class RequestController extends BaseController
     public function destroy($id)
     {
         //
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function past(Request $request): JsonResponse
+    {
+        try {
+            $manager_id = auth('manager')->user();
+
+            $limit = $request->limit ?? 10;
+
+            $allRequests = Requests::with('organization:id,name')
+                ->with('city:id,name')
+                ->with('route:id,name')
+                // ->with('childRequests')
+                ->with('passenger:id,name,phone')
+                ->where('organization_id', $manager_id->o_id)
+                ->where('status', Requests::STATUS_DISAPPROVED) // Include both statuses
+                ->withCount('childRequests')
+                ->latest()
+                ->get();
+                // ->paginate(10);
+
+            return $this->respondWithSuccess($allRequests, 'Past User Request Lists', 'PAST_USER_REQUEST_LISTS');
+        } catch (\Throwable $th) {
+            return $this->respondWithError('Error Occurred while fetching request list' . $th->getMessage());
+        }
     }
 
     /**

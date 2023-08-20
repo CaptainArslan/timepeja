@@ -173,8 +173,8 @@ class RequestFactory extends Factory
                 'created_user_id' => $this->faker->randomNumber(5),
                 'status' => $this->faker->randomElement([
                     Requests::STATUS_PENDING,
-                    Requests::STATUS_APPROVE,
-                    Requests::STATUS_DISAPPROVE,
+                    Requests::STATUS_APPROVED,
+                    Requests::STATUS_DISAPPROVED,
                     Requests::STATUS_MEET_PERSONALLY,
                 ]),
             ]
