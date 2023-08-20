@@ -9,7 +9,7 @@ use App\Http\Controllers\Api\V1\LogReportController;
 use App\Http\Controllers\Api\V1\ApiVehicleController;
 use App\Http\Controllers\Api\V1\ApiScheduleController;
 use App\Http\Controllers\Api\V1\VehicletypeController;
-use App\Http\Controllers\Api\V1\OrganizationController;
+use App\Http\Controllers\Api\V1\OrganizationController as ApiOrganizationController;
 use App\Http\Controllers\Api\V1\Auth\DriverAuthController;
 use App\Http\Controllers\Api\V1\Auth\ManagerAuthController;
 use App\Http\Controllers\Api\V1\ApiDriverController as ApiDriverController;
@@ -110,7 +110,8 @@ Route::group(['middleware' => 'api'], function () {
 
 
             // Organization Api
-            Route::get('/get-all-organizations', [OrganizationController::class, 'index']);
+            Route::get('/get-all-organizations', [ApiOrganizationController::class, 'index']);
+            Route::get('/organization/{code}', [ApiOrganizationController::class, 'show']);
 
             // Route Api
             Route::resource('/route', ApiRouteController::class);
@@ -127,8 +128,10 @@ Route::group(['middleware' => 'api'], function () {
             Route::get('/log-report-wrapper', [ApiManagerController::class, 'wrapper']);
 
             // get tranport user requests
-            Route::get('/request', [ApiRequestController::class, 'index']);
-            Route::post('/request', [ApiRequestController::class, 'store']);
+            Route::get('/requests', [ApiRequestController::class, 'index']);
+            Route::get('/requests/past', [ApiRequestController::class, 'past']);
+            Route::post('/request/store', [ApiRequestController::class, 'store']);
+            Route::get('/request/{id}', [ApiRequestController::class, 'show']);
         });
     });
 

@@ -40,7 +40,7 @@
         <!-- ============================================================== -->
         <div class="content-page">
             <div class="content">
-                @includeif('./partials/flash_message')
+                @includeif('partials.flash_message')
                 <!-- Start Content-->
                 <div class="container-fluid">
                     @yield('content')
@@ -55,7 +55,7 @@
         <!-- ============================================================== -->
     </div>
     <!-- END wrapper -->
-    @include('./partials/right-sidebar')
+    @include('.partials.right-sidebar')
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>
     <!-- Vendor js -->
