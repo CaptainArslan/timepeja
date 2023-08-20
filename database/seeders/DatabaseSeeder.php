@@ -52,7 +52,7 @@ class DatabaseSeeder extends Seeder
             ScheduleSeeder::class,
             // TripSeeder::class
             PassengerSeeder::class,
-            // RequestSeeder::class,
+            RequestSeeder::class,
         ]);
     }
 }
