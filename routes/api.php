@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\V1\Auth\ManagerAuthController;
 use App\Http\Controllers\Api\V1\ApiDriverController as ApiDriverController;
 use App\Http\Controllers\Api\V1\ApiManagerController as ApiManagerController;
 use App\Http\Controllers\Api\V1\Auth\PassengerAuthController;
+use App\Http\Controllers\Api\V1\LocationController;
 use App\Http\Controllers\Api\V1\PassengerController;
 use App\Http\Controllers\Api\V1\PassengerRequestController;
 use App\Http\Controllers\Api\V1\RequestController as ApiRequestController;
@@ -34,7 +35,6 @@ use App\Http\Controllers\RequestController;
 
 Route::group(['middleware' => 'api'], function () {
     Route::prefix('v1/manager')->name('manager.')->group(function () {
-
 
         // Manager Auth
         Route::post('/register', [ManagerAuthController::class, 'register']);
@@ -132,6 +132,10 @@ Route::group(['middleware' => 'api'], function () {
             Route::get('/requests/past', [ApiRequestController::class, 'past']);
             Route::post('/request/store', [ApiRequestController::class, 'store']);
             Route::get('/request/{id}', [ApiRequestController::class, 'show']);
+
+
+
+            Route::get('/locations/', [LocationController::class, 'index']);
         });
     });
 

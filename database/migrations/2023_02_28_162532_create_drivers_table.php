@@ -32,7 +32,7 @@ class CreateDriversTable extends Migration
             $table->string('license_no_front_pic')->nullable();
             $table->string('license_no_back_pic')->nullable();
             $table->date('license_expiry_date')->nullable();
-            $table->string('otp')->unique();
+            $table->string('otp')->unique()->nullable();
             // $table->string('token')->unique()->nullable();
             $table->integer('status')->default(Driver::STATUS_ACTIVE);
             $table->integer('online_status')->default(Driver::STATUS_OFFLINE);

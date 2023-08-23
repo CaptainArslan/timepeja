@@ -53,6 +53,7 @@ class DatabaseSeeder extends Seeder
             // TripSeeder::class
             PassengerSeeder::class,
             RequestSeeder::class,
+            LocationSeeder::class,
         ]);
     }
 }
