@@ -33,7 +33,7 @@ class DriverFactory extends Factory
             'license_no_front_pic' => $this->faker->imageUrl(),
             'license_no_back_pic' => $this->faker->imageUrl(),
             'license_expiry_date' => Carbon::now(),
-            'otp' => rand(1000, 9999),
+            'otp' => null,
             // 'token' => Str::random(10),
             'status' => 1,
             'online_status' => $this->faker->randomElement([
