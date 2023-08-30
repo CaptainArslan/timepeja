@@ -338,7 +338,7 @@ class RequestController extends BaseController
                 'in:father,mother,uncle,aunt,brother,sister,grandfather,grandmother,other'
             ],
             'guardian_code' => [
-                'nullable', 'string',
+                'nullable', 'string', 'exists:requests,guardian_code', 
                 Rule::requiredIf(function () use ($request) {
                     return in_array($request->type, ['student_guardian', 'employee_guardian']);
                 })
@@ -373,9 +373,9 @@ class RequestController extends BaseController
         }
 
         $request_id =  null;
-
         $organization_id = $request->organization_id;
-
+        $passenger = Passenger::where('unique_id', $request->unique_id)->first();
+        $passenger_id = $passenger->id;
         if ($request->type === 'student_guardian' || $request->type === 'employee_guardian') {
             $parentRequest = Requests::where('guardian_code', $request->guardian_code)->first();
             $childRequestCount = $parentRequest->childRequests->count();
@@ -389,6 +389,7 @@ class RequestController extends BaseController
         }
 
         $data = $request->all();
+        $data['passenger_id'] = $passenger_id;
         $data['guardian_code'] = substr(uniqid(), -8);
         $data['parent_request_id'] = $request_id;
         $data['organization_id'] = $organization_id;
@@ -410,7 +411,11 @@ class RequestController extends BaseController
     public function show($id)
     {
         try {
-            $requests = Requests::with('childRequests')->withCount('childRequests')->findOrFail($id);
+            $requests = Requests::with('childRequests')->withCount('childRequests')->with('city:id,name')
+                ->with('route:id,name')
+                // ->with('childRequests')
+                ->with('passenger:id,name,phone')
+                ->with('organization:id,name,branch_name,branch_code,email,phone,code')->findOrFail($id);
             return $this->respondWithSuccess($requests, 'Request Details', 'REQUEST_DETAILS');
         } catch (\Throwable $th) {
             return $this->respondWithError('Error Occured while fetching request details');

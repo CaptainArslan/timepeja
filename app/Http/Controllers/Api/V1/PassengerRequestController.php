@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Models\Request as Requests;
+
+use App\Models\Passenger;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\Controller;
-use App\Models\Employee;
-use App\Models\Guardian;
-use App\Models\Student;
+use Illuminate\Validation\Rule;
+use Illuminate\Http\JsonResponse;
+use App\Models\Request as Requests;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class PassengerRequestController extends BaseController
@@ -18,10 +18,36 @@ class PassengerRequestController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(): JsonResponse
     {
-        //
+        try {
+            $passenger = auth('passenger')->user();
+
+            $requestStatuses = [
+                Requests::STATUS_APPROVED,
+                Requests::STATUS_PENDING,
+                Requests::STATUS_MEET_PERSONALLY
+            ];
+
+            $allRequests = Requests::where('passenger_id', $passenger->id)
+                ->with([
+                    'city:id,name',
+                    'route:id,name',
+                    'organization:id,name,branch_name,branch_code,email,phone,code',
+                ])
+                // ->with('childRequests')
+                ->whereIn('status', $requestStatuses)
+                ->latest()
+                ->get();
+
+            return $this->respondWithSuccess($allRequests, 'Request Lists', 'REQUEST_LISTS');
+        } catch (\Throwable $th) {
+            // Log the exception for debugging
+            Log::error('Error occurred while fetching request list: ' . $th->getMessage());
+            return $this->respondWithError('Error occurred while fetching request list');
+        }
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -41,140 +67,175 @@ class PassengerRequestController extends BaseController
      */
     public function store(Request $request)
     {
-        $validator = Validator::make(
-            $request->all(),
-            [
-                'organization_id' => ['required', 'numeric', 'integer', 'exists:organizations,id'],
-                'type' => ['required', 'string'],
-                'name' => ['required', 'string'],
+        $validator = Validator::make($request->all(),  [
+            'organization_id' => ['required', 'numeric', 'exists:organizations,id',],
+            // 'parent_request_id' => ['nullable', 'numeric', 'exists:requests,id',],
+            'type' => ['required', 'string', 'in:student,employee,student_guardian,employee_guardian',],
+            'student_type' => ['nullable', 'string', 'in:school,college,university', Rule::requiredIf(function () use ($request) {
+                return in_array($request->type, ['student', 'student_guardian']);
+            }),],
+            'gender' => ['nullable', 'string', 'in:male,female,others',],
+            'name' => ['required', 'string',],
+            'phone' => ['required', 'string',],
+            // 'passenger_id' => ['required', 'numeric', 'exists:passengers,id',],
+            'email' => ['nullable', 'email', 'string',],
+            'address' => ['required', 'string',],
+            'pickup_address' => ['nullable', 'string',],
+            'house_no' => ['nullable', 'string',],
+            'street_no' => ['required', 'string',],
+            'town' => ['nullable', 'string',],
+            'lattitude' => ['nullable', 'string',],
+            'longitude' => ['nullable', 'string',],
+            'pickup_city_id' => ['nullable', 'string',],
+            'additional_detail' => ['nullable', 'string',],
+            'roll_no' => [
+                'nullable', 'string',
+                Rule::requiredIf(function () use ($request) {
+                    return in_array($request->type, ['student']);
+                }),
             ],
-            [
-                'organization_id.required' => 'organization id required',
-                'organization_id.numeric' => 'organization id must be an integer',
-                'type.required' => 'Request Types required',
-                'type.string' => 'Type must be a string',
-                'name.required' => 'Name is required',
-                'name.string' => 'Name must be a string',
-            ]
-        );
+            'class' => [
+                'nullable', 'string',
+                Rule::requiredIf(function () use ($request) {
+                    return in_array($request->type, ['student']);
+                }),
+            ],
+            'section' => [
+                'nullable', 'string',
+                Rule::requiredIf(function () use ($request) {
+                    return in_array($request->type, ['student']);
+                }),
+            ],
+            'qualification' => [
+                'nullable', 'string',
+                Rule::requiredIf(function () use ($request) {
+                    return in_array($request->type, ['student',]);
+                }),
+            ],
+            'batch_year' => [
+                'nullable', 'integer',
+                // Rule::requiredIf(function () use ($request) {
+                //     return in_array($request->type, ['student',]);
+                // }),
+            ],
+            'degree_duration' => [
+                'nullable', 'integer',
+                // Rule::requiredIf(function () use ($request) {
+                //     return in_array($request->type, ['student',]);
+                // }),
+            ],
+            'discipline' => [
+                'nullable', 'string',
+                // Rule::requiredIf(function () use ($request) {
+                //     return in_array($request->type, ['student',]);
+                // }),
+            ],
+            'employee_comp_id' => [
+                'nullable', 'string',
+                Rule::requiredIf(function () use ($request) {
+                    return in_array($request->type, ['employee',]);
+                }),
+            ],
+            'designation' => [
+                'nullable', 'string',
+                Rule::requiredIf(function () use ($request) {
+                    return in_array($request->type, ['employee',]);
+                })
+            ],
+            'profile_card' => [
+                'nullable', 'string',
+                // Rule::requiredIf(function () use ($request) {
+                //     return in_array($request->type, ['student','employee','student_guardian','employee_guardian']);
+                // }),
+            ],
+            'cnic_no' => [
+                'nullable', 'string',
+                Rule::requiredIf(function () use ($request) {
+                    return in_array($request->type, ['student_guardian', 'employee_guardian']);
+                }),
+            ],
+            'cnic_front_image' => [
+                'nullable',
+                Rule::requiredIf(function () use ($request) {
+                    return in_array($request->type, ['student_guardian', 'employee_guardian']);
+                }),
+            ],
+            'cnic_back_image' => [
+                'nullable', 'string',
+                Rule::requiredIf(function () use ($request) {
+                    return in_array($request->type, ['student_guardian', 'employee_guardian']);
+                })
+            ],
+            'relation' => [
+                'nullable', 'string',
+                Rule::requiredIf(function () use ($request) {
+                    return in_array($request->type, ['student_guardian', 'employee_guardian']);
+                }),
+                'in:father,mother,uncle,aunt,brother,sister,grandfather,grandmother,other'
+            ],
+            'guardian_code' => [
+                'nullable', 'string', 'exists:requests,guardian_code',
+                Rule::requiredIf(function () use ($request) {
+                    return in_array($request->type, ['student_guardian', 'employee_guardian']);
+                })
+            ],
+            'route_id' => ['nullable', 'numeric', 'exists:routes,id'],
+            'transport_start_date' => [
+                'nullable', 'date',
+                // 'required_if:route_id,!=,null'
+            ],
+            'transport_end_date' => [
+                'nullable', 'date',
+                // 'required_if:route_id,!=,null'
+            ],
+            'status' => ['nullable', 'string', 'in:pending,approved,disapproved'],
+        ], [
+            'name.required' => 'Please enter your name.',
+            'phone.required' => 'Please enter your phone number.',
+            'email.required' => 'Please enter your email address.',
+            'email.email' => 'Please enter a valid email address.',
+            'student_type.required' => 'Please specify Student type.',
+            'organization_id.required' => 'Organization ID is required.',
+            'type.required' => 'Please specify the type.',
+            'roll_no.required' => 'Please enter your roll number.',
+            'class.required' => 'Please enter your class.',
+            'section.required' => 'Please enter your section.',
+            'qualification.required' => 'Please enter your qualification.',
+            'route_id.exists' => 'The selected route is invalid.',
+        ]);
 
         if ($validator->fails()) {
-            return $this->respondWithError($validator->errors()->first());
+            return $this->respondWithError(implode(',', $validator->errors()->all()));
         }
 
-        try {
-            DB::beginTransaction();
+        $request_id =  null;
+        $organization_id = $request->organization_id;
+        $passenger = auth('passenger')->user();
 
-            $passenger =  auth('passenger')->user();
+        if ($request->type === 'student_guardian' || $request->type === 'employee_guardian') {
+            $parentRequest = Requests::where('guardian_code', $request->guardian_code)->first();
+            $childRequestCount = $parentRequest->childRequests->count();
 
-            $requests_data = new Requests();
-            $requests_data->passenger_id = $passenger->id;
-            $requests_data->organization_id = $request->organization_id;
-            $requests_data->roll_no = $request->roll_no ?? null;
-            $requests_data->class = $request->class ?? null;
-            $requests_data->section = $request->section ?? null;
-            $requests_data->profile_card = $request->profile_card ?? null;
-            $requests_data->descipline = $request->descipline ?? null;
-            $requests_data->designation = $request->designation ?? null;
-            $requests_data->employee_comp_id = $request->employee_comp_id ?? null;
-            $requests_data->route_id = $request->route_id ?? null;
-            $requests_data->transport_start_time = $request->transport_start_time ?? null;
-            $requests_data->transport_end_time = $request->transport_end_time ?? null;
-            $requests_data->qualification = $request->qualification ?? null;
-            $requests_data->batch_year = $request->batch_year ?? null;
-            $requests_data->degree_duration = $request->degree_duration ?? null;
-            $requests_data->type = $request->type ?? null;
-            $save = $requests_data->save();
-            if ($save) {
-                if ($request->type == Requests::REQUEST_TYPE_STUDENT) {
-
-                    $student = new Student();
-                    $student->name = $request->name;
-                    $student->request_id = $requests_data->id;
-                    $student->phone = $request->phone ?? null;
-                    $student->email = $request->email ?? null;
-                    $student->image = $request->image ?? null;
-                    $student->house_no = $request->house_no ?? null;
-                    $student->street_no = $request->street_no ?? null;
-                    $student->town = $request->town ?? null;
-                    $student->additional_detail = $request->additional_detail ?? null;
-                    $student->city_id = $request->city_id ?? null;
-                    $student->pickup_address = $request->pickup_address ?? null;
-                    $student->pickup_city_id = $request->pickup_city_id ?? null;
-                    $student->lattitude = $request->lattitude ?? null;
-                    $student->longitude = $request->longitude ?? null;
-                    $student->type = $request->request_further_type ?? null;
-                    // $student->status = $request->status ?? null;
-                    $student->save();
-                } else if ($request->type == Requests::REQUEST_TYPE_EMPLOYEE) {
-
-                    $employee = new Employee();
-                    $employee->name = $request->name;
-                    $employee->request_id = $requests_data->id;
-                    $employee->phone = $request->phone ?? null;
-                    $employee->email = $request->email ?? null;
-                    $employee->image = $request->image ?? null;
-                    $employee->house_no = $request->house_no ?? null;
-                    $employee->street_no = $request->street_no ?? null;
-                    $employee->town = $request->town ?? null;
-                    $employee->additional_detail = $request->additional_detail ?? null;
-                    $employee->city_id = $request->city_id ?? null;
-                    $employee->pickup_address = $request->pickup_address ?? null;
-                    $employee->pickup_city_id = $request->pickup_city_id ?? null;
-                    $employee->lattitude = $request->lattitude ?? null;
-                    $employee->longitude = $request->longitude ?? null;
-                    // $employee->status = $request->status ?? null;
-                    $employee->save();
-                }
-                // else if ($request->type == 'guardian') {
-
-                //     $guardian = new Guardian();
-                //     $guardian->name = $request->name;
-                //     $guardian->request_id = $requests_data->id;
-                //     $guardian->phone = $request->phone ?? null;
-                //     $guardian->email = $request->email ?? null;
-                //     $guardian->image = $request->image ?? null;
-                //     $guardian->house_no = $request->house_no ?? null;
-                //     $guardian->street_no = $request->street_no ?? null;
-                //     $guardian->town = $request->town ?? null;
-                //     $guardian->additional_detail = $request->additional_detail ?? null;
-                //     $guardian->city_id = $request->city_id ?? null;
-                //     $guardian->cnic = $request->cnic ?? null;
-                //     $guardian->cnic_front = $request->cnic_front ?? null;
-                //     $guardian->cnic_back = $request->cnic_back ?? null;
-                //     $guardian->guardian_code = $request->guardian_code ?? null;
-                //     $guardian->pickup_address = $request->pickup_address ?? null;
-                //     $guardian->pickup_city_id = $request->pickup_city_id ?? null;
-                //     $guardian->latitude = $request->latitude ?? null;
-                //     $guardian->longitude = $request->longitude ?? null;
-                //     $guardian->relation = $request->relation ?? null;
-                //     $guardian->status = $request->status ?? null;
-                //     $guardian->save();
-                // }
+            if ($childRequestCount >= Requests::MAX_GUARDIAN_ALLOWED) {
+                return $this->respondWithError('You cannot add more than 3 guardians.');
             }
-            DB::commit();
-            return $this->respondWithSuccess($requests_data, 'Request created successfully', 'REQUEST_CREATED_SUCCESSFULLY');
-        } catch (\Throwable $th) {
-            DB::rollBack();
-            return $this->respondWithError('Error Occured while request creation');
+
+            $request_id = $parentRequest->id;
+            $organization_id = $parentRequest->organization_id;
         }
-    }
 
+        $data = $request->all();
+        $data['passenger_id'] = $passenger->id;
+        $data['guardian_code'] = substr(uniqid(), -8);
+        $data['parent_request_id'] = $request_id;
+        $data['organization_id'] = $organization_id;
+        $data['created_by'] = 'passenger';
+        $data['created_user_id'] = $passenger->id;
+        $data['status'] = Requests::STATUS_APPROVED;
 
-    public function createRequest($request)
-    {
-    }
+        $data = Requests::create($data);
 
-    public function createStudent($request)
-    {
-    }
-
-    public function createEmployee($request)
-    {
-    }
-
-    public function createGuardian($request)
-    {
+        return $this->respondWithSuccess($data, 'Request Created Successfully', 'REQUEST_CREATED_SUCCESSFULLY');
     }
 
     /**
@@ -185,8 +246,20 @@ class PassengerRequestController extends BaseController
      */
     public function show($id)
     {
-        //
+        try {
+            $request = Requests::with([
+                'city:id,name',
+                'route:id,name',
+                'organization:id,name,branch_name,branch_code,email,phone,code'
+            ])->findOrFail($id);
+
+            return $this->respondWithSuccess($request, 'Request Details', 'REQUEST_DETAILS');
+        } catch (\Throwable $th) {
+            Log::error('Error occurred while fetching request list: ' . $th->getMessage());
+            return $this->respondWithError('Error occurred while fetching request details');
+        }
     }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -208,7 +281,181 @@ class PassengerRequestController extends BaseController
      */
     public function update(Request $request, $id)
     {
-        //
+        $validator = Validator::make($request->all(),  [
+            'organization_id' => ['required', 'numeric', 'exists:organizations,id',],
+            // 'parent_request_id' => ['nullable', 'numeric', 'exists:requests,id',],
+            'type' => ['required', 'string', 'in:student,employee,student_guardian,employee_guardian',],
+            'student_type' => ['nullable', 'string', 'in:school,college,university', Rule::requiredIf(function () use ($request) {
+                return in_array($request->type, ['student', 'student_guardian']);
+            }),],
+            'gender' => ['nullable', 'string', 'in:male,female,others',],
+            'name' => ['required', 'string',],
+            'phone' => ['required', 'string',],
+            // 'passenger_id' => ['required', 'numeric', 'exists:passengers,id',],
+            'email' => ['nullable', 'email', 'string',],
+            'address' => ['required', 'string',],
+            'pickup_address' => ['nullable', 'string',],
+            'house_no' => ['nullable', 'string',],
+            'street_no' => ['required', 'string',],
+            'town' => ['nullable', 'string',],
+            'lattitude' => ['nullable', 'string',],
+            'longitude' => ['nullable', 'string',],
+            'pickup_city_id' => ['nullable', 'string',],
+            'additional_detail' => ['nullable', 'string',],
+            'roll_no' => [
+                'nullable', 'string',
+                Rule::requiredIf(function () use ($request) {
+                    return in_array($request->type, ['student']);
+                }),
+            ],
+            'class' => [
+                'nullable', 'string',
+                Rule::requiredIf(function () use ($request) {
+                    return in_array($request->type, ['student']);
+                }),
+            ],
+            'section' => [
+                'nullable', 'string',
+                Rule::requiredIf(function () use ($request) {
+                    return in_array($request->type, ['student']);
+                }),
+            ],
+            'qualification' => [
+                'nullable', 'string',
+                Rule::requiredIf(function () use ($request) {
+                    return in_array($request->type, ['student',]);
+                }),
+            ],
+            'batch_year' => [
+                'nullable', 'integer',
+                // Rule::requiredIf(function () use ($request) {
+                //     return in_array($request->type, ['student',]);
+                // }),
+            ],
+            'degree_duration' => [
+                'nullable', 'integer',
+                // Rule::requiredIf(function () use ($request) {
+                //     return in_array($request->type, ['student',]);
+                // }),
+            ],
+            'discipline' => [
+                'nullable', 'string',
+                // Rule::requiredIf(function () use ($request) {
+                //     return in_array($request->type, ['student',]);
+                // }),
+            ],
+            'employee_comp_id' => [
+                'nullable', 'string',
+                Rule::requiredIf(function () use ($request) {
+                    return in_array($request->type, ['employee',]);
+                }),
+            ],
+            'designation' => [
+                'nullable', 'string',
+                Rule::requiredIf(function () use ($request) {
+                    return in_array($request->type, ['employee',]);
+                })
+            ],
+            'profile_card' => [
+                'nullable', 'string',
+                // Rule::requiredIf(function () use ($request) {
+                //     return in_array($request->type, ['student','employee','student_guardian','employee_guardian']);
+                // }),
+            ],
+            'cnic_no' => [
+                'nullable', 'string',
+                Rule::requiredIf(function () use ($request) {
+                    return in_array($request->type, ['student_guardian', 'employee_guardian']);
+                }),
+            ],
+            'cnic_front_image' => [
+                'nullable',
+                Rule::requiredIf(function () use ($request) {
+                    return in_array($request->type, ['student_guardian', 'employee_guardian']);
+                }),
+            ],
+            'cnic_back_image' => [
+                'nullable', 'string',
+                Rule::requiredIf(function () use ($request) {
+                    return in_array($request->type, ['student_guardian', 'employee_guardian']);
+                })
+            ],
+            'relation' => [
+                'nullable', 'string',
+                Rule::requiredIf(function () use ($request) {
+                    return in_array($request->type, ['student_guardian', 'employee_guardian']);
+                }),
+                'in:father,mother,uncle,aunt,brother,sister,grandfather,grandmother,other'
+            ],
+            'guardian_code' => [
+                'nullable', 'string', 'exists:requests,guardian_code',
+                Rule::requiredIf(function () use ($request) {
+                    return in_array($request->type, ['student_guardian', 'employee_guardian']);
+                })
+            ],
+            'route_id' => ['nullable', 'numeric', 'exists:routes,id'],
+            'transport_start_date' => [
+                'nullable', 'date',
+                // 'required_if:route_id,!=,null'
+            ],
+            'transport_end_date' => [
+                'nullable', 'date',
+                // 'required_if:route_id,!=,null'
+            ],
+            'status' => ['nullable', 'string', 'in:pending,approved,disapproved'],
+        ], [
+            'name.required' => 'Please enter your name.',
+            'phone.required' => 'Please enter your phone number.',
+            'email.required' => 'Please enter your email address.',
+            'email.email' => 'Please enter a valid email address.',
+            'student_type.required' => 'Please specify Student type.',
+            'organization_id.required' => 'Organization ID is required.',
+            'type.required' => 'Please specify the type.',
+            'roll_no.required' => 'Please enter your roll number.',
+            'class.required' => 'Please enter your class.',
+            'section.required' => 'Please enter your section.',
+            'qualification.required' => 'Please enter your qualification.',
+            'route_id.exists' => 'The selected route is invalid.',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->respondWithError(implode(',', $validator->errors()->all()));
+        }
+
+        try {
+            $request_found = Requests::findOrFail($id);
+
+            $request_id =  null;
+            $organization_id = $request->organization_id;
+            $passenger = auth('passenger')->user();
+            $data = $request->all();
+
+            if ($request->type === 'student_guardian' || $request->type === 'employee_guardian') {
+                $parentRequest = Requests::where('guardian_code', $request->guardian_code)->first();
+                $childRequestCount = $parentRequest->childRequests->count();
+
+                if ($childRequestCount >= Requests::MAX_GUARDIAN_ALLOWED) {
+                    return $this->respondWithError('You cannot add more than 3 guardians.');
+                }
+
+                $data['parent_request_id'] = $parentRequest->id;
+                $data['organization_id'] = $parentRequest->organization_id;
+            }
+
+
+            $data['passenger_id'] = $passenger->id;
+            $data['guardian_code'] = substr(uniqid(), -8);
+            $data['created_by'] = 'passenger';
+            $data['created_user_id'] = $passenger->id;
+            $data['status'] = Requests::STATUS_APPROVED;
+
+            $request_found::update($data);
+
+            return $this->respondWithSuccess($data, 'Request Created Successfully', 'REQUEST_CREATED_SUCCESSFULLY');
+        } catch (\Throwable $th) {
+            Log::error('Error occurred while fetching request list: ' . $th->getMessage());
+            return $this->respondWithError('Error occurred while updating request details');
+        }
     }
 
     /**
@@ -219,6 +466,12 @@ class PassengerRequestController extends BaseController
      */
     public function destroy($id)
     {
-        //
+        try {
+            Requests::findOrFail($id)->delete();
+            return $this->respondWithSuccess(null, 'Request Details', 'REQUEST_DETAILS');
+        } catch (\Throwable $th) {
+            Log::error('Error occurred while Deleting route: ' . $th->getMessage());
+            return $this->respondWithError('Error occurred while fetching request details');
+        }
     }
 }
