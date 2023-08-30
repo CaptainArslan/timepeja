@@ -176,8 +176,13 @@ Route::group(['middleware' => 'api'], function () {
             Route::post('/logout', [PassengerAuthController::class, 'logout']);
 
             // Passenger Request Api
-            Route::group(['prefix' => 'request'], function () {
-                Route::post('/', [PassengerRequestController::class, 'store']);
+            Route::group(['prefix' => 'requests', 'name' => 'requests'], function () {
+                // get tranport user requests
+                Route::get('/', [PassengerRequestController::class, 'index']);
+                Route::get('/{id}', [PassengerRequestController::class, 'show']);
+                Route::post('/store', [PassengerRequestController::class, 'store']);
+                Route::put('/{id}', [PassengerRequestController::class, 'update']);
+                Route::delete('/{id}', [PassengerRequestController::class, 'destroy']);
                 // Route::post('/', [ApiVehicleController::class, 'storeWeb']);
                 // Route::put('/{id}', [ApiVehicleController::class, 'updateWeb']);
             });
