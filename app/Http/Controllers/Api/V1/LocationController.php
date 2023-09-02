@@ -52,7 +52,12 @@ class LocationController extends BaseController
      */
     public function show($id)
     {
-        //
+        try {
+            $locations = Location::where('vehicle_id', $id)->where('type', 'driver')->latest()->first();
+            return $this->respondWithSuccess($locations, 'Latest location fetched successfully', 'LATEST_LOCATION_FETCHED');
+        } catch (\Throwable $th) {
+            return $this->respondWithError($th->getMessage());
+        }
     }
 
     /**
