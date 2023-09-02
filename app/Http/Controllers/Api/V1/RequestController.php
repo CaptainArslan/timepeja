@@ -466,7 +466,36 @@ class RequestController extends BaseController
         try {
             $manager_id = auth('manager')->user();
 
-            $limit = $request->limit ?? 10;
+            $limit = $request->limit ?? Requests::LIMIT;
+
+            $allRequests = Requests::with('organization:id,name')
+                ->with('city:id,name')
+                ->with('route:id,name')
+                // ->with('childRequests')
+                ->with('passenger:id,name,phone')
+                ->where('organization_id', $manager_id->o_id)
+                ->onlyTrashed() // Retrieve only soft-deleted entries
+                ->withCount('childRequests')
+                ->latest()
+                ->paginate($limit);
+
+            return $this->respondWithSuccess($allRequests, 'Past User Request Lists', 'PAST_USER_REQUEST_LISTS');
+        } catch (\Throwable $th) {
+            return $this->respondWithError('Error Occurred while fetching request list' . $th->getMessage());
+        }
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function disapproved(Request $request): JsonResponse
+    {
+        try {
+            $manager_id = auth('manager')->user();
+
+            $limit = $request->limit ?? Requests::LIMIT;
 
             $allRequests = Requests::with('organization:id,name')
                 ->with('city:id,name')
@@ -477,7 +506,7 @@ class RequestController extends BaseController
                 ->where('status', Requests::STATUS_DISAPPROVED) // Include both statuses
                 ->withCount('childRequests')
                 ->latest()
-                ->get();
+                ->paginate($limit);
             // ->paginate(10);
 
             return $this->respondWithSuccess($allRequests, 'Past User Request Lists', 'PAST_USER_REQUEST_LISTS');
