@@ -2,17 +2,27 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\City;
+use App\Models\Route;
+use App\Models\State;
+use App\Models\Driver;
+use App\Models\Manager;
+use App\Models\Vehicle;
+use App\Models\Schedule;
+use App\Models\Passenger;
+use App\Models\OrganizationType;
+use App\Models\Request;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Organization extends Model
 {
     use HasFactory;
     use SoftDeletes;
 
-    public const STATUS_ACTIVE = true;
-    public const STATUS_DEACTIVE = false;
+    public const STATUS_ACTIVE = 1;
+    public const STATUS_DEACTIVE = 0;
 
     /**
      * array for fillable
@@ -33,6 +43,13 @@ class Organization extends Model
         'head_phone',
         'head_address',
         'status'
+    ];
+
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+        'deleted_at',
+        'deactivate_code',
     ];
 
 
@@ -97,7 +114,7 @@ class Organization extends Model
     {
         return $this->hasMany(Passenger::class, 'o_id', 'id');
     }
-    
+
     /**
      * organization relation with drivers
      *
@@ -106,6 +123,56 @@ class Organization extends Model
     public function drivers()
     {
         return $this->hasMany(Driver::class, 'o_id', 'id');
+    }
+
+    /**
+     * organization relation with drivers
+     *
+     * @return void
+     */
+    public function vehicles()
+    {
+        return $this->hasMany(Vehicle::class, 'o_id', 'id');
+    }
+
+    /**
+     * organization relation with drivers
+     *
+     * @return void
+     */
+    public function routes()
+    {
+        return $this->hasMany(Route::class, 'o_id', 'id');
+    }
+
+    /**
+     * organization relation with drivers
+     *
+     * @return void
+     */
+    public function schedules()
+    {
+        return $this->hasMany(Schedule::class, 'o_id', 'id');
+    }
+
+    /**
+     * organization relation with drivers
+     *
+     * @return void
+     */
+    public function requests()
+    {
+        return $this->hasMany(Request::class);
+    }
+
+    /**
+     * organization relation with drivers
+     *
+     * @return void
+     */
+    public function locations()
+    {
+        return $this->hasMany(Location::class);
     }
 
 

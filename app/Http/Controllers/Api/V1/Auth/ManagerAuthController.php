@@ -129,13 +129,18 @@ class ManagerAuthController extends BaseController
         try {
             $credentials = $request->only(['phone', 'password']);
 
-            if (!$token = auth('manager')->attempt($credentials)) {
+            $user = Manager::where('phone', $credentials['phone'])->first();
+
+            if (!$user) {
                 return $this->respondWithError('Invalid phone number or password');
             }
 
-            $user = auth('manager')->user();
-            if (!$user) {
-                return $this->respondWithError('User not Found');
+            if ($user->status !== Manager::STATUS_ACTIVE) {
+                return $this->respondWithError('Account is not active');
+            }
+
+            if (!$token = auth('manager')->attempt($credentials)) {
+                return $this->respondWithError('Invalid phone number or password');
             }
 
             return $this->respondWithSuccess($user, 'Login successfully', 'LOGIN_API_SUCCESS', [
@@ -146,6 +151,7 @@ class ManagerAuthController extends BaseController
             throw $th;
         }
     }
+
 
     /**
      * [getVerificationCode description]

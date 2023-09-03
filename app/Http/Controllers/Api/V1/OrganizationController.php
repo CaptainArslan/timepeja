@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Models\Organization;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class OrganizationController extends BaseController
 {
@@ -18,7 +21,6 @@ class OrganizationController extends BaseController
             ->with('city:id,name')
             ->with('state:id,name')
             ->get();
-
         return $this->respondWithSuccess(
             $data,
             'All Organizations',
@@ -46,5 +48,63 @@ class OrganizationController extends BaseController
             'Organization',
             'ORGANIZATION'
         );
+    }
+
+    public function deactivateCode()
+    {
+        $manager = auth('manager')->user();
+        $organization = Organization::findOrFail($manager->o_id);
+        $organization->deactivate_code = $this->generateRandomSixDigitNumber();
+        $organization->save();
+
+        return $this->respondWithSuccess(
+            $organization->only('id', 'email', 'branch_code', 'branch_name', 'phone', 'code', 'deactivate_code'),
+            'Organization Deactivated',
+            'ORGANIZATION_DEACTIVATED'
+        );
+    }
+
+    public function deactivate(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'deactivate_code' => ['required', 'string', 'exists:organizations,deactivate_code'],
+        ]);
+        if ($validator->fails()) {
+            return $this->respondWithError(implode(',', $validator->errors()->all()));
+        }
+
+        $manager = auth('manager')->user();
+        $organization = Organization::where('id', $manager->o_id)->where('deactivate_code', $request->deactivate_code)->first();
+
+        if ($organization->deactivate_code != $request->deactivate_code) {
+            return $this->respondWithError('Invalid Deactivate Code');
+        }
+
+        $organization->status = Organization::STATUS_DEACTIVE;
+        $organization->save();
+
+        // Soft delete the organization and its related entries
+        DB::transaction(function () use ($organization) {
+            $organization->delete();
+            $organization->vehicles()->delete();
+            $organization->drivers()->delete();
+            $organization->routes()->delete();
+            // $organization->requests()->delete();
+            // $organization->users()->delete();
+            // $organization->locations()->delete();
+            // $organization->manager()->delete();
+            // $organization->schedules()->delete();
+        });
+
+        return $this->respondWithSuccess(
+            [],
+            'Organization Deactivated',
+            'ORGANIZATION_DEACTIVATED'
+        );
+    }
+
+    private function generateRandomSixDigitNumber()
+    {
+        return str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
     }
 }
