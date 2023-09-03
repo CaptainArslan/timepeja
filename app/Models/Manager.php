@@ -51,7 +51,8 @@ class Manager extends Authenticatable implements JWTSubject
     protected $hidden = [
         'password',
         'remember_token',
-        'otp'
+        'otp',
+        'deleted_at',
     ];
 
     // Rest omitted for brevity

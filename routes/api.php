@@ -57,7 +57,6 @@ Route::group(['middleware' => 'api'], function () {
             });
 
             // Route::post('/create-schedule', [ScheduleController::class, 'create']);
-
             // Upload Media Api
             Route::post('upload-media', [MediaController::class, 'uploadMedia']);
 
@@ -112,6 +111,8 @@ Route::group(['middleware' => 'api'], function () {
             // Organization Api
             Route::get('/get-all-organizations', [ApiOrganizationController::class, 'index']);
             Route::get('/organization/{code}', [ApiOrganizationController::class, 'show']);
+            Route::post('/organization/deactivation/code', [ApiOrganizationController::class, 'deactivateCode']);
+            Route::post('/organization/deactivate', [ApiOrganizationController::class, 'deactivate']);
 
             // Route Api
             Route::resource('/route', ApiRouteController::class);
