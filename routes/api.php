@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\Driver\ScheduleController as DriverScheduleController;
 use App\Models\Pdf;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\PdfController;
@@ -156,8 +157,17 @@ Route::group(['middleware' => 'api'], function () {
          * Driver Auth Middleware with jwt
          */
         Route::middleware(['jwt.verify:driver'])->group(function () {
-            Route::get('/profile', [DriverAuthController::class, 'profile']);
+            
+            Route::get('/profile', [DriverAuthController::class, 'driverProfile']);
             Route::post('/logout', [DriverAuthController::class, 'logout']);
+
+            Route::put('/online', [DriverScheduleController::class, 'online']);
+            Route::put('/offline', [DriverScheduleController::class, 'offline']);
+
+            Route::get('/schedule/incoming/{date}', [DriverScheduleController::class, 'index']);
+            Route::put('/schedule/start/{id}', [DriverScheduleController::class, 'startTrip']);
+            Route::put('/schedule/end/{id}', [DriverScheduleController::class, 'endTrip']);
+            Route::put('/schedule/delay/{id}', [DriverScheduleController::class, 'delayTrip']);
         });
     });
 
