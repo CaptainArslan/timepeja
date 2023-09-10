@@ -81,13 +81,16 @@ class LogReportController extends BaseController
 
             if ($result->isNotEmpty()) {
                 $download_url = $this->creatdPdf($request, $result);
+                $data = [
+                    'logreport' => $result,
+                    'download_url' => $download_url
+                ];
+    
+                return $this->respondWithSuccess($data, 'Log report fetched successfully', 'LOG_REPORT_FETCHED_SUCCESSFULLY');
             }
-            $data = [
-                'logreport' => $result,
-                'download_url' => $download_url
-            ];
-
-            return $this->respondWithSuccess($data, 'Log report fetched successfully', 'LOG_REPORT_FETCHED_SUCCESSFULLY');
+            else{
+                return $this->respondWithError('No data found');
+            }
         } catch (\Throwable $th) {
             throw $th;
         }
