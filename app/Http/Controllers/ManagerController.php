@@ -25,21 +25,17 @@ class ManagerController extends Controller
     {
         $organization_types = OrganizationType::get();
         $states = State::where('ctry_id', 167)->get();
-        $org_dropdowns = Organization::get();
+        $org_dropdowns = Organization::has('manager')->get();
         if ($request->has('filter')) {
             $organizations =  $this->filterManager($request);
         } else {
-            $organizations = Organization::with('organizationType')
-                ->with('city', function ($query) {
-                    $query->select('id', 'name');
-                })
-                ->with('state', function ($query) {
-                    $query->select('id', 'name');
-                })
-                ->with('manager', function ($query) {
-                    $query->select('id', 'o_id', 'name', 'email', 'phone', 'otp', 'picture');
-                })
-                ->orderBY('id', 'DESC')
+            $organizations = Organization::has('manager') // Only retrieve organizations with a manager
+                ->with('organizationType')
+                ->with('city:id,name') // Select only id and name columns from city relation
+                ->with('state:id,name') // Select only id and name columns from state relation
+                ->with('manager:id,o_id,name,email,phone,otp,picture') // Select specific columns from the manager relation
+                // ->orderBy('id', 'DESC')
+                ->latest()
                 ->take(10)
                 ->get();
         }
@@ -76,9 +72,10 @@ class ManagerController extends Controller
         $to = $request->input('to');
 
         // Start with base query
-        $result = Organization::when($oId, function ($query, $oId) {
-            return $query->where('id', $oId);
-        })
+        $result = Organization::has('manager')  
+            ->when($oId, function ($query, $oId) {
+                return $query->where('id', $oId);
+            })
             ->when($from && $to, function ($query) use ($from, $to) {
                 return $query->whereBetween('created_at', [$from, $to]);
             })

@@ -22,7 +22,7 @@ class MediaController extends BaseController
             $request->all(),
             [
                 'type' => ['required', 'string'],
-                'image.*' => ['required', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
+                'image.*' => ['required', 'max:2048'],
             ],
             [
                 'image.required' => 'Please upload an image',

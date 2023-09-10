@@ -178,6 +178,8 @@ Route::group(['middleware' => 'api'], function () {
             Route::get('/profile', [PassengerAuthController::class, 'profile']);
             Route::post('/logout', [PassengerAuthController::class, 'logout']);
 
+            Route::post('upload-media', [MediaController::class, 'uploadMedia']);
+
             // Passenger Request Api
             Route::group(['prefix' => 'requests', 'name' => 'requests'], function () {
                 // get tranport user requests
