@@ -9,6 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Api\V1\BaseController;
+use Illuminate\Support\Facades\Log;
 
 class DriverAuthController extends BaseController
 {
@@ -19,7 +20,7 @@ class DriverAuthController extends BaseController
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register', 'getVerificationCode', 'forgetPassword']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register', 'getVerificationCode', 'forgetPassword', 'driverProfile']]);
     }
 
     /**
@@ -33,7 +34,7 @@ class DriverAuthController extends BaseController
     {
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'string', 'min:3', 'max:255'],
-            'phone' => ['required', 'numeric', ],
+            'phone' => ['required', 'numeric',],
             'otp' => ['nullable', 'string'],
             'password' => [
                 'required',
@@ -221,7 +222,6 @@ class DriverAuthController extends BaseController
             ->update([
                 'password' => Hash::make($request->password),
             ]);
-        $driver->makeHidden('password');
 
         return $this->respondWithSuccess($driver, 'Password Updated Successfully', 'PASSWORD_UPDATE');
     }
@@ -231,15 +231,24 @@ class DriverAuthController extends BaseController
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function profile()
+    public function driverProfile()
     {
+        try {
+        $driver = auth('driver')->user();
+        if (!$driver) {
+            $this->respondWithError('Error Occured while fetching profile');
+        }
+
         return $this->respondWithSuccess(
-            auth('driver')->user(),
-            // ->load('organization')
+            $driver,
             'Driver profile',
             'DRIVER_PROFILE'
         );
-        // return response()->json(auth('driver')->user());
+        
+        } catch (\Throwable $th) {
+            Log::info('Error Occured while fetching profile' . $th->getMessage());
+            return $this->respondWithError('Error Occured while fetching profile');
+        }
     }
 
     /**

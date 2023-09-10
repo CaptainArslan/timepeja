@@ -36,6 +36,7 @@ class CreateSchedulesTable extends Migration
                 Schedule::TRIP_STATUS_UPCOMING,
                 Schedule::TRIP_STATUS_INPROGRESS,
                 Schedule::TRIP_STATUS_COMPLETED,
+                Schedule::TRIP_STATUS_DELAYED,
             ]);
             $table->timestamps();
             $table->text('delayed_reason')->nullable();
