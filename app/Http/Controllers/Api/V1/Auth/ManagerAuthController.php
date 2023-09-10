@@ -81,6 +81,10 @@ class ManagerAuthController extends BaseController
                 return $this->respondWithError("Invalid phone number or verification code");
             }
 
+            if($manager->organization->status !== 1){
+                return $this->respondWithError("Organization is not active");
+            }
+
             if (empty($manager->password)) {
                 $manager::where('phone', $request->phone)->update([
                     'password' => Hash::make($request->password),

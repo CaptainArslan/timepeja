@@ -86,7 +86,7 @@ class Manager extends Authenticatable implements JWTSubject
      */
     public function organization()
     {
-        return $this->belongsTo(Organization::class, 'o_id', 'id');
+        return $this->belongsTo(Organization::class, 'o_id', );
     }
 
     /**

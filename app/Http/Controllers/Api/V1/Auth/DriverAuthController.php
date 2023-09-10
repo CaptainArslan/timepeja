@@ -33,16 +33,16 @@ class DriverAuthController extends BaseController
     {
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'string', 'min:3', 'max:255'],
-            'phone' => ['required', 'numeric', 'digits:11'],
-            'otp' => ['required', 'string'],
+            'phone' => ['required', 'numeric', ],
+            'otp' => ['nullable', 'string'],
             'password' => [
                 'required',
                 'string',
                 'confirmed',
-                'between:8,255',
+                'between:8,25',
                 // 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'
             ],
-            'password_confirmation' => ['required', 'string', 'between:8,255'],
+            'password_confirmation' => ['required', 'string', 'between:8,25'],
             'email' => ['nullable', 'email', 'max:255'],
         ], [
             'name.required' => 'Name is required',
@@ -60,28 +60,32 @@ class DriverAuthController extends BaseController
         ]);
 
         if ($validator->fails()) {
-            return $this->respondWithError("Please fill the form correctly");
+            return $this->respondWithError($validator->errors()->first());
         }
+        try {
+            $driver = Driver::where('phone', $request->phone)
+                ->where('otp', $request->otp)
+                ->first();
 
-        $driver = Driver::where('phone', $request->phone)
-            ->where('otp', $request->otp)
-            ->first();
+            if (!$driver) {
+                return $this->respondWithError("Invalid phone number or verification code");
+            }
 
-        if (!$driver) {
-            return $this->respondWithError("Invalid phone number or verification code");
-        } elseif ($driver->status == 0) {
-            return $this->respondWithError("This driver is blocked. Please contact your manager");
-        }
+            if ($driver->organization->status !== 1) {
+                return $this->respondWithError("Organization is not active");
+            }
 
-        if (empty($driver->password)) {
-            $driver->where('phone', $request->phone)->update([
-                'password' => Hash::make($request->password),
-                // ,
-            ]);
-            $driver->makeHidden(['password']);
-            return $this->respondWithSuccess($driver, 'Driver registered successfully', 'REGISTER_API_SUCCESS');
-        } else {
-            return $this->respondWithError('Driver alreasy exist. Please login ');
+            if (empty($driver->password)) {
+                $driver::where('phone', $request->phone)->update([
+                    'password' => Hash::make($request->password),
+                    'status' => Driver::STATUS_ACTIVE,
+                ]);
+                return $this->respondWithSuccess($driver, 'Driver registered successfully', 'DRIVER_REGISTERED_SUCCESSFULLY');
+            } else {
+                return $this->respondWithError('Driver alreasy exist. Please login.');
+            }
+        } catch (\Throwable $th) {
+            throw $th;
         }
     }
 

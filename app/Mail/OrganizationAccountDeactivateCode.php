@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class OrganizationAccountDeactivate extends Mailable
+class OrganizationAccountDeactivateCode extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -29,6 +29,6 @@ class OrganizationAccountDeactivate extends Mailable
      */
     public function build()
     {
-        return $this->markdown('emails.organization.account_deactivate_success');
+        return $this->markdown('emails.organization.account_deactivate');
     }
 }

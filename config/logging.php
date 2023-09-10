@@ -113,6 +113,12 @@ return [
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],
+        
+        'middleware' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/middleware.log'), // Define your middleware log file path
+            'level' => 'info',
+        ],
     ],
 
 ];
