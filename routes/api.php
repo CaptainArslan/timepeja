@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\V1\ApiDriverController as ApiDriverController;
 use App\Http\Controllers\Api\V1\ApiManagerController as ApiManagerController;
 use App\Http\Controllers\Api\V1\Auth\PassengerAuthController;
 use App\Http\Controllers\Api\V1\LocationController;
+use App\Http\Controllers\Api\V1\Passenger\ScheduleController as PassengerScheduleController;
 use App\Http\Controllers\Api\V1\PassengerController;
 use App\Http\Controllers\Api\V1\PassengerRequestController;
 use App\Http\Controllers\Api\V1\RequestController as ApiRequestController;
@@ -157,7 +158,7 @@ Route::group(['middleware' => 'api'], function () {
          * Driver Auth Middleware with jwt
          */
         Route::middleware(['jwt.verify:driver'])->group(function () {
-            
+
             Route::get('/profile', [DriverAuthController::class, 'driverProfile']);
             Route::post('/logout', [DriverAuthController::class, 'logout']);
 
@@ -201,6 +202,7 @@ Route::group(['middleware' => 'api'], function () {
                 // Route::post('/', [ApiVehicleController::class, 'storeWeb']);
                 // Route::put('/{id}', [ApiVehicleController::class, 'updateWeb']);
             });
+            Route::get('/schedules/{id}/{date}', [PassengerScheduleController::class, 'index']);
         });
     });
 });

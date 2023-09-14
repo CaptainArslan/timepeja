@@ -9,6 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Api\V1\BaseController;
+use App\Models\Organization;
 use Illuminate\Support\Facades\Log;
 
 class DriverAuthController extends BaseController
@@ -72,7 +73,7 @@ class DriverAuthController extends BaseController
                 return $this->respondWithError("Invalid phone number or verification code");
             }
 
-            if ($driver->organization->status !== 1) {
+            if ($driver->organization->status != Organization::STATUS_ACTIVE) {
                 return $this->respondWithError("Organization is not active");
             }
 

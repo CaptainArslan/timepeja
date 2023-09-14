@@ -72,7 +72,7 @@ class Organization extends Model
      */
     public function manager()
     {
-        return $this->hasOne(Manager::class, 'o_id' );
+        return $this->hasOne(Manager::class, 'o_id');
     }
 
     /**
