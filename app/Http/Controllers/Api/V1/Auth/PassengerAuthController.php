@@ -105,7 +105,7 @@ class PassengerAuthController extends Controller
 
         return $this->respondWithSuccess($passenger, 'Login successfully', 'LOGIN_API_SUCCESS', [
             'content-type' => 'application/json',
-            'Authorization' => 'Bearer ' . $token
+            'Authorization' => $token
         ]);
     }
 
