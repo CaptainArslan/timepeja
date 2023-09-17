@@ -4,10 +4,11 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Models\Passenger;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Api\V1\BaseController;
-use Illuminate\Http\JsonResponse;
 
 class PassengerController extends BaseController
 {
@@ -129,5 +130,40 @@ class PassengerController extends BaseController
     public function destroy($id)
     {
         //
+    }
+
+    public function updatePhone(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'phone' => [
+                'required',
+                'numeric',
+                'digits:11',
+                Rule::unique('passengers', 'phone')->ignore(auth('passenger')->id()), // Ignore the current passenger's record
+            ],
+            'otp' => ['required'], // Add validation for 'top' field
+        ]);
+
+        if ($validator->fails()) {
+            return $this->respondWithError(implode(", ", $validator->errors()->all()));
+        }
+
+        try {
+            $passenger = auth('passenger')->user();
+
+            // Check if the 'top' value from the request matches the passenger's 'top' column
+            if ($request->otp === $passenger->otp) {
+                // Verification succeeded, update the phone number
+                $passenger->phone = $request->phone;
+                $passenger->save();
+
+                return $this->respondWithSuccess($passenger, 'Passenger phone number updated successfully', 'PASSENGER_PHONE_UPDATED_SUCCESSFULLY');
+            } else {
+                // Verification failed
+                return $this->respondWithError('Invalid otp');
+            }
+        } catch (\Throwable $th) {
+            return $this->respondWithError('Error Occurred while updating passenger phone number' . $th->getMessage());
+        }
     }
 }
