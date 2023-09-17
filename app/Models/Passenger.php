@@ -104,9 +104,6 @@ class Passenger extends Authenticatable implements JWTSubject
         ];
     }
 
-
-
-
     // ----------------------------------------------------------------
     // ------------------ Accessors & Mutator -------------------------
     // ----------------------------------------------------------------
@@ -192,5 +189,11 @@ class Passenger extends Authenticatable implements JWTSubject
     public function requests()
     {
         return $this->hasMany(Request::class);
+    }
+
+
+    public function favoriteRoutes()
+    {
+        return $this->belongsToMany(Route::class, 'passenger_route', 'passenger_id', 'route_id');
     }
 }

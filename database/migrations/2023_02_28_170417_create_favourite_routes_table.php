@@ -15,17 +15,13 @@ class CreateFavouriteRoutesTable extends Migration
      */
     public function up()
     {
-        Schema::create('favourite_routes', function (Blueprint $table) {
+        Schema::create('passenger_route', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('o_id')->index('o_id')->nullable();
-            $table->unsignedBigInteger('p_id')->index('p_id')->nullable();
-            $table->unsignedBigInteger('route_id')->index('route_id')->nullable();
-            $table->boolean('status');
+            $table->foreignId('passenger_id')->constrained('passengers');
+            $table->foreignId('route_id')->constrained('routes');
+            // $table->boolean('status');
             $table->timestamps();
             $table->softDeletes();
-            $table->foreign('o_id')->references('id')->on('organizations')->onUpdate('cascade');
-            $table->foreign('p_id')->references('id')->on('passengers')->onUpdate('cascade');
-            $table->foreign('route_id')->references('id')->on('routes')->onUpdate('cascade');
         });
     }
 

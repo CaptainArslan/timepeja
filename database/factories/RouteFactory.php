@@ -20,7 +20,7 @@ class RouteFactory extends Factory
         $from = $this->faker->city();
         $to = $this->faker->city();
         $number = rand(1000, 9999);
-        $name = $number . '-' . $from . '-' . $to;
+        $name = $number . '-' . $from . ' To ' . $to;
         return [
             'o_id' => Organization::inRandomOrder()->first()->id,
             'u_id' => 1,
