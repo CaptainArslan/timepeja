@@ -136,10 +136,10 @@ Route::group(['middleware' => 'api'], function () {
             Route::get('/requests/dissapproved', [ApiRequestController::class, 'disapproved']);
             Route::post('/request/store', [ApiRequestController::class, 'store']);
             Route::get('/request/{id}', [ApiRequestController::class, 'show']);
-            Route::delete('/request/delete', [ApiRequestController::class, 'delete']);
-            Route::put('/request/approve', [ApiRequestController::class, 'approveRequests']);
-            Route::put('/request/dissapprove', [ApiRequestController::class, 'dissapproveRequests']);
-            Route::put('/request/meet-personally', [ApiRequestController::class, 'meetPersonallyRequests']);
+            Route::delete('/requests/delete', [ApiRequestController::class, 'delete']);
+            Route::put('/requests/approve', [ApiRequestController::class, 'approveRequests']);
+            Route::put('/requests/dissapprove', [ApiRequestController::class, 'dissapproveRequests']);
+            Route::put('/requests/meet-personally', [ApiRequestController::class, 'meetPersonallyRequests']);
 
             Route::get('/locations', [LocationController::class, 'index']);
             Route::get('/locations/{id}', [LocationController::class, 'show']);
