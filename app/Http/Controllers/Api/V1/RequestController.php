@@ -338,7 +338,7 @@ class RequestController extends BaseController
                 'in:father,mother,uncle,aunt,brother,sister,grandfather,grandmother,other'
             ],
             'guardian_code' => [
-                'nullable', 'string', 'exists:requests,guardian_code', 
+                'nullable', 'string', 'exists:requests,guardian_code',
                 Rule::requiredIf(function () use ($request) {
                     return in_array($request->type, ['student_guardian', 'employee_guardian']);
                 })
@@ -454,6 +454,133 @@ class RequestController extends BaseController
     public function destroy($id)
     {
         //
+    }
+
+    /** 
+     * Delete Requests
+     * 
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function delete(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'request_ids' => ['required', 'array'],
+            'request_ids.*' => ['integer', 'exists:requests,id'], // Assuming your table name is "requests"
+        ], [
+            'request_ids.required' => 'Request ids are required',
+            'request_ids.*.integer' => 'ID must be an integer',
+            'request_ids.*.exists' => 'Invalid ID provided',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->respondWithError($validator->errors()->first());
+        }
+
+        $requestIds = $request->request_ids;
+
+        try {
+            Requests::whereIn('id', $requestIds)->delete();
+            return $this->respondWithSuccess([], 'Requests deleted successfully', 'REQUESTS_DELETED_SUCCESSFULLY');
+        } catch (\Throwable $th) {
+            return $this->respondWithError('Error Occurred while deleting requests');
+        }
+    }
+
+    /** 
+     * Delete Requests
+     * 
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function approveRequests(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'request_ids' => ['required', 'array'],
+            'request_ids.*' => ['integer', 'exists:requests,id'], // Assuming your table name is "requests"
+        ], [
+            'request_ids.required' => 'Request ids are required',
+            'request_ids.*.integer' => 'ID must be an integer',
+            'request_ids.*.exists' => 'Invalid ID provided',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->respondWithError($validator->errors()->first());
+        }
+
+        $requestIds = $request->request_ids;
+
+        try {
+            // Update the status of the requests to 'approved'
+            Requests::whereIn('id', $requestIds)->update(['status' => 'approved']);
+            return $this->respondWithSuccess([], 'Requests deleted successfully', 'REQUESTS_DELETED_SUCCESSFULLY');
+        } catch (\Throwable $th) {
+            return $this->respondWithError('Error Occurred while deleting requests');
+        }
+    }
+
+    /** 
+     * Delete Requests
+     * 
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function dissapproveRequests(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'request_ids' => ['required', 'array'],
+            'request_ids.*' => ['integer', 'exists:requests,id'], // Assuming your table name is "requests"
+        ], [
+            'request_ids.required' => 'Request ids are required',
+            'request_ids.*.integer' => 'ID must be an integer',
+            'request_ids.*.exists' => 'Invalid ID provided',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->respondWithError($validator->errors()->first());
+        }
+
+        $requestIds = $request->request_ids;
+
+        try {
+            // Update the status of the requests to 'approved'
+            Requests::whereIn('id', $requestIds)->update(['status' => 'disapproved']);
+            return $this->respondWithSuccess([], 'Requests deleted successfully', 'REQUESTS_DELETED_SUCCESSFULLY');
+        } catch (\Throwable $th) {
+            return $this->respondWithError('Error Occurred while deleting requests');
+        }
+    }
+
+    /** 
+     * Delete Requests
+     * 
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function meetPersonallyRequests(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'request_ids' => ['required', 'array'],
+            'request_ids.*' => ['integer', 'exists:requests,id'], // Assuming your table name is "requests"
+        ], [
+            'request_ids.required' => 'Request ids are required',
+            'request_ids.*.integer' => 'ID must be an integer',
+            'request_ids.*.exists' => 'Invalid ID provided',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->respondWithError($validator->errors()->first());
+        }
+
+        $requestIds = $request->request_ids;
+
+        try {
+            // Update the status of the requests to 'approved'
+            Requests::whereIn('id', $requestIds)->update(['status' => 'meet-personally']);
+            return $this->respondWithSuccess([], 'Requests deleted successfully', 'REQUESTS_DELETED_SUCCESSFULLY');
+        } catch (\Throwable $th) {
+            return $this->respondWithError('Error Occurred while deleting requests');
+        }
     }
 
     /**
