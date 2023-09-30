@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use Throwable;
+use Svg\Tag\Rect;
 use App\Models\Student;
 use App\Models\Employee;
 use App\Models\Guardian;
 use App\Models\Passenger;
 use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\Rule;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use App\Models\Request as Requests;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Api\V1\BaseController;
-use Svg\Tag\Rect;
 
 class RequestController extends BaseController
 {
@@ -513,9 +514,9 @@ class RequestController extends BaseController
         try {
             // Update the status of the requests to 'approved'
             Requests::whereIn('id', $requestIds)->update(['status' => 'approved']);
-            return $this->respondWithSuccess([], 'Requests deleted successfully', 'REQUESTS_DELETED_SUCCESSFULLY');
+            return $this->respondWithSuccess([], 'Requests deleted successfully', 'REQUESTS_APPROVED_SUCCESSFULLY');
         } catch (\Throwable $th) {
-            return $this->respondWithError('Error Occurred while deleting requests');
+            return $this->respondWithError('Error Occurred while approving requests');
         }
     }
 
@@ -545,9 +546,9 @@ class RequestController extends BaseController
         try {
             // Update the status of the requests to 'approved'
             Requests::whereIn('id', $requestIds)->update(['status' => 'disapproved']);
-            return $this->respondWithSuccess([], 'Requests deleted successfully', 'REQUESTS_DELETED_SUCCESSFULLY');
+            return $this->respondWithSuccess([], 'Requests deleted successfully', 'REQUESTS_DISAPPROVED_SUCCESSFULLY');
         } catch (\Throwable $th) {
-            return $this->respondWithError('Error Occurred while deleting requests');
+            return $this->respondWithError('Error Occurred while dissapproving requests');
         }
     }
 
@@ -577,9 +578,9 @@ class RequestController extends BaseController
         try {
             // Update the status of the requests to 'approved'
             Requests::whereIn('id', $requestIds)->update(['status' => 'meet-personally']);
-            return $this->respondWithSuccess([], 'Requests deleted successfully', 'REQUESTS_DELETED_SUCCESSFULLY');
-        } catch (\Throwable $th) {
-            return $this->respondWithError('Error Occurred while deleting requests');
+            return $this->respondWithSuccess([], 'Requests deleted successfully', 'REQUESTS_MEET_PERSONALLY_SUCCESSFULLY');
+        } catch (Throwable $th) {
+            return $this->respondWithError('Error Occurred while updating meet-personal requests');
         }
     }
 
