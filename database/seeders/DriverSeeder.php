@@ -34,6 +34,6 @@ class DriverSeeder extends Seeder
             'status' => 1,
             'online_status' => Driver::STATUS_ONLINE,
         ]);
-        Driver::factory(10)->create();
+        Driver::factory(200)->create();
     }
 }
