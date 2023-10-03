@@ -24,7 +24,7 @@ class ApiScheduleController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(): JsonResponse
+    public function index()
     {
         try {
             $manager = auth('manager')->user();
@@ -261,7 +261,7 @@ class ApiScheduleController extends BaseController
      *
      * @return JsonResponse
      */
-    public function getOrganizationData(): JsonResponse
+    public function getOrganizationData(Request $request)
     {
         try {
             $manager = auth('manager')->user();
@@ -281,8 +281,10 @@ class ApiScheduleController extends BaseController
                 ->select('id', 'name')
                 ->get();
 
+            $date = $request->date ?? date('Y-m-d');
+
             $schedules = Schedule::where('o_id', $manager->o_id)
-                ->where('date', date('Y-m-d'))
+                ->where('date', $date)
                 ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time', 'status', 'created_at')
                 ->with('organizations:id,name')
                 ->with('routes:id,name,number,from,to')
@@ -312,7 +314,7 @@ class ApiScheduleController extends BaseController
             ];
 
             // store data in cache
-            Cache::put('ORGANIZATION_ROUTE_VEHICLE_DRIVER_SCHEDULE_DATA_' . $manager->o_id, $data, 60 * 60 * 24);
+            // Cache::put('ORGANIZATION_ROUTE_VEHICLE_DRIVER_SCHEDULE_DATA_' . $manager->o_id, $data, 60 * 60 * 24);
 
             return $this->respondWithSuccess(
                 $data,
