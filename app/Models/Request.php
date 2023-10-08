@@ -86,6 +86,7 @@ class Request extends Model
         'parent_request_id' => 'integer',
         'route_id' => 'integer',
         'pickup_city_id' => 'integer',
+        'created_at' => 'datetime:Y-m-d H:i:s',
     ];
 
     protected $hidden = [
