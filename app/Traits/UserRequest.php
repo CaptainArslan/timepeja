@@ -104,18 +104,25 @@ trait UserRequest
         return $pdf->download(time() . 'Approved_User.pdf');
     }
 
-    public function getUserRequestsByStatus($status)
+    public function getUserRequestsByStatus($status, $organizationId = null)
     {
-        $requests = ModelsRequest::where('status', $status)
+        $query = ModelsRequest::where('status', $status)
             ->whereIn('type', [ModelsRequest::STUDENT, ModelsRequest::EMPLOYEE])
             ->with('organization:id,name,branch_name,branch_code,email,phone,address,code')
             ->withCount('childRequests')
             ->latest()
-            ->take(10)
-            ->get();
+            ->take(10);
+
+        // If organizationId is provided, add a filter by organization
+        if ($organizationId !== null) {
+            $query->where('organization_id', $organizationId);
+        }
+
+        $requests = $query->get();
 
         return $requests;
     }
+
 
     /**
      * Get user requests
