@@ -8,10 +8,13 @@ use App\Http\Controllers\Controller;
 use App\Models\Pdf as ModelsPdf;
 use Illuminate\Support\Facades\Validator;
 use PDF;
+use App\Models\Request as ModelsRequest;
+use App\Traits\UserRequest;
 
 class PdfController extends Controller
 {
 
+    use UserRequest;
     /**
      * Log report pdf
      *
@@ -97,17 +100,55 @@ class PdfController extends Controller
             if ($pdfModel->save()) {
                 return $this->respondWithSuccess($pdfModel, 'Pdf Created Successfully', 'LOG_REPORT_PDF_CREATED_SUCCESSFULLY');
             } else {
-                // Delete the saved PDF file if model saving failed
-                // if (file_exists($filePath)) {
-                //     unlink($filePath);
-                // }
                 return $this->respondWithError('Error occurred while creating the PDF. Failed to save the model.');
             }
         } catch (\Throwable $th) {
-            // Delete the saved PDF file if an exception occurred
-            // if (file_exists($filePath)) {
-            //     unlink($filePath);
-            // }
+            return $this->respondWithError('Error occurred while creating the PDF: ' . $th->getMessage());
+        }
+    }
+
+    /**
+     * Log report pdf
+     *
+     * @param Request $request
+     * @return void
+     */
+    function userRequests(Request $request)
+    {
+
+        $validator = $this->validateStatus($request);
+
+        if ($validator->fails()) {
+            return $this->respondWithError(implode(", ", $validator->errors()->all()));
+        }
+
+        try {
+            $requests = $this->getUserRequestsByStatus($request->status);
+            $organization = auth('manager')->user()->organization;
+
+            $data = [
+                'requests' => $requests,
+                'request' => $request->all(),
+                'organization' => $organization,
+            ];
+
+            $pdf = PDF::loadview('pdf.requests', $data);
+            $pdf->setPaper('A4', 'landscape');
+
+            $filename = date('Ymd_His') . $request->status . '_Report.pdf'; // Generate a unique filename
+            $filePath = public_path('uploads/pdf/' . $filename); // Get the full file path
+
+            $pdf->save($filePath); // Save the PDF to the specified folder
+
+            $pdfModel = new ModelsPdf();
+            $pdfModel->url = asset('/uploads/pdf/' . $filename);
+
+            if ($pdfModel->save()) {
+                return $this->respondWithSuccess($pdfModel, 'Pdf Created Successfully', 'USER_REQUEST_REPORT_PDF_CREATED_SUCCESSFULLY');
+            } else {
+                return $this->respondWithError('Error occurred while creating the PDF. Failed to save the model.');
+            }
+        } catch (\Throwable $th) {
             return $this->respondWithError('Error occurred while creating the PDF: ' . $th->getMessage());
         }
     }

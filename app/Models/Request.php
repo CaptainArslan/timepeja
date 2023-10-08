@@ -174,4 +174,32 @@ class Request extends Model
     {
         return $this->belongsTo(City::class);
     }
+
+
+    // helper function to get the request type
+    public function getUserId()
+    {
+        if ($this->type == self::STUDENT) {
+            return $this->roll_no;
+        } elseif ($this->type == self::EMPLOYEE) {
+            return $this->employee_comp_id;
+        } elseif ($this->type == self::STUDENT_GUARDIAN) {
+            return 'Student Guardian';
+        } elseif ($this->type == self::EMPLOYEE_GUARDIAN) {
+            return 'Employee Guardian';
+        }
+    }
+
+    public function getUserClassOrDepartment()
+    {
+        if ($this->type == self::STUDENT) {
+            return $this->class;
+        } elseif ($this->type == self::EMPLOYEE) {
+            return $this->department;
+        } elseif ($this->type == self::STUDENT_GUARDIAN) {
+            return 'Student Guardian';
+        } elseif ($this->type == self::EMPLOYEE_GUARDIAN) {
+            return 'Employee Guardian';
+        }
+    }
 }

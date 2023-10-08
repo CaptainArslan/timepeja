@@ -125,6 +125,7 @@ Route::group(['middleware' => 'api'], function () {
             // Log Report Api
             Route::post('/logreport', [LogReportController::class, 'index']);
             Route::get('/logreport/pdf', [PdfController::class, 'logReport']);
+            Route::post('/get-user-request/pdf', [PdfController::class, 'userRequests']);
 
             //main screen wrapper
             Route::get('/main-screen-wrapper', [ApiManagerController::class, 'wrapper']);
