@@ -49,6 +49,7 @@ class Schedule extends Model
         'v_id' => 'integer',
         'd_id' => 'integer',
         'id_delay' => 'boolean',
+        'created_at' => 'datetime:Y-m-d H:i:s',
         // 'trip_status' => 'boolean'
     ];
 
