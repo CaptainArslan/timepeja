@@ -25,8 +25,9 @@
         <div class="card">
             <div class="card-body">
                 <!-- <h4 class="header-title">Select Organization</h4> -->
-                <form action="" method="post" id="approved_user_form">
+                <form action="{{ route('user.approved') }}" method="post" id="approved_user_form">
                     @csrf
+                    <input class="form-control" type="hidden" id="" name="status" value="approved" readonly>
                     <div class="row">
                         <div class="col-md-4">
                             <label for="organization">Select Oganization</label>
@@ -50,17 +51,18 @@
                         </div>
                         <div class="col-md-3">
                             <label for="date-1">Registered From</label>
-                            <input class="form-control today-date" id="" type="date" name="from" value="{{ request()->input('from', old('from')) }}">
+                            <input class="form-control" id="" type="date" name="from" value="{{ request()->input('from', old('from')) }}">
                         </div>
                     </div>
                     <div class="row mt-2">
                         <div class="col-md-3">
                             <label for="date">Registered To</label>
-                            <input class="form-control today-date" id="" type="date" name="to" value="{{ request()->input('to', old('to')) }}">
+                            <input class="form-control" id="" type="date" name="to" value="{{ request()->input('to', old('to')) }}">
                         </div>
+
                         <div class="col-md-1">
-                            <label for="publish_schedule">.</label>
-                            <button type="submit" class="btn btn-success" id="publish_schedule" name="submit"> Submit </button>
+                            <label for="filter">.</label>
+                            <button type="submit" class="btn btn-success" id="filter" name="filter" value="filter"> Submit </button>
                         </div>
                     </div> <!-- end row -->
                 </form>
@@ -69,74 +71,92 @@
     </div> <!-- end col-->
 </div>
 
-@if(isset($_POST['submit']))
 <div class="row">
     <div class="col-12">
-        <div class="card">
-            <div class="card-header d-flex">
-                <div class="col-2">
-                    <h4 class="header-title">Approved Users </h4>
-                </div>
-                <div class="col-9">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <input class="form-control" type="hidden" id="" value="{{ request()->input('o_id', old('o_id')) }}" name="o_id" style="font-weight: bold;" readonly>
-                        </div>
-                        <div class="col-md-3">
-                            <input class="form-control today-date" type="hidden" id="" name="from" value="{{ request()->input('from', old('from')) }}">
-                        </div>
-                        <div class="col-md-3">
-                            <input class="form-control today-date" type="hidden" id="" name="to" value="{{ request()->input('from', old('from')) }}">
-                        </div>
-                        <div class="col-md-3">
-                            <input class="form-control" type="hidden" id="" name="type" value="{{ request()->input('type', old('type')) }}">
+        <form action="{{ route('user.approved') }}" method="POST">
+            @csrf
+            <div class="card">
+                <div class="card-header d-flex">
+                    <div class="col-2">
+                        <h4 class="header-title">Approved Users </h4>
+                    </div>
+                    <div class="col-9">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <input class="form-control" type="hidden" id="" value="{{ request()->input('o_id') }}" name="o_id" style="font-weight: bold;" readonly>
+                            </div>
+                            <div class="col-md-3">
+                                <input class="form-control" type="hidden" name="from" value="{{ request()->input('from') }}" readonly>
+                            </div>
+                            <div class="col-md-3">
+                                <input class="form-control" type="hidden" name="to" value="{{ request()->input('to') }}" readonly>
+                            </div>
+                            <div class="col-md-3">
+                                <input class="form-control" type="hidden" id="" name="type" value="{{ request()->input('type') }}" readonly>
+                            </div>
+                            <div class="col-md-3">
+                                <input class="form-control" type="hidden" id="" name="status" value="approved" readonly>
+                            </div>
+                            <div class="col-md-3">
+                                <input class="form-control" type="hidden" id="" name="filter" value="{{ request()->input('filter') }}" readonly>
+                            </div>
                         </div>
                     </div>
+                    @if (request()->has('filter'))
+                    <div class="col-1">
+                        <button type="submit" name="export" id="export" value="export" class="btn btn-primary">Export</button>
+                    </div>
+                    @endif
                 </div>
-            </div>
-            <div class="card-body">
-                <table id="basic-datatable" class="table table-striped dt-responsive nowrap w-100">
-                    <thead>
-                        <tr>
-                            <th>
+                <div class="card-body">
+                    <table id="basic-datatable" class="table table-striped dt-responsive nowrap w-100">
+                        <thead>
+                            <tr>
+                                <!-- <th>
                                 <input type="checkbox" class="parent_checkbox">
-                            </th>
-                            <th>Student/Employee Name</th>
-                            <th>Roll No/Employee ID</th>
-                            <th>Class/Department</th>
-                            <th>Town/City</th>
-                            <th>Transport Facility Start Date</th>
-                            <th>Transport Facility End Date</th>
-                            <th>No of Guardian</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
+                            </th> -->
+                                <th>Student/Employee Name</th>
+                                <th>Roll No/Employee ID</th>
+                                <th>Class/Department</th>
+                                <th>Type</th>
+                                <th>Town/City</th>
+                                <th>Transport Facility Start Date</th>
+                                <th>Transport Facility End Date</th>
+                                <th>No of Guardian</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($requests as $request)
+
+                            <tr>
+                                <!-- <td>
                                 <input type="checkbox" class="child_checkbox">
-                            </td>
-                            <td>Ali</td>
-                            <td>MSCS220444</td>
-                            <td>8th/Sales</td>
-                            <td>Johar Town Lahore</td>
-                            <td>20.05.2022</td>
-                            <td>20.05.2022</td>
-                            <td>3</td>
-                            <td><span class="badge bg-success">approved</span></td>
-                            <td>
-                                <a href="#" class="btn btn-success  show_request text-white action-icon"> <i class="mdi mdi-logout-variant"></i></a>
-                                <!-- <a href="#" class="btn btn-danger  text-white action-icon"> <i class="mdi mdi-delete"></i></a> -->
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div> <!-- end card body-->
-        </div> <!-- end card -->
+                            </td> -->
+                                <td>{{ $request->name }}</td>
+                                <td>{{ $request->getUserId() }}</td>
+                                <td>{{ $request->getUserClassOrDepartment() }}</td>
+                                <td>{{ $request->type }} </td>
+                                <td>{{ $request->town }} {{ $request->city?->name }}</td>
+                                <td>{{ $request->transport_start_date  }}</td>
+                                <td>{{ $request->transport_end_date  }}</td>
+                                <td>{{ $request->child_requests_count ?? 0 }}</td>
+                                <td><span class="badge bg-success">approved</span></td>
+                                <td>
+                                    <a href="#" class="btn btn-success  show_request text-white action-icon"> <i class="mdi mdi-logout-variant"></i></a>
+                                    <!-- <a href="#" class="btn btn-danger  text-white action-icon"> <i class="mdi mdi-delete"></i></a> -->
+                                </td>
+                            </tr>
+                            @endforeach
+
+                        </tbody>
+                    </table>
+                </div> <!-- end card body-->
+            </div> <!-- end card -->
+        </form>
     </div><!-- end col-->
 </div>
-@endif
 
 <!-- Modal -->
 <div class="modal fade" id="modal_organization" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="organizationLabel" aria-hidden="true">

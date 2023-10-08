@@ -12,10 +12,15 @@ use App\Models\OrganizationType;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\ManagerStoreRequest;
+use App\Models\Request as ModelsRequest;
+use App\Traits\UserRequest;
 use PDF;
 
 class ManagerController extends Controller
 {
+
+    use UserRequest;
+
     /**
      * Display a listing of the resource.
      *
@@ -72,7 +77,7 @@ class ManagerController extends Controller
         $to = $request->input('to');
 
         // Start with base query
-        $result = Organization::has('manager')  
+        $result = Organization::has('manager')
             ->when($oId, function ($query, $oId) {
                 return $query->where('id', $oId);
             })
@@ -219,51 +224,6 @@ class ManagerController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Manager  $Manager
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Manager $Manager)
-    {
-        dd('show');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Manager  $Manager
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Manager $Manager)
-    {
-        dd('edit');
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Manager  $Manager
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Manager $Manager)
-    {
-        dd('edit');
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Manager  $Manager
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Manager $Manager)
-    {
-        dd('destroy');
-    }
-
-    /**
      * [deleteOrganization description]
      *
      * @param   [type]  $id  [$id description]
@@ -286,11 +246,6 @@ class ManagerController extends Controller
         }
     }
 
-    /**
-     * Display the log report for the organization.
-     *
-     * @return \Illuminate\Contracts\View\View
-     */
     public function logReport(Request $request)
     {
         $request->validate([
@@ -314,7 +269,7 @@ class ManagerController extends Controller
                 ];
                 $pdf = PDF::loadview('manager.report.export.logreport', $data);
                 $pdf->setPaper('A4', 'landscape');
-                return $pdf->download(time() . 'history_report.pdf');
+                return $pdf->download(time() . 'log_report.pdf');
             }
         }
         $organizations = Organization::where('status', Organization::STATUS_ACTIVE)->get();
@@ -333,106 +288,138 @@ class ManagerController extends Controller
      * @param [type] $request
      * @return void
      */
-    protected function filterReport($request)
+    // protected function filterReport($request)
+    // {
+    //     $query = Schedule::query();
+    //     if (gettype($request->input('selection')) === "string") {
+    //         $selection = explode(",", $request->input('selection'));
+    //     } else {
+    //         $selection = $request->input('selection');
+    //     }
+
+    //     switch ($request->type) {
+    //         case 'driver':
+    //             if ($selection[0] == 'all') {
+    //                 $query->whereNotNull('d_id');
+    //             } else {
+    //                 $query->whereIn('d_id', $selection);
+    //             }
+    //             break;
+    //         case 'vehicle':
+    //             if ($selection[0] == 'all') {
+    //                 $query->whereNotNull('v_id');
+    //             } else {
+    //                 $query->whereIn('v_id', $selection);
+    //             }
+    //             break;
+    //         case 'route':
+    //             if ($selection[0] == 'all') {
+    //                 $query->whereNotNull('route_id');
+    //             } else {
+    //                 $query->whereIn('route_id', $selection);
+    //             }
+    //             break;
+    //         default:
+    //             break;
+    //     }
+
+    //     $query->when($request->filled('from') && $request->filled('to'), function ($query) use ($request) {
+    //         $query->whereBetween('date', [$request->input('from'), $request->input('to')]);
+    //     });
+
+    //     $query->when($request->filled('from'), function ($query) use ($request) {
+    //         $query->where('date', '>=', $request->input('from'));
+    //     });
+
+    //     $query->when($request->filled('to'), function ($query) use ($request) {
+    //         $query->where('date', '<=', $request->input('to'));
+    //     });
+
+    //     $result = $query->where('o_id', $request->o_id)
+    //         ->where('status', Schedule::STATUS_PUBLISHED)
+    //         ->with('organizations:id,name,branch_name,branch_code,email,phone,address,code')
+    //         ->with('routes:id,name,number,from,to')
+    //         ->with('vehicles:id,number')
+    //         ->with('drivers:id,name')
+    //         ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time as scheduled_time', 'start_time', 'end_time', 'is_delay', 'trip_status', 'delayed_reason')
+    //         ->orderby('trip_status', 'desc')
+    //         ->get();
+
+    //     return $result;
+    // }
+
+
+    /**
+     * This function is to filter record
+     *
+     * @param [type] $request
+     * @return void
+     */
+    public function awaitingApproval(Request $request)
     {
-        $query = Schedule::query();
-        if (gettype($request->input('selection')) === "string") {
-            $selection = explode(",", $request->input('selection'));
+        $organizations = Organization::where('status', Organization::STATUS_ACTIVE)->get();
+
+        $requests = [];
+        if ($request->isMethod('post')) {
+            if ($request->has('filter')) {
+                $requests = $this->filterUserRequest($request);
+            }
+            if ($request->has('export')) {
+                $requests = $this->filterUserRequest($request);
+
+                // dd($requests->toArray());
+                $data = [
+                    'requests' => $requests,
+                    'request' => $request->all()
+                ];
+
+                $pdf = PDF::loadview('manager.report.export.user_requests', $data);
+                $pdf->setPaper('A4', 'landscape');
+                return $pdf->download(time() . 'Approved_User.pdf');
+            }
         } else {
-            $selection = $request->input('selection');
+            $requests = ModelsRequest::where('status', ModelsRequest::STATUS_APPROVED)->whereIn('type', [ModelsRequest::STUDENT, ModelsRequest::EMPLOYEE])->withCount('childRequests')->latest()->take(10)->get();
         }
-
-        switch ($request->type) {
-            case 'driver':
-                if ($selection[0] == 'all') {
-                    $query->whereNotNull('d_id');
-                } else {
-                    $query->whereIn('d_id', $selection);
-                }
-                break;
-            case 'vehicle':
-                if ($selection[0] == 'all') {
-                    $query->whereNotNull('v_id');
-                } else {
-                    $query->whereIn('v_id', $selection);
-                }
-                break;
-            case 'route':
-                if ($selection[0] == 'all') {
-                    $query->whereNotNull('route_id');
-                } else {
-                    $query->whereIn('route_id', $selection);
-                }
-                break;
-            default:
-                break;
-        }
-
-        $query->when($request->filled('from') && $request->filled('to'), function ($query) use ($request) {
-            $query->whereBetween('date', [$request->input('from'), $request->input('to')]);
-        });
-
-        $query->when($request->filled('from'), function ($query) use ($request) {
-            $query->where('date', '>=', $request->input('from'));
-        });
-
-        $query->when($request->filled('to'), function ($query) use ($request) {
-            $query->where('date', '<=', $request->input('to'));
-        });
-
-        $result = $query->where('o_id', $request->o_id)
-            // ->with('organizations:id,name,branch_name,branch_code,email,phone,address,code')
-            // ->with('routes:id,name,number,from,to')
-            // ->with('vehicles:id,number')
-            // ->with('drivers:id,name')
-            // ->get();
-            ->where('status', Schedule::STATUS_PUBLISHED)
-            ->with('organizations:id,name,branch_name,branch_code,email,phone,address,code')
-            ->with('routes:id,name,number,from,to')
-            ->with('vehicles:id,number')
-            ->with('drivers:id,name')
-            ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time as scheduled_time', 'start_time', 'end_time', 'is_delay', 'trip_status', 'delayed_reason')
-            ->orderby('trip_status', 'desc')
-            ->get();
-
-
-
-        return $result;
-    }
-
-
-    /**
-     * [awaitingApproval description]
-     *
-     * @return  [type]  [return description]
-     */
-    public function awaitingApproval()
-    {
-        $organizations = Organization::where('status', Organization::STATUS_ACTIVE)->get();
-        $org_dropdowns = $organizations;
-        return view('manager.approval.awaiting_approvals', [
-            'organizations' => $organizations,
-            'org_dropdowns' => $org_dropdowns
-        ]);
-    }
-
-    /**
-     * [approvedUser description]
-     *
-     * @return  [type]  [return description]
-     */
-    public function approvedUser()
-    {
-        $organizations = Organization::where('status', Organization::STATUS_ACTIVE)->get();
         return view('manager.approval.approved_user', [
-            'organizations' => $organizations
+            'organizations' => $organizations,
+            'requests' => $requests,
         ]);
     }
 
     /**
-     * [disapprovedUser description]
+     * This function is to filter record
      *
-     * @return  [type]  [return description]
+     * @param [type] $request
+     * @return void
+     */
+    public function approvedUser(Request $request)
+    {
+        $organizations = Organization::where('status', Organization::STATUS_ACTIVE)->get();
+        $requests = [];
+
+        if ($request->isMethod('post')) {
+            if ($request->has('filter') || $request->has('export')) {
+                $requests = $this->filterUserRequest($request);
+            }
+
+            if ($request->has('export')) {
+                return $this->exportUserRequestsToPDF($requests, $request->all());
+            }
+        } else {
+            $requests = $this->getUserRequestsByStatus(ModelsRequest::STATUS_APPROVED);
+        }
+
+        return view('manager.approval.approved_user', [
+            'organizations' => $organizations,
+            'requests' => $requests,
+        ]);
+    }
+
+    /**
+     * This function is to filter record
+     *
+     * @param [type] $request
+     * @return void
      */
     public function disapprovedUser()
     {
@@ -443,9 +430,10 @@ class ManagerController extends Controller
     }
 
     /**
-     * [pastUser description]
+     * This function is to filter record
      *
-     * @return  [type]  [return description]
+     * @param [type] $request
+     * @return void
      */
     public function pastUser()
     {
