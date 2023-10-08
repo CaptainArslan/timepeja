@@ -138,7 +138,7 @@
                                 <td>{{ $request->getUserId() }}</td>
                                 <td>{{ $request->getUserClassOrDepartment() }}</td>
                                 <td>{{ $request->type }} </td>
-                                <td>{{ $request->town }} {{ $request->city?->name }}</td>
+                                <td>{{ $request->town ? $request->town : '' }} {{ optional($request->city)->name }}</td>
                                 <td>{{ $request->transport_start_date  }}</td>
                                 <td>{{ $request->transport_end_date  }}</td>
                                 <td>{{ $request->child_requests_count ?? 0 }}</td>

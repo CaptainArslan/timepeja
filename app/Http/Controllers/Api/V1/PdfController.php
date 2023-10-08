@@ -123,8 +123,9 @@ class PdfController extends Controller
         }
 
         try {
-            $requests = $this->getUserRequestsByStatus($request->status);
-            $organization = auth('manager')->user()->organization;
+            $manager = auth('manager')->user();
+            $requests = $this->getUserRequestsByStatus($request->status, $manager->o_id);
+            $organization = $manager->organization;
 
             $data = [
                 'requests' => $requests,
