@@ -393,6 +393,7 @@ class RequestController extends BaseController
 
         $data = $request->all();
         $data['passenger_id'] = $passenger_id;
+        $data['upload_image'] = $request->upload_image;
         $data['guardian_code'] = substr(uniqid(), -8);
         $data['parent_request_id'] = $request_id;
         $data['organization_id'] = $organization_id;

@@ -77,6 +77,7 @@ class Request extends Model
         'created_by',
         'created_user_id',
         'status',
+        'upload_image'
     ];
 
     protected $casts = [
