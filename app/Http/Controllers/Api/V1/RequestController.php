@@ -233,7 +233,7 @@ class RequestController extends BaseController
     {
         $validator = Validator::make($request->all(),  [
             'unique_id' => ['required', 'string', 'exists:passengers,unique_id',],
-            'organization_id' => ['required', 'numeric', 'exists:organizations,id',],
+            'organization_id' => ['nullable', 'numeric', 'exists:organizations,id',],
             // 'parent_request_id' => ['nullable', 'numeric', 'exists:requests,id',],
             'type' => ['required', 'string', 'in:student,employee,student_guardian,employee_guardian',],
             'student_type' => ['nullable', 'string', 'in:school,college,university', Rule::requiredIf(function () use ($request) {
