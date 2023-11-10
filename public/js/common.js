@@ -262,7 +262,7 @@ function resetPreviewDropify(imageUrl, inputId) {
 }
 
 // this function is use to show the success message
-function showSuccess( message = "Success created" ) {
+function showSuccess(message = "Success created") {
     $.toast({
         heading: "Success",
         text: message,
@@ -276,7 +276,7 @@ function showSuccess( message = "Success created" ) {
 }
 
 // this function is use to show the error message
-function showError( message = "Error Occured!") {
+function showError(message = "Error Occured!") {
     $.toast({
         heading: "Error",
         text: message,

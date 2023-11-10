@@ -21,6 +21,7 @@ class Passenger extends Authenticatable implements JWTSubject
 
     public const STATUS_ACTIVE = true;
     public const STATUS_DEACTIVE = false;
+    public const PASSENGER_LIMIT_PER_PAGE = false;
 
     /**
      * array for fillable
@@ -28,19 +29,18 @@ class Passenger extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
-        'id',
         'name',
         'phone',
         'email',
         'email_verified_at',
         'password',
         'gender',
-        'type',
         'unique_id',
         'gaurd_code',
-        'register_type',
         'bio',
         'location',
+        'lattutude',
+        'longitude',
         'google',
         'google_id',
         'facebook',
@@ -48,15 +48,12 @@ class Passenger extends Authenticatable implements JWTSubject
         'twitter',
         'twitter_id',
         'image',
-        'token',
         'otp',
-        'house_no',
-        'near_by',
-        'c_id',
-        'street_no',
-        'town',
         'status',
         'remember_token',
+        'created_at',
+        'updated_at',
+        'deleted_at'
     ];
 
     /**
@@ -66,6 +63,18 @@ class Passenger extends Authenticatable implements JWTSubject
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'status' => 'boolean',
+    ];
+
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
+        'otp',
     ];
 
     // ----------------------------------------------------------------
@@ -90,37 +99,101 @@ class Passenger extends Authenticatable implements JWTSubject
      */
     public function getJWTCustomClaims()
     {
-        return [];
+        return [
+            'exp' => now()->addMonth(1)->timestamp, // Set token expiration to 30 days from now
+        ];
+    }
+
+    // ----------------------------------------------------------------
+    // ------------------ Accessors & Mutator -------------------------
+    // ----------------------------------------------------------------
+
+    /**
+     * Set the name attribute.
+     *
+     * @param  string  $value
+     * @return void
+     */
+    public function setNameAttribute($value)
+    {
+        $this->attributes['name'] = ucwords(strtolower($value));
+    }
+
+    /**
+     * Get the name attribute.
+     *
+     * @param  string  $value
+     * @return string
+     */
+    public function getNameAttribute($value)
+    {
+        return ucwords(strtolower($value));
+    }
+
+    /**
+     * Set the phone number attribute.
+     *
+     * @param  string  $value
+     * @return void
+     */
+    public function setPhoneAttribute($value)
+    {
+        $this->attributes['phone'] = str_replace('-', '', $value);
+    }
+
+    /**
+     * Get the phone number attribute.
+     *
+     * @param  string  $value
+     * @return string
+     */
+    public function getPhoneAttribute($value)
+    {
+        return substr($value, 0, 4) . '-' . substr($value, 4, 8);
+    }
+
+    /**
+     * Get the front picture of the cnic.
+     *
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getImageAttribute()
+    {
+        return $this->attributes['image'] ? asset('uploads/passengers/profile/' . $this->attributes['image']) : asset('uploads/placeholder.jpg');
+    }
+
+    /**
+     * Get the front picture name of the vehicle.
+     *
+     * @param  string  $value
+     * @return string|null
+     */
+    public function getImageNameAttribute()
+    {
+        return $this->attributes['image'];
     }
 
 
+
+
+    // ----------------------------------------------------------------
+    // -------------------------- Relations ---------------------------
+    // ----------------------------------------------------------------
+
     /**
-     * manager relation function with manager
+     * relation of passenger and requests
      *
      * @return void
      */
-    public function manager()
+    public function requests()
     {
-        return $this->belongsTo(Manager::class, 'id', 'o_id');
+        return $this->hasMany(Request::class);
     }
 
-    /**
-     * city relation with organization
-     *
-     * @return  [relation]  [this function will return city that belogs to organizations]
-     */
-    public function city()
-    {
-        return $this->belongsTo(City::class, 'c_id', 'id');
-    }
 
-    /**
-     * state relation with organization
-     *
-     * @return  [type]  [this function will return state that belogs to organizations]
-     */
-    public function state()
+    public function favoriteRoutes()
     {
-        return $this->belongsTo(State::class, 's_id', 'id');
+        return $this->belongsToMany(Route::class, 'passenger_route', 'passenger_id', 'route_id');
     }
 }

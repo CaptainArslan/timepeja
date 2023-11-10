@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use PDF;
 use App\Models\Driver;
 use Illuminate\Http\Request;
+use App\Models\Pdf as ModelsPdf;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Api\V1\BaseController;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
 
 class ApiDriverController extends BaseController
 {
@@ -387,18 +390,18 @@ class ApiDriverController extends BaseController
     public function search(): JsonResponse
     {
         try {
-            $string = request()->input('name');
+            $string = request()->input('string');
             $manager = auth('manager')->user();
             $drivers = Driver::where('name', 'like', '%' . $string . '%')
-                // ->orWhere('phone', 'like', '%' . $string . '%')
-                // ->orWhere('cnic', 'like', '%' . $string . '%')
-                // ->orWhere('license_no', 'like', '%' . $string . '%')
+                ->orWhere('phone', 'like', '%' . $string . '%')
+                ->orWhere('cnic', 'like', '%' . $string . '%')
+                ->orWhere('license_no', 'like', '%' . $string . '%')
                 ->where('o_id', $manager->o_id)
                 ->select('id', 'name')
                 ->get();
-            if ($drivers->isEmpty()) {
-                return $this->respondWithError('No data found');
-            }
+            // if ($drivers->isEmpty()) {
+            //     return $this->respondWithError('No data found');
+            // }
             return $this->respondWithSuccess($drivers, 'Drivers retrieved successfully', 'API_DRIVER_SEARCH_RESULT');
         } catch (ModelNotFoundException $e) {
             throw new NotFoundHttpException('Error occured while fetching data');
@@ -680,5 +683,52 @@ class ApiDriverController extends BaseController
             return $this->respondWithError('Driver not found');
             // throw new NotFoundHttpException('Driver id not found');
         }
+    }
+
+    /**
+     * Create Pdf for drivers
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function createPdf(Request $request)
+    {
+        try {
+            $manager = auth('manager')->user();
+            $drivers = Driver::where('o_id', $manager->o_id)
+                ->with('organization:id,name,branch_name,branch_code,email,phone,address,code')
+                ->get();
+            $data = [
+                'drivers' => $drivers->toArray(),
+                'request' => $request->all()
+            ];
+            $pdf = PDF::loadview('pdf.driver', $data);
+            $pdf->setPaper('A4', 'landscape');
+
+            $filename = date('Ymd_His') . '_Driver_Report.pdf'; // Generate a unique filename
+            $filePath = public_path('uploads/pdf/' . $filename); // Get the full file path
+
+            $pdf->save($filePath); // Save the PDF to the specified folder
+
+            $pdfModel = new ModelsPdf();
+            $pdfModel->url = asset('/uploads/pdf/' . $filename);
+
+            if ($pdfModel->save()) {
+                return $this->respondWithSuccess($pdfModel, 'Pdf Created Successfully', 'LOG_REPORT_PDF_CREATED_SUCCESSFULLY');
+            } else {
+                // Delete the saved PDF file if model saving failed
+                if (file_exists($filePath)) {
+                    unlink($filePath);
+                }
+                return $this->respondWithError('Error occurred while creating the PDF. Failed to save the model.');
+            }
+        } catch (\Throwable $th) {
+            // Delete the saved PDF file if an exception occurred
+            // if (file_exists($filePath)) {
+            //     unlink($filePath);
+            // }
+            return $this->respondWithError('Error occurred while creating the PDF: ' . $th->getMessage());
+        }
+
     }
 }

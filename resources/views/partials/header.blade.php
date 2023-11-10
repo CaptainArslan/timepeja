@@ -168,7 +168,8 @@
 
             <li class="dropdown notification-list topbar-dropdown">
                 <a class="nav-link dropdown-toggle nav-user me-0 waves-effect waves-light" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
-                    <img src="{{asset('images/users/user-1.jpg')}}" alt="user-image" class="rounded-circle">
+                    <img src="@if (auth()->user()->image) {{asset('uploads/managers/profiles/'.auth()->user()->image)}} @else {{asset('uploads/managers/profiles/placeholder.jpg')}} @endif
+                    " alt="user-image" class="rounded-circle">
                     <span class="pro-user-name ms-1">
                         {{auth()->user()->user_name}} <i class="mdi mdi-chevron-down"></i>
                     </span>

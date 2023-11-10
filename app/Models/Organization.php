@@ -2,17 +2,27 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\City;
+use App\Models\Route;
+use App\Models\State;
+use App\Models\Driver;
+use App\Models\Manager;
+use App\Models\Vehicle;
+use App\Models\Schedule;
+use App\Models\Passenger;
+use App\Models\OrganizationType;
+use App\Models\Request;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Organization extends Model
 {
     use HasFactory;
     use SoftDeletes;
 
-    public const STATUS_ACTIVE = true;
-    public const STATUS_DEACTIVE = false;
+    public const STATUS_ACTIVE = 1;
+    public const STATUS_DEACTIVE = 0;
 
     /**
      * array for fillable
@@ -35,6 +45,13 @@ class Organization extends Model
         'status'
     ];
 
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+        'deleted_at',
+        'deactivate_code',
+    ];
+
 
     /**
      * The attributes that should be cast.
@@ -55,7 +72,7 @@ class Organization extends Model
      */
     public function manager()
     {
-        return $this->belongsTo(Manager::class, 'id', 'o_id');
+        return $this->hasOne(Manager::class, 'o_id');
     }
 
     /**
@@ -86,6 +103,76 @@ class Organization extends Model
     public function organizationType()
     {
         return $this->belongsTo(OrganizationType::class, 'o_type_id', 'id');
+    }
+
+    /**
+     * organization relation with passenger
+     *
+     * @return void
+     */
+    public function passengers()
+    {
+        return $this->hasMany(Passenger::class, 'o_id', 'id');
+    }
+
+    /**
+     * organization relation with drivers
+     *
+     * @return void
+     */
+    public function drivers()
+    {
+        return $this->hasMany(Driver::class, 'o_id', 'id');
+    }
+
+    /**
+     * organization relation with drivers
+     *
+     * @return void
+     */
+    public function vehicles()
+    {
+        return $this->hasMany(Vehicle::class, 'o_id', 'id');
+    }
+
+    /**
+     * organization relation with drivers
+     *
+     * @return void
+     */
+    public function routes()
+    {
+        return $this->hasMany(Route::class, 'o_id', 'id');
+    }
+
+    /**
+     * organization relation with drivers
+     *
+     * @return void
+     */
+    public function schedules()
+    {
+        return $this->hasMany(Schedule::class, 'o_id', 'id');
+    }
+
+    /**
+     * organization relation with drivers
+     *
+     * @return void
+     */
+    public function requests()
+    {
+        return $this->hasMany(Request::class);
+    }
+
+    /**
+     * organization relation with drivers
+     *
+     * @return void
+     */
+    public function locations()
+    {
+        return $this->hasMany(Location::class);
     }
 
 

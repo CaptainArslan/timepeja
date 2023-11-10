@@ -276,7 +276,7 @@ class ApiManagerController extends BaseController
      * @param Request $request
      * @return void
      */
-    public function mainScreenWrapper(): jsonResponse
+    public function wrapper(): jsonResponse
     {
         try {
             $manager = auth('manager')->user();
@@ -288,7 +288,7 @@ class ApiManagerController extends BaseController
 
             $vehicles = Vehicle::where('o_id', $manager->o_id)
                 ->where('status', Vehicle::STATUS_ACTIVE)
-                ->select('id', 'number as  name')
+                ->select('id', 'number')
                 ->get();
 
             $drivers = Driver::where('o_id', $manager->o_id)

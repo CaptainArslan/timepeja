@@ -9,6 +9,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Api\V1\BaseController;
+use App\Models\Organization;
+use Illuminate\Support\Facades\Log;
 
 class DriverAuthController extends BaseController
 {
@@ -19,7 +21,7 @@ class DriverAuthController extends BaseController
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register', 'getVerificationCode', 'forgetPassword']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register', 'getVerificationCode', 'forgetPassword', 'driverProfile']]);
     }
 
     /**
@@ -33,16 +35,16 @@ class DriverAuthController extends BaseController
     {
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'string', 'min:3', 'max:255'],
-            'phone' => ['required', 'numeric', 'digits:11'],
-            'otp' => ['required', 'string'],
+            'phone' => ['required', 'numeric',],
+            'otp' => ['nullable', 'string'],
             'password' => [
                 'required',
                 'string',
                 'confirmed',
-                'between:8,255',
+                'between:8,25',
                 // 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'
             ],
-            'password_confirmation' => ['required', 'string', 'between:8,255'],
+            'password_confirmation' => ['required', 'string', 'between:8,25'],
             'email' => ['nullable', 'email', 'max:255'],
         ], [
             'name.required' => 'Name is required',
@@ -60,28 +62,32 @@ class DriverAuthController extends BaseController
         ]);
 
         if ($validator->fails()) {
-            return $this->respondWithError("Please fill the form correctly");
+            return $this->respondWithError($validator->errors()->first());
         }
+        try {
+            $driver = Driver::where('phone', $request->phone)
+                ->where('otp', $request->otp)
+                ->first();
 
-        $driver = Driver::where('phone', $request->phone)
-            ->where('otp', $request->otp)
-            ->first();
+            if (!$driver) {
+                return $this->respondWithError("Invalid phone number or verification code");
+            }
 
-        if (!$driver) {
-            return $this->respondWithError("Invalid phone number or verification code");
-        } elseif ($driver->status == 0) {
-            return $this->respondWithError("This driver is blocked. Please contact your manager");
-        }
+            if ($driver->organization->status != Organization::STATUS_ACTIVE) {
+                return $this->respondWithError("Organization is not active");
+            }
 
-        if (empty($driver->password)) {
-            $driver->where('phone', $request->phone)->update([
-                'password' => Hash::make($request->password),
-                // ,
-            ]);
-            $driver->makeHidden(['password']);
-            return $this->respondWithSuccess($driver, 'Driver registered successfully', 'REGISTER_API_SUCCESS');
-        } else {
-            return $this->respondWithError('Driver alreasy exist. Please login ');
+            if (empty($driver->password)) {
+                $driver::where('phone', $request->phone)->update([
+                    'password' => Hash::make($request->password),
+                    'status' => Driver::STATUS_ACTIVE,
+                ]);
+                return $this->respondWithSuccess($driver, 'Driver registered successfully', 'DRIVER_REGISTERED_SUCCESSFULLY');
+            } else {
+                return $this->respondWithError('Driver alreasy exist. Please login.');
+            }
+        } catch (\Throwable $th) {
+            throw $th;
         }
     }
 
@@ -130,12 +136,9 @@ class DriverAuthController extends BaseController
         if (!$user) {
             return $this->respondWithError('User not Found');
         }
-        // $user->makeHidden('password');
 
         return $this->respondWithSuccess($user, 'Login successfully', 'LOGIN_API_SUCCESS', [
             'content-type' => 'application/json',
-            // 'uid' => $user->email,
-            // 'access-token' => $user->token,
             'Authorization' => $token
         ]);
     }
@@ -168,7 +171,8 @@ class DriverAuthController extends BaseController
             $driver->otp = rand(1000, 9999);
             $save = $driver->save();
             if ($save) {
-                return $this->respondWithSuccess($driver->otp, 'Otp Sent Successfully', 'API_GET_CODE');
+                $data = $driver->only('id', 'name', 'phone', 'otp');
+                return $this->respondWithSuccess($data, 'Otp Sent Successfully', 'API_GET_CODE');
             } else {
                 return $this->respondWithError('Error Occured while sending otp');
             }
@@ -219,7 +223,6 @@ class DriverAuthController extends BaseController
             ->update([
                 'password' => Hash::make($request->password),
             ]);
-        $driver->makeHidden('password');
 
         return $this->respondWithSuccess($driver, 'Password Updated Successfully', 'PASSWORD_UPDATE');
     }
@@ -229,15 +232,24 @@ class DriverAuthController extends BaseController
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function profile()
+    public function driverProfile()
     {
+        try {
+        $driver = auth('driver')->user();
+        if (!$driver) {
+            $this->respondWithError('Error Occured while fetching profile');
+        }
+
         return $this->respondWithSuccess(
-            auth('driver')->user(),
-            // ->load('organization')
+            $driver,
             'Driver profile',
             'DRIVER_PROFILE'
         );
-        // return response()->json(auth('driver')->user());
+        
+        } catch (\Throwable $th) {
+            Log::info('Error Occured while fetching profile' . $th->getMessage());
+            return $this->respondWithError('Error Occured while fetching profile');
+        }
     }
 
     /**

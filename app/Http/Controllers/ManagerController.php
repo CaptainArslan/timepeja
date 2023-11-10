@@ -12,9 +12,15 @@ use App\Models\OrganizationType;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\ManagerStoreRequest;
+use App\Models\Request as ModelsRequest;
+use App\Traits\UserRequest;
+use PDF;
 
 class ManagerController extends Controller
 {
+
+    use UserRequest;
+
     /**
      * Display a listing of the resource.
      *
@@ -24,21 +30,17 @@ class ManagerController extends Controller
     {
         $organization_types = OrganizationType::get();
         $states = State::where('ctry_id', 167)->get();
-        $org_dropdowns = Organization::get();
+        $org_dropdowns = Organization::has('manager')->get();
         if ($request->has('filter')) {
             $organizations =  $this->filterManager($request);
         } else {
-            $organizations = Organization::with('organizationType')
-                ->with('city', function ($query) {
-                    $query->select('id', 'name');
-                })
-                ->with('state', function ($query) {
-                    $query->select('id', 'name');
-                })
-                ->with('manager', function ($query) {
-                    $query->select('id', 'o_id', 'name', 'email', 'phone', 'otp', 'picture');
-                })
-                ->orderBY('id', 'DESC')
+            $organizations = Organization::has('manager') // Only retrieve organizations with a manager
+                ->with('organizationType')
+                ->with('city:id,name') // Select only id and name columns from city relation
+                ->with('state:id,name') // Select only id and name columns from state relation
+                ->with('manager:id,o_id,name,email,phone,otp,picture') // Select specific columns from the manager relation
+                // ->orderBy('id', 'DESC')
+                ->latest()
                 ->take(10)
                 ->get();
         }
@@ -75,9 +77,10 @@ class ManagerController extends Controller
         $to = $request->input('to');
 
         // Start with base query
-        $result = Organization::when($oId, function ($query, $oId) {
-            return $query->where('id', $oId);
-        })
+        $result = Organization::has('manager')
+            ->when($oId, function ($query, $oId) {
+                return $query->where('id', $oId);
+            })
             ->when($from && $to, function ($query) use ($from, $to) {
                 return $query->whereBetween('created_at', [$from, $to]);
             })
@@ -221,51 +224,6 @@ class ManagerController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Manager  $Manager
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Manager $Manager)
-    {
-        dd('show');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Manager  $Manager
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Manager $Manager)
-    {
-        dd('edit');
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Manager  $Manager
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Manager $Manager)
-    {
-        dd('edit');
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Manager  $Manager
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Manager $Manager)
-    {
-        dd('destroy');
-    }
-
-    /**
      * [deleteOrganization description]
      *
      * @param   [type]  $id  [$id description]
@@ -288,17 +246,12 @@ class ManagerController extends Controller
         }
     }
 
-    /**
-     * Display the log report for the organization.
-     *
-     * @return \Illuminate\Contracts\View\View
-     */
     public function logReport(Request $request)
     {
         $request->validate([
-            'o_id' => 'nullable|numeric',
-            'from' => 'nullable|date',
-            'to' => 'nullable|date|after:from',
+            'o_id' => ['nullable', 'numeric'],
+            'from' => ['nullable', 'date'],
+            'to' => ['nullable', 'date', 'after:from'],
         ], [
             'to.after' => "The registration to date must be a date after registration from.",
         ]);
@@ -310,16 +263,16 @@ class ManagerController extends Controller
             }
             if ($request->has('export')) {
                 $reports = $this->filterReport($request);
-                // dd($reports->toArray());
-                $request = $request->all();
-                $user = Auth::user();
-                return view('manager.report.export.index', [
-                    'reports' => $reports,
-                    'request' => $request,
-                ]);
+                $data = [
+                    'report' => $reports->toArray(),
+                    'request' => $request->all()
+                ];
+                $pdf = PDF::loadview('manager.report.export.logreport', $data);
+                $pdf->setPaper('A4', 'landscape');
+                return $pdf->download(time() . 'log_report.pdf');
             }
         }
-        $organizations = Organization::get();
+        $organizations = Organization::where('status', Organization::STATUS_ACTIVE)->get();
         $org_dropdowns = $organizations;
         return view('manager.report.index', [
             'organizations' => $organizations,
@@ -329,173 +282,162 @@ class ManagerController extends Controller
     }
 
 
-    protected function filterReport($request)
-    {
-        $query = Schedule::query();
-        if (gettype($request->input('selection')) === "string") {
-            $selection = explode(",", $request->input('selection'));
-        } else {
-            $selection = $request->input('selection');
-        }
-
-        switch ($request->type) {
-            case 'driver':
-                if ($selection[0] == 'all') {
-                    $query->whereNotNull('d_id');
-                } else {
-                    $query->whereIn('d_id', $selection);
-                }
-                break;
-            case 'vehicle':
-                if ($selection[0] == 'all') {
-                    $query->whereNotNull('v_id');
-                } else {
-                    $query->whereIn('v_id', $selection);
-                }
-                break;
-            case 'route':
-                if ($selection[0] == 'all') {
-                    $query->whereNotNull('route_id');
-                } else {
-                    $query->whereIn('route_id', $selection);
-                }
-                break;
-            default:
-                break;
-        }
-
-        $query->when($request->filled('from') && $request->filled('to'), function ($query) use ($request) {
-            $query->whereBetween('date', [$request->input('from'), $request->input('to')]);
-        });
-
-        $query->when($request->filled('from'), function ($query) use ($request) {
-            $query->where('date', '>=', $request->input('from'));
-        });
-
-        $query->when($request->filled('to'), function ($query) use ($request) {
-            $query->where('date', '<=', $request->input('to'));
-        });
-
-        $result = $query->where('o_id', $request->o_id)
-            ->with('organizations:id,name,branch_name,branch_code,email,phone,address')
-            ->with('routes:id,name,number,from,to')
-            ->with('vehicles:id,number')
-            ->with('drivers:id,name')
-            ->get();
-
-        return $result;
-    }
-
+    /**
+     * This function is to filter record
+     *
+     * @param [type] $request
+     * @return void
+     */
     // protected function filterReport($request)
     // {
-    //     // dd($request->all());
-    //     // dd($request->selection[0]);
     //     $query = Schedule::query();
-    //     if ($request->type == 'driver') {
-    //         if ($request->selection[0] == 'all') {
-    //             // return 'all';
-    //             $query->when($request->input('selection'), function ($query) use ($request) {
-    //                 $query->whereNotNull('d_id');
-    //             });
-    //         } else {
-    //             // return 'selection';
-    //             $query->when($request->input('selection'), function ($query) use ($request) {
-    //                 $query->whereIn('d_id', $request->input('selection'));
-    //             });
-    //         }
-    //     } elseif ($request->type == 'vehicle') {
-    //         if ($request->selection[0] == 'all') {
-    //             // return 'all';
-    //             $query->when($request->input('selection'), function ($query) use ($request) {
-    //                 $query->whereNotNull('v_id');
-    //             });
-    //         } else {
-    //             // return 'selection';
-    //             $query->when($request->input('selection'), function ($query) use ($request) {
-    //                 $query->whereIn('v_id', $request->input('selection'));
-    //             });
-    //         }
-    //     } elseif ($request->type == 'route') {
-    //         if ($request->selection[0] == 'all') {
-    //             // return 'all';
-    //             $query->when($request->input('selection'), function ($query) use ($request) {
-    //                 $query->whereNotNull('route_id');
-    //             });
-    //         } else {
-    //             // return 'selection';
-    //             $query->when($request->input('selection'), function ($query) use ($request) {
-    //                 $query->whereIn('route_id', $request->input('selection'));
-    //             });
-    //         }
+    //     if (gettype($request->input('selection')) === "string") {
+    //         $selection = explode(",", $request->input('selection'));
+    //     } else {
+    //         $selection = $request->input('selection');
     //     }
-    //     // Add date range constraint if both dates are provided
-    //     $query->when($request->input('from') && $request->input('to'), function ($query) use ($request) {
+
+    //     switch ($request->type) {
+    //         case 'driver':
+    //             if ($selection[0] == 'all') {
+    //                 $query->whereNotNull('d_id');
+    //             } else {
+    //                 $query->whereIn('d_id', $selection);
+    //             }
+    //             break;
+    //         case 'vehicle':
+    //             if ($selection[0] == 'all') {
+    //                 $query->whereNotNull('v_id');
+    //             } else {
+    //                 $query->whereIn('v_id', $selection);
+    //             }
+    //             break;
+    //         case 'route':
+    //             if ($selection[0] == 'all') {
+    //                 $query->whereNotNull('route_id');
+    //             } else {
+    //                 $query->whereIn('route_id', $selection);
+    //             }
+    //             break;
+    //         default:
+    //             break;
+    //     }
+
+    //     $query->when($request->filled('from') && $request->filled('to'), function ($query) use ($request) {
     //         $query->whereBetween('date', [$request->input('from'), $request->input('to')]);
-    //     })->when($request->input('from') && !$request->input('to'), function ($query) use ($request) {
-    //         $query->where('date', $request->input('from'));
-    //     })->when(!$request->input('from') && $request->input('to'), function ($query) use ($request) {
-    //         $query->where('date', $request->input('to'));
+    //     });
+
+    //     $query->when($request->filled('from'), function ($query) use ($request) {
+    //         $query->where('date', '>=', $request->input('from'));
+    //     });
+
+    //     $query->when($request->filled('to'), function ($query) use ($request) {
+    //         $query->where('date', '<=', $request->input('to'));
     //     });
 
     //     $result = $query->where('o_id', $request->o_id)
-    //         ->with('organizations:id,name')
+    //         ->where('status', Schedule::STATUS_PUBLISHED)
+    //         ->with('organizations:id,name,branch_name,branch_code,email,phone,address,code')
     //         ->with('routes:id,name,number,from,to')
     //         ->with('vehicles:id,number')
     //         ->with('drivers:id,name')
+    //         ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time as scheduled_time', 'start_time', 'end_time', 'is_delay', 'trip_status', 'delayed_reason')
+    //         ->orderby('trip_status', 'desc')
     //         ->get();
-    //     // dd($result->toArray());
+
     //     return $result;
     // }
 
-    /**
-     * [awaitingApproval description]
-     *
-     * @return  [type]  [return description]
-     */
-    public function awaitingApproval()
-    {
-        $organizations = Organization::get();
-        $org_dropdowns = $organizations;
-        return view('manager.approval.awaiting_approvals', [
-            'organizations' => $organizations,
-            'org_dropdowns' => $org_dropdowns
-        ]);
-    }
 
     /**
-     * [approvedUser description]
+     * This function is to filter record
      *
-     * @return  [type]  [return description]
+     * @param [type] $request
+     * @return void
      */
-    public function approvedUser()
+    public function awaitingApproval(Request $request)
     {
-        $organizations = Organization::get();
+        $organizations = Organization::where('status', Organization::STATUS_ACTIVE)->get();
+
+        $requests = [];
+        if ($request->isMethod('post')) {
+            if ($request->has('filter')) {
+                $requests = $this->filterUserRequest($request);
+            }
+            if ($request->has('export')) {
+                $requests = $this->filterUserRequest($request);
+
+                // dd($requests->toArray());
+                $data = [
+                    'requests' => $requests,
+                    'request' => $request->all()
+                ];
+
+                $pdf = PDF::loadview('manager.report.export.user_requests', $data);
+                $pdf->setPaper('A4', 'landscape');
+                return $pdf->download(time() . 'Approved_User.pdf');
+            }
+        } else {
+            $requests = ModelsRequest::where('status', ModelsRequest::STATUS_APPROVED)->whereIn('type', [ModelsRequest::STUDENT, ModelsRequest::EMPLOYEE])->withCount('childRequests')->latest()->take(10)->get();
+        }
         return view('manager.approval.approved_user', [
-            'organizations' => $organizations
+            'organizations' => $organizations,
+            'requests' => $requests,
         ]);
     }
 
     /**
-     * [disapprovedUser description]
+     * This function is to filter record
      *
-     * @return  [type]  [return description]
+     * @param [type] $request
+     * @return void
+     */
+    public function approvedUser(Request $request)
+    {
+        $organizations = Organization::where('status', Organization::STATUS_ACTIVE)->get();
+        $requests = [];
+
+        if ($request->isMethod('post')) {
+            if ($request->has('filter') || $request->has('export')) {
+                $requests = $this->filterUserRequest($request);
+            }
+
+            if ($request->has('export')) {
+                return $this->exportUserRequestsToPDF($requests, $request->all());
+            }
+        } else {
+            $requests = $this->getUserRequestsByStatus(ModelsRequest::STATUS_APPROVED);
+        }
+
+        return view('manager.approval.approved_user', [
+            'organizations' => $organizations,
+            'requests' => $requests,
+        ]);
+    }
+
+    /**
+     * This function is to filter record
+     *
+     * @param [type] $request
+     * @return void
      */
     public function disapprovedUser()
     {
-        $organizations = Organization::get();
+        $organizations = Organization::where('status', Organization::STATUS_ACTIVE)->get();
         return view('manager.approval.disapproved_user', [
             'organizations' => $organizations
         ]);
     }
 
     /**
-     * [pastUser description]
+     * This function is to filter record
      *
-     * @return  [type]  [return description]
+     * @param [type] $request
+     * @return void
      */
     public function pastUser()
     {
-        $organizations = Organization::get();
+        $organizations = Organization::where('status', Organization::STATUS_ACTIVE)->get();
         return view('manager.approval.pastuser', [
             'organizations' => $organizations
         ]);

@@ -31,6 +31,7 @@ class CreateOrganizationsTable extends Migration
             $table->string('head_phone');
             $table->string('head_address')->nullable();
             $table->boolean('status');
+            $table->string('deactivate_code')->nullable();
             $table->timestamps();
             $table->softDeletes();
             $table->foreign('o_type_id')->references('id')->on('organization_types');

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use PDF;
 use App\Models\Driver;
 use App\Models\Schedule;
 use App\Models\Organization;
@@ -12,17 +13,18 @@ use App\Http\Requests\Driver\DriverStoreRequest;
 use App\Http\Requests\Driver\DriverUpdateRequest;
 use App\Http\Requests\Driver\DriverMultiDeleteRequest;
 
+
 class DriverController extends Controller
 {
     /**
-     * Undocumented function
+     * Index function
      *
      * @param Request $request
      * @return void
      */
     public function index(Request $request)
     {
-        $organizations = Organization::get();
+        $organizations = Organization::where('status', Organization::STATUS_ACTIVE)->get();
         $drivers = Driver::with(['organization' => function ($query) {
             $query->select('id', 'name', 'email');
         }])
@@ -78,7 +80,7 @@ class DriverController extends Controller
                 return $query->whereDate('created_at', '<=', $to);
             })
             ->with('organization', function ($query) {
-                $query->select('id', 'name'); // Select the id and name columns from the organizations table
+                $query->select('id', 'name', 'branch_name', 'branch_code', 'email', 'phone', 'address', 'code'); // Select the id and name columns from the organizations table
             })
             ->get();
 
@@ -93,7 +95,7 @@ class DriverController extends Controller
      */
     public function create(Request $request)
     {
-        $organizations = Organization::get();
+        $organizations = Organization::where('status', Organization::STATUS_ACTIVE)->get();
         $drivers = Driver::with('organizations')
             ->latest()
             ->take(10)
@@ -241,11 +243,20 @@ class DriverController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-        if (Driver::where('id', $id)->delete()) {
+        try {
+            $driver = Driver::findOrFail($id);
+            $driver->delete();
+
             return response()->json(['status' => 'success']);
-        } else {
-            return response()->json(['status' => 'error']);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error'], 500);
         }
+
+        // if (Driver::where('id', $id)->delete()) {
+        //     return response()->json(['status' => 'success']);
+        // } else {
+        //     return response()->json(['status' => 'error']);
+        // }
     }
 
     /**
@@ -288,7 +299,7 @@ class DriverController extends Controller
                 $trips = $this->filterUpcomingTrips($request);
             }
         }
-        $organizations = Organization::get();
+        $organizations = Organization::where('status', Organization::STATUS_ACTIVE)->get();
         return view('driver.trips', [
             'organizations' => $organizations,
             'trips' => $trips
@@ -345,5 +356,33 @@ class DriverController extends Controller
             ->with('drivers:id,name')
             ->get();
         return $trips;
+    }
+
+
+    /**
+     * Print PDF for to print the driver
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function printPdf(Request $request)
+    {
+        if (empty($request->o_id) && empty($request->from) && empty($request->to)) {
+            $drivers = Driver::with('organization:id,name,branch_name,branch_code,email,phone,address,code')
+                ->latest()
+                ->take(10)
+                ->get();
+        } else {
+            $drivers = $this->filter($request);
+        }
+
+        $data = [
+            'drivers' => $drivers->toArray(),
+            'request' => $request->all()
+        ];
+
+        $pdf = PDF::loadview('driver.export.driverpdf', $data);
+        $pdf->setPaper('A4', 'landscape');
+        return $pdf->download(time() . 'Log_Report.pdf');
     }
 }

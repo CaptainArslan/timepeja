@@ -17,9 +17,9 @@ class CreateTripsTable extends Migration
         Schema::create('trips', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('u_id')->index('u_id')->nullable();
-            // $table->unsignedBigInteger('o_id')->index('o_id')->nullable();
+            $table->foreignId('organization_id')->constrained('organizations')->onDelete('cascade');
             // $table->foreign('u_id')->references('id')->on('users')->onUpdate('cascade');
-            $table->unsignedBigInteger('sch_id')->index('sch_id')->nullable();
+            $table->unsignedBigInteger('schedule_id')->index('schedule_id')->nullable();
             $table->time('actual_start_time')->nullable();
             $table->string('start_time')->nullable();
             $table->string('end_time')->nullable();
@@ -33,7 +33,7 @@ class CreateTripsTable extends Migration
             ]);
             $table->timestamps();
             $table->softDeletes();
-            $table->foreign('sch_id')->references('id')->on('schedules')->onUpdate('cascade');
+            $table->foreign('schedule_id')->references('id')->on('schedules')->onUpdate('cascade');
             // $table->foreign('o_id')->references('id')->on('organizations')->onUpdate('cascade');
         });
     }

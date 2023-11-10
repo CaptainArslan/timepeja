@@ -18,6 +18,7 @@ class Schedule extends Model
     public const TRIP_STATUS_UPCOMING = 'upcoming';
     public const TRIP_STATUS_INPROGRESS = 'in-progress';
     public const TRIP_STATUS_COMPLETED = 'completed';
+    public const TRIP_STATUS_DELAYED = 'delayed';
 
     public const TRIP_NOTDELAYED = false;
     public const TRIP_ISDELAYED = true;
@@ -47,6 +48,9 @@ class Schedule extends Model
         'route_id' => 'integer',
         'v_id' => 'integer',
         'd_id' => 'integer',
+        'id_delay' => 'boolean',
+        'created_at' => 'datetime:Y-m-d H:i:s',
+        // 'trip_status' => 'boolean'
     ];
 
 

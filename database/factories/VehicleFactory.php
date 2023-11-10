@@ -22,9 +22,9 @@ class VehicleFactory extends Factory
             'number' => $this->faker->regexify('[A-Z]{2}[0-9]{2}[A-Z]{2}[0-9]{4}'),
             'o_id' =>  Organization::inRandomOrder()->first()->id,
             'no_of_seat' => rand(0, 72),
-            'front_pic' => 'placeholder.jpg',
-            'back_pic' => 'placeholder.jpg',
-            'number_pic' => 'placeholder.jpg',
+            'front_pic' => $this->faker->imageUrl(),
+            'back_pic' => $this->faker->imageUrl(),
+            'number_pic' => $this->faker->imageUrl(),
             'status' => 1,
             'created_at' => $this->faker->time(),
         ];

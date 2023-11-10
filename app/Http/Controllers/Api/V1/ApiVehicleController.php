@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use PDF;
 use App\Models\Vehicle;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use App\Models\Pdf as ModelsPdf;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
 
 class ApiVehicleController extends BaseController
 {
@@ -273,20 +276,20 @@ class ApiVehicleController extends BaseController
     public function search(): JsonResponse
     {
         try {
-            $string = request()->input('number');
+            $string = request()->input('string');
             $manager = auth('manager')->user();
             $vehicles = Vehicle::where('number', 'LIKE', '%' . $string . '%')
-                // ->orWhere('o_id', 'LIKE', '%' . $string . '%')
-                // ->orWhere('v_type_id', 'LIKE', '%' . $string . '%')
-                // ->orWhere('status', 'LIKE', '%' . $string . '%')
-                // ->orWhere('created_at', 'LIKE', '%' . $string . '%')
-                // ->orWhere('updated_at', 'LIKE', '%' . $string . '%')
+                ->orWhere('o_id', 'LIKE', '%' . $string . '%')
+                ->orWhere('v_type_id', 'LIKE', '%' . $string . '%')
+                ->orWhere('status', 'LIKE', '%' . $string . '%')
+                ->orWhere('created_at', 'LIKE', '%' . $string . '%')
+                ->orWhere('updated_at', 'LIKE', '%' . $string . '%')
                 ->where('o_id', $manager->o_id)
                 ->select('id', 'number')
                 ->get();
-            if ($vehicles->isEmpty()) {
-                return $this->respondWithError('No Vehicle found');
-            }
+            // if ($vehicles->isEmpty()) {
+            //     return $this->respondWithError('No Vehicle found');
+            // }
             return $this->respondWithSuccess($vehicles, 'Vehicle retrieved successfully', 'API_VEHICLE_SEARCH_RESULT');
         } catch (ModelNotFoundException $th) {
             throw new NotFoundHttpException('Error occured while fetching data');
@@ -449,6 +452,54 @@ class ApiVehicleController extends BaseController
             }
         } catch (ModelNotFoundException $e) {
             throw new NotFoundHttpException('Vehicle not found');
+        }
+    }
+
+    /**
+     * Create pdf for vehicle of an organization
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function createPdf(Request $request)
+    {
+        try {
+            $manager = auth('manager')->user();
+            $vehicles = Vehicle::where('o_id', $manager->o_id)
+                ->with('organization:id,name,branch_name,branch_code,email,phone,address,code')
+                ->with('vehiclesType:id,name')
+                ->get();
+            $data = [
+                'vehicles' => $vehicles->toArray(),
+                'request' => $request->all()
+            ];
+
+            $pdf = PDF::loadview('pdf.vehicle', $data);
+            $pdf->setPaper('A4', 'landscape');
+
+            $filename = date('Ymd_His') . '_Vehicle_Report.pdf'; // Generate a unique filename
+            $filePath = public_path('uploads/pdf/' . $filename); // Get the full file path
+
+            $pdf->save($filePath); // Save the PDF to the specified folder
+
+            $pdfModel = new ModelsPdf();
+            $pdfModel->url = asset('/uploads/pdf/' . $filename);
+
+            if ($pdfModel->save()) {
+                return $this->respondWithSuccess($pdfModel, 'Pdf Created Successfully', 'LOG_REPORT_PDF_CREATED_SUCCESSFULLY');
+            } else {
+                // Delete the saved PDF file if model saving failed
+                if (file_exists($filePath)) {
+                    unlink($filePath);
+                }
+                return $this->respondWithError('Error occurred while creating the PDF. Failed to save the model.');
+            }
+        } catch (\Throwable $th) {
+            // Delete the saved PDF file if an exception occurred
+            // if (file_exists($filePath)) {
+            //     unlink($filePath);
+            // }
+            return $this->respondWithError('Error occurred while creating the PDF: ' . $th->getMessage());
         }
     }
 }

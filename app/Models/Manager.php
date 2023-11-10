@@ -51,7 +51,8 @@ class Manager extends Authenticatable implements JWTSubject
     protected $hidden = [
         'password',
         'remember_token',
-        'otp'
+        'otp',
+        'deleted_at',
     ];
 
     // Rest omitted for brevity
@@ -85,7 +86,7 @@ class Manager extends Authenticatable implements JWTSubject
      */
     public function organization()
     {
-        return $this->belongsTo(Organization::class, 'o_id', 'id');
+        return $this->belongsTo(Organization::class, 'o_id', );
     }
 
     /**
@@ -168,8 +169,14 @@ class Manager extends Authenticatable implements JWTSubject
      *
      * @return  [image with path]  [this function will return the manager image with full path]
      */
-    public function getPictureAttribute()
+    public function getPictureAttribute($value)
     {
+        if (filter_var($value, FILTER_VALIDATE_URL)) {
+            $value = $this->attributes['picture'];
+        } else {
+            $value = asset('uploads/managers/profiles/placeholder.jpg');
+        }
+        return $value;
         return $this->attributes['picture'] ? asset('uploads/managers/profiles/' . $this->attributes['picture']) : null;
     }
 
@@ -181,7 +188,19 @@ class Manager extends Authenticatable implements JWTSubject
      */
     public function getPictureNameAttribute()
     {
-        return $this->attributes['picture'];
+        $url = $this->attributes['picture'] ?? null;
+
+        // Extract the image name from the URL if it's present
+        if ($url && filter_var($url, FILTER_VALIDATE_URL)) {
+            $path = parse_url($url, PHP_URL_PATH);
+            $name = basename($path);
+
+            return $name;
+        }
+
+        // Return the simple name if it's already present
+        return $this->attributes['picture'] ?? null;
+        // return $this->attributes['picture'];
     }
 
     /**

@@ -110,7 +110,7 @@
                                 </td>
                                 <td>{{ formatDate($vehicle->created_at) }}</td>
                                 <td>{{ formatTime($vehicle->created_at)  }}</td>
-                                <td>{{$vehicle->organizations['name'] ?? '' }}</td>
+                                <td>{{$vehicle->organization['name'] ?? '' }}</td>
                                 <td>{{$vehicle->vehiclesTypes['name'] ?? ''}}</td>
                                 <td> {{ $vehicle->id }} {{$vehicle->number}}</td>
                                 <td>

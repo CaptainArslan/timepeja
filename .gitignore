@@ -15,7 +15,7 @@ yarn-error.log
 /.vscode
 /backup-files
 vendor/phpunit/phpunit
-/public/images/*
+# /public/images/*
 /database/migrations-backup
 /database/seeders-backup
 /public/uploads/*

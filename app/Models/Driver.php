@@ -97,7 +97,7 @@ class Driver extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [
-            'exp' => now()->addMonth(1)->timestamp, // Set token expiration to 7 days from now
+            'exp' => now()->addMonth(1)->timestamp, // Set token expiration to 30 days from now
         ];
     }
 
@@ -217,9 +217,16 @@ class Driver extends Authenticatable implements JWTSubject
      * @param  string  $value
      * @return string|null
      */
-    public function getCnicFrontPicAttribute()
+    public function getCnicFrontPicAttribute($value)
     {
-        return $this->attributes['cnic_front_pic'] ? asset('uploads/drivers/cnic/' . $this->attributes['cnic_front_pic']) : null;
+        if (filter_var($value, FILTER_VALIDATE_URL)) {
+            $value = $this->attributes['cnic_front_pic'];
+        } else {
+            $value = asset('uploads/drivers/placeholder.jpg');
+        }
+        return $value;
+
+        // return $this->attributes['cnic_front_pic'] ? asset('uploads/drivers/cnic/' . $this->attributes['cnic_front_pic']) : asset('uploads/drivers/cnic/placeholder.jpg');
     }
 
     /**
@@ -230,7 +237,19 @@ class Driver extends Authenticatable implements JWTSubject
      */
     public function getCnicFrontPicNameAttribute()
     {
-        return $this->attributes['cnic_front_pic'];
+        $url = $this->attributes['cnic_front_pic'] ?? null;
+
+        // Extract the image name from the URL if it's present
+        if ($url && filter_var($url, FILTER_VALIDATE_URL)) {
+            $path = parse_url($url, PHP_URL_PATH);
+            $name = basename($path);
+
+            return $name;
+        }
+
+        // Return the simple name if it's already present
+        return $this->attributes['cnic_front_pic'] ?? null;
+        // return $this->attributes['cnic_front_pic'];
     }
 
     /**
@@ -239,9 +258,16 @@ class Driver extends Authenticatable implements JWTSubject
      * @param  string  $value
      * @return string|null
      */
-    public function getCnicBackPicAttribute()
+    public function getCnicBackPicAttribute($value)
     {
-        return $this->attributes['cnic_back_pic'] ? asset('uploads/drivers/cnic/' . $this->attributes['cnic_back_pic']) : null;
+        if (filter_var($value, FILTER_VALIDATE_URL)) {
+            $value = $this->attributes['cnic_back_pic'];
+        } else {
+            $value = asset('uploads/drivers/placeholder.jpg');
+        }
+        return $value;
+
+        // return $this->attributes['cnic_back_pic'] ? asset('uploads/drivers/cnic/' . $this->attributes['cnic_back_pic']) : asset('uploads/drivers/cnic/placeholder.jpg');
     }
 
     /**
@@ -252,7 +278,19 @@ class Driver extends Authenticatable implements JWTSubject
      */
     public function getCnicBackPicNameAttribute()
     {
-        return $this->attributes['cnic_back_pic'];
+        $url = $this->attributes['cnic_back_pic'] ?? null;
+
+        // Extract the image name from the URL if it's present
+        if ($url && filter_var($url, FILTER_VALIDATE_URL)) {
+            $path = parse_url($url, PHP_URL_PATH);
+            $name = basename($path);
+
+            return $name;
+        }
+
+        // Return the simple name if it's already present
+        return $this->attributes['cnic_back_pic'] ?? null;
+        // return $this->attributes['cnic_back_pic'];
     }
 
     /**
@@ -261,9 +299,15 @@ class Driver extends Authenticatable implements JWTSubject
      * @param  string  $value
      * @return string|null
      */
-    public function getLicenseNoFrontPicAttribute()
+    public function getLicenseNoFrontPicAttribute($value)
     {
-        return $this->attributes['license_no_front_pic'] ? asset('uploads/drivers/license/' . $this->attributes['license_no_front_pic']) : null;
+        if (filter_var($value, FILTER_VALIDATE_URL)) {
+            $value = $this->attributes['license_no_front_pic'];
+        } else {
+            $value = asset('uploads/drivers/placeholder.jpg');
+        }
+        return $value;
+        // return $this->attributes['license_no_front_pic'] ? asset('uploads/drivers/license/' . $this->attributes['license_no_front_pic']) : asset('uploads/drivers/license/placeholder.jpg');
     }
 
     /**
@@ -274,7 +318,19 @@ class Driver extends Authenticatable implements JWTSubject
      */
     public function getLicenseNoFrontPicNameAttribute()
     {
-        return $this->attributes['license_no_front_pic'];
+        $url = $this->attributes['license_no_front_pic'] ?? null;
+
+        // Extract the image name from the URL if it's present
+        if ($url && filter_var($url, FILTER_VALIDATE_URL)) {
+            $path = parse_url($url, PHP_URL_PATH);
+            $name = basename($path);
+
+            return $name;
+        }
+
+        // Return the simple name if it's already present
+        return $this->attributes['license_no_front_pic'] ?? null;
+        // return $this->attributes['license_no_front_pic'];
     }
 
     /**
@@ -283,9 +339,17 @@ class Driver extends Authenticatable implements JWTSubject
      * @param  string  $value
      * @return string|null
      */
-    public function getLicenseNoBackPicAttribute()
+    public function getLicenseNoBackPicAttribute($value)
     {
-        return $this->attributes['license_no_back_pic'] ? asset('uploads/drivers/license/' . $this->attributes['license_no_back_pic']) : null;
+
+        if (filter_var($value, FILTER_VALIDATE_URL)) {
+            $value = $this->attributes['license_no_back_pic'];
+        } else {
+            $value = asset('uploads/drivers/placeholder.jpg');
+        }
+        return $value;
+
+        // return $this->attributes['license_no_back_pic'] ? asset('uploads/drivers/license/' . $this->attributes['license_no_back_pic']) : asset('uploads/drivers/license/placeholder.jpg');
     }
 
     /**
@@ -296,28 +360,82 @@ class Driver extends Authenticatable implements JWTSubject
      */
     public function getLicenseNoBackPicNameAttribute()
     {
-        return $this->attributes['license_no_back_pic'];
+        $url = $this->attributes['license_no_back_pic'] ?? null;
+
+        // Extract the image name from the URL if it's present
+        if ($url && filter_var($url, FILTER_VALIDATE_URL)) {
+            $path = parse_url($url, PHP_URL_PATH);
+            $name = basename($path);
+
+            return $name;
+        }
+
+        // Return the simple name if it's already present
+        return $this->attributes['license_no_back_pic'] ?? null;
+        // return $this->attributes['license_no_back_pic'];
     }
 
     /**
-     * Get the created_at.
+     * Get the back picture of the cnic.
      *
      * @param  string  $value
      * @return string|null
      */
-    public function getCreatedAtAttribute($value)
+    public function getProfilePictureAttribute($value)
     {
-        return Carbon::parse($value)->format('Y-m-d');
+
+        if (filter_var($value, FILTER_VALIDATE_URL)) {
+            $value = $this->attributes['profile_picture'];
+        } else {
+            $value = asset('uploads/drivers/placeholder.jpg');
+        }
+        return $value;
+
+        // return $this->attributes['license_no_back_pic'] ? asset('uploads/drivers/license/' . $this->attributes['license_no_back_pic']) : asset('uploads/drivers/license/placeholder.jpg');
     }
 
     /**
-     * Get the updated_at.
+     * Get the front picture name of the vehicle.
      *
      * @param  string  $value
      * @return string|null
      */
-    public function getUpdatedAtAttribute($value)
+    public function getProfilePictureNameAttribute()
     {
-        return Carbon::parse($value)->format('Y-m-d');
+        $url = $this->attributes['profile_picture'] ?? null;
+
+        // Extract the image name from the URL if it's present
+        if ($url && filter_var($url, FILTER_VALIDATE_URL)) {
+            $path = parse_url($url, PHP_URL_PATH);
+            $name = basename($path);
+
+            return $name;
+        }
+
+        // Return the simple name if it's already present
+        return $this->attributes['profile_picture'] ?? null;
+        // return $this->attributes['license_no_back_pic'];
     }
+
+    // /**
+    //  * Get the created_at.
+    //  *
+    //  * @param  string  $value
+    //  * @return string|null
+    //  */
+    // public function getCreatedAtAttribute($value)
+    // {
+    //     return Carbon::parse($value)->format('Y-m-d');
+    // }
+
+    // /**
+    //  * Get the updated_at.
+    //  *
+    //  * @param  string  $value
+    //  * @return string|null
+    //  */
+    // public function getUpdatedAtAttribute($value)
+    // {
+    //     return Carbon::parse($value)->format('Y-m-d');
+    // }
 }

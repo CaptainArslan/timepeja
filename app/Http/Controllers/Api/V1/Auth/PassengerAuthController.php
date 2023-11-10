@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Api\V1\Auth;
 
+use App\Models\Passenger;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class PassengerAuthController extends Controller
@@ -16,7 +18,7 @@ class PassengerAuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:manager', ['except' => ['login', 'register', 'getVerificationCode', 'forgetPassword']]);
+        $this->middleware('auth:passenger', ['except' => ['login', 'register', 'getVerificationCode', 'forgetPassword']]);
     }
 
     /**
@@ -29,54 +31,35 @@ class PassengerAuthController extends Controller
     public function register(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'name' => ['required', 'string', 'min:3', 'max:255'],
-            'phone' => ['required', 'numeric', 'digits:11'],
-            'otp' => ['required', 'string'],
-            'password' => [
-                'required',
-                'string',
-                'confirmed',
-                'between:8,255',
-                // 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'
-            ],
-            'password_confirmation' => ['required', 'string', 'between:8,255'],
-            'email' => ['nullable', 'email', 'max:255'],
+            'name' => ['required', 'string',  'min:3', 'max:255'],
+            'phone' => ['required', 'numeric', 'digits:11', 'unique:passengers,phone'],
+            'password' => ['required', 'min:6', 'confirmed'],
         ], [
-            'name.required' => 'Name is required',
-            'phone.required' => 'Phone number is required',
-            'phone.numeric' => 'Phone number must be numeric',
-            'phone.digits' => 'Phone number must be 11 digits',
-            'email.email' => 'Email must be a valid email address',
-            'password.required' => 'Password is required',
-            'password.between' => 'Password must be between :min and :max characters',
-            'password.confirmed' => 'Password confirmation does not match',
-            'password.regex' =>
-            'The password must contain at least one uppercase letter, one lowercase letter, one number, 
-            and one special character.',
-            'otp.required' => 'Verification code is required',
+            'name.required' => 'The name field is required.',
+            'phone.required' => 'The phone field is required.',
+            'phone.unique' => 'The phone number is already registered.',
+            'verification_code.required' => 'The verification code field is required.',
+            'password.required' => 'The password field is required.',
+            'password.min' => 'The password must be at least 6 characters long.',
+            'password.confirmed' => 'The password confirmation does not match.',
         ]);
 
         if ($validator->fails()) {
-            return $this->respondWithError("Please fill the form correctly");
+            return $this->respondWithError($validator->errors()->first());
         }
 
-        $manager = Manager::where('phone', $request->phone)
-            ->where('otp', $request->otp)
-            ->first();
-
-        if (!$manager) {
-            return $this->respondWithError("Invalid phone number or verification code");
-        }
-
-        if (empty($manager->token) && empty($manager->password)) {
-            Manager::where('phone', $request->phone)->update([
-                'password' => Hash::make($request->password),
-                ,
-            ]);
-            $manager->makeHidden(['password']);
-            return $this->respondWithSuccess($manager, 'Manager registered successfully', 'REGISTER_API_SUCCESS');
-        } else {
-            return $this->respondWithError('Manager alreasy exist. Please login ');
+        try {
+            $passenger = new Passenger();
+            $passenger->name = $request->name;
+            $passenger->phone = $request->phone;
+            $passenger->unique_id = substr(uniqid(), -8);
+            // $passenger->gaurd_code = substr(uniqid(), -8);
+            // $passenger->otp = rand(1000, 9999);
+            $passenger->password = Hash::make($request->password);
+            $passenger->save();
+            return $this->respondWithSuccess($passenger, 'Passenger register successfully', 'PASSENGER_CREATED_SUCCESSFULLY');
+        } catch (\Throwable $th) {
+            throw $th;
         }
     }
 
@@ -95,7 +78,6 @@ class PassengerAuthController extends Controller
                 'required',
                 'string',
                 'between:8,255',
-                // 'regex:/^(?=.*[a-z])(?=.*[A- Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'
             ],
         ], [
             'phone.required' => 'Phone number is required',
@@ -103,35 +85,27 @@ class PassengerAuthController extends Controller
             'phone.digits' => 'Phone number must be 11 digits',
             'password.required' => 'Password is required',
             'password.between' => 'Password must be between :min and :max characters',
-            'password.regex' =>
-            'The password must contain at least one uppercase letter, one lowercase letter, 
-            one number, and one special character.'
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => "Please fill the form correctly"
-            ], 401);
+            return $this->respondWithError($validator->errors()->first());
         }
 
         $credentials = $request->only(['phone', 'password']);
 
-        if (!$token = auth('manager')->attempt($credentials)) {
+
+        if (!$token = auth('passenger')->attempt($credentials)) {
             return $this->respondWithError('Invalid phone number or password');
         }
 
-        $user = auth('manager')->user();
-        if (!$user) {
+        $passenger = auth('passenger')->user();
+        if (!$passenger) {
             return $this->respondWithError('User not Found');
         }
-        $user->makeHidden('password');
 
-        return $this->respondWithSuccess($user, 'Login successfully', 'LOGIN_API_SUCCESS', [
+        return $this->respondWithSuccess($passenger, 'Login successfully', 'LOGIN_API_SUCCESS', [
             'content-type' => 'application/json',
-            'uid' => $user->email,
-            // 'access-token' => $user->token,
-            'Authorization' => 'Bearer ' . $token
+            'Authorization' => $token
         ]);
     }
 
@@ -145,7 +119,7 @@ class PassengerAuthController extends Controller
     public function getVerificationCode(Request $request): JsonResponse
     {
         $fields = $request->all();
-        $validate = Validator::make($fields, [
+        $validator = Validator::make($fields, [
             'phone' => ['required', 'numeric', 'digits:11'],
         ], [
             'phone.required' => 'Phone number is required',
@@ -153,17 +127,18 @@ class PassengerAuthController extends Controller
             'phone.digits' => 'Phone number must be 11 digits',
         ]);
 
-        if ($validate->fails()) {
-            return $this->respondWithError('Please fill the form correctly');
+        if ($validator->fails()) {
+            return $this->respondWithError($validator->errors()->first());
         }
 
-        $manager = Manager::where('phone', $fields['phone'])->first();
-        if (!empty($manager)) {
-            $manager = Manager::find($manager->id);
-            $manager->otp = substr(uniqid(), -4);
-            $save = $manager->save();
+        $passenger = Passenger::where('phone', $fields['phone'])->first();
+        if (!empty($passenger)) {
+            $passenger = Passenger::find($passenger->id);
+            $passenger->otp = rand(1000, 9999);
+            $save = $passenger->save();
             if ($save) {
-                return $this->respondWithSuccess($manager->otp, 'Otp Sent Successfully', 'API_GET_CODE');
+                $data = $passenger->only('id', 'name', 'phone', 'otp');
+                return $this->respondWithSuccess($data, 'Otp Sent Successfully', 'API_GET_CODE');
             } else {
                 return $this->respondWithError('Error Occured while sending otp');
             }
@@ -179,7 +154,7 @@ class PassengerAuthController extends Controller
      *
      * @return  [type]             [return description]
      */
-    public function forgetPassword(Request $request)
+    public function forgetPassword(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'otp' => ['required', 'string'],
@@ -198,24 +173,60 @@ class PassengerAuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return $this->respondWithError('Please fill the forn correctly');
+            return $this->respondWithError($validator->errors()->first());
         }
 
-        $manager = Manager::where('phone', $request->phone)
+        $passenger = Passenger::where('phone', $request->phone)
             ->where('otp', $request->otp)
             ->first();
 
-        if (!$manager) {
+        if (!$passenger) {
             return $this->respondWithError('invalid phone or verification code');
         }
 
-        Manager::where('phone', $request->phone)
+        Passenger::where('phone', $request->phone)
             ->where('otp', $request->otp)
             ->update([
                 'password' => Hash::make($request->password),
             ]);
-        $manager->makeHidden('password');
+        $passenger->makeHidden('password');
 
-        return $this->respondWithSuccess($manager, 'Password Updated Successfully', 'PASSWORD_UPDATE');
+        return $this->respondWithSuccess(null, 'Password Updated Successfully', 'PASSWORD_UPDATE');
+    }
+
+    /**
+     * Get the authenticated User.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function profile(): JsonResponse
+    {
+        return $this->respondWithSuccess(
+            auth('passenger')->user(),
+            // ->load('organization')
+            'Passenger profile',
+            'PASSENGER_PROFILE'
+        );
+    }
+
+    /**
+     * Log the user out (Invalidate the token).
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function logout(): JsonResponse
+    {
+        auth('passenger')->logout();
+        return response()->json(['message' => 'Successfully logged out']);
+    }
+
+    /**
+     * Refresh a token.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function refresh(): JsonResponse
+    {
+        return $this->respondWithToken(auth('passenger')->refresh());
     }
 }

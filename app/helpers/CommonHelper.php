@@ -1,6 +1,7 @@
 <?php
 
 use App\Jobs\SendOrgRegisterEmailJob;
+use App\Models\Setting;
 
 /**
  * [print_data description]
@@ -152,4 +153,15 @@ function emailsendingJob($email, $object)
         'otp' => $object->otp,
     ];
     dispatch(new SendOrgRegisterEmailJob($email, $details));
+}
+
+function getGoogleApi()
+{
+    try {
+        $data = Setting::where('platform', 'google_map')->first();
+        if ($data)
+            return $data->credentials;
+    } catch (\Exception $e) {
+        return null;
+    }
 }

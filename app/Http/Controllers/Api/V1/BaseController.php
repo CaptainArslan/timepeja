@@ -70,4 +70,18 @@ class BaseController extends Controller
             'message' => $message,
         ], $statusCode, $headers);
     }
+
+    /**
+     * success response method.
+     */
+    public static function respondWithSuccessLogReport($data = null, $download_url = null, $message = null, $code = null, $headers = [], $statusCode = 200)
+    {
+        return response()->json([
+            'success' => true,
+            'code' => $code,
+            'message' => $message,
+            'data' => $data,
+            'download_url' => $download_url,
+        ], $statusCode, $headers);
+    }
 }
