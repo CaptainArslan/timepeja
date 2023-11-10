@@ -133,9 +133,10 @@ Route::group(['middleware' => 'api'], function () {
 
             // get tranport user requests
             Route::get('/requests', [ApiRequestController::class, 'index']);
+            Route::post('/request/store', [ApiRequestController::class, 'store']);
+
             Route::get('/requests/past', [ApiRequestController::class, 'past']);
             Route::get('/requests/dissapproved', [ApiRequestController::class, 'disapproved']);
-            Route::post('/request/store', [ApiRequestController::class, 'store']);
             Route::get('/request/{id}', [ApiRequestController::class, 'show']);
             Route::delete('/requests/delete', [ApiRequestController::class, 'delete']);
             Route::put('/requests/approve', [ApiRequestController::class, 'approveRequests']);

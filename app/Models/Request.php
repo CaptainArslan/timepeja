@@ -87,12 +87,13 @@ class Request extends Model
         'route_id' => 'integer',
         'pickup_city_id' => 'integer',
         'created_at' => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s',
     ];
 
     protected $hidden = [
         'created_by',
-        'created_user_id',
         'deleted_at',
+        'created_user_id',
     ];
 
     /**

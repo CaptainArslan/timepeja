@@ -373,8 +373,10 @@ class RequestController extends BaseController
             return $this->respondWithError(implode(',', $validator->errors()->all()));
         }
 
+        $manager = auth('manager')->user();
+
         $request_id =  null;
-        $organization_id = $request->organization_id;
+        $organization_id = $manager->o_id;
         $passenger = Passenger::where('unique_id', $request->unique_id)->first();
         $passenger_id = $passenger->id;
         if ($request->type === 'student_guardian' || $request->type === 'employee_guardian') {
