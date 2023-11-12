@@ -78,6 +78,8 @@ Route::group(['middleware' => 'api'], function () {
                 Route::get('/published/{date}', [ApiScheduleController::class, 'getPublishedScheduleByDate']);
                 Route::get('/created/{date}', [ApiScheduleController::class, 'getCreatedScheduleByDate']);
             });
+            Route::get('/created-schedule/pdf/{date}', [PdfController::class, 'createdSchedule']);
+            Route::get('/published-schedule/pdf/{date}', [PdfController::class, 'publishedSchedule']);
 
             // Vehicle Type
             Route::get('vehicle-types', [VehicleTypeController::class, 'index']);
@@ -89,11 +91,9 @@ Route::group(['middleware' => 'api'], function () {
 
 
             // Driver api for web
-            Route::group(['prefix' => 'web/driver'], function () {
-                Route::get('/', [ApiDriverController::class, 'getDriver']);
-                Route::post('/', [ApiDriverController::class, 'storeWeb']);
-                Route::put('/{id}', [ApiDriverController::class, 'updateWeb']);
-            });
+            Route::get('web/driver/', [ApiDriverController::class, 'getDriver']);
+            Route::post('web/driver/', [ApiDriverController::class, 'storeWeb']);
+            Route::put('web/driver/{id}', [ApiDriverController::class, 'updateWeb']);
 
 
             // Vehicle Api
@@ -148,6 +148,7 @@ Route::group(['middleware' => 'api'], function () {
 
             Route::get('/locations', [LocationController::class, 'index']);
             Route::get('/locations/{id}', [LocationController::class, 'show']);
+
         });
     });
 
