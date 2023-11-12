@@ -78,7 +78,7 @@ class RequestFactory extends Factory
                 'team lead',
                 'senior team lead',
             ]);
-            $guardian_code = Str::random(10);
+            $guardian_code = Str::random(6);
         } elseif ($type == Requests::STUDENT_GUARDIAN || $type == Requests::EMPLOYEE_GUARDIAN) {
             $cnic_no = $this->faker->regexify('/^[0-9+]{13}$/');
             $cnic_front_image = $this->faker->imageUrl();

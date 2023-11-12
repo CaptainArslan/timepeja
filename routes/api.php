@@ -138,6 +138,9 @@ Route::group(['middleware' => 'api'], function () {
             Route::get('/requests/past', [ApiRequestController::class, 'past']);
             Route::get('/requests/dissapproved', [ApiRequestController::class, 'disapproved']);
             Route::get('/request/{id}', [ApiRequestController::class, 'show']);
+
+            Route::get('/request/{code}', [ApiRequestController::class, 'getRequestDetailByCode']);
+
             Route::delete('/requests/delete', [ApiRequestController::class, 'delete']);
             Route::put('/requests/approve', [ApiRequestController::class, 'approveRequests']);
             Route::put('/requests/dissapprove', [ApiRequestController::class, 'dissapproveRequests']);

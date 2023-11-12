@@ -8,6 +8,7 @@ use App\Models\Student;
 use App\Models\Employee;
 use App\Models\Guardian;
 use App\Models\Passenger;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\JsonResponse;
@@ -394,7 +395,7 @@ class RequestController extends BaseController
         $data = $request->all();
         $data['passenger_id'] = $passenger_id;
         $data['upload_image'] = $request->upload_image;
-        $data['guardian_code'] = substr(uniqid(), -8);
+        $data['guardian_code'] = Str::random(6);
         $data['parent_request_id'] = $request_id;
         $data['organization_id'] = $organization_id;
         $data['created_by'] = 'manager';
@@ -761,5 +762,21 @@ class RequestController extends BaseController
         $newRequest->status = Requests::STATUS_PENDING;
         $newRequest->save();
         return $newRequest;
+    }
+
+
+    public function getRequestDetailByCode($code){
+        try {
+            $request = Requests::with('organization:id,name')
+                ->with('city:id,name')
+                ->with('route:id,name')
+                ->with('passenger:id,name,phone')
+                ->where('guardian_code', $code)
+                ->firstOrFail();
+
+            return $this->respondWithSuccess($request, 'Request Details', 'REQUEST_DETAILS');
+        } catch (\Throwable $th) {
+            return $this->respondWithError('Error Occured while fetching request details');
+        }
     }
 }
