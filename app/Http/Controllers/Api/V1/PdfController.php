@@ -157,7 +157,6 @@ class PdfController extends Controller
 
     public function createdSchedule($date)
     {
-
         $validator = Validator::make(['date' => $date], [
             'date' => ['required', 'date'],
         ], [
@@ -195,7 +194,7 @@ class PdfController extends Controller
             $download_url = $this->creatdPdf($data);
             $response = [
                 'download_url' => $download_url,
-                'schedules' => $schedule,
+                'data' => $schedule,
             ];
             return $this->respondWithSuccess($response, 'Created schedule fetched successfully', 'CREATED_SCHEDULE_FETCHED_SUCCESSFULLY');
         } catch (Throwable $th) {
@@ -206,7 +205,7 @@ class PdfController extends Controller
 
     public function creatdPdf($data)
     {
-        $pdf = PDF::loadview('pdf.created-schedule', $data);
+        $pdf = PDF::loadview('pdf.schedule', $data);
         $pdf->setPaper('A4', 'landscape');
 
         $filename = uniqid() . '_' . $data['title'] . '_schedule.pdf'; // Generate a unique filename
@@ -220,8 +219,51 @@ class PdfController extends Controller
         if ($pdfModel->save()) {
             return $pdfModel->url;
         } else {
-            Log::error('Error occurred while creating the PDF. Failed to save the model.');
+            Log::error('Error occurred while creating the PDF. Failed to save the model.' . $data['title']);
             return null;
+        }
+    }
+
+    public function publishedSchedule($date)
+    {
+        $validator = Validator::make(['date' => $date], [
+            'date' => ['required', 'date'],
+        ], [
+            'date.required' => 'Date is required',
+            'date.date' => 'Date must be a valid date',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->respondWithError($validator->errors()->first());
+        }
+
+        $nextDate = date("Y-m-d", strtotime($date) + 86400);
+        $manager = auth('manager')->user();
+        $schedule = Schedule::where('o_id', $manager->o_id)
+            ->where('date', '>=', $date)
+            ->where('date', '<', $nextDate)
+            ->where('status', Schedule::STATUS_PUBLISHED)
+            ->with('routes:id,name,number,from,to')
+            ->with('vehicles:id,number')
+            ->with('drivers:id,name')
+            ->with('organizations:id,name')
+            ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time', 'status', 'trip_status')
+            ->get();
+        if ($schedule->isEmpty()) {
+            return $this->respondWithError('No data found');
+        }
+        try {
+            $data = $this->creatdPdf([
+                'schedules' => $schedule->toArray(),
+                'organization' => $manager->organization->toArray(),
+                'date' => $date,
+                'title' => 'Published',
+            ]);
+
+            return $this->respondWithSuccess($data, 'Published schedule fetched successfully', 'PUBLISHED_SCHEDULE_FETCHED_SUCCESSFULLY');
+        } catch (Throwable $th) {
+            Log::error('Error occurred while creating the PDF PUBLISHED SCHEDULE: ' . $th->getMessage());
+            return $this->respondWithError('Error occurred while creating PDF');
         }
     }
 }

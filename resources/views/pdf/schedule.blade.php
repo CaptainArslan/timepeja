@@ -51,7 +51,7 @@
                     <td>{{ $row['drivers']['name'] }}</td>
                     <td>{{ $row['vehicles']['number'] }}</td>
                     <td>{{ $row['routes']['name'] }} </td>
-                    <td>{{ $title }} Schedule </td>
+                    <td>{{ $title }} </td>
                 </tr>
                 @empty
                 <tr>
