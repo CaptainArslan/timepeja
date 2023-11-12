@@ -774,7 +774,7 @@ class RequestController extends BaseController
                 ->where('guardian_code', $code)
                 ->firstOrFail();
 
-            return $this->respondWithSuccess($request, 'Request Details', 'REQUEST_DETAILS');
+            return $this->respondWithSuccess($request, 'Request Details', 'REQUEST_SPECIFIC_DETAILS');
         } catch (\Throwable $th) {
             return $this->respondWithError('Error Occured while fetching request details');
         }
