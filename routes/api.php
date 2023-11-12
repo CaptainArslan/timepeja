@@ -139,7 +139,7 @@ Route::group(['middleware' => 'api'], function () {
             Route::get('/requests/dissapproved', [ApiRequestController::class, 'disapproved']);
             Route::get('/request/{id}', [ApiRequestController::class, 'show']);
 
-            Route::get('/request/{code}', [ApiRequestController::class, 'getRequestDetailByCode']);
+            Route::get('/request/code/{code}', [ApiRequestController::class, 'getRequestDetailByCode']);
 
             Route::delete('/requests/delete', [ApiRequestController::class, 'delete']);
             Route::put('/requests/approve', [ApiRequestController::class, 'approveRequests']);
