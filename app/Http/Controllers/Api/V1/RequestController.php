@@ -284,7 +284,7 @@ class RequestController extends BaseController
                 // }),
             ],
             'degree_duration' => [
-                'nullable', 'integer',
+                'nullable',
                 // Rule::requiredIf(function () use ($request) {
                 //     return in_array($request->type, ['student',]);
                 // }),
