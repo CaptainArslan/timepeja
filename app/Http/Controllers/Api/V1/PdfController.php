@@ -260,7 +260,11 @@ class PdfController extends Controller
                 'title' => 'Published',
             ]);
 
-            return $this->respondWithSuccess($data, 'Published schedule fetched successfully', 'PUBLISHED_SCHEDULE_FETCHED_SUCCESSFULLY');
+            $response = [
+                'download_url' => $data,
+            ];
+
+            return $this->respondWithSuccess($response, 'Published schedule fetched successfully', 'PUBLISHED_SCHEDULE_FETCHED_SUCCESSFULLY');
         } catch (Throwable $th) {
             Log::error('Error occurred while creating the PDF PUBLISHED SCHEDULE: ' . $th->getMessage());
             return $this->respondWithError('Error occurred while creating PDF');
