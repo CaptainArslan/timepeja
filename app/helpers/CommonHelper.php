@@ -165,3 +165,9 @@ function getGoogleApi()
         return null;
     }
 }
+
+
+function getPdfLogo()
+{
+    return  asset('images/logo.png');
+}
