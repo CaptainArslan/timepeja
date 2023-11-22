@@ -74,7 +74,7 @@ class PassengerRequestController extends BaseController
             'student_type' => ['nullable', 'string', 'in:school,college,university', Rule::requiredIf(function () use ($request) {
                 return in_array($request->type, ['student', 'student_guardian']);
             }),],
-            'gender' => ['nullable', 'string', 'in:male,female,others',],
+            'gender' => ['nullable', 'string', 'in:male,female,other',],
             'name' => ['required', 'string',],
             'phone' => ['required', 'string',],
             // 'passenger_id' => ['required', 'numeric', 'exists:passengers,id',],
@@ -113,13 +113,13 @@ class PassengerRequestController extends BaseController
                 }),
             ],
             'batch_year' => [
-                'nullable', 'integer',
+                'nullable', 'string',
                 // Rule::requiredIf(function () use ($request) {
                 //     return in_array($request->type, ['student',]);
                 // }),
             ],
             'degree_duration' => [
-                'nullable', 'integer',
+                'nullable', 'string',
                 // Rule::requiredIf(function () use ($request) {
                 //     return in_array($request->type, ['student',]);
                 // }),
@@ -167,11 +167,10 @@ class PassengerRequestController extends BaseController
                 })
             ],
             'relation' => [
-                'nullable', 'string',
+                'nullable', 'string', 'in:father,mother,uncle,aunt,brother,sister,grandfather,grandmother,other',
                 Rule::requiredIf(function () use ($request) {
                     return in_array($request->type, ['student_guardian', 'employee_guardian']);
                 }),
-                'in:father,mother,uncle,aunt,brother,sister,grandfather,grandmother,other'
             ],
             'guardian_code' => [
                 'nullable', 'string', 'exists:requests,guardian_code',
