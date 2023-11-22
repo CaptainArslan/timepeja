@@ -18,6 +18,7 @@ vendor/phpunit/phpunit
 # /public/images/*
 /database/migrations-backup
 /database/seeders-backup
-/public/uploads/*
+/public/uploads/
 # /public/managers/*
 # /public/drivers/*
+/public/uploads/*
