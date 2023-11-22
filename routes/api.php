@@ -38,18 +38,15 @@ use App\Http\Controllers\Api\V1\RequestController as ApiRequestController;
 Route::group(['middleware' => 'api'], function () {
     Route::prefix('v1/manager')->name('manager.')->group(function () {
 
-        // Manager Auth
         Route::post('/register', [ManagerAuthController::class, 'register']);
         Route::post('/login', [ManagerAuthController::class, 'login']);
         Route::post('/login/web', [ManagerAuthController::class, 'webLogin']);
         Route::post('/get-code', [ManagerAuthController::class, 'getVerificationCode'])
             ->middleware('throttle:ratelimit');
-
         Route::post('/refresh', [ManagerAuthController::class, 'refresh']);
         Route::post('/logout', [ManagerAuthController::class, 'logout']);
         Route::post('/forget-password', [ManagerAuthController::class, 'forgetPassword']);
 
-        // Manager Auth Middleware with jwt
         Route::middleware(['jwt.verify:manager'])->group(function () {
             Route::group(['prefix' => 'profile'], function () {
                 Route::get('/', [ManagerAuthController::class, 'profile']);
@@ -58,19 +55,13 @@ Route::group(['middleware' => 'api'], function () {
                 Route::put('/web/update', [ApiManagerController::class, 'profileUpdateWeb']);
             });
 
-            // Route::post('/create-schedule', [ScheduleController::class, 'create']);
             // Upload Media Api
             Route::post('upload-media', [MediaController::class, 'uploadMedia']);
-
-            // Get all organization data
             Route::get('/get-organization-data', [ApiScheduleController::class, 'getOrganizationData']);
 
             // Schedule Api
             Route::resource('/schedule', ApiScheduleController::class);
-            Route::group(['prefix' => 'schedule'], function () {
-
-                Route::post('/replicate', [ApiScheduleController::class, 'replicate']);
-            });
+            Route::post('/schedule/replicate', [ApiScheduleController::class, 'replicate']);
 
             Route::group(['prefix' => 'schedules'], function () {
                 Route::put('/publish', [ApiScheduleController::class, 'publish']);
@@ -149,7 +140,6 @@ Route::group(['middleware' => 'api'], function () {
 
     // Driver Apis
     Route::prefix('v1/driver')->name('driver.')->group(function () {
-        // Driver Auth
         Route::post('/register', [DriverAuthController::class, 'register']);
         Route::post('/login', [DriverAuthController::class, 'login']);
         Route::post('/get-code', [DriverAuthController::class, 'getVerificationCode'])
@@ -157,17 +147,11 @@ Route::group(['middleware' => 'api'], function () {
         Route::post('/refresh', [DriverAuthController::class, 'refresh']);
         Route::post('/forget-password', [DriverAuthController::class, 'forgetPassword']);
 
-        /**
-         * Driver Auth Middleware with jwt
-         */
         Route::middleware(['jwt.verify:driver'])->group(function () {
-
             Route::get('/profile', [DriverAuthController::class, 'driverProfile']);
             Route::post('/logout', [DriverAuthController::class, 'logout']);
-
             Route::put('/online', [DriverScheduleController::class, 'online']);
             Route::put('/offline', [DriverScheduleController::class, 'offline']);
-
             Route::get('/schedule/incoming/{date}', [DriverScheduleController::class, 'index']);
             Route::put('/schedule/start/{id}', [DriverScheduleController::class, 'startTrip']);
             Route::put('/schedule/end/{id}', [DriverScheduleController::class, 'endTrip']);
@@ -177,23 +161,16 @@ Route::group(['middleware' => 'api'], function () {
 
     // Passenger apis
     Route::prefix('v1/passenger')->name('passenger.')->group(function () {
-        // Driver Auth
         Route::post('/register', [PassengerAuthController::class, 'register']);
         Route::post('/login', [PassengerAuthController::class, 'login']);
         Route::post('/get-code', [PassengerAuthController::class, 'getVerificationCode'])
             ->middleware('throttle:ratelimit');
         Route::post('/refresh', [PassengerAuthController::class, 'refresh']);
         Route::post('/forget-password', [PassengerAuthController::class, 'forgetPassword']);
-
-        /**
-         * Driver Auth Middleware with jwt
-         */
         Route::middleware(['jwt.verify:passenger'])->group(function () {
             Route::get('/profile', [PassengerAuthController::class, 'profile']);
             Route::post('/logout', [PassengerAuthController::class, 'logout']);
-
             Route::post('upload-media', [MediaController::class, 'uploadMedia']);
-
             // Passenger Request Api
             Route::group(['prefix' => 'requests', 'name' => 'requests'], function () {
                 // get tranport user requests
@@ -208,7 +185,6 @@ Route::group(['middleware' => 'api'], function () {
             Route::get('/schedules/{id}/{date}', [PassengerScheduleController::class, 'index']);
             Route::post('/add-favorites-routes', [RouteController::class, 'addFavoriteRoute']);
             Route::post('/remove-favorites-routes', [RouteController::class, 'removeFavoriteRoute']);
-
             Route::post('update-phone', [PassengerController::class, 'updatePhone']);
         });
     });

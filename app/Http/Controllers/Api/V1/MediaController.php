@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Models\OtherMedia;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -15,9 +16,8 @@ class MediaController extends BaseController
      * @param Request $request
      * @return void
      */
-    public function uploadMedia(Request $request)
+    public function uploadMedia(Request $request): JsonResponse
     {
-        // return $request->all();
         $validator = Validator::make(
             $request->all(),
             [
@@ -73,7 +73,6 @@ class MediaController extends BaseController
                 $save = $othermedia->save();
                 if (!$save) {
                     return $this->respondWithError('Error ooccured while uploading');
-                    // throw new \Exception('Error Occured while image uploading');
                 }
                 $uploaded[] = $othermedia;
             }

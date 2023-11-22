@@ -5,19 +5,12 @@ namespace App\Http\Middleware;
 use Closure;
 use ApiHelper;
 use Exception;
-use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
-use Tymon\JWTAuth\Http\Middleware\BaseMiddleware;
+use Tymon\JWTAuth\Exceptions\TokenExpiredException;
+use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 
 class JwtMiddleware
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
-     * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
-     */
     public function handle($request, Closure $next, $guard)
     {
         // $uid = $request->header('uid');
@@ -30,12 +23,13 @@ class JwtMiddleware
         try {
             JWTAuth::parseToken()->authenticate($guard);
         } catch (Exception $e) {
-            if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException) {
+            dd($request->header('Authorization'));
+            if ($e instanceof TokenInvalidException) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Token is Invalid'
                 ], 401);
-            } elseif ($e instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException) {
+            } elseif ($e instanceof TokenExpiredException) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Token is Expired'
