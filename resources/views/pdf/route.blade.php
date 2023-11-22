@@ -10,7 +10,7 @@
 <body>
     <header class="clearfix">
         <div id="logo">
-            <img src="{{ asset('images/logo.png') }}">
+            <img src="{{ getPdfLogo() }}">
         </div>
         <h1>
             Routes

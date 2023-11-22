@@ -37,6 +37,7 @@ class CreateRequestsTable extends Migration
             ])->default('male');
 
             $table->string('name');
+            $table->string('upload_image')->nullable();
             $table->string('phone');
             $table->foreignId('passenger_id')->nullable()->constrained('passengers');
             $table->string('email')->nullable();

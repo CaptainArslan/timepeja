@@ -8,6 +8,7 @@ use App\Models\Student;
 use App\Models\Employee;
 use App\Models\Guardian;
 use App\Models\Passenger;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\JsonResponse;
@@ -233,7 +234,7 @@ class RequestController extends BaseController
     {
         $validator = Validator::make($request->all(),  [
             'unique_id' => ['required', 'string', 'exists:passengers,unique_id',],
-            'organization_id' => ['required', 'numeric', 'exists:organizations,id',],
+            'organization_id' => ['nullable', 'numeric', 'exists:organizations,id',],
             // 'parent_request_id' => ['nullable', 'numeric', 'exists:requests,id',],
             'type' => ['required', 'string', 'in:student,employee,student_guardian,employee_guardian',],
             'student_type' => ['nullable', 'string', 'in:school,college,university', Rule::requiredIf(function () use ($request) {
@@ -261,21 +262,21 @@ class RequestController extends BaseController
             ],
             'class' => [
                 'nullable', 'string',
-                Rule::requiredIf(function () use ($request) {
-                    return in_array($request->type, ['student']);
-                }),
+                // Rule::requiredIf(function () use ($request) {
+                //     return in_array($request->type, ['student']);
+                // }),
             ],
             'section' => [
                 'nullable', 'string',
-                Rule::requiredIf(function () use ($request) {
-                    return in_array($request->type, ['student']);
-                }),
+                // Rule::requiredIf(function () use ($request) {
+                //     return in_array($request->type, ['student']);
+                // }),
             ],
             'qualification' => [
                 'nullable', 'string',
-                Rule::requiredIf(function () use ($request) {
-                    return in_array($request->type, ['student',]);
-                }),
+                // Rule::requiredIf(function () use ($request) {
+                //     return in_array($request->type, ['student',]);
+                // }),
             ],
             'batch_year' => [
                 'nullable', 'integer',
@@ -284,7 +285,7 @@ class RequestController extends BaseController
                 // }),
             ],
             'degree_duration' => [
-                'nullable', 'integer',
+                'nullable',
                 // Rule::requiredIf(function () use ($request) {
                 //     return in_array($request->type, ['student',]);
                 // }),
@@ -373,8 +374,10 @@ class RequestController extends BaseController
             return $this->respondWithError(implode(',', $validator->errors()->all()));
         }
 
+        $manager = auth('manager')->user();
+
         $request_id =  null;
-        $organization_id = $request->organization_id;
+        $organization_id = $manager->o_id;
         $passenger = Passenger::where('unique_id', $request->unique_id)->first();
         $passenger_id = $passenger->id;
         if ($request->type === 'student_guardian' || $request->type === 'employee_guardian') {
@@ -391,7 +394,8 @@ class RequestController extends BaseController
 
         $data = $request->all();
         $data['passenger_id'] = $passenger_id;
-        $data['guardian_code'] = substr(uniqid(), -8);
+        $data['upload_image'] = $request->upload_image;
+        $data['guardian_code'] = Str::random(6);
         $data['parent_request_id'] = $request_id;
         $data['organization_id'] = $organization_id;
         $data['created_by'] = 'manager';
@@ -758,5 +762,21 @@ class RequestController extends BaseController
         $newRequest->status = Requests::STATUS_PENDING;
         $newRequest->save();
         return $newRequest;
+    }
+
+
+    public function getRequestDetailByCode($code){
+        try {
+            $request = Requests::with('organization:id,name')
+                ->with('city:id,name')
+                ->with('route:id,name')
+                ->with('passenger:id,name,phone')
+                ->where('guardian_code', $code)
+                ->firstOrFail();
+
+            return $this->respondWithSuccess($request, 'Request Details', 'REQUEST_SPECIFIC_DETAILS');
+        } catch (\Throwable $th) {
+            return $this->respondWithError('Error Occured while fetching request details');
+        }
     }
 }
