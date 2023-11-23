@@ -100,7 +100,6 @@ Route::group(['middleware' => 'api'], function () {
                 Route::put('/{id}', [ApiVehicleController::class, 'updateWeb']);
             });
 
-
             // Organization Api
             Route::get('/get-all-organizations', [ApiOrganizationController::class, 'index']);
             Route::get('/organization/{code}', [ApiOrganizationController::class, 'show']);
@@ -177,6 +176,7 @@ Route::group(['middleware' => 'api'], function () {
             Route::post('/logout', [PassengerAuthController::class, 'logout']);
             Route::post('upload-media', [MediaController::class, 'uploadMedia']);
             // Passenger Request Api
+
             Route::group(['prefix' => 'requests', 'name' => 'requests'], function () {
                 // get tranport user requests
                 Route::get('/', [PassengerRequestController::class, 'index']);
@@ -184,9 +184,9 @@ Route::group(['middleware' => 'api'], function () {
                 Route::post('/store', [PassengerRequestController::class, 'store']);
                 Route::put('/{id}', [PassengerRequestController::class, 'update']);
                 Route::delete('/{id}', [PassengerRequestController::class, 'destroy']);
-                // Route::post('/', [ApiVehicleController::class, 'storeWeb']);
-                // Route::put('/{id}', [ApiVehicleController::class, 'updateWeb']);
+                Route::get('/code/{code}', [ApiRequestController::class, 'getRequestDetailByCode']);
             });
+
             Route::get('/schedules/{id}/{date}', [PassengerScheduleController::class, 'index']);
             Route::post('/add-favorites-routes', [RouteController::class, 'addFavoriteRoute']);
             Route::post('/remove-favorites-routes', [RouteController::class, 'removeFavoriteRoute']);

@@ -23,7 +23,7 @@ class JwtMiddleware
         try {
             JWTAuth::parseToken()->authenticate($guard);
         } catch (Exception $e) {
-            dd($request->header('Authorization'));
+            // dd($request->header('Authorization'));
             if ($e instanceof TokenInvalidException) {
                 return response()->json([
                     'success' => false,

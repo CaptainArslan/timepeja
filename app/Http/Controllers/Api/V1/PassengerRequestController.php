@@ -473,4 +473,19 @@ class PassengerRequestController extends BaseController
             return $this->respondWithError('Error occurred while fetching request details');
         }
     }
+
+    public function getRequestDetailByCode($code){
+        try {
+            $request = Requests::with('organization:id,name')
+                ->with('city:id,name')
+                ->with('route:id,name')
+                ->with('passenger:id,name,phone')
+                ->where('guardian_code', $code)
+                ->firstOrFail();
+
+            return $this->respondWithSuccess($request, 'Request Details', 'REQUEST_SPECIFIC_DETAILS');
+        } catch (\Throwable $th) {
+            return $this->respondWithError('Error Occured while fetching request details');
+        }
+    }
 }
