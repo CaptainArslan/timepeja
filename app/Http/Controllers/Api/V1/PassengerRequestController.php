@@ -299,7 +299,7 @@ class PassengerRequestController extends BaseController
             'town' => ['nullable', 'string',],
             'lattitude' => ['nullable', 'string',],
             'longitude' => ['nullable', 'string',],
-            'pickup_city_id' => ['nullable', 'string',],
+            'pickup_city_id' => ['nullable', 'string'],
             'additional_detail' => ['nullable', 'string',],
             'roll_no' => [
                 'nullable', 'string',
@@ -326,13 +326,13 @@ class PassengerRequestController extends BaseController
                 }),
             ],
             'batch_year' => [
-                'nullable', 'integer',
+                'nullable', 'string',
                 // Rule::requiredIf(function () use ($request) {
                 //     return in_array($request->type, ['student',]);
                 // }),
             ],
             'degree_duration' => [
-                'nullable', 'integer',
+                'nullable', 'string',
                 // Rule::requiredIf(function () use ($request) {
                 //     return in_array($request->type, ['student',]);
                 // }),
@@ -368,7 +368,7 @@ class PassengerRequestController extends BaseController
                 }),
             ],
             'cnic_front_image' => [
-                'nullable',
+                'nullable', 'string',
                 Rule::requiredIf(function () use ($request) {
                     return in_array($request->type, ['student_guardian', 'employee_guardian']);
                 }),

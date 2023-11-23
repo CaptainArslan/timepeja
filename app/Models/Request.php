@@ -55,6 +55,8 @@ class Request extends Model
         'lattitude',
         'longitude',
         'pickup_city_id',
+        'pickup_city',
+        'city',
         'additional_detail',
         'roll_no',
         'class',

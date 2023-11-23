@@ -49,6 +49,8 @@ class CreateRequestsTable extends Migration
             $table->string('lattitude')->nullable();
             $table->string('longitude')->nullable();
             $table->foreignId('pickup_city_id')->nullable()->constrained('cities');
+            $table->string('pickup_city')->nullable();
+            $table->string('city')->nullable();
             $table->string('additional_detail')->nullable();
             $table->string('roll_no')->nullable();
             $table->string('class')->nullable();
