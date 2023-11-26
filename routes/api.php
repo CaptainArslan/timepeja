@@ -193,6 +193,8 @@ Route::group(['middleware' => 'api'], function () {
             Route::post('update-phone', [PassengerController::class, 'updatePhone']);
 
             Route::get('/get-routes', [PassengerRouteController::class, 'getRoutes']);
+            Route::get('/get-all-organizations', [ApiOrganizationController::class, 'index']);
+            Route::get('/organization/{code}', [ApiOrganizationController::class, 'show']);
         });
     });
 });
