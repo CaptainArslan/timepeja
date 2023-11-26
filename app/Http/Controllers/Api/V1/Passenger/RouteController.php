@@ -46,7 +46,6 @@ class RouteController extends BaseController
         }
     }
 
-
     public function removeFavoriteRoute(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -79,6 +78,16 @@ class RouteController extends BaseController
             return $this->respondWithSuccess(null, 'Route(s) removed from favorites', 'ROUTE_REMOVED_FROM_FAVORITES');
         } else {
             return $this->respondWithError('Route(s) not found in favorites');
+        }
+    }
+
+    public function getRoutes(Request $request)
+    {
+        try {
+            $routes = Route::byOrganization($request->organization_id)->select('id', 'name')->get();
+            return $this->respondWithSuccess($routes, 'Routes retrieved successfully', 'ROUTES_RETRIEVED');
+        } catch (\Throwable $th) {
+            return $this->respondWithError('Error occured while retrieving routes');
         }
     }
 }

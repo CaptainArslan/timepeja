@@ -177,4 +177,15 @@ class Route extends Model
     {
         return Carbon::parse($value)->format('Y-m-d');
     }
+
+
+
+    public function scopeByOrganization($query, $organization_id)
+    {
+        return $query->when($organization_id, function ($query) use ($organization_id) {
+            return $query->where('o_id', $organization_id);
+        }, function ($query) {
+            return $query;
+        });
+    }
 }

@@ -17,7 +17,7 @@ use App\Http\Controllers\Api\V1\ApiDriverController as ApiDriverController;
 use App\Http\Controllers\Api\V1\ApiManagerController as ApiManagerController;
 use App\Http\Controllers\Api\V1\Auth\PassengerAuthController;
 use App\Http\Controllers\Api\V1\LocationController;
-use App\Http\Controllers\Api\V1\Passenger\RouteController;
+use App\Http\Controllers\Api\V1\Passenger\RouteController as PassengerRouteController;
 use App\Http\Controllers\Api\V1\Passenger\ScheduleController as PassengerScheduleController;
 use App\Http\Controllers\Api\V1\PassengerController;
 use App\Http\Controllers\Api\V1\PassengerRequestController;
@@ -188,9 +188,11 @@ Route::group(['middleware' => 'api'], function () {
             });
 
             Route::get('/schedules/{id}/{date}', [PassengerScheduleController::class, 'index']);
-            Route::post('/add-favorites-routes', [RouteController::class, 'addFavoriteRoute']);
-            Route::post('/remove-favorites-routes', [RouteController::class, 'removeFavoriteRoute']);
+            Route::post('/add-favorites-routes', [PassengerRouteController::class, 'addFavoriteRoute']);
+            Route::post('/remove-favorites-routes', [PassengerRouteController::class, 'removeFavoriteRoute']);
             Route::post('update-phone', [PassengerController::class, 'updatePhone']);
+
+            Route::get('/get-routes', [PassengerRouteController::class, 'getRoutes']);
         });
     });
 });
