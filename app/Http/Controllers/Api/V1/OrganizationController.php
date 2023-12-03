@@ -46,6 +46,7 @@ class OrganizationController extends BaseController
         $data = Organization::where('status', Organization::STATUS_ACTIVE)
             ->where('code', $code)
             ->with('manager')
+            ->with('manager:name,email')
             // ->select('id', 'name', 'branch_name', 'branch_code', 'email', 'address', 'c_id', 's_id')
             ->with('city:id,name')
             ->with('state:id,name')
