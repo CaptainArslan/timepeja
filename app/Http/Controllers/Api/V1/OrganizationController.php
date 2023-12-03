@@ -23,10 +23,11 @@ class OrganizationController extends BaseController
     {
         $data = Organization::where('status', Organization::STATUS_ACTIVE)
             ->has('manager')
-            ->with('manager')
+            ->with('manager:id,name')
+            // ->with('manager')
             // ->select('id', 'name', 'branch_name', 'branch_code', 'email', 'address', 'c_id', 's_id')
-            ->with('city:id,name')
-            ->with('state:id,name')
+            // ->with('city:id,name')
+            // ->with('state:id,name')
             ->get();
         return $this->respondWithSuccess(
             $data,
