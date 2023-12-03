@@ -210,10 +210,12 @@ class PassengerRequestController extends BaseController
         $request_id =  null;
         $organization_id = $request->organization_id;
         $passenger = auth('passenger')->user();
+        $student_type = null;
 
         if ($request->type === 'student_guardian' || $request->type === 'employee_guardian') {
             $parentRequest = Requests::where('guardian_code', $request->guardian_code)->first();
             $childRequestCount = $parentRequest->childRequests->count();
+            $student_type = $parentRequest->student_type;
 
             if ($childRequestCount >= Requests::MAX_GUARDIAN_ALLOWED) {
                 return $this->respondWithError('You cannot add more than 3 guardians.');
@@ -225,6 +227,7 @@ class PassengerRequestController extends BaseController
 
         $data = $request->all();
         $data['passenger_id'] = $passenger->id;
+        $data['student_type'] = $student_type;
         $data['guardian_code'] = substr(uniqid(), -8);
         $data['parent_request_id'] = $request_id;
         $data['organization_id'] = $organization_id;

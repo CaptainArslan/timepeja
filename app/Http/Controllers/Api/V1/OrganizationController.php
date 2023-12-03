@@ -22,6 +22,8 @@ class OrganizationController extends BaseController
     public function index()
     {
         $data = Organization::where('status', Organization::STATUS_ACTIVE)
+            ->has('manager')
+            ->with('manager')
             // ->select('id', 'name', 'branch_name', 'branch_code', 'email', 'address', 'c_id', 's_id')
             ->with('city:id,name')
             ->with('state:id,name')
@@ -43,6 +45,7 @@ class OrganizationController extends BaseController
     {
         $data = Organization::where('status', Organization::STATUS_ACTIVE)
             ->where('code', $code)
+            ->with('manager')
             // ->select('id', 'name', 'branch_name', 'branch_code', 'email', 'address', 'c_id', 's_id')
             ->with('city:id,name')
             ->with('state:id,name')
