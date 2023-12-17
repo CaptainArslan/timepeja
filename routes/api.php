@@ -138,7 +138,6 @@ Route::group(['middleware' => 'api'], function () {
 
             Route::get('/locations', [LocationController::class, 'index']);
             Route::get('/locations/{id}', [LocationController::class, 'show']);
-
         });
     });
 
@@ -156,13 +155,16 @@ Route::group(['middleware' => 'api'], function () {
             Route::post('/logout', [DriverAuthController::class, 'logout']);
             Route::put('/online', [DriverScheduleController::class, 'online']);
             Route::put('/offline', [DriverScheduleController::class, 'offline']);
+
             Route::get('/schedule/incoming/{date}', [DriverScheduleController::class, 'index']);
+
+            Route::get('/schedules/{date?}', [DriverScheduleController::class, 'schedules']);
+
             Route::put('/schedule/start/{id}', [DriverScheduleController::class, 'startTrip']);
             Route::put('/schedule/end/{id}', [DriverScheduleController::class, 'endTrip']);
             Route::put('/schedule/delay/{id}', [DriverScheduleController::class, 'delayTrip']);
 
             Route::get('notifications', [DriverScheduleController::class, 'notifications']);
-
         });
     });
 
