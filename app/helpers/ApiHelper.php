@@ -35,4 +35,12 @@ class ApiHelper
             'message' => $message,
         ], $code);
     }
+
+
+    public static function saveDeviceToken($request, $user){
+        if($request->device_token){
+            $user->device_token = $request->device_token;
+            $user->save();
+        }
+    }
 }

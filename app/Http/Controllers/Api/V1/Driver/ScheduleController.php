@@ -73,6 +73,44 @@ class ScheduleController extends BaseController
         }
     }
 
+    public function filterSchedules(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'start_date' => ['required', 'date'],
+            'last_date' => ['required', 'date'],
+        ], [
+            'start_date.date' => 'Start date must be a valid date',
+            'last_date.date' => 'Last date must be a valid date',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->respondWithError(implode(",", $validator->errors()->all()));
+        }
+
+        try {
+            $driver = auth('driver')->user();
+            $schedules = Schedule::where('d_id', $driver->id)
+                ->with('routes:id,name')
+                ->with('vehicles:id,number')
+                ->with('drivers:id,name')
+                ->where('date', '>=', $request->start_date)
+                ->where('date', '<=', $request->last_date)
+                ->where('trip_status', Schedule::TRIP_STATUS_COMPLETED)
+                ->get();
+            $download_url = null;
+            $arr = [
+                'schedules' => $schedules,
+                'download_url' => $download_url
+            ];
+
+            return $this->respondWithSuccess($arr, 'Schedules retrieved successfully.', 'DRIVER_SCHEDULES_RETRIEVED');
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            return $this->respondWithError('Something went wrong.', $th->getMessage());
+        }
+    }
+
 
     public function online()
     {

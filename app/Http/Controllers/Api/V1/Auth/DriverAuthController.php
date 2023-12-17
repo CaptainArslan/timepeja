@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers\Api\V1\Auth;
 
+use ApiHelper;
 use App\Models\Driver;
 use Illuminate\Support\Str;
+use App\Models\Organization;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Api\V1\BaseController;
-use App\Models\Organization;
-use Illuminate\Support\Facades\Log;
 
 class DriverAuthController extends BaseController
 {
@@ -128,11 +129,15 @@ class DriverAuthController extends BaseController
 
         $credentials = $request->only(['phone', 'password']);
 
+        
         if (!$token = auth('driver')->attempt($credentials)) {
             return $this->respondWithError('Invalid phone number or password');
         }
 
         $user = auth('driver')->user();
+        
+        ApiHelper::saveDeviceToken($request, $user);
+
         if (!$user) {
             return $this->respondWithError('User not Found');
         }
