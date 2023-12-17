@@ -71,7 +71,19 @@ class Driver extends Authenticatable implements JWTSubject
     protected $hidden = [
         'password',
         'remember_token',
-        'otp'
+        'otp',
+        'device_token',
+        'cnic_expiry_date',
+        'license_expiry_date',
+        'license_no_front_pic',
+        'license_no_back_pic',
+        'cnic_front_pic',
+        'cnic_back_pic',
+        'online_status',
+        'license_no',
+        'created_at',
+        'updated_at',
+        'deleted_at',
     ];
 
     // ----------------------------------------------------------------
