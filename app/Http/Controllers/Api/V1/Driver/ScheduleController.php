@@ -173,6 +173,7 @@ class ScheduleController extends BaseController
         try {
             $driver = auth('driver')->user();
             $schedules_notifications = Schedule::where('d_id', $driver->id)
+            ->where('status', Schedule::STATUS_PUBLISHED)
                 ->where('date', now()->format('Y-m-d'))
                 ->whereBetween('time', [
                     now()->format('H:i:s'),
