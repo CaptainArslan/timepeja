@@ -80,7 +80,7 @@ class Driver extends Authenticatable implements JWTSubject
         'cnic_front_pic',
         'cnic_back_pic',
         'online_status',
-        'license_no',
+        // 'license_no',
         'created_at',
         'updated_at',
         'deleted_at',

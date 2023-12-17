@@ -150,7 +150,13 @@ class ScheduleController extends BaseController
         }
 
         try {
-            $schedule = Schedule::find($id);
+            $schedule = Schedule::where('id', $id)
+                ->with('drivers:id,name,license_no')
+                ->with('organizations:id,name,address')
+                ->with('routes:id,name')
+                ->with('vehicles:id,number')
+                ->first();
+
             if (!$schedule) {
                 return $this->respondWithError('Schedule not found.');
             }
@@ -160,10 +166,12 @@ class ScheduleController extends BaseController
             // Compare the current time with the actual start time
             if ($currentTime->greaterThan($schedule->start_time)) {
                 // If the current time is greater, set the is_delay column to 1
-                $schedule->is_delay = 1;
+                $schedule->is_delay = Schedule::TRIP_ISDELAYED;
             }
             $schedule->trip_status = Schedule::TRIP_STATUS_INPROGRESS;
             $schedule->save();
+
+
             return $this->respondWithSuccess($schedule, 'Trip started successfully.', 'DRIVER_TRIP_STARTED');
         } catch (\Throwable $th) {
             Log::error($th->getMessage());
@@ -193,7 +201,7 @@ class ScheduleController extends BaseController
             $schedule->trip_status = Schedule::TRIP_STATUS_COMPLETED;
             $schedule->end_time = date("h:i:s");
             $schedule->save();
-            return $this->respondWithSuccess($schedule, 'Trip started successfully.', 'DRIVER_TRIP_STARTED');
+            return $this->respondWithSuccess(null, 'Trip completed successfully.', 'DRIVER_TRIP_STARTED');
         } catch (\Throwable $th) {
             Log::error($th->getMessage());
             return $this->respondWithError('Something went wrong.', $th->getMessage());
