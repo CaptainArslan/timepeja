@@ -23,6 +23,9 @@ class Schedule extends Model
     public const TRIP_NOTDELAYED = false;
     public const TRIP_ISDELAYED = true;
 
+    public const SCHEDULE_TIME = 15;
+
+
     protected $table = 'schedules';
 
     protected $fillable = [
@@ -50,6 +53,7 @@ class Schedule extends Model
         'd_id' => 'integer',
         'id_delay' => 'boolean',
         'created_at' => 'datetime:Y-m-d H:i:s',
+        'date' => 'string'
         // 'trip_status' => 'boolean'
     ];
 

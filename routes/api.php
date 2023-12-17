@@ -160,6 +160,9 @@ Route::group(['middleware' => 'api'], function () {
             Route::put('/schedule/start/{id}', [DriverScheduleController::class, 'startTrip']);
             Route::put('/schedule/end/{id}', [DriverScheduleController::class, 'endTrip']);
             Route::put('/schedule/delay/{id}', [DriverScheduleController::class, 'delayTrip']);
+
+            Route::get('notifications', [DriverScheduleController::class, 'notifications']);
+
         });
     });
 

@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api\V1\Driver;
 
 use App\Models\Schedule;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use App\Http\Controllers\Api\V1\BaseController;
 use App\Models\Driver;
 use Illuminate\Support\Facades\Log;
@@ -165,6 +164,23 @@ class ScheduleController extends BaseController
             return $this->respondWithSuccess($schedule, 'Trip started successfully.', 'DRIVER_TRIP_STARTED');
         } catch (\Throwable $th) {
             Log::error($th->getMessage());
+            return $this->respondWithError('Something went wrong.', $th->getMessage());
+        }
+    }
+
+    public function notifications()
+    {
+        try {
+            $driver = auth('driver')->user();
+            $schedules_notifications = Schedule::where('d_id', $driver->id)
+                ->where('date', now()->format('Y-m-d'))
+                ->whereBetween('time', [
+                    now()->format('H:i:s'),
+                    now()->addMinutes(15)->format('H:i:s')
+                ])
+                ->get();
+            return $this->respondWithSuccess($schedules_notifications, 'Notifications retrieved successfully.', 'DRIVER_NOTIFICATIONS_RETRIEVED');
+        } catch (\Throwable $th) {
             return $this->respondWithError('Something went wrong.', $th->getMessage());
         }
     }
