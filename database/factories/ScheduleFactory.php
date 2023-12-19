@@ -31,8 +31,8 @@ class ScheduleFactory extends Factory
             'o_id' => Organization::inRandomOrder()->first()->id,
             'route_id' =>  Route::inRandomOrder()->first()->id,
             'v_id' => Vehicle::inRandomOrder()->first()->id,
-            'd_id' => Driver::inRandomOrder()->first()->id,
-            'date' => Carbon::now()->format('Y-m-d'),
+            'd_id' => 1,
+            'date' => Carbon::now()->subDay(7)->format('Y-m-d'),
             'time' => $this->faker->time(),
             'status' => $this->faker->randomElement([
                 Schedule::STATUS_DRAFT,
@@ -41,10 +41,7 @@ class ScheduleFactory extends Factory
             'start_time' => $this->faker->time(),
             'end_time' => '',
             'trip_status' => $this->faker->randomElement([
-                Schedule::TRIP_STATUS_UPCOMING,
-                Schedule::TRIP_STATUS_INPROGRESS,
                 Schedule::TRIP_STATUS_COMPLETED,
-                Schedule::TRIP_STATUS_DELAYED
             ]),
             'is_delay' => $isDelayed,
             'delayed_reason' => $delayReason,

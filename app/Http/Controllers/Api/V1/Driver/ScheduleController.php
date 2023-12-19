@@ -96,7 +96,7 @@ class ScheduleController extends BaseController
                 ->with('drivers:id,name')
                 ->where('date', '>=', $request->start_date)
                 ->where('date', '<=', $request->last_date)
-                ->where('trip_status', Schedule::TRIP_STATUS_COMPLETED)
+                // ->where('trip_status', Schedule::TRIP_STATUS_COMPLETED)
                 ->get();
             $download_url = null;
             $arr = [
