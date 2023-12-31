@@ -1,27 +1,28 @@
 <?php
 
-use App\Http\Controllers\Api\V1\Driver\ScheduleController as DriverScheduleController;
 use App\Models\Pdf;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Api\V1\PdfController;
 use App\Http\Controllers\Api\V1\MediaController;
 use App\Http\Controllers\Api\V1\ApiRouteController;
+use App\Http\Controllers\Api\V1\LocationController;
 use App\Http\Controllers\Api\V1\LogReportController;
+use App\Http\Controllers\Api\V1\PassengerController;
 use App\Http\Controllers\Api\V1\ApiVehicleController;
 use App\Http\Controllers\Api\V1\ApiScheduleController;
 use App\Http\Controllers\Api\V1\VehicletypeController;
-use App\Http\Controllers\Api\V1\OrganizationController as ApiOrganizationController;
 use App\Http\Controllers\Api\V1\Auth\DriverAuthController;
 use App\Http\Controllers\Api\V1\Auth\ManagerAuthController;
+use App\Http\Controllers\Api\V1\PassengerRequestController;
+use App\Http\Controllers\Api\V1\Auth\PassengerAuthController;
+use App\Http\Controllers\Api\V1\RequestController as ApiRequestController;
 use App\Http\Controllers\Api\V1\ApiDriverController as ApiDriverController;
 use App\Http\Controllers\Api\V1\ApiManagerController as ApiManagerController;
-use App\Http\Controllers\Api\V1\Auth\PassengerAuthController;
-use App\Http\Controllers\Api\V1\LocationController;
+use App\Http\Controllers\Api\V1\OrganizationController as ApiOrganizationController;
+use App\Http\Controllers\Api\V1\Driver\ScheduleController as DriverScheduleController;
 use App\Http\Controllers\Api\V1\Passenger\RouteController as PassengerRouteController;
 use App\Http\Controllers\Api\V1\Passenger\ScheduleController as PassengerScheduleController;
-use App\Http\Controllers\Api\V1\PassengerController;
-use App\Http\Controllers\Api\V1\PassengerRequestController;
-use App\Http\Controllers\Api\V1\RequestController as ApiRequestController;
 
 /*
 |--------------------------------------------------------------------------
@@ -203,5 +204,9 @@ Route::group(['middleware' => 'api'], function () {
             Route::get('/get-all-organizations', [ApiOrganizationController::class, 'index']);
             Route::get('/organization/{code}', [ApiOrganizationController::class, 'show']);
         });
+    });
+
+    Route::prefix('v1')->group(function () {
+        Route::post('/contact-us', [ContactController::class, 'send'])->name('send');
     });
 });
