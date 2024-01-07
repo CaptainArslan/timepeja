@@ -26,6 +26,10 @@ class Kernel extends ConsoleKernel
         // $schedule->command('schedule:seed')->daily();
         // $schedule->command('inspire')->hourly();
         $schedule->command('driver:schedule-notification')->everyMinute();
+        
+        $schedule->command('queue:work --stop-when-empty')
+            ->everyMinute()
+            ->withoutOverlapping();
     }
 
     /**

@@ -90,7 +90,7 @@ class DriverScheduleNotification extends Command
                 $scheduleTime = Carbon::parse($schedule->time)->format('g:i A');
                 $date = Carbon::parse($schedule->date)->format('d/m/Y');
                 $title = "Upcoming Schedule";
-                $body = "Your upcoming schedule on date {$date} at {$scheduleTime} on route {$schedule->route->name} on vehicle number {$schedule->vehicle->name}";
+                $body = "Your upcoming schedule on date {$date} at {$scheduleTime} on route {$schedule->route->name} on vehicle number {$schedule->vehicle->number}";
                 Log::info($body);
                 notification($title, $body, $schedule, $driver->device_token);
             }
