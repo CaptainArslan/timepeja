@@ -17,8 +17,10 @@ class ScheduleFactory extends Factory
      *
      * @return array
      */
+
     public function definition()
     {
+
         $isDelayed = $this->faker->randomElement([
             Schedule::TRIP_ISDELAYED,
             Schedule::TRIP_NOTDELAYED
@@ -26,14 +28,18 @@ class ScheduleFactory extends Factory
 
         $delayReason = $isDelayed == Schedule::TRIP_ISDELAYED ? $this->faker->sentence() : null;
 
+        // Start with the current time
+        $currentDateTime = Carbon::now()->addMinutes(15);
+
+
         return [
             'u_id' => 1,
             'o_id' => Organization::inRandomOrder()->first()->id,
-            'route_id' =>  Route::inRandomOrder()->first()->id,
+            'route_id' => Route::inRandomOrder()->first()->id,
             'v_id' => Vehicle::inRandomOrder()->first()->id,
             'd_id' => 1,
-            'date' => Carbon::now()->subDay(7)->format('Y-m-d'),
-            'time' => $this->faker->time(),
+            'date' => $currentDateTime->toDateString(),
+            'time' => $currentDateTime->toTimeString(),
             'status' => $this->faker->randomElement([
                 Schedule::STATUS_DRAFT,
                 Schedule::STATUS_PUBLISHED
