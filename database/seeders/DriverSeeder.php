@@ -36,6 +36,6 @@ class DriverSeeder extends Seeder
             'online_status' => Driver::STATUS_ONLINE,
             'device_token' => 'fLE6PePxTFmDxCzeFeM_H_:APA91bGJWQC2gBwv-wQT8iE3Esn0cRkm6cnLg5WaNj2FJSyTEso6TUuo-5pfcE0EDEqTD1LX_MFBpf7kNxHO-FhgUFHxuGMHk-cZKi1zknP9doMo7GZso89VLBVGfP1Veh80WgFvs-hy'
         ]);
-        Driver::factory(5)->create();
+        // Driver::factory(5)->create();
     }
 }

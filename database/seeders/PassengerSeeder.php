@@ -41,6 +41,6 @@ class PassengerSeeder extends Seeder
             'created_at' => Carbon::now()->subDays(14),
             'updated_at' => Carbon::now()->subDays(14),
         ]);
-        Passenger::factory(10)->create();
+        // Passenger::factory(10)->create();
     }
 }
