@@ -210,7 +210,7 @@ class PassengerRequestController extends BaseController
         $request_id =  null;
         $organization_id = $request->organization_id;
         $passenger = auth('passenger')->user();
-        $student_type = null;
+        $student_type = $request->student_type;
 
         if ($request->type === 'student_guardian' || $request->type === 'employee_guardian') {
             $parentRequest = Requests::where('guardian_code', $request->guardian_code)->first();
