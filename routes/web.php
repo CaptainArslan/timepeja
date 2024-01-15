@@ -284,7 +284,11 @@ Route::get('queue-work', function () {
 
 Route::get('schedule-work', function () {
     Artisan::call('schedule:work');
-    dd("telinta customer Completed");
+    dd("Schedule stated");
+});
+Route::get('schedule-work', function () {
+    Artisan::call('schedule:terminate');
+    dd("Schedule Terminated");
 });
 
 Route::get('clear-route', function () {
