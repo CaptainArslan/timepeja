@@ -11,10 +11,10 @@ use Illuminate\Support\Facades\Validator;
 
 class ScheduleController extends BaseController
 {
-    public function __construct()
-    {
-        $this->middleware('auth:driver');
-    }
+    // public function __construct()
+    // {
+    //     $this->middleware('auth:driver');
+    // }
 
     public function index($date)
     {
