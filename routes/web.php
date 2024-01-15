@@ -286,7 +286,7 @@ Route::get('schedule-work', function () {
     Artisan::call('schedule:work');
     dd("Schedule stated");
 });
-Route::get('schedule-work', function () {
+Route::get('schedule-terminate', function () {
     Artisan::call('schedule:terminate');
     dd("Schedule Terminated");
 });
