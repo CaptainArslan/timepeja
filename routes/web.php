@@ -279,7 +279,7 @@ Route::get('storage-link', function () {
 
 Route::get('queue-work', function () {
     Artisan::call('queue:work --stop-when-empty');
-    dd("telinta customer Completed");
+    dd("Queue working Completed");
 });
 
 Route::get('schedule-work', function () {

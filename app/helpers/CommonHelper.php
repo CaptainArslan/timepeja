@@ -177,6 +177,7 @@ function getPdfLogo()
 function notification($title, $body, $data, $device_token)
 {
     $SERVER_API_KEY = $SERVER_API_KEY = config('app.firebase_key');
+    Log::info($SERVER_API_KEY);
     $data = [
         "to" => $device_token,
         "notification" => [
