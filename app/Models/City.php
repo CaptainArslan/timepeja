@@ -8,4 +8,27 @@ use Illuminate\Database\Eloquent\Model;
 class City extends Model
 {
     use HasFactory;
+
+    protected $table = 'cities';
+
+    protected $fillable = [
+        'id',
+        'name',
+        'state_id',
+        'country_id',
+        'status'
+    ];
+
+    protected $casts = [
+        'state_id' => 'integer',
+        'country_id' => 'integer',
+        'status' => 'boolean',
+    ];
+
+
+    public function state()
+    {
+        return $this->belongsTo(State::class, 's_id', 'id');
+    }
+    
 }

@@ -110,6 +110,16 @@ class Manager extends Authenticatable implements JWTSubject
         return $this->hasOne(Organization::class, 'id', 'o_type_id');
     }
 
+    
+    public function city()
+    {
+        return $this->hasOne(City::class, 'id', 'c_id');
+    }
+
+    public function state()
+    {
+        return $this->hasOne(State::class, 'id', 's_id');
+    }
 
 
 

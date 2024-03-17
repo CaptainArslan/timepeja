@@ -135,7 +135,11 @@ class ManagerAuthController extends BaseController
         try {
             $credentials = $request->only(['phone', 'password']);
 
-            $user = Manager::where('phone', $credentials['phone'])->first();
+            $user = Manager::where('phone', $credentials['phone'])
+                ->with('organization')
+                ->with('organization.city:id,name')
+                ->with('organization.state:id,name')
+                ->first();
 
             if (!$user) {
                 return $this->respondWithError('Invalid phone number or password');
