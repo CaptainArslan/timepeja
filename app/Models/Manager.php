@@ -78,38 +78,20 @@ class Manager extends Authenticatable implements JWTSubject
         ];
     }
 
-    /**
-     * Send the password reset notification.
-     *
-     * @param  string  $token
-     * @return void
-     */
+
+    // ----------------------------------------------------------------
+    // ------------------ Relationships --------------------------------
+    // ----------------------------------------------------------------
+    
     public function organization()
     {
         return $this->belongsTo(Organization::class, 'o_id');
     }
 
-    /**
-     * [managerOrganization description]
-     *
-     * @return  [type]  [return description]
-     */
     public function managerOrganization()
     {
         return $this->hasOne(Manager::class, 'id', 'o_id');
     }
-
-    /**
-     * [managerUser description]
-     *
-     * @return  [type]  [return description]
-     *
-     */
-    public function organizationType()
-    {
-        return $this->hasOne(Organization::class, 'id', 'o_type_id');
-    }
-
     
     public function city()
     {
@@ -121,7 +103,11 @@ class Manager extends Authenticatable implements JWTSubject
         return $this->hasOne(State::class, 'id', 's_id');
     }
 
-
+    // not sure about this relationship not removing yet
+    public function organizationType()
+    {
+        return $this->hasOne(OrganizationType::class, 'o_type_id', 'id');
+    }
 
 
 
