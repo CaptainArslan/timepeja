@@ -196,6 +196,9 @@ Route::group(['middleware' => 'api'], function () {
             });
 
             Route::get('/schedules/{id}/{date}', [PassengerScheduleController::class, 'index']);
+
+
+            Route::get('/get-favorites-routes', [PassengerRouteController::class, 'getFavoriteRoute']);
             Route::post('/add-favorites-routes', [PassengerRouteController::class, 'addFavoriteRoute']);
             Route::post('/remove-favorites-routes', [PassengerRouteController::class, 'removeFavoriteRoute']);
             Route::post('update-phone', [PassengerController::class, 'updatePhone']);

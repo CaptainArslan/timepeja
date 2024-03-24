@@ -11,6 +11,14 @@ use App\Http\Controllers\Api\V1\BaseController;
 
 class RouteController extends BaseController
 {
+
+    public function getFavoriteRoute() {
+        $passenger = auth('passenger')->user();
+        $favoriteRoutes = $passenger->routes()->select('routes.id', 'name', 'number', 'from', 'to')->get();
+        return $this->respondWithSuccess($favoriteRoutes, 'Favorite routes retrieved successfully', 'FAVORITE_ROUTES_RETRIEVED');
+    }
+    
+
     public function addFavoriteRoute(Request $request)
     {
         $validator = Validator::make($request->all(), [

@@ -192,8 +192,8 @@ class Passenger extends Authenticatable implements JWTSubject
     }
 
 
-    public function favoriteRoutes()
+    public function routes()
     {
-        return $this->belongsToMany(Route::class, 'passenger_route', 'passenger_id', 'route_id');
+        return $this->belongsToMany(Route::class, 'passenger_route');
     }
 }

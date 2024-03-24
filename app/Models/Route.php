@@ -71,7 +71,7 @@ class Route extends Model
 
     public function passengers()
     {
-        return $this->belongsToMany(Passenger::class, 'passenger_route', 'route_id', 'passenger_id');
+        return $this->belongsToMany(Passenger::class, 'passenger_route');
     }
 
     // /**
