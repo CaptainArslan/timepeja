@@ -39,13 +39,13 @@ class RouteController extends BaseController
         $passenger = auth('passenger')->user();
 
         // Get the passenger's current favorite route IDs
-        $currentFavorites = $passenger->favoriteRoutes()->pluck('routes.id')->toArray();
+        $currentFavorites = $passenger->routes()->pluck('routes.id')->toArray();
 
         // Filter the provided route IDs to exclude those already in favorites
         $newRouteIds = array_diff($request->route_ids, $currentFavorites);
 
-        // Attach the new route IDs to the passenger's favoriteRoutes
-        $passenger->favoriteRoutes()->attach($newRouteIds);
+        // Attach the new route IDs to the passenger's routes
+        $passenger->routes()->attach($newRouteIds);
 
         if (count($newRouteIds) > 0) {
             return $this->respondWithSuccess(null, 'Route(s) added to favorites', 'ROUTE_ADDED_TO_FAVORITES');
