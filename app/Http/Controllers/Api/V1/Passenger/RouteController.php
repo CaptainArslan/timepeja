@@ -74,14 +74,14 @@ class RouteController extends BaseController
         $passenger = auth('passenger')->user();
 
         // Get the passenger's current favorite route IDs
-        $currentFavorites = $passenger->favoriteRoutes()->pluck('routes.id')->toArray();
+        $currentFavorites = $passenger->routes()->pluck('routes.id')->toArray();
 
         // Filter the provided route IDs to include only those currently in favorites
         $routeIdsToRemove = array_intersect($request->route_ids, $currentFavorites);
 
         if (count($routeIdsToRemove) > 0) {
             // Detach the route IDs to remove from the passenger's favoriteRoutes
-            $passenger->favoriteRoutes()->detach($routeIdsToRemove);
+            $passenger->routes()->detach($routeIdsToRemove);
 
             return $this->respondWithSuccess(null, 'Route(s) removed from favorites', 'ROUTE_REMOVED_FROM_FAVORITES');
         } else {
