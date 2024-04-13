@@ -53,6 +53,7 @@ class Manager extends Authenticatable implements JWTSubject
         'remember_token',
         'otp',
         'deleted_at',
+        'device_token',
     ];
 
     // Rest omitted for brevity
@@ -168,12 +169,12 @@ class Manager extends Authenticatable implements JWTSubject
     public function getPictureAttribute($value)
     {
         if (filter_var($value, FILTER_VALIDATE_URL)) {
-            $value = $this->attributes['picture'];
+            return $value; // If it's a valid URL, return it directly
+        } elseif ($value) {
+            return asset('uploads/managers/profiles/' . $value); // If not a URL but has a value, return asset URL
         } else {
-            $value = asset('uploads/managers/profiles/placeholder.jpg');
+            return asset('uploads/managers/profiles/placeholder.jpg'); // If empty or not set, return placeholder URL
         }
-        return $value;
-        return $this->attributes['picture'] ? asset('uploads/managers/profiles/' . $this->attributes['picture']) : null;
     }
 
     /**
