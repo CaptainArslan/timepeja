@@ -22,3 +22,4 @@ vendor/phpunit/phpunit
 # /public/managers/*
 # /public/drivers/*
 /public/uploads/*
+error_log
