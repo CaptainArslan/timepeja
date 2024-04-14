@@ -16,7 +16,7 @@ class Manager extends Authenticatable implements JWTSubject
     use Notifiable;
 
     protected $table = 'managers';
-    protected $appends = ['picture'];
+    // protected $appends = ['picture'];
 
     public const STATUS_ACTIVE = true;
     public const STATUS_INACTIVE = false;
@@ -168,7 +168,6 @@ class Manager extends Authenticatable implements JWTSubject
      */
     public function getPictureAttribute($value)
     {
-        return $value;
         if (filter_var($value, FILTER_VALIDATE_URL)) {
             return $value; // If it's a valid URL, return it directly
         } elseif ($value) {
