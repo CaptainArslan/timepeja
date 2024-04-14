@@ -95,6 +95,21 @@ class Vehicle extends Model
         return $this->belongsTo(VehicleType::class, 'v_type_id', 'id');
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'u_id', 'id');
+    }
+
+    public function locations()
+    {
+        return $this->hasMany(Location::class, 'vehicle_id', 'id');
+    }
+
+    public function trips()
+    {
+        return $this->hasMany(Trip::class, 'vehicle_id', 'id');
+    }
+
 
     // ----------------------------------------------------------------
     // ------------------ Accessors & Mutator -------------------------

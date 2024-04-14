@@ -16,7 +16,15 @@ class LocationController extends BaseController
     public function index()
     {
         try {
-            $locations = Location::all();
+            $locations = Location::with(['vehicle' => function ($query) {
+                $query->select('id', 'number', 'v_type_id', 'front_pic', 'number_pic', 'status');
+            }, 'vehicle.vehiclesTypes:id,name'])
+            ->with('driver:id,name,phone,email')
+            ->with('passenger:id,name,phone,email')
+            ->with('organization:id,name,phone,email')
+            ->select('id', 'organization_id', 'name', 'passenger_id', 'vehicle_id', 'driver_id', 'type', 'latitude', 'longitude')
+            ->get();
+
             return $this->respondWithSuccess($locations, 'location fetched successfully', 'LOCATION_FETCHED');
         } catch (\Throwable $th) {
             return $this->respondWithError($th->getMessage());
