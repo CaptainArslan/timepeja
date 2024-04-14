@@ -173,6 +173,10 @@ function getPdfLogo()
     return  asset('images/logo.png');
 }
 
+function getPaginated($limit = 10){
+    return $limit;
+}
+
 
 function notification($title, $body, $data, $device_token)
 {

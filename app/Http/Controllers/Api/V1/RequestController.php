@@ -206,7 +206,7 @@ class RequestController extends BaseController
     //         $guardian->students()->attach($already_request->student_id);
     //         $guardian->requests()->attach($requestCreate->id);
 
-    //         // $requestCreate->guardians()->attach($guardian->id); 
+    //         // $requestCreate->guardians()->attach($guardian->id);
     //     } elseif ($request->type == 'employee_guardian') {
 
     //         $count = Requests::where('employee_id', $already_request->employee_id)->count();
@@ -461,9 +461,9 @@ class RequestController extends BaseController
         //
     }
 
-    /** 
+    /**
      * Delete Requests
-     * 
+     *
      * @param Request $request
      * @return JsonResponse
      */
@@ -492,9 +492,9 @@ class RequestController extends BaseController
         }
     }
 
-    /** 
+    /**
      * Delete Requests
-     * 
+     *
      * @param Request $request
      * @return JsonResponse
      */
@@ -524,9 +524,9 @@ class RequestController extends BaseController
         }
     }
 
-    /** 
+    /**
      * Delete Requests
-     * 
+     *
      * @param Request $request
      * @return JsonResponse
      */
@@ -556,9 +556,9 @@ class RequestController extends BaseController
         }
     }
 
-    /** 
+    /**
      * Delete Requests
-     * 
+     *
      * @param Request $request
      * @return JsonResponse
      */
@@ -765,7 +765,8 @@ class RequestController extends BaseController
     }
 
 
-    public function getRequestDetailByCode($code){
+    public function getRequestDetailByCode($code)
+    {
         try {
             $request = Requests::with('organization:id,name')
                 ->with('city:id,name')
@@ -775,6 +776,34 @@ class RequestController extends BaseController
                 ->firstOrFail();
 
             return $this->respondWithSuccess($request, 'Request Details', 'REQUEST_SPECIFIC_DETAILS');
+        } catch (\Throwable $th) {
+            return $this->respondWithError('Error Occured while fetching request details');
+        }
+    }
+
+    public function search(Request $request): JsonResponse
+    {
+        try {
+            $manager = auth('manager')->user();
+
+            $allRequests = Requests::with('organization:id,name')
+                ->with('city:id,name')
+                ->with('route:id,name')
+                // ->with('childRequests')
+                ->with('passenger:id,name,phone')
+                ->where('organization_id', $manager->o_id)
+                ->when($request->status, function ($query, $status) {
+                    if ($status == 'past') {
+                        return $query->onlyTrashed();
+                    } else {
+                        return $query->where('status', $status);
+                    }
+                })
+                // ->where('status', $request->status)
+                // ->withCount('childRequests')
+                ->paginate(getPaginated());
+
+            return $this->respondWithSuccess($allRequests, 'list of users', 'FETCHED_REQUESTS_WITH_STATUS');
         } catch (\Throwable $th) {
             return $this->respondWithError('Error Occured while fetching request details');
         }
