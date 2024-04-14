@@ -19,11 +19,19 @@ class LocationController extends BaseController
             $locations = Location::with(['vehicle' => function ($query) {
                 $query->select('id', 'number', 'v_type_id', 'front_pic', 'number_pic', 'status');
             }, 'vehicle.vehiclesTypes:id,name'])
-            ->with('driver:id,name,phone,email')
-            ->with('passenger:id,name,phone,email')
-            ->with('organization:id,name,phone,email')
-            ->select('id', 'organization_id', 'name', 'passenger_id', 'vehicle_id', 'driver_id', 'type', 'latitude', 'longitude')
-            ->get();
+                ->with(['driver' => function ($query) {
+                    $query->select('id', 'name', 'phone', 'email');
+                }])
+                ->with(['passenger' => function ($query) {
+                    $query->select('id', 'name', 'phone', 'email');
+                }])
+                ->with('organization:id,name,phone,email')
+                ->whereHas('driver')
+                ->whereHas('passenger')
+                ->whereHas('vehicle')
+                ->select('id', 'organization_id', 'name', 'passenger_id', 'vehicle_id', 'driver_id', 'type', 'latitude', 'longitude')
+                ->get();
+
 
             return $this->respondWithSuccess($locations, 'location fetched successfully', 'LOCATION_FETCHED');
         } catch (\Throwable $th) {
