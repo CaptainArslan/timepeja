@@ -139,6 +139,7 @@ Route::group(['middleware' => 'api'], function () {
             Route::put('/requests/meet-personally', [ApiRequestController::class, 'meetPersonallyRequests']);
 
             Route::get('/locations', [LocationController::class, 'index']);
+            Route::get('/locations/search', [LocationController::class, 'search']);
             Route::get('/locations/{id}', [LocationController::class, 'show']);
         });
     });

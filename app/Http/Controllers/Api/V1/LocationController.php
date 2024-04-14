@@ -19,12 +19,12 @@ class LocationController extends BaseController
             $locations = Location::with(['vehicle' => function ($query) {
                 $query->select('id', 'number', 'v_type_id', 'front_pic', 'number_pic', 'status');
             }, 'vehicle.vehiclesTypes:id,name'])
-            ->with('driver:id,name,phone,email')
-            ->with('passenger:id,name,phone,email')
-            ->with('organization:id,name,phone,email')
-            ->whereHas('vehicle')
-            ->select('id', 'organization_id', 'name', 'passenger_id', 'vehicle_id', 'driver_id', 'type', 'latitude', 'longitude')
-            ->get();
+                ->with('driver:id,name,phone,email')
+                ->with('passenger:id,name,phone,email')
+                ->with('organization:id,name,phone,email')
+                // ->whereHas('vehicle')
+                ->select('id', 'organization_id', 'name', 'passenger_id', 'vehicle_id', 'driver_id', 'type', 'latitude', 'longitude')
+                ->get();
 
             return $this->respondWithSuccess($locations, 'location fetched successfully', 'LOCATION_FETCHED');
         } catch (\Throwable $th) {
@@ -101,5 +101,28 @@ class LocationController extends BaseController
     public function destroy($id)
     {
         //
+    }
+
+    public function search(Request $request)
+    {
+        try {
+            $searchString = '%' . $request->string . '%';
+
+            $locations = Location::whereHas('vehicle', function ($query) use ($searchString) {
+                $query->where('number', 'like', $searchString);
+            })
+                ->with(['vehicle' => function ($query) {
+                    $query->select('id', 'number', 'v_type_id', 'front_pic', 'number_pic', 'status');
+                }, 'vehicle.vehiclesTypes:id,name'])
+                ->with('driver:id,name,phone,email')
+                ->with('passenger:id,name,phone,email')
+                ->with('organization:id,name,phone,email')
+                ->select('id', 'organization_id', 'name', 'passenger_id', 'vehicle_id', 'driver_id', 'type', 'latitude', 'longitude')
+                ->paginate(getPaginated());
+
+            return $this->respondWithSuccess($locations, 'Locations fetched successfully', 'LOCATIONS_FETCHED');
+        } catch (\Throwable $th) {
+            return $this->respondWithError($th->getMessage());
+        }
     }
 }
