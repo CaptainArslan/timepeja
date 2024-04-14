@@ -83,7 +83,7 @@ class Manager extends Authenticatable implements JWTSubject
     // ----------------------------------------------------------------
     // ------------------ Relationships --------------------------------
     // ----------------------------------------------------------------
-    
+
     public function organization()
     {
         return $this->belongsTo(Organization::class, 'o_id');
@@ -93,7 +93,7 @@ class Manager extends Authenticatable implements JWTSubject
     {
         return $this->hasOne(Manager::class, 'id', 'o_id');
     }
-    
+
     public function city()
     {
         return $this->hasOne(City::class, 'id', 'c_id');
@@ -168,6 +168,7 @@ class Manager extends Authenticatable implements JWTSubject
      */
     public function getPictureAttribute($value)
     {
+        return $value;
         if (filter_var($value, FILTER_VALIDATE_URL)) {
             return $value; // If it's a valid URL, return it directly
         } elseif ($value) {
