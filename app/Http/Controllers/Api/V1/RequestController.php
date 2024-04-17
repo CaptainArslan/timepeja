@@ -784,51 +784,62 @@ class RequestController extends BaseController
     public function search(Request $request): JsonResponse
     {
         // try {
-            $manager = auth('manager')->user();
+        $manager = auth('manager')->user();
 
-            $allRequests = Requests::with('organization:id,name')
-                ->with('city:id,name')
-                ->with('route:id,name')
-                ->with('passenger:id,name,phone')
-                ->where('organization_id', $manager->o_id)
-                ->when($request->status, function ($query, $status) {
-                    if ($status == 'past') {
-                        return $query->onlyTrashed();
-                    } else {
-                        return $query->where('status', $status);
-                    }
-                })
-                ->when($request->string, function ($query) use ($request) {
-                    return $query
-                        ->where('name', 'like', '%' . $request->string . '%')
-                        ->orWhere('phone', 'like', '%' . $request->string . '%')
-                        ->orWhere('email', 'like', '%' . $request->string . '%')
-                        ->orWhere('house_no', 'like', '%' . $request->string . '%')
-                        ->orWhere('street_no', 'like', '%' . $request->string . '%')
-                        ->orWhere('town', 'like', '%' . $request->string . '%')
-                        ->orWhere('pickup_address', 'like', '%' . $request->string . '%')
-                        ->orWhere('additional_detail', 'like', '%' . $request->string . '%')
-                        ->orWhere('roll_no', 'like', '%' . $request->string . '%')
-                        ->orWhere('class', 'like', '%' . $request->string . '%')
-                        ->orWhere('section', 'like', '%' . $request->string . '%')
-                        ->orWhere('qualification', 'like', '%' . $request->string . '%')
-                        ->orWhere('batch_year', 'like', '%' . $request->string . '%')
-                        ->orWhere('degree_duration', 'like', '%' . $request->string . '%')
-                        ->orWhere('discipline', 'like', '%' . $request->string . '%')
-                        ->orWhere('employee_comp_id', 'like', '%' . $request->string . '%')
-                        ->orWhere('designation', 'like', '%' . $request->string . '%')
-                        ->orWhere('profile_card', 'like', '%' . $request->string . '%')
-                        ->orWhere('cnic_no', 'like', '%' . $request->string . '%')
-                        ->orWhere('relation', 'like', '%' . $request->string . '%')
-                        ->orWhere('guardian_code', 'like', '%' . $request->string . '%')
-                        ->orWhere('transport_start_date', 'like', '%' . $request->string . '%')
-                        ->orWhere('transport_end_date', 'like', '%' . $request->string . '%')
-                        ->orWhere('status', 'like', '%' . $request->string . '%');
-                        ;
-                })
-                ->paginate(getPaginated());
+        $allRequestsQuery = Requests::with('organization:id,name')
+            ->with('city:id,name')
+            ->with('route:id,name')
+            ->with('passenger:id,name,phone')
+            ->where('organization_id', $manager->o_id)
+            ->when($request->string, function ($query) use ($request) {
+                return $query
+                    ->where('name', 'like', '%' . $request->string . '%')
+                    ->orWhere('phone', 'like', '%' . $request->string . '%')
+                    ->orWhere('email', 'like', '%' . $request->string . '%')
+                    ->orWhere('house_no', 'like', '%' . $request->string . '%')
+                    ->orWhere('street_no', 'like', '%' . $request->string . '%')
+                    ->orWhere('town', 'like', '%' . $request->string . '%')
+                    ->orWhere('pickup_address', 'like', '%' . $request->string . '%')
+                    ->orWhere('additional_detail', 'like', '%' . $request->string . '%')
+                    ->orWhere('roll_no', 'like', '%' . $request->string . '%')
+                    ->orWhere('class', 'like', '%' . $request->string . '%')
+                    ->orWhere('section', 'like', '%' . $request->string . '%')
+                    ->orWhere('qualification', 'like', '%' . $request->string . '%')
+                    ->orWhere('batch_year', 'like', '%' . $request->string . '%')
+                    ->orWhere('degree_duration', 'like', '%' . $request->string . '%')
+                    ->orWhere('discipline', 'like', '%' . $request->string . '%')
+                    ->orWhere('employee_comp_id', 'like', '%' . $request->string . '%')
+                    ->orWhere('designation', 'like', '%' . $request->string . '%')
+                    ->orWhere('profile_card', 'like', '%' . $request->string . '%')
+                    ->orWhere('cnic_no', 'like', '%' . $request->string . '%')
+                    ->orWhere('relation', 'like', '%' . $request->string . '%')
+                    ->orWhere('guardian_code', 'like', '%' . $request->string . '%')
+                    ->orWhere('transport_start_date', 'like', '%' . $request->string . '%')
+                    ->orWhere('transport_end_date', 'like', '%' . $request->string . '%')
+                    ->orWhere('status', 'like', '%' . $request->string . '%');
+            });
 
-            return $this->respondWithSuccess($allRequests, 'list of users', 'FETCHED_REQUESTS_WITH_STATUS');
+        if ($request->has('status')) {
+            if ($request->status === 'past') {
+                $allRequests = $allRequestsQuery->onlyTrashed()->get();
+            } else {
+                $allRequests = $allRequestsQuery->where('status', $request->status)->get();
+            }
+        } else {
+            $allRequests = $allRequestsQuery->get();
+            $approvedRequests = $allRequests->where('status', Requests::STATUS_APPROVED)->values();
+            $pendingRequests = $allRequests->where('status', Requests::STATUS_PENDING)->values();
+
+            $response = [
+                'approved_requests' => $approvedRequests,
+                'pending_requests' => $pendingRequests,
+            ];
+            return $this->respondWithSuccess($response, 'list of users', 'FETCHED_REQUESTS_WITH_STATUS');
+        }
+
+        return $this->respondWithSuccess($allRequests, 'list of users', 'FETCHED_REQUESTS_WITH_STATUS');
+
+
         // } catch (\Throwable $th) {
         //     return $this->respondWithError('Error Occured while fetching request details');
         // }
