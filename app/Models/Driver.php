@@ -198,7 +198,8 @@ class Driver extends Authenticatable implements JWTSubject
      */
     public function getLicenseNoAttribute($value)
     {
-        return substr($value, 0, 10) . '-' . substr($value, 11, 3);
+        return $value;
+        // return substr($value, 0, 10) . '-' . substr($value, 11, 3);
     }
 
     /**
