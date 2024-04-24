@@ -145,8 +145,7 @@ class ApiVehicleController extends BaseController
                 ->where('status', Vehicle::STATUS_ACTIVE)
                 ->with('vehiclesTypes', function ($query) {
                     $query->select('id', 'name', 'desc');
-                })
-                ->first();
+                });
 
             return $this->respondWithSuccess($vehicle, 'Get Vehcile', 'API_GET_VEHICLE');
         } catch (ModelNotFoundException $e) {
