@@ -149,7 +149,8 @@ class Passenger extends Authenticatable implements JWTSubject
      */
     public function getPhoneAttribute($value)
     {
-        return substr($value, 0, 4) . '-' . substr($value, 4, 8);
+        return $value;
+        // return substr($value, 0, 4) . '-' . substr($value, 4, 8);
     }
 
     /**
