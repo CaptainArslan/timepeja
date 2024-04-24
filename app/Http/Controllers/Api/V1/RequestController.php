@@ -783,7 +783,6 @@ class RequestController extends BaseController
 
     public function search(Request $request): JsonResponse
     {
-        // try {
         $manager = auth('manager')->user();
 
         $allRequestsQuery = Requests::with('organization:id,name')
@@ -821,9 +820,9 @@ class RequestController extends BaseController
 
         if ($request->has('status')) {
             if ($request->status === 'past') {
-                $allRequests = $allRequestsQuery->whereNotNull('deleted_at')->values();
+                $allRequests = $allRequestsQuery->onlyTrashed()->get();
             } else {
-                $allRequests = $allRequestsQuery->where('status', $request->status)->values();
+                $allRequests = $allRequestsQuery->where('status', $request->status)->get();
             }
         } else {
             $allRequests = $allRequestsQuery->get();
@@ -838,10 +837,5 @@ class RequestController extends BaseController
         }
 
         return $this->respondWithSuccess($allRequests, 'list of users', 'FETCHED_REQUESTS_WITH_STATUS');
-
-
-        // } catch (\Throwable $th) {
-        //     return $this->respondWithError('Error Occured while fetching request details');
-        // }
     }
 }
