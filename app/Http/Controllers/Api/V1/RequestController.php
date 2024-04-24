@@ -821,7 +821,7 @@ class RequestController extends BaseController
 
         if ($request->has('status')) {
             if ($request->status === 'past') {
-                $allRequests = $allRequestsQuery->onlyTrashed()->get();
+                $allRequests = $allRequestsQuery->whereNotNull('deleted_at')->get();
             } else {
                 $allRequests = $allRequestsQuery->where('status', $request->status)->get();
             }
