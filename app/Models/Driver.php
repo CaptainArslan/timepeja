@@ -220,7 +220,8 @@ class Driver extends Authenticatable implements JWTSubject
      */
     public function getCnicAttribute($value)
     {
-        return substr($value, 0, 5) . '-' . substr($value, 5, 7) . '-' . substr($value, 12);
+        return $value;
+        // return substr($value, 0, 5) . '-' . substr($value, 5, 7) . '-' . substr($value, 12);
     }
 
 
