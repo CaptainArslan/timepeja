@@ -19,5 +19,6 @@ vendor/phpunit/phpunit
 /database/migrations-backup
 /database/seeders-backup
 /public/uploads/*
+/firebase/*
 # /public/managers/*
 # /public/drivers/*
