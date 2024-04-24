@@ -142,7 +142,7 @@ class ApiVehicleController extends BaseController
             // $manager = auth('manager')->user();
             $vehicle = Vehicle::findOrFail($id)
                 ->select('id', 'o_id', 'v_type_id', 'number', 'front_pic', 'number_pic', 'status')
-                ->where('status', Vehicle::STATUS_ACTIVE)
+                // ->where('status', Vehicle::STATUS_ACTIVE)
                 ->with('vehiclesTypes', function ($query) {
                     $query->select('id', 'name', 'desc');
                 });
