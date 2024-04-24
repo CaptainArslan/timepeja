@@ -205,7 +205,7 @@ class Vehicle extends Model
     public function getNumberPicAttribute($value)
     {
         if (filter_var($value, FILTER_VALIDATE_URL)) {
-            $value = $this->attributes['front_pic'];
+            $value = $this->attributes['number_pic'];
         } else {
             $value = asset('uploads/vehicles/placeholder.jpg');
         }
