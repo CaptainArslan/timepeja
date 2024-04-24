@@ -458,7 +458,7 @@ class ApiScheduleController extends BaseController
 
             Cache::put('PUBLISHED_SCHEDULE_' . $manager->o_id, $schedules, now()->addDay(1));
 
-            return $this->respondWithSuccess($schedules, 'Schedule by date', 'SCHEDULE_BY_DATE');
+            return $this->respondWithSuccess($schedules, 'Schedule by date', 'PUBLISHED_SCHEDULE_BY_DATE');
         } catch (\Throwable $th) {
             return $this->respondWithError('An error occurred while fetching schedules for this date.' . $th->getMessage());
         }
@@ -499,7 +499,7 @@ class ApiScheduleController extends BaseController
             // store in cache
             Cache::put('CREATED_SCHEDULE_' . $manager->o_id, $schedules, now()->addDay(1));
 
-            return $this->respondWithSuccess($schedules, 'Schedule by date', 'SCHEDULE_BY_DATE');
+            return $this->respondWithSuccess($schedules, 'Schedule by date', 'CREATED_SCHEDULE_BY_DATE');
         } catch (\Throwable $th) {
             return $this->respondWithError('An error occurred while fetching schedules for this date.' . $th->getMessage());
         }
