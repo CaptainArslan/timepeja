@@ -272,7 +272,7 @@ class PassengerAuthController extends Controller
             $passenger->image = $image;
             // $data = $passenger->select('id', 'picture')->first();
             if ($passenger->save()) {
-                return $this->respondWithSuccess($passenger->only('id', 'image'), 'Profile Updated', 'PASSENGER_PROFILE_UPDATED');
+                return $this->respondWithSuccess($passenger->only('id', 'image'), 'Profile Updated', 'PASSENGER_PROFILE_IMAGE_UPDATED');
             } else {
                 return $this->respondWithError('Profile not Updated');
             }
