@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api\V1\Driver;
 
 use App\Models\Schedule;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use App\Http\Controllers\Api\V1\BaseController;
 use App\Models\Driver;
 use Illuminate\Support\Facades\Log;
@@ -12,15 +11,15 @@ use Illuminate\Support\Facades\Validator;
 
 class ScheduleController extends BaseController
 {
-    public function __construct()
-    {
-        $this->middleware('auth:driver');
-    }
+    // public function __construct()
+    // {
+    //     $this->middleware('auth:driver');
+    // }
 
     public function index($date)
     {
         $validator = Validator::make(['date' => $date], [
-            'date' => ['nullable', 'date'],
+            'date' => ['required', 'date'],
         ], [
             'date.date' => 'Date must be a valid date',
         ]);
@@ -38,8 +37,8 @@ class ScheduleController extends BaseController
             $schedules = Schedule::where('d_id', $driver->id)
                 ->where('date', $date)
                 ->where('o_id', $driver->o_id)
-                ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time', 'status', 'created_at')
-                ->with('organizations:id,name')
+                // ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time', 'status', 'trip_status', 'created_at')
+                // ->with('organizations:id,name')
                 ->with('routes:id,name,number,from,to')
                 ->with('vehicles:id,number')
                 ->with('drivers:id,name')
@@ -51,6 +50,67 @@ class ScheduleController extends BaseController
             return $this->respondWithError('Something went wrong.', $th->getMessage());
         }
     }
+
+    public function schedules(Request $request, $date = null)
+    {
+        try {
+            $driver = auth('driver')->user();
+            $schedules = Schedule::where('d_id', $driver->id)
+                ->with('routes:id,name,number,from,to')
+                ->with('vehicles:id,number')
+                ->with('drivers:id,name')
+                ->when($date !== null, function ($query) use ($date) {
+                    return $query->where('date', $date)
+                        ->where('time', '>=', now()->format('H:i:s'));
+                })
+                ->get();
+
+
+            return $this->respondWithSuccess($schedules, 'Schedules retrieved successfully.', 'DRIVER_SCHEDULES_RETRIEVED');
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            return $this->respondWithError('Something went wrong.', $th->getMessage());
+        }
+    }
+
+    public function filterSchedules(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'start_date' => ['required', 'date'],
+            'last_date' => ['required', 'date'],
+        ], [
+            'start_date.date' => 'Start date must be a valid date',
+            'last_date.date' => 'Last date must be a valid date',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->respondWithError(implode(",", $validator->errors()->all()));
+        }
+
+        try {
+            $driver = auth('driver')->user();
+            $schedules = Schedule::where('d_id', $driver->id)
+                ->with('routes:id,name')
+                ->with('vehicles:id,number')
+                ->with('drivers:id,name')
+                ->where('date', '>=', $request->start_date)
+                ->where('date', '<=', $request->last_date)
+                // ->where('trip_status', Schedule::TRIP_STATUS_COMPLETED)
+                ->get();
+            $download_url = null;
+            $arr = [
+                'schedules' => $schedules,
+                'download_url' => $download_url
+            ];
+
+            return $this->respondWithSuccess($arr, 'Schedules retrieved successfully.', 'DRIVER_SCHEDULES_RETRIEVED');
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            return $this->respondWithError('Something went wrong.', $th->getMessage());
+        }
+    }
+
 
     public function online()
     {
@@ -90,7 +150,13 @@ class ScheduleController extends BaseController
         }
 
         try {
-            $schedule = Schedule::find($id);
+            $schedule = Schedule::where('id', $id)
+                ->with('drivers:id,name,license_no')
+                ->with('organizations:id,name,address')
+                ->with('routes:id,name')
+                ->with('vehicles:id,number')
+                ->first();
+
             if (!$schedule) {
                 return $this->respondWithError('Schedule not found.');
             }
@@ -100,10 +166,12 @@ class ScheduleController extends BaseController
             // Compare the current time with the actual start time
             if ($currentTime->greaterThan($schedule->start_time)) {
                 // If the current time is greater, set the is_delay column to 1
-                $schedule->is_delay = 1;
+                $schedule->is_delay = Schedule::TRIP_ISDELAYED;
             }
             $schedule->trip_status = Schedule::TRIP_STATUS_INPROGRESS;
             $schedule->save();
+
+
             return $this->respondWithSuccess($schedule, 'Trip started successfully.', 'DRIVER_TRIP_STARTED');
         } catch (\Throwable $th) {
             Log::error($th->getMessage());
@@ -133,7 +201,7 @@ class ScheduleController extends BaseController
             $schedule->trip_status = Schedule::TRIP_STATUS_COMPLETED;
             $schedule->end_time = date("h:i:s");
             $schedule->save();
-            return $this->respondWithSuccess($schedule, 'Trip started successfully.', 'DRIVER_TRIP_STARTED');
+            return $this->respondWithSuccess(null, 'Trip completed successfully.', 'DRIVER_TRIP_STARTED');
         } catch (\Throwable $th) {
             Log::error($th->getMessage());
             return $this->respondWithError('Something went wrong.', $th->getMessage());
@@ -165,6 +233,28 @@ class ScheduleController extends BaseController
             return $this->respondWithSuccess($schedule, 'Trip started successfully.', 'DRIVER_TRIP_STARTED');
         } catch (\Throwable $th) {
             Log::error($th->getMessage());
+            return $this->respondWithError('Something went wrong.', $th->getMessage());
+        }
+    }
+
+    public function notifications()
+    {
+        try {
+            $driver = auth('driver')->user();
+            $schedules_notifications = Schedule::where('d_id', $driver->id)
+                ->where('status', Schedule::STATUS_PUBLISHED)
+                ->where('date', now()->format('Y-m-d'))
+                // ->whereBetween('time', [
+                //     now()->format('H:i:s'),
+                //     now()->addMinutes(15)->format('H:i:s')
+                // ])
+                ->where('time', '>=', now()->format('H:i:s'))
+                ->where('time', '<=', now()->addMinutes(15)->format('H:i:s'))
+                ->with('routes:id,name')
+                ->with('vehicles:id,number')
+                ->get();
+            return $this->respondWithSuccess($schedules_notifications, 'Notifications retrieved successfully.', 'DRIVER_NOTIFICATIONS_RETRIEVED');
+        } catch (\Throwable $th) {
             return $this->respondWithError('Something went wrong.', $th->getMessage());
         }
     }

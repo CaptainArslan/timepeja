@@ -140,15 +140,14 @@ class ApiVehicleController extends BaseController
         }
         try {
             // $manager = auth('manager')->user();
-            $vehicle = Vehicle::findOrFail($id)
+            $vehicle = Vehicle::with(['vehiclesTypes' => function ($query) {
+                $query->select('id', 'name');
+            }]) // Correctly pass a closure to constrain the eager loaded vehiclesTypes
                 ->select('id', 'o_id', 'v_type_id', 'number', 'front_pic', 'number_pic', 'status')
-                ->where('status', Vehicle::STATUS_ACTIVE)
-                ->with('vehiclesTypes', function ($query) {
-                    $query->select('id', 'name', 'desc');
-                })
-                ->first();
+                // ->where('status', Vehicle::STATUS_ACTIVE)
+                ->findOrFail($id); // Execute the query and fetch the vehicle or fail if not found
 
-            return $this->respondWithSuccess($vehicle, 'Get Vehcile', 'API_GET_VEHICLE');
+            return $this->respondWithSuccess($vehicle, 'Get Vehicle', 'API_GET_VEHICLE');
         } catch (ModelNotFoundException $e) {
             return $this->respondWithError('Vehicle id not found');
             // throw new NotFoundHttpException('Vehicle id not found');

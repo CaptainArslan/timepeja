@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Api\V1\Auth;
 
+use ApiHelper;
 use App\Models\Manager;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Api\V1\BaseController;
+use Facade\FlareClient\Api;
 
 class ManagerAuthController extends BaseController
 {
@@ -81,7 +83,7 @@ class ManagerAuthController extends BaseController
                 return $this->respondWithError("Invalid phone number or verification code");
             }
 
-            if($manager->organization->status !== 1){
+            if ($manager->organization->status !== 1) {
                 return $this->respondWithError("Organization is not active");
             }
 
@@ -133,7 +135,11 @@ class ManagerAuthController extends BaseController
         try {
             $credentials = $request->only(['phone', 'password']);
 
-            $user = Manager::where('phone', $credentials['phone'])->first();
+            $user = Manager::where('phone', $credentials['phone'])
+                ->with('organization')
+                ->with('organization.city:id,name')
+                ->with('organization.state:id,name')
+                ->first();
 
             if (!$user) {
                 return $this->respondWithError('Invalid phone number or password');
@@ -142,6 +148,8 @@ class ManagerAuthController extends BaseController
             if ($user->status !== Manager::STATUS_ACTIVE) {
                 return $this->respondWithError('Account is not active');
             }
+
+            ApiHelper::saveDeviceToken($request, $user);
 
             if (!$token = auth('manager')->attempt($credentials)) {
                 return $this->respondWithError('Invalid phone number or password');

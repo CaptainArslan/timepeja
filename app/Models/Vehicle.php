@@ -95,6 +95,21 @@ class Vehicle extends Model
         return $this->belongsTo(VehicleType::class, 'v_type_id', 'id');
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'u_id', 'id');
+    }
+
+    public function locations()
+    {
+        return $this->hasMany(Location::class, 'vehicle_id', 'id');
+    }
+
+    public function trips()
+    {
+        return $this->hasMany(Trip::class, 'vehicle_id', 'id');
+    }
+
 
     // ----------------------------------------------------------------
     // ------------------ Accessors & Mutator -------------------------
@@ -150,7 +165,7 @@ class Vehicle extends Model
     public function getBackPicAttribute($value)
     {
         if (filter_var($value, FILTER_VALIDATE_URL)) {
-            $value = $this->attributes['front_pic'];
+            $value = $this->attributes['back_pic'];
         } else {
             $value = asset('uploads/vehicles/placeholder.jpg');
         }
@@ -190,7 +205,7 @@ class Vehicle extends Model
     public function getNumberPicAttribute($value)
     {
         if (filter_var($value, FILTER_VALIDATE_URL)) {
-            $value = $this->attributes['front_pic'];
+            $value = $this->attributes['number_pic'];
         } else {
             $value = asset('uploads/vehicles/placeholder.jpg');
         }

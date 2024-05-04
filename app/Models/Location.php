@@ -23,4 +23,51 @@ class Location extends Model
     {
         return $this->belongsTo(Organization::class);
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function vehicle()
+    {
+        return $this->belongsTo(Vehicle::class);
+    }
+
+    public function driver()
+    {
+        return $this->belongsTo(Driver::class);
+    }
+
+    public function passenger()
+    {
+        return $this->belongsTo(Passenger::class);
+    }
+
+    // ===================== SCOPES =====================
+    public function scopeDriverLocation($query, $id)
+    {
+        return $query->where('vehicle_id', $id)->where('type', 'driver')->latest()->first();
+    }
+
+    public function scopePassengerLocation($query, $id)
+    {
+        return $query->where('passenger_id', $id)->where('type', 'passenger')->latest()->first();
+    }
+
+    public function scopeVehicleLocation($query, $id)
+    {
+        return $query->where('vehicle_id', $id)->where('type', 'driver')->latest()->first();
+    }
+
+    public function scopePassengerVehicleLocation($query, $id)
+    {
+        return $query->where('vehicle_id', $id)->where('type', 'passenger')->latest()->first();
+    }
+
+    public function scopePassengerDriverLocation($query, $id)
+    {
+        return $query->where('driver_id', $id)->where('type', 'passenger')->latest()->first();
+    }
+
 }

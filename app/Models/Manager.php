@@ -16,7 +16,7 @@ class Manager extends Authenticatable implements JWTSubject
     use Notifiable;
 
     protected $table = 'managers';
-    protected $appends = ['picture'];
+    // protected $appends = ['picture'];
 
     public const STATUS_ACTIVE = true;
     public const STATUS_INACTIVE = false;
@@ -53,6 +53,7 @@ class Manager extends Authenticatable implements JWTSubject
         'remember_token',
         'otp',
         'deleted_at',
+        'device_token',
     ];
 
     // Rest omitted for brevity
@@ -78,40 +79,36 @@ class Manager extends Authenticatable implements JWTSubject
         ];
     }
 
-    /**
-     * Send the password reset notification.
-     *
-     * @param  string  $token
-     * @return void
-     */
+
+    // ----------------------------------------------------------------
+    // ------------------ Relationships --------------------------------
+    // ----------------------------------------------------------------
+
     public function organization()
     {
-        return $this->belongsTo(Organization::class, 'o_id', );
+        return $this->belongsTo(Organization::class, 'o_id');
     }
 
-    /**
-     * [managerOrganization description]
-     *
-     * @return  [type]  [return description]
-     */
     public function managerOrganization()
     {
         return $this->hasOne(Manager::class, 'id', 'o_id');
     }
 
-    /**
-     * [managerUser description]
-     *
-     * @return  [type]  [return description]
-     *
-     */
-    public function organizationType()
+    public function city()
     {
-        return $this->hasOne(Organization::class, 'id', 'o_type_id');
+        return $this->hasOne(City::class, 'id', 'c_id');
     }
 
+    public function state()
+    {
+        return $this->hasOne(State::class, 'id', 's_id');
+    }
 
-
+    // not sure about this relationship not removing yet
+    public function organizationType()
+    {
+        return $this->hasOne(OrganizationType::class, 'o_type_id', 'id');
+    }
 
 
 
@@ -161,7 +158,8 @@ class Manager extends Authenticatable implements JWTSubject
      */
     public function getPhoneAttribute($value)
     {
-        return substr($value, 0, 4) . '-' . substr($value, 4, 8);
+        return $value;
+        // return substr($value, 0, 4) . '-' . substr($value, 4, 8);
     }
 
     /**
@@ -172,12 +170,12 @@ class Manager extends Authenticatable implements JWTSubject
     public function getPictureAttribute($value)
     {
         if (filter_var($value, FILTER_VALIDATE_URL)) {
-            $value = $this->attributes['picture'];
+            return $value; // If it's a valid URL, return it directly
+        } elseif ($value) {
+            return asset('uploads/managers/profiles/' . $value); // If not a URL but has a value, return asset URL
         } else {
-            $value = asset('uploads/managers/profiles/placeholder.jpg');
+            return asset('uploads/managers/profiles/placeholder.jpg'); // If empty or not set, return placeholder URL
         }
-        return $value;
-        return $this->attributes['picture'] ? asset('uploads/managers/profiles/' . $this->attributes['picture']) : null;
     }
 
     /**

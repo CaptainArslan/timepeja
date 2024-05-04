@@ -22,9 +22,11 @@ class OrganizationController extends BaseController
     public function index()
     {
         $data = Organization::where('status', Organization::STATUS_ACTIVE)
-            // ->select('id', 'name', 'branch_name', 'branch_code', 'email', 'address', 'c_id', 's_id')
-            ->with('city:id,name')
-            ->with('state:id,name')
+            ->has('manager')
+            // ->with('manager')
+            ->select('id', 'name', 'code')
+            // ->with('city:id,name')
+            // ->with('state:id,name')
             ->get();
         return $this->respondWithSuccess(
             $data,
@@ -43,7 +45,9 @@ class OrganizationController extends BaseController
     {
         $data = Organization::where('status', Organization::STATUS_ACTIVE)
             ->where('code', $code)
-            // ->select('id', 'name', 'branch_name', 'branch_code', 'email', 'address', 'c_id', 's_id')
+            ->has('manager')
+            ->select('id', 'name', 'branch_name', 'branch_code', 'email', 'address', 'c_id', 's_id')
+            ->with('manager')
             ->with('city:id,name')
             ->with('state:id,name')
             ->first();
@@ -90,7 +94,7 @@ class OrganizationController extends BaseController
     {
         $validator = Validator::make($request->all(), [
             'deactivate_code' => ['required', 'string', 'exists:organizations,deactivate_code'],
-        ],[
+        ], [
             'deactivate_code.exists' => 'Invalid Deactivate Code'
         ]);
         if ($validator->fails()) {
@@ -114,14 +118,14 @@ class OrganizationController extends BaseController
         // Soft delete the organization and its related entries
         // DB::transaction(function () use ($organization) {
         //     $organization->delete();
-            // $organization->vehicles()->delete();
-            // $organization->drivers()->delete();
-            // $organization->routes()->delete();
-            // // $organization->requests()->delete();
-            // $organization->users()->delete();
-            // $organization->locations()->delete();
-            // $organization->manager()->delete();
-            // $organization->schedules()->delete();
+        // $organization->vehicles()->delete();
+        // $organization->drivers()->delete();
+        // $organization->routes()->delete();
+        // // $organization->requests()->delete();
+        // $organization->users()->delete();
+        // $organization->locations()->delete();
+        // $organization->manager()->delete();
+        // $organization->schedules()->delete();
         // });
 
         try {

@@ -71,7 +71,7 @@ class Route extends Model
 
     public function passengers()
     {
-        return $this->belongsToMany(Passenger::class, 'passenger_route', 'route_id', 'passenger_id');
+        return $this->belongsToMany(Passenger::class, 'passenger_route');
     }
 
     // /**
@@ -176,5 +176,16 @@ class Route extends Model
     public function getUpdatedAtAttribute($value)
     {
         return Carbon::parse($value)->format('Y-m-d');
+    }
+
+
+
+    public function scopeByOrganization($query, $organization_id)
+    {
+        return $query->when($organization_id, function ($query) use ($organization_id) {
+            return $query->where('o_id', $organization_id);
+        }, function ($query) {
+            return $query;
+        });
     }
 }

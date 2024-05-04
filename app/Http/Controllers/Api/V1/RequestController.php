@@ -8,6 +8,7 @@ use App\Models\Student;
 use App\Models\Employee;
 use App\Models\Guardian;
 use App\Models\Passenger;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\JsonResponse;
@@ -205,7 +206,7 @@ class RequestController extends BaseController
     //         $guardian->students()->attach($already_request->student_id);
     //         $guardian->requests()->attach($requestCreate->id);
 
-    //         // $requestCreate->guardians()->attach($guardian->id); 
+    //         // $requestCreate->guardians()->attach($guardian->id);
     //     } elseif ($request->type == 'employee_guardian') {
 
     //         $count = Requests::where('employee_id', $already_request->employee_id)->count();
@@ -233,7 +234,7 @@ class RequestController extends BaseController
     {
         $validator = Validator::make($request->all(),  [
             'unique_id' => ['required', 'string', 'exists:passengers,unique_id',],
-            'organization_id' => ['required', 'numeric', 'exists:organizations,id',],
+            'organization_id' => ['nullable', 'numeric', 'exists:organizations,id',],
             // 'parent_request_id' => ['nullable', 'numeric', 'exists:requests,id',],
             'type' => ['required', 'string', 'in:student,employee,student_guardian,employee_guardian',],
             'student_type' => ['nullable', 'string', 'in:school,college,university', Rule::requiredIf(function () use ($request) {
@@ -261,21 +262,21 @@ class RequestController extends BaseController
             ],
             'class' => [
                 'nullable', 'string',
-                Rule::requiredIf(function () use ($request) {
-                    return in_array($request->type, ['student']);
-                }),
+                // Rule::requiredIf(function () use ($request) {
+                //     return in_array($request->type, ['student']);
+                // }),
             ],
             'section' => [
                 'nullable', 'string',
-                Rule::requiredIf(function () use ($request) {
-                    return in_array($request->type, ['student']);
-                }),
+                // Rule::requiredIf(function () use ($request) {
+                //     return in_array($request->type, ['student']);
+                // }),
             ],
             'qualification' => [
                 'nullable', 'string',
-                Rule::requiredIf(function () use ($request) {
-                    return in_array($request->type, ['student',]);
-                }),
+                // Rule::requiredIf(function () use ($request) {
+                //     return in_array($request->type, ['student',]);
+                // }),
             ],
             'batch_year' => [
                 'nullable', 'integer',
@@ -284,7 +285,7 @@ class RequestController extends BaseController
                 // }),
             ],
             'degree_duration' => [
-                'nullable', 'integer',
+                'nullable',
                 // Rule::requiredIf(function () use ($request) {
                 //     return in_array($request->type, ['student',]);
                 // }),
@@ -393,7 +394,8 @@ class RequestController extends BaseController
 
         $data = $request->all();
         $data['passenger_id'] = $passenger_id;
-        $data['guardian_code'] = substr(uniqid(), -8);
+        $data['upload_image'] = $request->upload_image;
+        $data['guardian_code'] = Str::random(6);
         $data['parent_request_id'] = $request_id;
         $data['organization_id'] = $organization_id;
         $data['created_by'] = 'manager';
@@ -459,9 +461,9 @@ class RequestController extends BaseController
         //
     }
 
-    /** 
+    /**
      * Delete Requests
-     * 
+     *
      * @param Request $request
      * @return JsonResponse
      */
@@ -490,9 +492,9 @@ class RequestController extends BaseController
         }
     }
 
-    /** 
+    /**
      * Delete Requests
-     * 
+     *
      * @param Request $request
      * @return JsonResponse
      */
@@ -522,9 +524,9 @@ class RequestController extends BaseController
         }
     }
 
-    /** 
+    /**
      * Delete Requests
-     * 
+     *
      * @param Request $request
      * @return JsonResponse
      */
@@ -554,9 +556,9 @@ class RequestController extends BaseController
         }
     }
 
-    /** 
+    /**
      * Delete Requests
-     * 
+     *
      * @param Request $request
      * @return JsonResponse
      */
@@ -760,5 +762,80 @@ class RequestController extends BaseController
         $newRequest->status = Requests::STATUS_PENDING;
         $newRequest->save();
         return $newRequest;
+    }
+
+
+    public function getRequestDetailByCode($code)
+    {
+        try {
+            $request = Requests::with('organization:id,name')
+                ->with('city:id,name')
+                ->with('route:id,name')
+                ->with('passenger:id,name,phone')
+                ->where('guardian_code', $code)
+                ->firstOrFail();
+
+            return $this->respondWithSuccess($request, 'Request Details', 'REQUEST_SPECIFIC_DETAILS');
+        } catch (\Throwable $th) {
+            return $this->respondWithError('Error Occured while fetching request details');
+        }
+    }
+
+    public function search(Request $request): JsonResponse
+    {
+        $manager = auth('manager')->user();
+
+        $allRequestsQuery = Requests::with('organization:id,name')
+            ->with('city:id,name')
+            ->with('route:id,name')
+            ->with('passenger:id,name,phone')
+            ->where('organization_id', $manager->o_id)
+            ->when($request->string, function ($query) use ($request) {
+                return $query
+                    ->where('name', 'like', '%' . $request->string . '%')
+                    ->orWhere('phone', 'like', '%' . $request->string . '%')
+                    ->orWhere('email', 'like', '%' . $request->string . '%')
+                    ->orWhere('house_no', 'like', '%' . $request->string . '%')
+                    ->orWhere('street_no', 'like', '%' . $request->string . '%')
+                    ->orWhere('town', 'like', '%' . $request->string . '%')
+                    ->orWhere('pickup_address', 'like', '%' . $request->string . '%')
+                    ->orWhere('additional_detail', 'like', '%' . $request->string . '%')
+                    ->orWhere('roll_no', 'like', '%' . $request->string . '%')
+                    ->orWhere('class', 'like', '%' . $request->string . '%')
+                    ->orWhere('section', 'like', '%' . $request->string . '%')
+                    ->orWhere('qualification', 'like', '%' . $request->string . '%')
+                    ->orWhere('batch_year', 'like', '%' . $request->string . '%')
+                    ->orWhere('degree_duration', 'like', '%' . $request->string . '%')
+                    ->orWhere('discipline', 'like', '%' . $request->string . '%')
+                    ->orWhere('employee_comp_id', 'like', '%' . $request->string . '%')
+                    ->orWhere('designation', 'like', '%' . $request->string . '%')
+                    ->orWhere('profile_card', 'like', '%' . $request->string . '%')
+                    ->orWhere('cnic_no', 'like', '%' . $request->string . '%')
+                    ->orWhere('relation', 'like', '%' . $request->string . '%')
+                    ->orWhere('guardian_code', 'like', '%' . $request->string . '%')
+                    ->orWhere('transport_start_date', 'like', '%' . $request->string . '%')
+                    ->orWhere('transport_end_date', 'like', '%' . $request->string . '%')
+                    ->orWhere('status', 'like', '%' . $request->string . '%');
+            });
+
+        if ($request->has('status')) {
+            if ($request->status === 'past') {
+                $allRequests = $allRequestsQuery->onlyTrashed()->get();
+            } else {
+                $allRequests = $allRequestsQuery->where('status', $request->status)->get();
+            }
+        } else {
+            $allRequests = $allRequestsQuery->get();
+            $approvedRequests = $allRequests->where('status', Requests::STATUS_APPROVED)->values();
+            $pendingRequests = $allRequests->where('status', Requests::STATUS_PENDING)->values();
+
+            $response = [
+                'approved_requests' => $approvedRequests,
+                'pending_requests' => $pendingRequests,
+            ];
+            return $this->respondWithSuccess($response, 'list of users', 'FETCHED_REQUESTS_WITH_STATUS');
+        }
+
+        return $this->respondWithSuccess($allRequests, 'list of users', 'FETCHED_REQUESTS_WITH_STATUS');
     }
 }

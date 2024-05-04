@@ -1,18 +1,19 @@
 <?php
 
-use App\Http\Controllers\CommonController;
+use App\Models\Schedule;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RouteController;
+use App\Http\Controllers\CommonController;
 use App\Http\Controllers\DriverController;
-use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\ManagerController;
-use App\Http\Controllers\PassengerController;
 use App\Http\Controllers\RequestController;
-use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\SettingController;
-use App\Models\Schedule;
+use App\Http\Controllers\VehicleController;
+use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\PassengerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -249,4 +250,48 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('schedule/delete/{id}', [ScheduleController::class, 'destroy'])->name('schedule.delete');
     Route::get('get-schedule', [ScheduleController::class, 'getSchedule'])->name('getSchedule');
     Route::get('get-driver-vehicle-route', [ScheduleController::class, 'getDriverVehicleRoute'])->name('getDriverVehicleRoute');
+});
+
+Route::get('clear-cache', function () {
+    Artisan::call('optimize:clear');
+    return back();
+});
+
+// Route::get('migrate-fresh', function () {
+//     Artisan::call('migrate:fresh');
+//     dd("Migration Freshed");
+// });
+
+// Route::get('migrate', function () {
+//     Artisan::call('migrate');
+//     dd("Migration Completed");
+// });
+
+// Route::get('seed', function () {
+//     Artisan::call('db:seed');
+//     dd("Seeding Completed");
+// });
+
+Route::get('storage-link', function () {
+    Artisan::call('storage:link');
+    dd("links Completed");
+});
+
+Route::get('queue-work', function () {
+    Artisan::call('queue:work --stop-when-empty');
+    dd("Queue working Completed");
+});
+
+Route::get('schedule-work', function () {
+    Artisan::call('schedule:work');
+    dd("Schedule stated");
+});
+Route::get('schedule-terminate', function () {
+    Artisan::call('schedule:terminate');
+    dd("Schedule Terminated");
+});
+
+Route::get('clear-route', function () {
+    Artisan::call('route:clear');
+    return back();
 });

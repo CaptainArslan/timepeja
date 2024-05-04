@@ -38,6 +38,7 @@ class CreateSchedulesTable extends Migration
                 Schedule::TRIP_STATUS_COMPLETED,
                 Schedule::TRIP_STATUS_DELAYED,
             ]);
+            $table->boolean('is_notified')->default(false);
             $table->timestamps();
             $table->text('delayed_reason')->nullable();
             $table->softDeletes();

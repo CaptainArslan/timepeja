@@ -173,10 +173,10 @@ class ApiDriverController extends BaseController
         }
         try {
             // $manager = auth('manager')->user();
-            $driver = Driver::findOrFail($id)
+            $driver = Driver::findOrFail($id);
                 // ->where('o_id', $manager->o_id)
-                ->where('status', Driver::STATUS_ACTIVE)
-                ->firstOrFail();
+                // ->where('status', Driver::STATUS_ACTIVE)
+                // ->firstOrFail();
 
             return $this->respondWithSuccess($driver, 'Get Driver', 'API_GET_DRIVER');
         } catch (ModelNotFoundException $e) {

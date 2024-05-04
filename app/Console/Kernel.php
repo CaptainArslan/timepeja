@@ -4,6 +4,7 @@ namespace App\Console;
 
 use Commands\ScheduleSeed;
 use Commands\MigrateInOrder;
+use App\Jobs\DriverScheduleJob;
 use App\Console\Commands\MakeModelSetup;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -25,6 +26,12 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('schedule:seed')->daily();
         // $schedule->command('inspire')->hourly();
+        // $schedule->command('driver:schedule-notification')->everyMinute();
+        $schedule->job(new DriverScheduleJob)->everyMinute();
+        
+        $schedule->command('queue:work --stop-when-empty')
+            ->everyMinute()
+            ->withoutOverlapping();
     }
 
     /**

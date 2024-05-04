@@ -1,7 +1,8 @@
 <?php
 
-use App\Jobs\SendOrgRegisterEmailJob;
 use App\Models\Setting;
+use Illuminate\Support\Facades\Log;
+use App\Jobs\SendOrgRegisterEmailJob;
 
 /**
  * [print_data description]
@@ -164,4 +165,48 @@ function getGoogleApi()
     } catch (\Exception $e) {
         return null;
     }
+}
+
+
+function getPdfLogo()
+{
+    return  asset('images/logo.png');
+}
+
+function getPaginated($limit = 10){
+    return $limit;
+}
+
+
+function notification($title, $body, $data, $device_token)
+{
+    $SERVER_API_KEY = $SERVER_API_KEY = config('app.firebase_key');
+    Log::info($SERVER_API_KEY);
+    $data = [
+        "to" => $device_token,
+        "notification" => [
+            "title" => $title,
+            "body" => $body,
+        ],
+
+    ];
+    $dataString = json_encode($data);
+    $headers = [
+        'Authorization: key=' . $SERVER_API_KEY,
+        'Content-Type: application/json',
+    ];
+
+    $ch = curl_init();
+
+    curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
+
+    $response = curl_exec($ch);
+
+    Log::info($response);
+    return $response;
 }

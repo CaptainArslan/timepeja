@@ -37,6 +37,7 @@ class CreateRequestsTable extends Migration
             ])->default('male');
 
             $table->string('name');
+            $table->string('upload_image')->nullable();
             $table->string('phone');
             $table->foreignId('passenger_id')->nullable()->constrained('passengers');
             $table->string('email')->nullable();
@@ -48,6 +49,8 @@ class CreateRequestsTable extends Migration
             $table->string('lattitude')->nullable();
             $table->string('longitude')->nullable();
             $table->foreignId('pickup_city_id')->nullable()->constrained('cities');
+            $table->string('pickup_city')->nullable();
+            $table->string('city')->nullable();
             $table->string('additional_detail')->nullable();
             $table->string('roll_no')->nullable();
             $table->string('class')->nullable();

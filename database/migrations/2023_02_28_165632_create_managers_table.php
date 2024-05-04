@@ -23,7 +23,7 @@ class CreateManagersTable extends Migration
             $table->string('phone')->unique();
             $table->string('password');
             $table->string('otp');
-            // $table->string('token')->unique()->nullable();
+            $table->string('device_token')->nullable();
             $table->longText('picture')->nullable();
             $table->longText('about')->nullable();
             $table->tinyInteger('status')->default(Manager::STATUS_ACTIVE);

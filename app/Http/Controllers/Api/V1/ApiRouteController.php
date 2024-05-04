@@ -174,10 +174,7 @@ class ApiRouteController extends BaseController
         }
         try {
             // $manager = auth('manager')->user();
-            $route = Route::findOrFail($id)
-                // ->where('o_id', $manager->o_id)
-                ->where('status', Route::STATUS_ACTIVE)
-                ->firstOrFail();
+            $route = Route::findOrFail($id);
 
             return $this->respondWithSuccess($route, 'Get Route', 'API_GET_ROUTE');
         } catch (ModelNotFoundException $e) {

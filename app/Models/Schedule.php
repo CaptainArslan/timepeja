@@ -6,6 +6,8 @@ use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Builder;
+
 
 class Schedule extends Model
 {
@@ -22,6 +24,9 @@ class Schedule extends Model
 
     public const TRIP_NOTDELAYED = false;
     public const TRIP_ISDELAYED = true;
+
+    public const SCHEDULE_TIME = 15;
+
 
     protected $table = 'schedules';
 
@@ -50,6 +55,7 @@ class Schedule extends Model
         'd_id' => 'integer',
         'id_delay' => 'boolean',
         'created_at' => 'datetime:Y-m-d H:i:s',
+        'date' => 'string'
         // 'trip_status' => 'boolean'
     ];
 
@@ -80,6 +86,15 @@ class Schedule extends Model
     }
 
     /**
+     * relation with route
+     *
+     * @return  [type]  return relation
+     */
+    public function route()
+    {
+        return $this->belongsTo(Route::class, 'route_id', 'id');
+    }
+    /**
      * RELATION WITH VEHICLE
      *
      * @return  [type]  return relation
@@ -89,12 +104,17 @@ class Schedule extends Model
         return $this->belongsTo(Vehicle::class, 'v_id', 'id');
     }
 
-    /**
-     * relation with driver
-     *
-     * @return  [type]  return relation
-     */
+    public function vehicle()
+    {
+        return $this->belongsTo(Vehicle::class, 'v_id', 'id');
+    }
+
     public function drivers()
+    {
+        return $this->belongsTo(Driver::class, 'd_id', 'id');
+    }
+
+    public function driver()
     {
         return $this->belongsTo(Driver::class, 'd_id', 'id');
     }
@@ -115,25 +135,28 @@ class Schedule extends Model
     // ------------------ Accessors & Mutator -------------------------
     // ----------------------------------------------------------------
 
-    /**
-     * Get the created_at.
-     *
-     * @param  string  $value
-     * @return string|null
-     */
     public function getCreatedAtAttribute($value)
     {
         return Carbon::parse($value)->format('Y-m-d');
     }
 
-    /**
-     * Get the updated_at.
-     *
-     * @param  string  $value
-     * @return string|null
-     */
     public function getUpdatedAtAttribute($value)
     {
         return Carbon::parse($value)->format('Y-m-d');
+    }
+
+    // ----------------------------------------------------------------
+    // -------------------------- Scopes ------------------------------
+    // ----------------------------------------------------------------
+
+
+    public function scopeIsNotNotified(Builder $query): Builder
+    {
+        return  $query->where('is_notified', 0);
+    }
+
+    public function scopeIsNotified(Builder $query): Builder
+    {
+        return  $query->where('is_notified', 1);
     }
 }

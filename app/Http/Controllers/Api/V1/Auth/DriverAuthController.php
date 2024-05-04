@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers\Api\V1\Auth;
 
+use ApiHelper;
 use App\Models\Driver;
 use Illuminate\Support\Str;
+use App\Models\Organization;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Api\V1\BaseController;
-use App\Models\Organization;
-use Illuminate\Support\Facades\Log;
 
 class DriverAuthController extends BaseController
 {
@@ -128,16 +129,25 @@ class DriverAuthController extends BaseController
 
         $credentials = $request->only(['phone', 'password']);
 
+
         if (!$token = auth('driver')->attempt($credentials)) {
             return $this->respondWithError('Invalid phone number or password');
         }
 
         $user = auth('driver')->user();
+        $driver = Driver::where('id', $user->id)
+            ->with('organization')
+            ->with('organization.city:id,name')
+            ->with('organization.state:id,name')
+            ->first();
+
+        ApiHelper::saveDeviceToken($request, $user);
+
         if (!$user) {
             return $this->respondWithError('User not Found');
         }
 
-        return $this->respondWithSuccess($user, 'Login successfully', 'LOGIN_API_SUCCESS', [
+        return $this->respondWithSuccess($driver, 'Login successfully', 'LOGIN_API_SUCCESS', [
             'content-type' => 'application/json',
             'Authorization' => $token
         ]);
@@ -235,17 +245,16 @@ class DriverAuthController extends BaseController
     public function driverProfile()
     {
         try {
-        $driver = auth('driver')->user();
-        if (!$driver) {
-            $this->respondWithError('Error Occured while fetching profile');
-        }
+            $driver = auth('driver')->user();
+            if (!$driver) {
+                $this->respondWithError('Error Occured while fetching profile');
+            }
 
-        return $this->respondWithSuccess(
-            $driver,
-            'Driver profile',
-            'DRIVER_PROFILE'
-        );
-        
+            return $this->respondWithSuccess(
+                $driver,
+                'Driver profile',
+                'DRIVER_PROFILE'
+            );
         } catch (\Throwable $th) {
             Log::info('Error Occured while fetching profile' . $th->getMessage());
             return $this->respondWithError('Error Occured while fetching profile');

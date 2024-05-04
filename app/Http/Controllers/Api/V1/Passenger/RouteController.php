@@ -11,6 +11,14 @@ use App\Http\Controllers\Api\V1\BaseController;
 
 class RouteController extends BaseController
 {
+
+    public function getFavoriteRoute() {
+        $passenger = auth('passenger')->user();
+        $favoriteRoutes = $passenger->routes()->select('routes.id', 'name', 'number', 'from', 'to')->get();
+        return $this->respondWithSuccess($favoriteRoutes, 'Favorite routes retrieved successfully', 'FAVORITE_ROUTES_RETRIEVED');
+    }
+    
+
     public function addFavoriteRoute(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -31,13 +39,13 @@ class RouteController extends BaseController
         $passenger = auth('passenger')->user();
 
         // Get the passenger's current favorite route IDs
-        $currentFavorites = $passenger->favoriteRoutes()->pluck('routes.id')->toArray();
+        $currentFavorites = $passenger->routes()->pluck('routes.id')->toArray();
 
         // Filter the provided route IDs to exclude those already in favorites
         $newRouteIds = array_diff($request->route_ids, $currentFavorites);
 
-        // Attach the new route IDs to the passenger's favoriteRoutes
-        $passenger->favoriteRoutes()->attach($newRouteIds);
+        // Attach the new route IDs to the passenger's routes
+        $passenger->routes()->attach($newRouteIds);
 
         if (count($newRouteIds) > 0) {
             return $this->respondWithSuccess(null, 'Route(s) added to favorites', 'ROUTE_ADDED_TO_FAVORITES');
@@ -45,7 +53,6 @@ class RouteController extends BaseController
             return $this->respondWithError('Route(s) already in favorites');
         }
     }
-
 
     public function removeFavoriteRoute(Request $request)
     {
@@ -67,18 +74,28 @@ class RouteController extends BaseController
         $passenger = auth('passenger')->user();
 
         // Get the passenger's current favorite route IDs
-        $currentFavorites = $passenger->favoriteRoutes()->pluck('routes.id')->toArray();
+        $currentFavorites = $passenger->routes()->pluck('routes.id')->toArray();
 
         // Filter the provided route IDs to include only those currently in favorites
         $routeIdsToRemove = array_intersect($request->route_ids, $currentFavorites);
 
         if (count($routeIdsToRemove) > 0) {
             // Detach the route IDs to remove from the passenger's favoriteRoutes
-            $passenger->favoriteRoutes()->detach($routeIdsToRemove);
+            $passenger->routes()->detach($routeIdsToRemove);
 
             return $this->respondWithSuccess(null, 'Route(s) removed from favorites', 'ROUTE_REMOVED_FROM_FAVORITES');
         } else {
             return $this->respondWithError('Route(s) not found in favorites');
+        }
+    }
+
+    public function getRoutes(Request $request)
+    {
+        try {
+            $routes = Route::byOrganization($request->organization_id)->select('id', 'name')->get();
+            return $this->respondWithSuccess($routes, 'Routes retrieved successfully', 'ROUTES_RETRIEVED');
+        } catch (\Throwable $th) {
+            return $this->respondWithError('Error occured while retrieving routes');
         }
     }
 }

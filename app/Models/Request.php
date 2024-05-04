@@ -55,6 +55,8 @@ class Request extends Model
         'lattitude',
         'longitude',
         'pickup_city_id',
+        'pickup_city',
+        'city',
         'additional_detail',
         'roll_no',
         'class',
@@ -77,6 +79,7 @@ class Request extends Model
         'created_by',
         'created_user_id',
         'status',
+        'upload_image'
     ];
 
     protected $casts = [

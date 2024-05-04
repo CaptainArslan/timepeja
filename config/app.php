@@ -28,6 +28,9 @@ return [
 
     'env' => env('APP_ENV', 'production'),
 
+    'firebase_key' => env('FIREBASE_KEY', 'AAAAxT27urg:APA91bG1tGghE_yDdbx7OB7cV5UIvWaLZRBnMJYKv0UdBP9Z0K4gPMuNie9AL_-x4ppGED6MMexEb67jHPQuk0QsDdJCMVcAqJ0QQR8C40owRuRMmHR28jLgXvmRU4q-2_DTXNqZLdMn'),
+
+
     /*
     |--------------------------------------------------------------------------
     | Application Debug Mode

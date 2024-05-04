@@ -18,7 +18,16 @@ vendor/phpunit/phpunit
 # /public/images/*
 /database/migrations-backup
 /database/seeders-backup
+<<<<<<< HEAD
 /public/uploads/*
 /firebase/*
 # /public/managers/*
 # /public/drivers/*
+=======
+/public/uploads/
+# /public/managers/*
+# /public/drivers/*
+/public/uploads/*
+error_log
+firebase/*
+>>>>>>> 15fa5e34d4e36ea93cb4622571ac5635165effd1

@@ -124,9 +124,9 @@ class ApiManagerController extends BaseController
             $image = uploadImage($request->file('profile_picture'), '/managers/profiles/', 'profile');
 
             $manager->picture = $image;
-            $data = $manager->select('id', 'picture')->first();
+            // $data = $manager->select('id', 'picture')->first();
             if ($manager->save()) {
-                return $this->respondWithSuccess($data, 'Profile Updated', 'PROFILE_UPDATED');
+                return $this->respondWithSuccess($manager->only('id', 'picture'), 'Profile Updated', 'PROFILE_UPDATED');
             } else {
                 return $this->respondWithError('Profile not Updated');
             }
@@ -137,12 +137,8 @@ class ApiManagerController extends BaseController
         // return $this->respondWithSuccess(null, 'Profile Uploaded', 'PROFILE_UPLOADED');
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function profileUpdate(Request $request)
+
+    public function profileUpdate(Request $request): jsonResponse
     {
         $manager = auth('manager')->user();
         $validator = Validator::make(
@@ -151,6 +147,7 @@ class ApiManagerController extends BaseController
                 'name' => ['required', 'string', 'max:255'],
                 'phone' => ['required', 'string', 'max:255', 'unique:managers,phone,' . $manager->id],
                 'address' => ['required', 'string', 'max:255'],
+<<<<<<< HEAD
                 // 'picture' => [
                 //     'string',
                 //     'required',
@@ -158,6 +155,8 @@ class ApiManagerController extends BaseController
                 //     'mimes:jpeg,png,jpg,gif',
                 //     'max:2048'
                 // ],
+=======
+>>>>>>> 15fa5e34d4e36ea93cb4622571ac5635165effd1
             ],
             [
                 'name.required' => 'Full name is required',
@@ -168,23 +167,26 @@ class ApiManagerController extends BaseController
 
                 'address.required' => 'Address is required',
                 'address.string' => 'address must be in string',
+<<<<<<< HEAD
 
                 // 'picture.required' => 'Profile Picture is required',
                 // 'picture.string' => 'address must be in string',
                 // 'picture.image' => 'Profile Picture must be an image',
                 // 'picture.mimes' => 'Profile Picture must be a file of type: jpeg, png, jpg, gif',
                 // 'picture.max' => 'Profile Picture may not be greater than 2048 kilobytes',
+=======
+>>>>>>> 15fa5e34d4e36ea93cb4622571ac5635165effd1
             ]
         );
 
         if ($validator->fails()) {
             return $this->respondWithError($validator->errors()->all());
         }
-
         try {
             $manager->name = $request->name;
             $manager->phone = $request->phone;
             $manager->address = $request->address;
+<<<<<<< HEAD
 
             // if ($request->has('picture') && $manager->picture_name != null) {
             //     removeImage($manager->picture_name, '/managers/profiles/');
@@ -192,8 +194,9 @@ class ApiManagerController extends BaseController
 
             // $manager->picture = $request->picture ? $request->picture : $manager->picture_name;
 
+=======
+>>>>>>> 15fa5e34d4e36ea93cb4622571ac5635165effd1
             if ($manager->save()) {
-                // $data = $manager->select('id', 'picture')->first();
                 return $this->respondWithSuccess($manager, 'Profile Updated', 'PROFILE_UPDATED');
             } else {
                 return $this->respondWithError('Error Occured while profile Updated');
@@ -201,8 +204,6 @@ class ApiManagerController extends BaseController
         } catch (\Throwable $th) {
             return $this->respondWithError('Error Occured while profile Updated');
         }
-
-        // return $this->respondWithSuccess(null, 'Profile Uploaded', 'PROFILE_UPLOADED');
     }
 
     /**
@@ -219,12 +220,12 @@ class ApiManagerController extends BaseController
                 'name' => ['required', 'string', 'max:255'],
                 'phone' => ['required', 'string', 'max:255', 'unique:managers,phone,' . $manager->id],
                 'address' => ['required', 'string', 'max:255'],
-                'picture' => [
-                    // 'required',
-                    'image',
-                    'mimes:jpeg,png,jpg,gif',
-                    'max:2048'
-                ],
+                // 'picture' => [
+                //     'required',
+                //     'image',
+                //     'mimes:jpeg,png,jpg,gif',
+                //     'max:2048'
+                // ],
             ],
             [
                 'name.required' => 'Full name is required',
@@ -236,9 +237,9 @@ class ApiManagerController extends BaseController
                 'address.required' => 'Address is required',
                 'address.string' => 'address must be in string',
 
-                'picture.image' => 'Profile Picture must be an image',
-                'picture.mimes' => 'Profile Picture must be a file of type: jpeg, png, jpg, gif',
-                'picture.max' => 'Profile Picture may not be greater than 2048 kilobytes',
+                // 'picture.image' => 'Profile Picture must be an image',
+                // 'picture.mimes' => 'Profile Picture must be a file of type: jpeg, png, jpg, gif',
+                // 'picture.max' => 'Profile Picture may not be greater than 2048 kilobytes',
             ]
         );
 
@@ -251,11 +252,11 @@ class ApiManagerController extends BaseController
             $manager->phone = $request->phone;
             $manager->address = $request->address;
 
-            if ($request->has('picture') && $manager->picture_name != null) {
-                removeImage($manager->picture_name, '/managers/profiles/');
-            }
+            // if ($request->has('picture') && $manager->picture_name != null) {
+            //     removeImage($manager->picture_name, '/managers/profiles/');
+            // }
 
-            $manager->picture = $request->hasFile('picture')  ? uploadImage($request->file('picture'), '/managers/profiles', 'manager_profile') : $manager->picture_name;
+            // $manager->picture = $request->hasFile('picture')  ? uploadImage($request->file('picture'), '/managers/profiles', 'manager_profile') : $manager->picture_name;
 
             if ($manager->save()) {
                 // $data = $manager->select('id', 'picture')->first();

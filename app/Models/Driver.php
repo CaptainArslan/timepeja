@@ -71,7 +71,19 @@ class Driver extends Authenticatable implements JWTSubject
     protected $hidden = [
         'password',
         'remember_token',
-        'otp'
+        'otp',
+        'device_token',
+        'cnic_expiry_date',
+        'license_expiry_date',
+        // 'license_no_front_pic',
+        // 'license_no_back_pic',
+        // 'cnic_front_pic',
+        // 'cnic_back_pic',
+        'online_status',
+        // 'license_no',
+        'created_at',
+        'updated_at',
+        'deleted_at',
     ];
 
     // ----------------------------------------------------------------
@@ -163,7 +175,8 @@ class Driver extends Authenticatable implements JWTSubject
      */
     public function getPhoneAttribute($value)
     {
-        return substr($value, 0, 4) . '-' . substr($value, 4, 8);
+        return $value;
+        // return substr($value, 0, 4) . '-' . substr($value, 4, 8);
     }
 
     /**
@@ -185,7 +198,8 @@ class Driver extends Authenticatable implements JWTSubject
      */
     public function getLicenseNoAttribute($value)
     {
-        return substr($value, 0, 10) . '-' . substr($value, 11, 3);
+        return $value;
+        // return substr($value, 0, 10) . '-' . substr($value, 11, 3);
     }
 
     /**
@@ -207,7 +221,8 @@ class Driver extends Authenticatable implements JWTSubject
      */
     public function getCnicAttribute($value)
     {
-        return substr($value, 0, 5) . '-' . substr($value, 5, 7) . '-' . substr($value, 12);
+        return $value;
+        // return substr($value, 0, 5) . '-' . substr($value, 5, 7) . '-' . substr($value, 12);
     }
 
 

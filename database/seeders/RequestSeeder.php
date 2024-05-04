@@ -14,7 +14,7 @@ class RequestSeeder extends Seeder
      */
     public function run()
     {
-        Requests::factory()->count(500)->create();
+        Requests::factory()->count(20)->create();
         $allRequests = Requests::all(); // Retrieve all requests
 
         $guardianRequests = $allRequests->filter(function ($request) {

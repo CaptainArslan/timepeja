@@ -44,4 +44,25 @@ class Trip extends Model
         'u_id' => 'integer',
         'schedule_id' => 'integer',
     ];
+
+    public function organization()
+    {
+        return $this->belongsTo(Organization::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'u_id');
+    }
+
+    public function schedule()
+    {
+        return $this->belongsTo(Schedule::class);
+    }
+
+    public function locations()
+    {
+        return $this->hasMany(Location::class);
+    }
+
 }

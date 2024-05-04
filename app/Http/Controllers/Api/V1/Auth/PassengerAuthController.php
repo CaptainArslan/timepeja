@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Auth;
 
+use ApiHelper;
 use App\Models\Passenger;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -98,10 +99,14 @@ class PassengerAuthController extends Controller
             return $this->respondWithError('Invalid phone number or password');
         }
 
+
         $passenger = auth('passenger')->user();
         if (!$passenger) {
             return $this->respondWithError('User not Found');
         }
+
+        ApiHelper::saveDeviceToken($request, $passenger);
+
 
         return $this->respondWithSuccess($passenger, 'Login successfully', 'LOGIN_API_SUCCESS', [
             'content-type' => 'application/json',
