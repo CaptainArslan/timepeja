@@ -482,10 +482,12 @@ class RequestController extends BaseController
             return $this->respondWithError($validator->errors()->first());
         }
 
-        $requestIds = $request->request_ids;
+        $requestIds = (array) $request->request_ids;
 
         try {
-            Requests::whereIn('id', $requestIds)->delete();
+            Requests::whereIn('id', $requestIds)->update([
+                'status' => Requests::STATUS_DELETED,
+            ])->delete();
             return $this->respondWithSuccess([], 'Requests deleted successfully', 'REQUESTS_DELETED_SUCCESSFULLY');
         } catch (\Throwable $th) {
             return $this->respondWithError('Error Occurred while deleting requests');
