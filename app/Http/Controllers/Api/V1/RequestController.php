@@ -603,11 +603,10 @@ class RequestController extends BaseController
             $allRequests = Requests::with('organization:id,name')
                 ->with('city:id,name')
                 ->with('route:id,name')
-                // ->with('childRequests')
                 ->with('passenger:id,name,phone')
                 ->where('organization_id', $manager_id->o_id)
-                ->onlyTrashed() // Retrieve only soft-deleted entries
                 ->withCount('childRequests')
+                ->onlyTrashed() // Retrieve only soft-deleted entries
                 ->latest()
                 ->paginate($limit);
 
