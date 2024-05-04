@@ -513,12 +513,12 @@ class RequestController extends BaseController
             return $this->respondWithError($validator->errors()->first());
         }
 
-        $requestIds = $request->request_ids;
+        $requestIds = (array) $request->request_ids;
 
         try {
             // Update the status of the requests to 'approved'
             Requests::whereIn('id', $requestIds)->update(['status' => 'approved']);
-            return $this->respondWithSuccess([], 'Requests deleted successfully', 'REQUESTS_APPROVED_SUCCESSFULLY');
+            return $this->respondWithSuccess([], 'Requests approved successfully', 'REQUESTS_APPROVED_SUCCESSFULLY');
         } catch (\Throwable $th) {
             return $this->respondWithError('Error Occurred while approving requests');
         }
