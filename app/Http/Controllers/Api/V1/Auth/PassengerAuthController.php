@@ -290,8 +290,8 @@ class PassengerAuthController extends Controller
             [
                 'name' => ['required', 'string', 'max:255'],
                 'phone' => ['required', 'string', 'max:255', 'unique:passengers,phone,' . $passenger->id],
-                'email' => ['required', 'string', 'email', 'max:255', 'unique:passengers,email,' . $passenger->id],
-                'address' => ['required', 'string', 'max:255'],
+                'email' => ['nullable', 'string', 'email', 'max:255', 'unique:passengers,email,' . $passenger->id],
+                'address' => ['nullable', 'string', 'max:255'],
             ],
             [
                 'name.required' => 'Full name is required',
