@@ -18,8 +18,17 @@ class PassengerRequestController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
+        // Ensure the provided date is a valid date format
+        $validator = Validator::make($request->all(), [
+            'date' => 'sometimes|required|date_format:Y-m-d',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->respondWithError('Invalid date provided');
+        }
+
         try {
             $passenger = auth('passenger')->user();
 
@@ -29,6 +38,8 @@ class PassengerRequestController extends BaseController
                 Requests::STATUS_MEET_PERSONALLY
             ];
 
+            $date = $request->date ?? date('Y-m-d');
+
             $allRequests = Requests::where('passenger_id', $passenger->id)
                 ->with([
                     'city:id,name',
@@ -37,6 +48,7 @@ class PassengerRequestController extends BaseController
                 ])
                 // ->with('childRequests')
                 ->whereIn('status', $requestStatuses)
+                ->whereDate('created_at', '>=', $date)
                 ->latest()
                 ->get();
 
