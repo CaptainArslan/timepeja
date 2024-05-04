@@ -606,6 +606,7 @@ class RequestController extends BaseController
                 ->with('passenger:id,name,phone')
                 ->where('organization_id', $manager_id->o_id)
                 ->withCount('childRequests')
+                ->Where('status', Requests::STATUS_DELETED) // Include both statuses
                 ->onlyTrashed() // Retrieve only soft-deleted entries
                 ->latest()
                 ->paginate($limit);
