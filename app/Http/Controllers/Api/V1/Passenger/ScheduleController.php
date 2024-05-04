@@ -25,7 +25,6 @@ class ScheduleController extends BaseController
                 ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time', 'status', 'trip_status')
                 ->get();
 
-
             $data = [
                 'transport_Schedule' => $schedule,
                 'transport_routes' => $this->getRoutes()

@@ -161,7 +161,9 @@ class Passenger extends Authenticatable implements JWTSubject
      */
     public function getImageAttribute()
     {
-        return $this->attributes['image'] ? asset('uploads/passengers/profile/' . $this->attributes['image']) : asset('uploads/placeholder.jpg');
+        return $this->attributes['image']
+            ? asset('uploads/passengers/profile/' . $this->attributes['image'])
+            : asset('uploads/placeholder.jpg');
     }
 
     /**

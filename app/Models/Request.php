@@ -24,6 +24,8 @@ class Request extends Model
     public const STATUS_APPROVED = 'approved';
     public const STATUS_DISAPPROVED = 'disapproved';
     public const STATUS_MEET_PERSONALLY = 'meet-personally';
+    public const STATUS_CANCELLED = 'cancelled';
+    public const STATUS_DELETED = 'deleted';
 
     public const SCHOOL = 'school';
     public const COLLEGE = 'college';

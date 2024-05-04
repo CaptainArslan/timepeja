@@ -482,10 +482,13 @@ class RequestController extends BaseController
             return $this->respondWithError($validator->errors()->first());
         }
 
-        $requestIds = $request->request_ids;
+        $requestIds = (array) $request->request_ids;
 
         try {
-            Requests::whereIn('id', $requestIds)->delete();
+            Requests::whereIn('id', $requestIds)->update([
+                'status' => Requests::STATUS_DELETED,
+                'deleted_at' => date('Y-m-d H:i:s'),
+            ]);
             return $this->respondWithSuccess([], 'Requests deleted successfully', 'REQUESTS_DELETED_SUCCESSFULLY');
         } catch (\Throwable $th) {
             return $this->respondWithError('Error Occurred while deleting requests');
@@ -513,12 +516,12 @@ class RequestController extends BaseController
             return $this->respondWithError($validator->errors()->first());
         }
 
-        $requestIds = $request->request_ids;
+        $requestIds = (array) $request->request_ids;
 
         try {
             // Update the status of the requests to 'approved'
-            Requests::whereIn('id', $requestIds)->update(['status' => 'approved']);
-            return $this->respondWithSuccess([], 'Requests deleted successfully', 'REQUESTS_APPROVED_SUCCESSFULLY');
+            Requests::whereIn('id', $requestIds)->update(['status' => 'approved', 'deleted_at' => null]);
+            return $this->respondWithSuccess([], 'Requests approved successfully', 'REQUESTS_APPROVED_SUCCESSFULLY');
         } catch (\Throwable $th) {
             return $this->respondWithError('Error Occurred while approving requests');
         }
@@ -549,7 +552,7 @@ class RequestController extends BaseController
 
         try {
             // Update the status of the requests to 'approved'
-            Requests::whereIn('id', $requestIds)->update(['status' => 'disapproved']);
+            Requests::whereIn('id', $requestIds)->update(['status' => 'disapproved', 'deleted_at' => null]);
             return $this->respondWithSuccess([], 'Requests deleted successfully', 'REQUESTS_DISAPPROVED_SUCCESSFULLY');
         } catch (\Throwable $th) {
             return $this->respondWithError('Error Occurred while dissapproving requests');
@@ -581,7 +584,7 @@ class RequestController extends BaseController
 
         try {
             // Update the status of the requests to 'approved'
-            Requests::whereIn('id', $requestIds)->update(['status' => 'meet-personally']);
+            Requests::whereIn('id', $requestIds)->update(['status' => 'meet-personally', 'deleted_at' => null]);
             return $this->respondWithSuccess([], 'Requests deleted successfully', 'REQUESTS_MEET_PERSONALLY_SUCCESSFULLY');
         } catch (Throwable $th) {
             return $this->respondWithError('Error Occurred while updating meet-personal requests');
@@ -603,11 +606,11 @@ class RequestController extends BaseController
             $allRequests = Requests::with('organization:id,name')
                 ->with('city:id,name')
                 ->with('route:id,name')
-                // ->with('childRequests')
                 ->with('passenger:id,name,phone')
                 ->where('organization_id', $manager_id->o_id)
-                ->onlyTrashed() // Retrieve only soft-deleted entries
                 ->withCount('childRequests')
+                ->Where('status', Requests::STATUS_DELETED)
+                // ->onlyTrashed()
                 ->latest()
                 ->paginate($limit);
 

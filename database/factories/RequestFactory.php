@@ -173,6 +173,8 @@ class RequestFactory extends Factory
                     Requests::STATUS_APPROVED,
                     Requests::STATUS_DISAPPROVED,
                     Requests::STATUS_MEET_PERSONALLY,
+                    Requests::STATUS_CANCELLED,
+                    Requests::STATUS_DELETED,
                 ]),
             ]
         );

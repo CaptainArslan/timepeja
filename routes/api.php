@@ -182,7 +182,15 @@ Route::group(['middleware' => 'api'], function () {
         Route::post('/refresh', [PassengerAuthController::class, 'refresh']);
         Route::post('/forget-password', [PassengerAuthController::class, 'forgetPassword']);
         Route::middleware(['jwt.verify:passenger'])->group(function () {
-            Route::get('/profile', [PassengerAuthController::class, 'profile']);
+
+            // Route::get('/profile', [PassengerAuthController::class, 'profile']);
+
+            Route::group(['prefix' => 'profile'], function () {
+                Route::get('/', [PassengerAuthController::class, 'profile']);
+                Route::post('/upload', [PassengerAuthController::class, 'profileUpload']);
+                Route::put('/update', [PassengerAuthController::class, 'profileUpdate']);
+            });
+
             Route::post('/logout', [PassengerAuthController::class, 'logout']);
             Route::post('upload-media', [MediaController::class, 'uploadMedia']);
             // Passenger Request Api
