@@ -292,6 +292,7 @@ class PassengerAuthController extends Controller
                 'phone' => ['required', 'string', 'max:255', 'unique:passengers,phone,' . $passenger->id],
                 'email' => ['nullable', 'string', 'email', 'max:255', 'unique:passengers,email,' . $passenger->id],
                 'address' => ['nullable', 'string', 'max:255'],
+                'image' => ['nullable', 'string', 'max:255'],
             ],
             [
                 'name.required' => 'Full name is required',
@@ -317,6 +318,7 @@ class PassengerAuthController extends Controller
             $passenger->email = $request->email;
             $passenger->phone = $request->phone;
             $passenger->address = $request->address;
+            $passenger->image = $request->image ?? $passenger->image;
             if ($passenger->save()) {
                 return $this->respondWithSuccess($passenger, 'Profile Updated', 'PASSENGER_PROFILE_UPDATED');
             } else {
