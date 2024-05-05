@@ -313,6 +313,8 @@ class PassengerAuthController extends Controller
         if ($validator->fails()) {
             return $this->respondWithError(implode(",", $validator->errors()->all()));
         }
+
+        dd($passenger->image , $request->image);
         // try {
             $passenger->name = $request->name;
             $passenger->email = $request->email;
