@@ -313,7 +313,7 @@ class PassengerAuthController extends Controller
         if ($validator->fails()) {
             return $this->respondWithError(implode(",", $validator->errors()->all()));
         }
-        try {
+        // try {
             $passenger->name = $request->name;
             $passenger->email = $request->email;
             $passenger->phone = $request->phone;
@@ -324,8 +324,8 @@ class PassengerAuthController extends Controller
             } else {
                 return $this->respondWithError('Error Occured while profile Updated');
             }
-        } catch (\Throwable $th) {
-            return $this->respondWithError('Error Occured while profile Updated');
-        }
+        // } catch (\Throwable $th) {
+        //     return $this->respondWithError('Error Occured while profile Updated');
+        // }
     }
 }
