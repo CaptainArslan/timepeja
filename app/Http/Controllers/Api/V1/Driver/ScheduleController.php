@@ -51,9 +51,10 @@ class ScheduleController extends BaseController
         }
     }
 
-    public function schedules(Request $request, $date = null)
+    public function schedules($date = null)
     {
         try {
+            $date = $date ? $date : now()->format('Y-m-d');
             $driver = auth('driver')->user();
             $schedules = Schedule::where('d_id', $driver->id)
                 ->with('routes:id,name,number,from,to')
@@ -61,10 +62,9 @@ class ScheduleController extends BaseController
                 ->with('drivers:id,name')
                 ->when($date !== null, function ($query) use ($date) {
                     return $query->where('date', $date)
-                        ->where('time', '>=', now()->format('H:i:s'));
+                        ->orWhere('time', '>=', now()->format('H:i:s'));
                 })
                 ->get();
-
 
             return $this->respondWithSuccess($schedules, 'Schedules retrieved successfully.', 'DRIVER_SCHEDULES_RETRIEVED');
         } catch (\Throwable $th) {
