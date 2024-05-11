@@ -56,6 +56,11 @@ class ScheduleController extends BaseController
         try {
             $date = $date ? $date : now()->format('Y-m-d');
             $driver = auth('driver')->user();
+
+            if ($driver->online_status == Driver::STATUS_OFFLINE) {
+                return $this->respondWithError('Driver is offline. Please make yourself available to view schedules.');
+            }
+
             $schedules = Schedule::where('d_id', $driver->id)
                 ->with('routes:id,name,number,from,to')
                 ->with('vehicles:id,number')
