@@ -261,47 +261,6 @@ class DriverAuthController extends BaseController
         }
     }
 
-    public function profileUpdate(Request $request): jsonResponse
-    {
-        $driver = auth('driver')->user();
-        $validator = Validator::make(
-            $request->all(),
-            [
-                'name' => ['required', 'string', 'max:255'],
-                'phone' => ['required', 'string', 'max:255', 'unique:drivers,phone,' . $driver->id],
-                'address' => ['required', 'string', 'max:255'],
-                'profile_picture' => 'nullable|string|max:255',
-            ],
-            [
-                'name.required' => 'Full name is required',
-                'name.string' => 'Name must be in string',
-
-                'phone.required' => 'Phone is required',
-                'phone.string' => 'phone must be in string',
-
-                'address.required' => 'Address is required',
-                'address.string' => 'address must be in string',
-            ]
-        );
-
-        if ($validator->fails()) {
-            return $this->respondWithError(implode(",", $validator->errors()->all()));
-        }
-        try {
-            $driver->name = $request->name;
-            $driver->phone = $request->phone;
-            $driver->profile_picture = $request->profile_picture ?? $driver->profile_picture;
-            $driver->address = $request->address;
-            if ($driver->save()) {
-                return $this->respondWithSuccess($driver, 'Profile Updated', 'PROFILE_UPDATED');
-            } else {
-                return $this->respondWithError('Error Occured while profile Updated');
-            }
-        } catch (\Throwable $th) {
-            return $this->respondWithError('Error Occured while profile Updated');
-        }
-    }
-
     /**
      * Log the user out (Invalidate the token).
      *

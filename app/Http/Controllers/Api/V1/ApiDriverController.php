@@ -174,9 +174,9 @@ class ApiDriverController extends BaseController
         try {
             // $manager = auth('manager')->user();
             $driver = Driver::findOrFail($id);
-                // ->where('o_id', $manager->o_id)
-                // ->where('status', Driver::STATUS_ACTIVE)
-                // ->firstOrFail();
+            // ->where('o_id', $manager->o_id)
+            // ->where('status', Driver::STATUS_ACTIVE)
+            // ->firstOrFail();
 
             return $this->respondWithSuccess($driver, 'Get Driver', 'API_GET_DRIVER');
         } catch (ModelNotFoundException $e) {
@@ -729,6 +729,48 @@ class ApiDriverController extends BaseController
             // }
             return $this->respondWithError('Error occurred while creating the PDF: ' . $th->getMessage());
         }
+    }
 
+
+
+    public function profileUpdate(Request $request): jsonResponse
+    {
+        $driver = auth('driver')->user();
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'name' => ['required', 'string', 'max:255'],
+                'phone' => ['required', 'string', 'max:255', 'unique:drivers,phone,' . $driver->id],
+                'address' => ['required', 'string', 'max:255'],
+                'profile_picture' => 'nullable|string|max:255',
+            ],
+            [
+                'name.required' => 'Full name is required',
+                'name.string' => 'Name must be in string',
+
+                'phone.required' => 'Phone is required',
+                'phone.string' => 'phone must be in string',
+
+                'address.required' => 'Address is required',
+                'address.string' => 'address must be in string',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return $this->respondWithError(implode(",", $validator->errors()->all()));
+        }
+        try {
+            $driver->name = $request->name;
+            $driver->phone = $request->phone;
+            $driver->profile_picture = $request->profile_picture ?? $driver->profile_picture;
+            $driver->address = $request->address;
+            if ($driver->save()) {
+                return $this->respondWithSuccess($driver, 'Profile Updated', 'PROFILE_UPDATED');
+            } else {
+                return $this->respondWithError('Error Occured while profile Updated');
+            }
+        } catch (\Throwable $th) {
+            return $this->respondWithError('Error Occured while profile Updated');
+        }
     }
 }
