@@ -135,6 +135,12 @@ class Schedule extends Model
     // ------------------ Accessors & Mutator -------------------------
     // ----------------------------------------------------------------
 
+    public function getTimeAttribute($value)
+    {
+        return Carbon::parse($value)->format('h:i A');
+    }
+
+
     public function getCreatedAtAttribute($value)
     {
         return Carbon::parse($value)->format('Y-m-d');
