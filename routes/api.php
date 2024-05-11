@@ -155,7 +155,7 @@ Route::group(['middleware' => 'api'], function () {
 
         Route::middleware(['jwt.verify:driver'])->group(function () {
             Route::get('/profile', [DriverAuthController::class, 'driverProfile']);
-            Route::post('/profile/update', [DriverAuthController::class, 'profileUpdate']);
+            Route::put('/profile/update', [DriverAuthController::class, 'profileUpdate']);
             Route::post('/logout', [DriverAuthController::class, 'logout']);
             Route::put('/online', [DriverScheduleController::class, 'online']);
             Route::put('/offline', [DriverScheduleController::class, 'offline']);
