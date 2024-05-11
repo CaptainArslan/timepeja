@@ -741,7 +741,7 @@ class ApiDriverController extends BaseController
             [
                 'name' => ['required', 'string', 'max:255'],
                 'phone' => ['required', 'string', 'max:255', 'unique:drivers,phone,' . $driver->id],
-                'address' => ['required', 'string', 'max:255'],
+                'address' => ['nullable', 'string', 'max:255'],
                 'profile_picture' => 'nullable|string|max:255',
             ],
             [
@@ -763,7 +763,7 @@ class ApiDriverController extends BaseController
             $driver->name = $request->name;
             $driver->phone = $request->phone;
             $driver->profile_picture = $request->profile_picture ?? $driver->profile_picture;
-            $driver->address = $request->address;
+            $driver->address = $request->address ?? '';
             if ($driver->save()) {
                 return $this->respondWithSuccess($driver, 'Profile Updated', 'PROFILE_UPDATED');
             } else {
