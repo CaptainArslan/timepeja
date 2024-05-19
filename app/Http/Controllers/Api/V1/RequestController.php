@@ -347,11 +347,11 @@ class RequestController extends BaseController
             ],
             'route_id' => ['nullable', 'numeric', 'exists:routes,id'],
             'transport_start_date' => [
-                'nullable', 'date',
+                'nullable', 'date_format:Y-m-d',
                 // 'required_if:route_id,!=,null'
             ],
             'transport_end_date' => [
-                'nullable', 'date',
+                'nullable', 'date_format:Y-m-d',
                 // 'required_if:route_id,!=,null'
             ],
             'status' => ['nullable', 'string', 'in:pending,approved,disapproved'],
