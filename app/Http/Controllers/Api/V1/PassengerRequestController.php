@@ -324,21 +324,21 @@ class PassengerRequestController extends BaseController
             ],
             'class' => [
                 'nullable', 'string',
-                Rule::requiredIf(function () use ($request) {
-                    return in_array($request->type, ['student']);
-                }),
+                // Rule::requiredIf(function () use ($request) {
+                //     return in_array($request->type, ['student']);
+                // }),
             ],
             'section' => [
                 'nullable', 'string',
-                Rule::requiredIf(function () use ($request) {
-                    return in_array($request->type, ['student']);
-                }),
+                // Rule::requiredIf(function () use ($request) {
+                //     return in_array($request->type, ['student']);
+                // }),
             ],
             'qualification' => [
                 'nullable', 'string',
-                Rule::requiredIf(function () use ($request) {
-                    return in_array($request->type, ['student',]);
-                }),
+                // Rule::requiredIf(function () use ($request) {
+                //     return in_array($request->type, ['student',]);
+                // }),
             ],
             'batch_year' => [
                 'nullable', 'string',
