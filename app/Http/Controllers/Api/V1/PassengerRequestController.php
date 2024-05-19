@@ -245,7 +245,7 @@ class PassengerRequestController extends BaseController
         $data['organization_id'] = $organization_id;
         $data['created_by'] = 'passenger';
         $data['created_user_id'] = $passenger->id;
-        $data['status'] = Requests::STATUS_APPROVED;
+        $data['status'] = Requests::STATUS_PENDING;
 
         $data = Requests::create($data);
 
