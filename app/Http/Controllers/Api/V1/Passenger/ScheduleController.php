@@ -14,7 +14,7 @@ class ScheduleController extends BaseController
 {
     public function index($id, $date)
     {
-        try {
+        // try {
             $schedule = Schedule::where('o_id', $id)
                 ->where('date', $date)
                 ->where('status', Schedule::STATUS_PUBLISHED)
@@ -25,14 +25,16 @@ class ScheduleController extends BaseController
                 ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time', 'status', 'trip_status')
                 ->get();
 
+                dd($schedule);
+
             $data = [
                 'transport_Schedule' => $schedule,
                 'transport_routes' => $this->getRoutes()
             ];
             return $this->respondWithSuccess($data, 'Published schedules retrieved successfully.', 'ORGANIZATION_SCHEDULE_FETCHED_SUCCESSFULLY');
-        } catch (\Throwable $th) {
-            return $this->respondWithError('Error Occurred while fetching schedule: ' . $th->getMessage());
-        }
+        // } catch (\Throwable $th) {
+        //     return $this->respondWithError('Error Occurred while fetching schedule!');
+        // }
     }
 
     public function getRoutes()
