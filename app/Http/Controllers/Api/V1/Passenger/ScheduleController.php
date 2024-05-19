@@ -25,9 +25,7 @@ class ScheduleController extends BaseController
                 ->with('organizations:id,name')
                 ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time', 'status', 'trip_status')
                 ->get();
-
-            dd($schedule->toArray());
-
+                
             $data = [
                 'transport_Schedule' => $schedule,
                 'transport_routes' => $this->getRoutes()
