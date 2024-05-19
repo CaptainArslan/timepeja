@@ -206,7 +206,7 @@ Route::group(['middleware' => 'api'], function () {
                 Route::get('/code/{code}', [ApiRequestController::class, 'getRequestDetailByCode']);
             });
 
-            Route::get('/schedules/{id}/{date}', [PassengerScheduleController::class, 'index']);
+            Route::get('/schedules/{id}/{date?}', [PassengerScheduleController::class, 'index']);
 
 
             Route::get('/get-favorites-routes', [PassengerRouteController::class, 'getFavoriteRoute']);
