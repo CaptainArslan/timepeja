@@ -17,7 +17,7 @@ class ScheduleController extends BaseController
         // try {
             $schedule = Schedule::
             where('o_id', $id)
-                // ->where('date', $date)
+                ->where('date', $date)
                 // ->where('status', Schedule::STATUS_PUBLISHED)
                 // ->with('routes:id,name,number,from,to')
                 // ->with('vehicles:id,number')
