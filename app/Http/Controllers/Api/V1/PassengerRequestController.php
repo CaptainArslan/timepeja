@@ -108,21 +108,21 @@ class PassengerRequestController extends BaseController
             ],
             'class' => [
                 'nullable', 'string',
-                Rule::requiredIf(function () use ($request) {
-                    return in_array($request->type, ['student']);
-                }),
+                // Rule::requiredIf(function () use ($request) {
+                //     return in_array($request->type, ['student']);
+                // }),
             ],
             'section' => [
                 'nullable', 'string',
-                Rule::requiredIf(function () use ($request) {
-                    return in_array($request->type, ['student']);
-                }),
+                // Rule::requiredIf(function () use ($request) {
+                //     return in_array($request->type, ['student']);
+                // }),
             ],
             'qualification' => [
                 'nullable', 'string',
-                Rule::requiredIf(function () use ($request) {
-                    return in_array($request->type, ['student',]);
-                }),
+                // Rule::requiredIf(function () use ($request) {
+                //     return in_array($request->type, ['student',]);
+                // }),
             ],
             'batch_year' => [
                 'nullable', 'string',
@@ -145,13 +145,13 @@ class PassengerRequestController extends BaseController
             'employee_comp_id' => [
                 'nullable', 'string',
                 Rule::requiredIf(function () use ($request) {
-                    return in_array($request->type, ['employee',]);
+                    return in_array($request->type, ['employee']);
                 }),
             ],
             'designation' => [
                 'nullable', 'string',
                 Rule::requiredIf(function () use ($request) {
-                    return in_array($request->type, ['employee',]);
+                    return in_array($request->type, ['employee']);
                 })
             ],
             'profile_card' => [
