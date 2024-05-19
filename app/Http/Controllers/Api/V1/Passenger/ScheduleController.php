@@ -16,7 +16,7 @@ class ScheduleController extends BaseController
     {
         // try {
             $schedule = Schedule::
-            // where('o_id', $id)
+            where('o_id', $id)
                 // ->where('date', $date)
                 // ->where('status', Schedule::STATUS_PUBLISHED)
                 // ->with('routes:id,name,number,from,to')
@@ -24,10 +24,9 @@ class ScheduleController extends BaseController
                 // ->with('drivers:id,name')
                 // ->with('organizations:id,name')
                 // ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time', 'status', 'trip_status')
-                // ->
-                get();
+                ->get();
 
-                dd($schedule);
+                dd($schedule->toArray());
 
             $data = [
                 'transport_Schedule' => $schedule,
