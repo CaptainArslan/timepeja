@@ -12,10 +12,10 @@ use Illuminate\Http\Request;
 
 class ScheduleController extends BaseController
 {
-    public function index($id, $date = null)
+    public function index(Request $request, $id)
     {
         try {
-            $data = $date ?? date('Y-m-d');
+            $date = $request->date ?? date('Y-m-d');
             $schedule = Schedule::where('o_id', $id)
                 ->where('date', $date)
                 ->where('status', Schedule::STATUS_PUBLISHED)
