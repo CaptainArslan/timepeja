@@ -735,7 +735,7 @@ class ApiDriverController extends BaseController
 
     public function profileUpdate(Request $request): jsonResponse
     {
-        $driver = auth('driver')->user();
+        $driver = auth('driver')->user()->with('organization');
         $validator = Validator::make(
             $request->all(),
             [
