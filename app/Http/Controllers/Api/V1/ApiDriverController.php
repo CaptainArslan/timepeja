@@ -735,7 +735,7 @@ class ApiDriverController extends BaseController
 
     public function profileUpdate(Request $request): jsonResponse
     {
-        $driver = auth('driver')->user()->with('organization');
+        $driver = auth('driver')->user();
         $validator = Validator::make(
             $request->all(),
             [
@@ -765,6 +765,7 @@ class ApiDriverController extends BaseController
             $driver->profile_picture = $request->profile_picture ?? $driver->profile_picture;
             $driver->address = $request->address ?? '';
             if ($driver->save()) {
+                $driver->load('organization');
                 return $this->respondWithSuccess($driver, 'Profile Updated', 'PROFILE_UPDATED');
             } else {
                 return $this->respondWithError('Error Occured while profile Updated');
