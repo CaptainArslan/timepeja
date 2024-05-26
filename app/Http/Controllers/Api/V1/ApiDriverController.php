@@ -765,7 +765,7 @@ class ApiDriverController extends BaseController
             $driver->profile_picture = $request->profile_picture ?? $driver->profile_picture;
             $driver->address = $request->address ?? '';
             if ($driver->save()) {
-                $driver->load('organization');
+                $driver->load('organization', 'organization.city', 'organization.state');
                 return $this->respondWithSuccess($driver, 'Profile Updated', 'PROFILE_UPDATED');
             } else {
                 return $this->respondWithError('Error Occured while profile Updated');
