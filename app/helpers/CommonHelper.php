@@ -180,7 +180,7 @@ function getPaginated($limit = 10)
 }
 
 
-function notification($title, $body, $device_token):
+function notification($title, $body, $device_token)
 {
     try {
         $SERVER_API_KEY = config('app.firebase_key');
