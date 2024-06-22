@@ -180,13 +180,7 @@ function getPaginated($limit = 10)
 }
 
 
-/**
- * @param $title
- * @param $body
- * @param $device_token
- * @return bool|string|null
- */
-function notification($title, $body, $device_token): bool|string|null
+function notification($title, $body, $device_token):
 {
     try {
         $SERVER_API_KEY = config('app.firebase_key');
@@ -217,9 +211,8 @@ function notification($title, $body, $device_token): bool|string|null
 
         Log::info($response);
     } catch (\Exception $e) {
-        return $response;
         Log::info($e->getMessage());
+        return $response;
     }
-    return null;
 }
 
