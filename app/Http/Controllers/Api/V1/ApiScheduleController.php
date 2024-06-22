@@ -359,8 +359,7 @@ class ApiScheduleController extends BaseController
                 }
                 $deviceTokens = array_unique($driverArray);
                 foreach ($deviceTokens as $token) {
-                    // Log::info('sending notification to this device token = ' . $token);
-                    notification('Schedule Published', 'Your schedule has been published', $token);
+                    notification('Schedule Published', 'Dear driver, Your schedule has been published', $token);
                 }
             });
             return $this->respondWithSuccess(null, 'Schedules published successfully', 'PUBLISH_SCHEDULE');
