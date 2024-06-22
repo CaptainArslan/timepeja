@@ -353,9 +353,12 @@ class ApiDriverController extends BaseController
 
         try {
             $driver = Driver::findOrFail($id);
+
             if ($driver->device_token) {
-                notification('Account Deleted', `Dear {$driver->name} Your account has been deleted by your organization manager`, $driver->device_token);
+                $message = "Dear {$driver->name}, Your account has been deleted by your organization manager";
+                notification('Account Deleted', $message, $driver->device_token);
             }
+
             $driver->delete();
             return $this->respondWithDelete('Driver deleted successfully', 'API_DRIVER_DELETED');
         } catch (ModelNotFoundException $e) {
