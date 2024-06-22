@@ -33,41 +33,6 @@ class DriverScheduleNotification extends Command
         parent::__construct();
     }
 
-    /**
-     * Execute the console command.
-     *
-     * @return int
-     */
-    // public function handle()
-    // {
-    //     Log::info("Driver Schedule Notification Command Started");
-    //     $currentTime = now();
-    //     $endTime = now()->addMinutes(15);
-
-    //     $driverSchedules = Schedule::where('status', Schedule::STATUS_PUBLISHED)
-    //         ->where('date', $currentTime->toDateString())
-    //         ->where('time', '>=', $currentTime->toTimeString())
-    //         ->where('time', '<=', $endTime->toTimeString())
-    //         ->isNotNotified()
-    //         ->get();
-
-    //     foreach ($driverSchedules as $schedule) {
-    //         $driver = $schedule->driver;
-    //         // Log::info($driver->device_token);
-    //         $scheduleTime = Carbon::parse($schedule->time)->format('g:i A');
-    //         $date = Carbon::parse($schedule->date)->format('d/m/Y');
-    //         if ($driver->device_token != null) {
-    //             $body = "Upcoming schedule for {$driver->name}: {$date} at {$scheduleTime} on route {$schedule->route->name} on vehicle number {$schedule->vehicle->name}";
-    //             Log::info($body);
-    //             $title = "Upcoming Schedule";
-    //             notification($title, $body, $schedule, $driver->device_token);
-    //         }
-    //         $schedule->is_notified = true;
-    //         $schedule->save();
-    //     }
-    //     Log::info("Driver Schedule Notification Command Ended");
-    //     return 0;
-    // }
     public function handle()
     {
         Log::info("Driver Schedule Notification Command Started");
@@ -92,7 +57,7 @@ class DriverScheduleNotification extends Command
                 $title = "Upcoming Schedule";
                 $body = "Your upcoming schedule on date {$date} at {$scheduleTime} on route {$schedule->route->name} on vehicle number {$schedule->vehicle->number}";
                 Log::info($body);
-                notification($title, $body, $schedule, $driver->device_token);
+                notification($title, $body, $driver->device_token);
             }
             $schedule->is_notified = true;
             $schedule->save();

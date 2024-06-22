@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
@@ -20,7 +21,6 @@ class Driver extends Authenticatable implements JWTSubject
 
     public const STATUS_ACTIVE = true;
     public const STATUS_INACTIVE = false;
-
     public const DRIVER_LIMIT_PER_PAGE = 10;
 
     /**
@@ -29,26 +29,7 @@ class Driver extends Authenticatable implements JWTSubject
      * @var array<string>
      */
     protected $fillable = [
-        'o_id',
-        'u_id',
-        'name',
-        'email',
-        'password',
-        'phone',
-        'cnic',
-        'profile_picture',
-        'cnic_front_pic',
-        'cnic_back_pic',
-        'cnic_expiry_date',
-        'license_no',
-        'license_no_front_pic',
-        'license_no_back_pic',
-        'license_expiry_date',
-        'otp',
-        'token',
-        'status',
-        'online_status',
-        'address',
+        'o_id', 'u_id', 'name', 'email', 'password', 'phone', 'cnic', 'profile_picture', 'cnic_front_pic', 'cnic_back_pic', 'cnic_expiry_date', 'license_no', 'license_no_front_pic', 'license_no_back_pic', 'license_expiry_date', 'otp', 'device_token', 'status', 'online_status', 'address',
     ];
 
     /**
@@ -96,7 +77,7 @@ class Driver extends Authenticatable implements JWTSubject
      *
      * @return mixed
      */
-    public function getJWTIdentifier()
+    public function getJWTIdentifier(): mixed
     {
         return $this->getKey();
     }
@@ -106,7 +87,7 @@ class Driver extends Authenticatable implements JWTSubject
      *
      * @return array
      */
-    public function getJWTCustomClaims()
+    public function getJWTCustomClaims(): array
     {
         return [
             'exp' => now()->addMonth(1)->timestamp, // Set token expiration to 30 days from now
@@ -120,11 +101,9 @@ class Driver extends Authenticatable implements JWTSubject
     // ----------------------------------------------------------------
 
     /**
-     * Undocumented function
-     *
-     * @return void
+     * @return BelongsTo
      */
-    public function organization()
+    public function organization(): BelongsTo
     {
         return $this->belongsTo(Organization::class, 'o_id', 'id');
     }
@@ -137,7 +116,7 @@ class Driver extends Authenticatable implements JWTSubject
     /**
      * Set the name attribute.
      *
-     * @param  string  $value
+     * @param string $value
      * @return void
      */
     public function setNameAttribute($value)
@@ -148,7 +127,7 @@ class Driver extends Authenticatable implements JWTSubject
     /**
      * Get the name attribute.
      *
-     * @param  string  $value
+     * @param string $value
      * @return string
      */
     public function getNameAttribute($value)
@@ -159,7 +138,7 @@ class Driver extends Authenticatable implements JWTSubject
     /**
      * Set the phone number attribute.
      *
-     * @param  string  $value
+     * @param string $value
      * @return void
      */
     public function setPhoneAttribute($value)
@@ -170,7 +149,7 @@ class Driver extends Authenticatable implements JWTSubject
     /**
      * Get the phone number attribute.
      *
-     * @param  string  $value
+     * @param string $value
      * @return string
      */
     public function getPhoneAttribute($value)
@@ -182,7 +161,7 @@ class Driver extends Authenticatable implements JWTSubject
     /**
      * Set the phone number attribute.
      *
-     * @param  string  $value
+     * @param string $value
      * @return void
      */
     public function setLicenseNoAttribute($value)
@@ -193,7 +172,7 @@ class Driver extends Authenticatable implements JWTSubject
     /**
      * Get the license_no number attribute.
      *
-     * @param  string  $value
+     * @param string $value
      * @return string
      */
     public function getLicenseNoAttribute($value)
@@ -205,7 +184,7 @@ class Driver extends Authenticatable implements JWTSubject
     /**
      * Set the phone number attribute.
      *
-     * @param  string  $value
+     * @param string $value
      * @return void
      */
     public function setCnicAttribute($value)
@@ -216,7 +195,7 @@ class Driver extends Authenticatable implements JWTSubject
     /**
      * Get the phone number attribute.
      *
-     * @param  string  $value
+     * @param string $value
      * @return string
      */
     public function getCnicAttribute($value)
@@ -229,7 +208,7 @@ class Driver extends Authenticatable implements JWTSubject
     /**
      * Get the front picture of the cnic.
      *
-     * @param  string  $value
+     * @param string $value
      * @return string|null
      */
     public function getCnicFrontPicAttribute($value)
@@ -247,7 +226,7 @@ class Driver extends Authenticatable implements JWTSubject
     /**
      * Get the front picture name of the vehicle.
      *
-     * @param  string  $value
+     * @param string $value
      * @return string|null
      */
     public function getCnicFrontPicNameAttribute()
@@ -270,7 +249,7 @@ class Driver extends Authenticatable implements JWTSubject
     /**
      * Get the back picture of the cnic.
      *
-     * @param  string  $value
+     * @param string $value
      * @return string|null
      */
     public function getCnicBackPicAttribute($value)
@@ -288,7 +267,7 @@ class Driver extends Authenticatable implements JWTSubject
     /**
      * Get the front picture name of the vehicle.
      *
-     * @param  string  $value
+     * @param string $value
      * @return string|null
      */
     public function getCnicBackPicNameAttribute()
@@ -311,7 +290,7 @@ class Driver extends Authenticatable implements JWTSubject
     /**
      * Get the front picture of the cnic.
      *
-     * @param  string  $value
+     * @param string $value
      * @return string|null
      */
     public function getLicenseNoFrontPicAttribute($value)
@@ -328,7 +307,7 @@ class Driver extends Authenticatable implements JWTSubject
     /**
      * Get the front picture name of the vehicle.
      *
-     * @param  string  $value
+     * @param string $value
      * @return string|null
      */
     public function getLicenseNoFrontPicNameAttribute()
@@ -351,7 +330,7 @@ class Driver extends Authenticatable implements JWTSubject
     /**
      * Get the back picture of the cnic.
      *
-     * @param  string  $value
+     * @param string $value
      * @return string|null
      */
     public function getLicenseNoBackPicAttribute($value)
@@ -370,7 +349,7 @@ class Driver extends Authenticatable implements JWTSubject
     /**
      * Get the front picture name of the vehicle.
      *
-     * @param  string  $value
+     * @param string $value
      * @return string|null
      */
     public function getLicenseNoBackPicNameAttribute()
@@ -393,7 +372,7 @@ class Driver extends Authenticatable implements JWTSubject
     /**
      * Get the back picture of the cnic.
      *
-     * @param  string  $value
+     * @param string $value
      * @return string|null
      */
     public function getProfilePictureAttribute($value)
@@ -412,7 +391,7 @@ class Driver extends Authenticatable implements JWTSubject
     /**
      * Get the front picture name of the vehicle.
      *
-     * @param  string  $value
+     * @param string $value
      * @return string|null
      */
     public function getProfilePictureNameAttribute()

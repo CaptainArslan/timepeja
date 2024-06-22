@@ -16,15 +16,12 @@ class Schedule extends Model
 
     public const STATUS_PUBLISHED = 'published';
     public const STATUS_DRAFT = 'draft';
-
     public const TRIP_STATUS_UPCOMING = 'upcoming';
     public const TRIP_STATUS_INPROGRESS = 'in-progress';
     public const TRIP_STATUS_COMPLETED = 'completed';
     public const TRIP_STATUS_DELAYED = 'delayed';
-
     public const TRIP_NOTDELAYED = false;
     public const TRIP_ISDELAYED = true;
-
     public const SCHEDULE_TIME = 15;
 
 

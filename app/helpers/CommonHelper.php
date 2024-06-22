@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Setting;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use App\Jobs\SendOrgRegisterEmailJob;
 
@@ -76,13 +77,13 @@ function makeCnicFormat($cnic_number)
 /**
  *Uploads an image to a specified folder and returns the filename
  *
- *@param \Illuminate\Http\UploadedFile $image The uploaded image file
+ * @param \Illuminate\Http\UploadedFile $image The uploaded image file
  *
- *@param string $folderName The name of the folder to store the image in
+ * @param string $folderName The name of the folder to store the image in
  *
- *@return string The generated filename of the uploaded image
+ * @return string The generated filename of the uploaded image
  *
- *@throws \Exception if the image is invalid or an error occurs during the upload process
+ * @throws \Exception if the image is invalid or an error occurs during the upload process
  */
 function uploadImage($image, $folderName, $defaultName = null)
 {
@@ -94,7 +95,7 @@ function uploadImage($image, $folderName, $defaultName = null)
     $extension = $image->getClientOriginalExtension();
 
     // Generate a unique filename for the image
-    $filename = uniqid() . '_' . time()  . '_' . $defaultName . '.' . $extension;
+    $filename = uniqid() . '_' . time() . '_' . $defaultName . '.' . $extension;
 
     if (!is_dir(public_path('uploads/' . $folderName))) {
         // create the directory if it does not exist
@@ -170,43 +171,55 @@ function getGoogleApi()
 
 function getPdfLogo()
 {
-    return  asset('images/logo.png');
+    return asset('images/logo.png');
 }
 
-function getPaginated($limit = 10){
+function getPaginated($limit = 10)
+{
     return $limit;
 }
 
 
-function notification($title, $body, $data, $device_token)
+/**
+ * @param $title
+ * @param $body
+ * @param $device_token
+ * @return bool|string|null
+ */
+function notification($title, $body, $device_token): bool|string|null
 {
-    $SERVER_API_KEY = $SERVER_API_KEY = config('app.firebase_key');
-    Log::info($SERVER_API_KEY);
-    $data = [
-        "to" => $device_token,
-        "notification" => [
-            "title" => $title,
-            "body" => $body,
-        ],
+    try {
+        $SERVER_API_KEY = config('app.firebase_key');
 
-    ];
-    $dataString = json_encode($data);
-    $headers = [
-        'Authorization: key=' . $SERVER_API_KEY,
-        'Content-Type: application/json',
-    ];
+        $data = [
+            "to" => $device_token,
+            "notification" => [
+                "title" => $title,
+                "body" => $body,
+            ],
 
-    $ch = curl_init();
+        ];
+        $dataString = json_encode($data);
+        $headers = [
+            'Authorization: key=' . $SERVER_API_KEY,
+            'Content-Type: application/json',
+        ];
 
-    curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
 
-    $response = curl_exec($ch);
+        $response = curl_exec($ch);
 
-    Log::info($response);
-    return $response;
+        Log::info($response);
+    } catch (\Exception $e) {
+        return $response;
+        Log::info($e->getMessage());
+    }
+    return null;
 }
+
