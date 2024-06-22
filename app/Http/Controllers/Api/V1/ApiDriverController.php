@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use Illuminate\Http\Response;
 use PDF;
 use App\Models\Driver;
 use Illuminate\Http\Request;
@@ -15,10 +16,9 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ApiDriverController extends BaseController
 {
+
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
     public function index(): JsonResponse
     {
@@ -33,21 +33,19 @@ class ApiDriverController extends BaseController
         }
     }
 
+
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
     public function create(): JsonResponse
     {
         return $this->sendResponse([], 'Driver create');
     }
 
+
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return JsonResponse
      */
     public function store(Request $request): JsonResponse
     {
@@ -154,10 +152,8 @@ class ApiDriverController extends BaseController
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param $id
+     * @return JsonResponse
      */
     public function show($id): JsonResponse
     {
@@ -172,11 +168,7 @@ class ApiDriverController extends BaseController
             return $this->respondWithError($validator->errors()->first());
         }
         try {
-            // $manager = auth('manager')->user();
             $driver = Driver::findOrFail($id);
-            // ->where('o_id', $manager->o_id)
-            // ->where('status', Driver::STATUS_ACTIVE)
-            // ->firstOrFail();
 
             return $this->respondWithSuccess($driver, 'Get Driver', 'API_GET_DRIVER');
         } catch (ModelNotFoundException $e) {
@@ -185,24 +177,22 @@ class ApiDriverController extends BaseController
         }
     }
 
+
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param $id
+     * @return JsonResponse
      */
     public function edit(Request $request, $id): JsonResponse
     {
-        return $request->all();
         return $this->respondWithError('Method not allowed');
     }
 
+
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param $id
+     * @return JsonResponse
      */
     public function update(Request $request, $id): JsonResponse
     {
@@ -296,28 +286,28 @@ class ApiDriverController extends BaseController
             if ($validator->fails()) {
                 return $this->respondWithError($validator->errors()->first());
             }
-            // update values
+
             $driver->name = $request->name;
             $driver->phone = $request->phone;
             $driver->cnic = $request->cnic;
             $driver->license_no = $request->license_no;
 
             // ----- these function are to remove old picture from the folder
-            if ($request->has('cnic_front') && $driver->cnic_front_pic_name != null) {
-                removeImage($driver->cnic_front_pic_name, 'drivers/cnic');
-            }
-
-            if ($request->has('cnic_back') && $driver->cnic_back_pic_name != null) {
-                removeImage($driver->cnic_back_pic_name, 'drivers/cnic');
-            }
-
-            if ($request->has('license_front') && $driver->license_no_front_pic_name != null) {
-                removeImage($driver->license_no_front_pic_name, 'drivers/license');
-            }
-
-            if ($request->has('license_back') && $driver->license_no_back_pic_name != null) {
-                removeImage($driver->license_no_back_pic_name, 'drivers/license');
-            }
+            // if ($request->has('cnic_front') && $driver->cnic_front_pic_name != null) {
+            //     removeImage($driver->cnic_front_pic_name, 'drivers/cnic');
+            // }
+            //
+            // if ($request->has('cnic_back') && $driver->cnic_back_pic_name != null) {
+            //     removeImage($driver->cnic_back_pic_name, 'drivers/cnic');
+            // }
+            //
+            // if ($request->has('license_front') && $driver->license_no_front_pic_name != null) {
+            //     removeImage($driver->license_no_front_pic_name, 'drivers/license');
+            // }
+            //
+            // if ($request->has('license_back') && $driver->license_no_back_pic_name != null) {
+            //     removeImage($driver->license_no_back_pic_name, 'drivers/license');
+            // }
 
             $driver->cnic_front_pic = ($request->has('cnic_front')) ?
                 $request->cnic_front
@@ -333,18 +323,9 @@ class ApiDriverController extends BaseController
                 $request->license_back :
                 $driver->license_no_back_pic_name;
             $save = $driver->save();
-
-            if (!$save) {
-                return $this->respondWithError('Error Occured while updating');
+            if($driver->device_token){
+                notification('Profile updated', 'Your profile has been updated by your organization manager', $driver->device_token);
             }
-
-            // if ($driver->save()) {
-            //     return redirect()->route('driver.index')
-            //         ->with('success', 'Driver updated successfully.');
-            // } else {
-            //     return redirect()->route('driver.index')
-            //         ->with('error', 'Error occured while driver updation .');
-            // }
             return $this->respondWithSuccess($driver, 'Driver updated successfully', 'API_DRIVER_UPDATED');
         } catch (ModelNotFoundException $e) {
             return $this->respondWithError('Driver id not found');
@@ -356,7 +337,7 @@ class ApiDriverController extends BaseController
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function destroy($id): JsonResponse
     {
@@ -385,7 +366,7 @@ class ApiDriverController extends BaseController
      * Search the specified resource from storage.
      *
      * @param  string  $string
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function search(): JsonResponse
     {
@@ -429,8 +410,8 @@ class ApiDriverController extends BaseController
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return Response
      */
     public function storeWeb(Request $request): JsonResponse
     {
@@ -543,9 +524,9 @@ class ApiDriverController extends BaseController
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param Request $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function updateWeb(Request $request, $id): JsonResponse
     {
