@@ -13,6 +13,9 @@ use App\Models\Passenger;
 use App\Models\OrganizationType;
 use App\Models\Request;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -65,112 +68,99 @@ class Organization extends Model
         'o_type_id' => 'integer',
     ];
 
+
     /**
-     * manager relation function with manager
-     *
-     * @return void
+     * @return HasOne
      */
-    public function manager()
+    public function manager(): HasOne
     {
         return $this->hasOne(Manager::class, 'o_id');
     }
 
+
     /**
-     * city relation with organization
-     *
-     * @return  [relation]  [this function will return city that belogs to organizations]
+     * @return BelongsTo
      */
-    public function city()
+    public function city(): BelongsTo
     {
         return $this->belongsTo(City::class, 'c_id', 'id');
     }
 
     /**
-     * state relation with organization
-     *
-     * @return  [type]  [this function will return state that belogs to organizations]
+     * @return BelongsTo
      */
-    public function state()
+    public function state(): BelongsTo
     {
         return $this->belongsTo(State::class, 's_id', 'id');
     }
 
+
     /**
-     * organization type relation with organization
-     *
-     * @return  [type]  [this function will return organization type that belogs to organizations]
+     * @return BelongsTo
      */
-    public function organizationType()
+    public function organizationType(): BelongsTo
     {
         return $this->belongsTo(OrganizationType::class, 'o_type_id', 'id');
     }
 
+
     /**
-     * organization relation with passenger
-     *
-     * @return void
+     * @return HasMany
      */
-    public function passengers()
+    public function passengers(): HasMany
     {
         return $this->hasMany(Passenger::class, 'o_id', 'id');
     }
 
     /**
-     * organization relation with drivers
-     *
-     * @return void
+     * @return HasMany
      */
-    public function drivers()
+    public function drivers(): HasMany
     {
         return $this->hasMany(Driver::class, 'o_id', 'id');
     }
 
+
     /**
-     * organization relation with drivers
-     *
-     * @return void
+     * @return HasMany
      */
-    public function vehicles()
+    public function vehicles(): HasMany
     {
         return $this->hasMany(Vehicle::class, 'o_id', 'id');
     }
 
+
     /**
-     * organization relation with drivers
-     *
-     * @return void
+     * @return HasMany
      */
-    public function routes()
+    public function routes(): HasMany
     {
         return $this->hasMany(Route::class, 'o_id', 'id');
     }
 
+
     /**
-     * organization relation with drivers
-     *
-     * @return void
+     * @return HasMany
      */
-    public function schedules()
+    public function schedules(): HasMany
     {
         return $this->hasMany(Schedule::class, 'o_id', 'id');
     }
 
+
     /**
-     * organization relation with drivers
-     *
-     * @return void
+     * @return HasMany
      */
-    public function requests()
+    public function requests(): HasMany
     {
         return $this->hasMany(Request::class);
     }
 
+
     /**
-     * organization relation with drivers
-     *
-     * @return void
+     * @return HasMany
      */
-    public function locations()
+    public function locations(): HasMany
     {
         return $this->hasMany(Location::class);
     }

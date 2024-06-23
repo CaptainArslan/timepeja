@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\Pdf;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Api\V1\PdfController;
@@ -70,7 +69,7 @@ Route::group(['middleware' => 'api'], function () {
                 Route::get('/published/{date}', [ApiScheduleController::class, 'getPublishedScheduleByDate']);
                 Route::get('/created/{date}', [ApiScheduleController::class, 'getCreatedScheduleByDate']);
             });
-            Route::get('/created-schedule/pdf/{date}', [PdfController::class, 'createdSchedule']);
+            Route::get('/created-schedule/pdf/{date}', [PdfController::class    , 'createdSchedule']);
             Route::get('/published-schedule/pdf/{date}', [PdfController::class, 'publishedSchedule']);
 
             // Vehicle Type
@@ -81,18 +80,15 @@ Route::group(['middleware' => 'api'], function () {
             Route::get('/drivers/pdf', [ApiDriverController::class, 'createPdf']);
             Route::get('/search/driver', [ApiDriverController::class, 'search']);
 
-
             // Driver api for web
             Route::get('web/driver/', [ApiDriverController::class, 'getDriver']);
             Route::post('web/driver/', [ApiDriverController::class, 'storeWeb']);
             Route::put('web/driver/{id}', [ApiDriverController::class, 'updateWeb']);
 
-
             // Vehicle Api
             Route::resource('/vehicle', ApiVehicleController::class);
             Route::get('/vehicles/pdf', [ApiVehicleController::class, 'createPdf']);
             Route::get('/search/vehicle', [ApiVehicleController::class, 'search']);
-
 
             // Vehicle apo for web
             Route::group(['prefix' => 'web/vehicle'], function () {
@@ -122,20 +118,21 @@ Route::group(['middleware' => 'api'], function () {
             Route::get('/main-screen-wrapper', [ApiManagerController::class, 'wrapper']);
             Route::get('/log-report-wrapper', [ApiManagerController::class, 'wrapper']);
 
-            // get tranport user requests
+            // get transport user requests
             Route::get('/requests', [ApiRequestController::class, 'index']);
             Route::post('/request/store', [ApiRequestController::class, 'store']);
 
             Route::get('/requests/past', [ApiRequestController::class, 'past']);
-            Route::get('/requests/dissapproved', [ApiRequestController::class, 'disapproved']);
             Route::get('/request/{id}', [ApiRequestController::class, 'show']);
             Route::get('requests/search', [ApiRequestController::class, 'search']);
-
             Route::get('/request/code/{code}', [ApiRequestController::class, 'getRequestDetailByCode']);
-
             Route::delete('/requests/delete', [ApiRequestController::class, 'delete']);
+            // Get disapproved requests
+            Route::get('/requests/dissapproved', [ApiRequestController::class, 'disapproved']);
+
+            // Approve, Disapprove, Meet Personally update status
             Route::put('/requests/approve', [ApiRequestController::class, 'approveRequests']);
-            Route::put('/requests/dissapprove', [ApiRequestController::class, 'dissapproveRequests']);
+            Route::put('/requests/dissapprove', [ApiRequestController::class, 'disapproveRequests']);
             Route::put('/requests/meet-personally', [ApiRequestController::class, 'meetPersonallyRequests']);
 
             Route::get('/locations', [LocationController::class, 'index']);

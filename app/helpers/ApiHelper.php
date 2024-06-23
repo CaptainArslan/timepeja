@@ -1,17 +1,19 @@
 <?php
+
+use Illuminate\Http\JsonResponse;
+
 class ApiHelper
 {
+
     /**
-     * Undocumented function
-     *
-     * @param [type] $data
-     * @param [type] $message
-     * @param [type] $code
+     * @param $data
+     * @param $message
+     * @param $code
      * @param array $headers
-     * @param integer $statusCode
-     * @return void
+     * @param int $statusCode
+     * @return JsonResponse
      */
-    public static function respondWithSuccess($data = null, $message = null, $code = null, $headers = [], $statusCode = 200)
+    public static function respondWithSuccess($data = null, $message = null, $code = null, array $headers = [], int $statusCode = 200): JsonResponse
     {
         return response()->json([
             'success' => true,
@@ -26,9 +28,9 @@ class ApiHelper
      *
      * @param [type] $message
      * @param integer $code
-     * @return void
+     * @return JsonResponse
      */
-    public static function respondWithError($message = null, $code = 400)
+    public static function respondWithError($message = null, int $code = 400): JsonResponse
     {
         return response()->json([
             'success' => false,
@@ -37,10 +39,17 @@ class ApiHelper
     }
 
 
-    public static function saveDeviceToken($request, $user){
+    /**
+     * @param $request
+     * @param $user
+     * @return true
+     */
+    public static function saveDeviceToken($request, $user): bool
+    {
         if($request->device_token){
             $user->device_token = $request->device_token;
             $user->save();
         }
+        return true;
     }
 }

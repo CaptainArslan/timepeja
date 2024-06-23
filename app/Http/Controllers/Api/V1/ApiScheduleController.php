@@ -408,10 +408,9 @@ class ApiScheduleController extends BaseController
         }
     }
 
+
     /**
-     * published publish schedule by date
-     *
-     * @param [type] $date
+     * @param $date
      * @return JsonResponse
      */
     public function getPublishedScheduleByDate($date): JsonResponse
@@ -447,10 +446,9 @@ class ApiScheduleController extends BaseController
         }
     }
 
+
     /**
-     * get create schedule by date
-     *
-     * @param [type] $date
+     * @param $date
      * @return JsonResponse
      */
     public function getCreatedScheduleByDate($date): JsonResponse
@@ -488,13 +486,12 @@ class ApiScheduleController extends BaseController
         }
     }
 
+
     /**
-     * this function is to replicate schedule
-     *
      * @param Request $request
-     * @return void
+     * @return JsonResponse
      */
-    public function replicate(Request $request)
+    public function replicate(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'schedule_ids' => ['required', 'array', 'exists:schedules,id'],
@@ -527,13 +524,13 @@ class ApiScheduleController extends BaseController
         }
     }
 
+
     /**
-     * replicate single schedule
-     *
-     * @param [type] $schedule
-     * @param [type] $user
-     * @param [type] $date
+     * @param $schedule
+     * @param $user
+     * @param $date
      * @return void
+     * @throws Exception
      */
     private function replicateSingleSchedule($schedule, $user, $date)
     {

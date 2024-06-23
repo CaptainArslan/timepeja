@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Api\V1\Driver;
 
+use App\Models\Route;
 use App\Models\Schedule;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\V1\BaseController;
 use App\Models\Driver;
@@ -123,6 +125,15 @@ class ScheduleController extends BaseController
             $driver = auth('driver')->user();
             $driver->online_status = Driver::STATUS_ONLINE;
             $driver->save();
+            $organization = $driver->organization;
+            if (!empty($organization)) {
+                $manager = $organization->manager;
+                $token = $manager ? $manager->device_token : null;
+                if ($token) {
+                    notification('Driver Online', `Driver {$driver->name} is online now.`, $token);
+                }
+            }
+
             return $this->respondWithSuccess(null, 'Driver is online now.', 'DRIVER_ONLINE');
         } catch (\Throwable $th) {
             return $this->respondWithError('Something went wrong.', $th->getMessage());
@@ -135,13 +146,26 @@ class ScheduleController extends BaseController
             $driver = auth('driver')->user();
             $driver->online_status = Driver::STATUS_OFFLINE;
             $driver->save();
+
+            $organization = $driver->organization;
+            if (!empty($organization)) {
+                $manager = $organization->manager;
+                $token = $manager ? $manager->device_token : null;
+                if ($token) {
+                    notification('Driver Offline', `Driver {$driver->name} is offline now.`, $token);
+                }
+            }
             return $this->respondWithSuccess(null, 'Driver is offline now.', 'DRIVER_OFFLINE');
         } catch (\Throwable $th) {
             return $this->respondWithError('Something went wrong.', $th->getMessage());
         }
     }
 
-    public function startTrip($id)
+    /**
+     * @param $id
+     * @return JsonResponse
+     */
+    public function startTrip($id): JsonResponse
     {
         $validator = Validator::make(['schedule_id' => $id], [
             'schedule_id' => ['required', 'integer'],
@@ -176,6 +200,17 @@ class ScheduleController extends BaseController
             $schedule->trip_status = Schedule::TRIP_STATUS_INPROGRESS;
             $schedule->save();
 
+            $organization = $schedule->organization;
+            if (!empty($organization)) {
+                $manager = $organization->manager;
+                $token = $manager ? $manager->device_token : null;
+                $route = Route::where('id', $schedule->route_id)->first;
+                $driver = Driver::where('id', $schedule->d_id)->first();
+                $message = `Driver "{$driver->name}" started his trip of route name "{$route->name}" `;
+                if ($token) {
+                    notification('Trip Started', $message, $token);
+                }
+            }
 
             return $this->respondWithSuccess($schedule, 'Trip started successfully.', 'DRIVER_TRIP_STARTED');
         } catch (\Throwable $th) {
@@ -184,7 +219,12 @@ class ScheduleController extends BaseController
         }
     }
 
-    public function endTrip(Request $request, $id)
+    /**
+     * @param Request $request
+     * @param $id
+     * @return JsonResponse
+     */
+    public function endTrip(Request $request, $id): JsonResponse
     {
         $validator = Validator::make(['schedule_id' => $id], [
             'schedule_id' => ['required', 'integer'],
@@ -206,6 +246,19 @@ class ScheduleController extends BaseController
             $schedule->trip_status = Schedule::TRIP_STATUS_COMPLETED;
             $schedule->end_time = date("h:i:s");
             $schedule->save();
+
+            $organization = $schedule->organization;
+            if (!empty($organization)) {
+                $manager = $organization->manager;
+                $token = $manager ? $manager->device_token : null;
+                $route = Route::where('id', $schedule->route_id)->first;
+                $driver = Driver::where('id', $schedule->d_id)->first();
+                $message = `Driver "{$driver->name}" end his trip of route name "{$route->name}" `;
+                if ($token) {
+                    notification('Trip End', $message, $token);
+                }
+            }
+
             return $this->respondWithSuccess(null, 'Trip completed successfully.', 'DRIVER_TRIP_STARTED');
         } catch (\Throwable $th) {
             Log::error($th->getMessage());
@@ -213,7 +266,12 @@ class ScheduleController extends BaseController
         }
     }
 
-    public function delayTrip(Request $request, $id)
+    /**
+     * @param Request $request
+     * @param $id
+     * @return JsonResponse
+     */
+    public function delayTrip(Request $request, $id): JsonResponse
     {
         $validator = Validator::make(['schedule_id' => $id,], [
             'schedule_id' => ['required', 'integer'],
@@ -235,6 +293,18 @@ class ScheduleController extends BaseController
             $schedule->delayed_reason = $request->delayed_reason;
             $schedule->trip_status = Schedule::TRIP_STATUS_DELAYED;
             $schedule->save();
+            $organization = $schedule->organization;
+
+            if (!empty($organization)) {
+                $manager = $organization->manager;
+                $token = $manager ? $manager->device_token : null;
+                $route = Route::where('id', $schedule->route_id)->first;
+                $driver = Driver::where('id', $schedule->d_id)->first();
+                $message = `Trip toward the route name "{$route->name}" taken by Driver "{$driver->name}" has been delayed`;
+                if ($token) {
+                    notification('Trip Delayed', $message, $token);
+                }
+            }
             return $this->respondWithSuccess($schedule, 'Trip started successfully.', 'DRIVER_TRIP_STARTED');
         } catch (\Throwable $th) {
             Log::error($th->getMessage());
@@ -242,17 +312,16 @@ class ScheduleController extends BaseController
         }
     }
 
-    public function notifications()
+    /**
+     * @return JsonResponse
+     */
+    public function notifications(): JsonResponse
     {
         try {
             $driver = auth('driver')->user();
             $schedules_notifications = Schedule::where('d_id', $driver->id)
                 ->where('status', Schedule::STATUS_PUBLISHED)
                 ->where('date', now()->format('Y-m-d'))
-                // ->whereBetween('time', [
-                //     now()->format('H:i:s'),
-                //     now()->addMinutes(15)->format('H:i:s')
-                // ])
                 ->where('time', '>=', now()->format('H:i:s'))
                 ->where('time', '<=', now()->addMinutes(15)->format('H:i:s'))
                 ->with('routes:id,name')

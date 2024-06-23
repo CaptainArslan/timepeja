@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use Illuminate\Http\Response;
 use Throwable;
-use Svg\Tag\Rect;
 use App\Models\Student;
 use App\Models\Employee;
 use App\Models\Guardian;
@@ -15,15 +15,10 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use App\Models\Request as Requests;
 use Illuminate\Support\Facades\Validator;
-use App\Http\Controllers\Api\V1\BaseController;
 
 class RequestController extends BaseController
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index(): JsonResponse
     {
         try {
@@ -62,23 +57,6 @@ class RequestController extends BaseController
         }
     }
 
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     // public function store(Request $request)
     // {
     //     $validator = Validator::make($request->all(), [
@@ -230,188 +208,205 @@ class RequestController extends BaseController
     //     }
     //     return $this->respondWithSuccess(null, 'Request Created Successfully', 'REQUEST_CREATED_SUCCESSFULLY');
     // }
-    public function store(Request $request)
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function store(Request $request): JsonResponse
     {
-        $validator = Validator::make($request->all(),  [
-            'unique_id' => ['required', 'string', 'exists:passengers,unique_id',],
-            'organization_id' => ['nullable', 'numeric', 'exists:organizations,id',],
-            // 'parent_request_id' => ['nullable', 'numeric', 'exists:requests,id',],
-            'type' => ['required', 'string', 'in:student,employee,student_guardian,employee_guardian',],
-            'student_type' => ['nullable', 'string', 'in:school,college,university', Rule::requiredIf(function () use ($request) {
-                return in_array($request->type, ['student', 'student_guardian']);
-            }),],
-            'gender' => ['nullable', 'string', 'in:male,female,others',],
-            'name' => ['required', 'string',],
-            'phone' => ['required', 'string',],
-            // 'passenger_id' => ['required', 'numeric', 'exists:passengers,id',],
-            'email' => ['nullable', 'email', 'string',],
-            'address' => ['required', 'string',],
-            'pickup_address' => ['nullable', 'string',],
-            'house_no' => ['nullable', 'string',],
-            'street_no' => ['required', 'string',],
-            'town' => ['nullable', 'string',],
-            'lattitude' => ['nullable', 'string',],
-            'longitude' => ['nullable', 'string',],
-            'pickup_city_id' => ['nullable', 'string',],
-            'additional_detail' => ['nullable', 'string',],
-            'roll_no' => [
-                'nullable', 'string',
-                Rule::requiredIf(function () use ($request) {
-                    return in_array($request->type, ['student']);
-                }),
-            ],
-            'class' => [
-                'nullable', 'string',
-                // Rule::requiredIf(function () use ($request) {
-                //     return in_array($request->type, ['student']);
-                // }),
-            ],
-            'section' => [
-                'nullable', 'string',
-                // Rule::requiredIf(function () use ($request) {
-                //     return in_array($request->type, ['student']);
-                // }),
-            ],
-            'qualification' => [
-                'nullable', 'string',
-                // Rule::requiredIf(function () use ($request) {
-                //     return in_array($request->type, ['student',]);
-                // }),
-            ],
-            'batch_year' => [
-                'nullable', 'integer',
-                // Rule::requiredIf(function () use ($request) {
-                //     return in_array($request->type, ['student',]);
-                // }),
-            ],
-            'degree_duration' => [
-                'nullable',
-                // Rule::requiredIf(function () use ($request) {
-                //     return in_array($request->type, ['student',]);
-                // }),
-            ],
-            'discipline' => [
-                'nullable', 'string',
-                // Rule::requiredIf(function () use ($request) {
-                //     return in_array($request->type, ['student',]);
-                // }),
-            ],
-            'employee_comp_id' => [
-                'nullable', 'string',
-                Rule::requiredIf(function () use ($request) {
-                    return in_array($request->type, ['employee',]);
-                }),
-            ],
-            'designation' => [
-                'nullable', 'string',
-                Rule::requiredIf(function () use ($request) {
-                    return in_array($request->type, ['employee',]);
-                })
-            ],
-            'profile_card' => [
-                'nullable', 'string',
-                // Rule::requiredIf(function () use ($request) {
-                //     return in_array($request->type, ['student','employee','student_guardian','employee_guardian']);
-                // }),
-            ],
-            'cnic_no' => [
-                'nullable', 'string',
-                Rule::requiredIf(function () use ($request) {
-                    return in_array($request->type, ['student_guardian', 'employee_guardian']);
-                }),
-            ],
-            'cnic_front_image' => [
-                'nullable',
-                Rule::requiredIf(function () use ($request) {
-                    return in_array($request->type, ['student_guardian', 'employee_guardian']);
-                }),
-            ],
-            'cnic_back_image' => [
-                'nullable', 'string',
-                Rule::requiredIf(function () use ($request) {
-                    return in_array($request->type, ['student_guardian', 'employee_guardian']);
-                })
-            ],
-            'relation' => [
-                'nullable', 'string',
-                Rule::requiredIf(function () use ($request) {
-                    return in_array($request->type, ['student_guardian', 'employee_guardian']);
-                }),
-                'in:father,mother,uncle,aunt,brother,sister,grandfather,grandmother,other'
-            ],
-            'guardian_code' => [
-                'nullable', 'string', 'exists:requests,guardian_code',
-                Rule::requiredIf(function () use ($request) {
-                    return in_array($request->type, ['student_guardian', 'employee_guardian']);
-                })
-            ],
-            'route_id' => ['nullable', 'numeric', 'exists:routes,id'],
-            'transport_start_date' => [
-                'nullable', 'date_format:Y-m-d',
-                // 'required_if:route_id,!=,null'
-            ],
-            'transport_end_date' => [
-                'nullable', 'date_format:Y-m-d',
-                // 'required_if:route_id,!=,null'
-            ],
-            'status' => ['nullable', 'string', 'in:pending,approved,disapproved'],
-        ], [
-            'name.required' => 'Please enter your name.',
-            'phone.required' => 'Please enter your phone number.',
-            'email.required' => 'Please enter your email address.',
-            'email.email' => 'Please enter a valid email address.',
-            'student_type.required' => 'Please specify Student type.',
-            'organization_id.required' => 'Organization ID is required.',
-            'type.required' => 'Please specify the type.',
-            'roll_no.required' => 'Please enter your roll number.',
-            'class.required' => 'Please enter your class.',
-            'section.required' => 'Please enter your section.',
-            'qualification.required' => 'Please enter your qualification.',
-            'route_id.exists' => 'The selected route is invalid.',
-        ]);
+        try {
+            $validator = Validator::make(
+                $request->all(),
+                [
+                    'unique_id' => ['required', 'string', 'exists:passengers,unique_id',],
+                    'organization_id' => ['nullable', 'numeric', 'exists:organizations,id',],
+                    // 'parent_request_id' => ['nullable', 'numeric', 'exists:requests,id',],
+                    'type' => ['required', 'string', 'in:student,employee,student_guardian,employee_guardian',],
+                    'student_type' => ['nullable', 'string', 'in:school,college,university', Rule::requiredIf(function () use ($request) {
+                        return in_array($request->type, ['student', 'student_guardian']);
+                    }),],
+                    'gender' => ['nullable', 'string', 'in:male,female,others',],
+                    'name' => ['required', 'string',],
+                    'phone' => ['required', 'string',],
+                    // 'passenger_id' => ['required', 'numeric', 'exists:passengers,id',],
+                    'email' => ['nullable', 'email', 'string',],
+                    'address' => ['required', 'string',],
+                    'pickup_address' => ['nullable', 'string',],
+                    'house_no' => ['nullable', 'string',],
+                    'street_no' => ['required', 'string',],
+                    'town' => ['nullable', 'string',],
+                    'lattitude' => ['nullable', 'string',],
+                    'longitude' => ['nullable', 'string',],
+                    'pickup_city_id' => ['nullable', 'string',],
+                    'additional_detail' => ['nullable', 'string',],
+                    'roll_no' => [
+                        'nullable', 'string',
+                        Rule::requiredIf(function () use ($request) {
+                            return in_array($request->type, ['student']);
+                        }),
+                    ],
+                    'class' => [
+                        'nullable', 'string',
+                        // Rule::requiredIf(function () use ($request) {
+                        //     return in_array($request->type, ['student']);
+                        // }),
+                    ],
+                    'section' => [
+                        'nullable', 'string',
+                        // Rule::requiredIf(function () use ($request) {
+                        //     return in_array($request->type, ['student']);
+                        // }),
+                    ],
+                    'qualification' => [
+                        'nullable', 'string',
+                        // Rule::requiredIf(function () use ($request) {
+                        //     return in_array($request->type, ['student',]);
+                        // }),
+                    ],
+                    'batch_year' => [
+                        'nullable', 'integer',
+                        // Rule::requiredIf(function () use ($request) {
+                        //     return in_array($request->type, ['student',]);
+                        // }),
+                    ],
+                    'degree_duration' => [
+                        'nullable',
+                        // Rule::requiredIf(function () use ($request) {
+                        //     return in_array($request->type, ['student',]);
+                        // }),
+                    ],
+                    'discipline' => [
+                        'nullable', 'string',
+                        // Rule::requiredIf(function () use ($request) {
+                        //     return in_array($request->type, ['student',]);
+                        // }),
+                    ],
+                    'employee_comp_id' => [
+                        'nullable', 'string',
+                        Rule::requiredIf(function () use ($request) {
+                            return in_array($request->type, ['employee',]);
+                        }),
+                    ],
+                    'designation' => [
+                        'nullable', 'string',
+                        Rule::requiredIf(function () use ($request) {
+                            return in_array($request->type, ['employee',]);
+                        })
+                    ],
+                    'profile_card' => [
+                        'nullable', 'string',
+                        // Rule::requiredIf(function () use ($request) {
+                        //     return in_array($request->type, ['student','employee','student_guardian','employee_guardian']);
+                        // }),
+                    ],
+                    'cnic_no' => [
+                        'nullable', 'string',
+                        Rule::requiredIf(function () use ($request) {
+                            return in_array($request->type, ['student_guardian', 'employee_guardian']);
+                        }),
+                    ],
+                    'cnic_front_image' => [
+                        'nullable',
+                        Rule::requiredIf(function () use ($request) {
+                            return in_array($request->type, ['student_guardian', 'employee_guardian']);
+                        }),
+                    ],
+                    'cnic_back_image' => [
+                        'nullable', 'string',
+                        Rule::requiredIf(function () use ($request) {
+                            return in_array($request->type, ['student_guardian', 'employee_guardian']);
+                        })
+                    ],
+                    'relation' => [
+                        'nullable', 'string',
+                        Rule::requiredIf(function () use ($request) {
+                            return in_array($request->type, ['student_guardian', 'employee_guardian']);
+                        }),
+                        'in:father,mother,uncle,aunt,brother,sister,grandfather,grandmother,other'
+                    ],
+                    'guardian_code' => [
+                        'nullable', 'string', 'exists:requests,guardian_code',
+                        Rule::requiredIf(function () use ($request) {
+                            return in_array($request->type, ['student_guardian', 'employee_guardian']);
+                        })
+                    ],
+                    'route_id' => ['nullable', 'numeric', 'exists:routes,id'],
+                    'transport_start_date' => [
+                        'nullable', 'date_format:Y-m-d',
+                        // 'required_if:route_id,!=,null'
+                    ],
+                    'transport_end_date' => [
+                        'nullable', 'date_format:Y-m-d',
+                        // 'required_if:route_id,!=,null'
+                    ],
+                    'status' => ['nullable', 'string', 'in:pending,approved,disapproved'],
+                ],
+                [
+                    'name.required' => 'Please enter your name.',
+                    'phone.required' => 'Please enter your phone number.',
+                    'email.required' => 'Please enter your email address.',
+                    'email.email' => 'Please enter a valid email address.',
+                    'student_type.required' => 'Please specify Student type.',
+                    'organization_id.required' => 'Organization ID is required.',
+                    'type.required' => 'Please specify the type.',
+                    'roll_no.required' => 'Please enter your roll number.',
+                    'class.required' => 'Please enter your class.',
+                    'section.required' => 'Please enter your section.',
+                    'qualification.required' => 'Please enter your qualification.',
+                    'route_id.exists' => 'The selected route is invalid.',
+                ]
+            );
 
-        if ($validator->fails()) {
-            return $this->respondWithError(implode(',', $validator->errors()->all()));
-        }
-
-        $manager = auth('manager')->user();
-
-        $request_id =  null;
-        $organization_id = $manager->o_id;
-        $passenger = Passenger::where('unique_id', $request->unique_id)->first();
-        $passenger_id = $passenger->id;
-        if ($request->type === 'student_guardian' || $request->type === 'employee_guardian') {
-            $parentRequest = Requests::where('guardian_code', $request->guardian_code)->first();
-            $childRequestCount = $parentRequest->childRequests->count();
-
-            if ($childRequestCount >= Requests::MAX_GUARDIAN_ALLOWED) {
-                return $this->respondWithError('You cannot add more than 3 guardians.');
+            if ($validator->fails()) {
+                return $this->respondWithError(implode(',', $validator->errors()->all()));
             }
 
-            $request_id = $parentRequest->id;
-            $organization_id = $parentRequest->organization_id;
+            $manager = auth('manager')->user();
+
+            $request_id = null;
+            $organization_id = $manager->o_id;
+            $passenger = Passenger::where('unique_id', $request->unique_id)->first();
+            $passenger_id = $passenger->id;
+            if ($request->type === 'student_guardian' || $request->type === 'employee_guardian') {
+                $parentRequest = Requests::where('guardian_code', $request->guardian_code)->first();
+                $childRequestCount = $parentRequest->childRequests->count();
+
+                if ($childRequestCount >= Requests::MAX_GUARDIAN_ALLOWED) {
+                    return $this->respondWithError('You cannot add more than 3 guardians.');
+                }
+
+                $request_id = $parentRequest->id;
+                $organization_id = $parentRequest->organization_id;
+            }
+
+            $data = $request->all();
+            $data['passenger_id'] = $passenger_id;
+            $data['upload_image'] = $request->upload_image;
+            $data['guardian_code'] = Str::random(6);
+            $data['parent_request_id'] = $request_id;
+            $data['organization_id'] = $organization_id;
+            $data['created_by'] = 'manager';
+            $data['created_user_id'] = auth('manager')->user()->id;
+            $data['status'] = Requests::STATUS_APPROVED;
+
+            $data = Requests::create($data);
+
+            if($passenger->device_token) {
+                notification('Request Created', 'Your request has been created successfully', $passenger->device_token);
+            }
+
+            return $this->respondWithSuccess($data, 'Request Created Successfully', 'REQUEST_CREATED_SUCCESSFULLY');
+        } catch (\Throwable $th) {
+            return $this->respondWithError('Error Occured while creating request');
         }
-
-        $data = $request->all();
-        $data['passenger_id'] = $passenger_id;
-        $data['upload_image'] = $request->upload_image;
-        $data['guardian_code'] = Str::random(6);
-        $data['parent_request_id'] = $request_id;
-        $data['organization_id'] = $organization_id;
-        $data['created_by'] = 'manager';
-        $data['created_user_id'] = auth('manager')->user()->id;
-        $data['status'] = Requests::STATUS_APPROVED;
-
-        $data = Requests::create($data);
-
-        return $this->respondWithSuccess($data, 'Request Created Successfully', 'REQUEST_CREATED_SUCCESSFULLY');
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     * @return Response
      */
     public function show($id)
     {
@@ -430,8 +425,8 @@ class RequestController extends BaseController
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     * @return Response
      */
     public function edit($id)
     {
@@ -441,9 +436,9 @@ class RequestController extends BaseController
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
+     * @return Response
      */
     public function update(Request $request, $id)
     {
@@ -453,8 +448,8 @@ class RequestController extends BaseController
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     * @return Response
      */
     public function destroy($id)
     {
@@ -482,7 +477,7 @@ class RequestController extends BaseController
             return $this->respondWithError($validator->errors()->first());
         }
 
-        $requestIds = (array) $request->request_ids;
+        $requestIds = (array)$request->request_ids;
 
         try {
             Requests::whereIn('id', $requestIds)->update([
@@ -501,7 +496,7 @@ class RequestController extends BaseController
      * @param Request $request
      * @return JsonResponse
      */
-    public function approveRequests(Request $request)
+    public function approveRequests(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'request_ids' => ['required', 'array'],
@@ -516,11 +511,31 @@ class RequestController extends BaseController
             return $this->respondWithError($validator->errors()->first());
         }
 
-        $requestIds = (array) $request->request_ids;
+        $requestIds = (array)$request->request_ids;
 
         try {
+            DB::transaction(function () use ($requestIds) {
+                foreach ($requestIds as $requestId) {
+                    $request = Requests::findOrFail($requestId);
+                    $save = $request->update(['status' => 'approved', 'deleted_at' => null]);
+
+                    if (!$save) {
+                        return $this->respondWithError('Error Occurred while approving requests');
+                    }
+
+                    $passenger = Passenger::find($request->passenger_id);
+                    if ($passenger) {
+                        $passengerToken = $passenger->device_token;
+                        $name = ucfirst($passenger->name);
+                        if ($passengerToken) {
+                            notification('Request Approved', `Dear {$name}! Contratulation... Your request has been approved`, $passengerToken);
+                        }
+                    }
+                }
+                return true;
+            });
             // Update the status of the requests to 'approved'
-            Requests::whereIn('id', $requestIds)->update(['status' => 'approved', 'deleted_at' => null]);
+            // $request = Requests::whereIn('id', $requestIds)->update(['status' => 'approved', 'deleted_at' => null]);
             return $this->respondWithSuccess([], 'Requests approved successfully', 'REQUESTS_APPROVED_SUCCESSFULLY');
         } catch (\Throwable $th) {
             return $this->respondWithError('Error Occurred while approving requests');
@@ -533,7 +548,7 @@ class RequestController extends BaseController
      * @param Request $request
      * @return JsonResponse
      */
-    public function dissapproveRequests(Request $request)
+    public function disapproveRequests(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'request_ids' => ['required', 'array'],
@@ -551,9 +566,27 @@ class RequestController extends BaseController
         $requestIds = $request->request_ids;
 
         try {
-            // Update the status of the requests to 'approved'
-            Requests::whereIn('id', $requestIds)->update(['status' => 'disapproved', 'deleted_at' => null]);
-            return $this->respondWithSuccess([], 'Requests deleted successfully', 'REQUESTS_DISAPPROVED_SUCCESSFULLY');
+            DB::transaction(function () use ($requestIds) {
+                foreach ($requestIds as $requestId) {
+                    $request = Requests::findOrFail($requestId);
+                    $save = $request->update(['status' => 'disapproved', 'deleted_at' => null]);
+
+                    if (!$save) {
+                        return $this->respondWithError('Error Occurred while approving requests');
+                    }
+
+                    $passenger = Passenger::find($request->passenger_id);
+                    if ($passenger) {
+                        $passengerToken = $passenger->device_token;
+                        $name = ucfirst($passenger->name);
+                        if ($passengerToken) {
+                            notification('Request Disapproved', `Dear {$name}! Sadly... Your request has been disapproved`, $passengerToken);
+                        }
+                    }
+                }
+                return true;
+            });
+            return $this->respondWithSuccess([], 'Requests disapproved successfully', 'REQUESTS_DISAPPROVED_SUCCESSFULLY');
         } catch (\Throwable $th) {
             return $this->respondWithError('Error Occurred while dissapproving requests');
         }
@@ -565,7 +598,7 @@ class RequestController extends BaseController
      * @param Request $request
      * @return JsonResponse
      */
-    public function meetPersonallyRequests(Request $request)
+    public function meetPersonallyRequests(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'request_ids' => ['required', 'array'],
@@ -584,17 +617,36 @@ class RequestController extends BaseController
 
         try {
             // Update the status of the requests to 'approved'
-            Requests::whereIn('id', $requestIds)->update(['status' => 'meet-personally', 'deleted_at' => null]);
-            return $this->respondWithSuccess([], 'Requests deleted successfully', 'REQUESTS_MEET_PERSONALLY_SUCCESSFULLY');
+            DB::transaction(function () use ($requestIds) {
+                foreach ($requestIds as $requestId) {
+                    $request = Requests::findOrFail($requestId);
+                    $save = $request->update(['status' => 'meet-personally', 'deleted_at' => null]);
+
+                    if (!$save) {
+                        return $this->respondWithError('Error Occurred while approving requests');
+                    }
+
+                    $passenger = Passenger::find($request->passenger_id);
+                    if ($passenger) {
+                        $passengerToken = $passenger->device_token;
+                        $name = ucfirst($passenger->name);
+                        if ($passengerToken) {
+                            notification('Personal meeting for request', `Dear {$name}! Please {$name} come to our office we want to meet you personally`, $passengerToken);
+                        }
+                    }
+                }
+                return true;
+            });
+            // Requests::whereIn('id', $requestIds)->update(['status' => 'meet-personally', 'deleted_at' => null]);
+            return $this->respondWithSuccess([], 'Requests status updated!', 'REQUESTS_MEET_PERSONALLY_SUCCESSFULLY');
         } catch (Throwable $th) {
             return $this->respondWithError('Error Occurred while updating meet-personal requests');
         }
     }
 
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return JsonResponse
      */
     public function past(Request $request): JsonResponse
     {
@@ -620,17 +672,17 @@ class RequestController extends BaseController
         }
     }
 
+
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return JsonResponse
      */
     public function disapproved(Request $request): JsonResponse
     {
         try {
             $manager_id = auth('manager')->user();
 
-            $limit = $request->limit ?? Requests::LIMIT;
+            $limit = $request->limit ?? getPaginated();
 
             $allRequests = Requests::with('organization:id,name')
                 ->with('city:id,name')
@@ -642,7 +694,6 @@ class RequestController extends BaseController
                 ->withCount('childRequests')
                 ->latest()
                 ->paginate($limit);
-            // ->paginate(10);
 
             return $this->respondWithSuccess($allRequests, 'Past User Request Lists', 'PAST_USER_REQUEST_LISTS');
         } catch (\Throwable $th) {
@@ -651,10 +702,8 @@ class RequestController extends BaseController
     }
 
     /**
-     * function to create student
-     *
-     * @param [object] $request
-     * @return void
+     * @param Request $request
+     * @return JsonResponse
      */
     public function createStudent($request)
     {
@@ -745,7 +794,7 @@ class RequestController extends BaseController
         $newRequest = new Requests();
         $newRequest->passenger_id = $passenger_id;
         $newRequest->organization_id = $request['organization_id'];
-        $newRequest->guardian_code =  substr(uniqid(), -8);
+        $newRequest->guardian_code = substr(uniqid(), -8);
         $newRequest->student_id = isset($request['student_id']) ? $request['student_id'] : null;
         $newRequest->employee_id = isset($request['employee_id']) ? $request['employee_id'] : null;
         $newRequest->type = $request['type'];

@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api\V1;
 
 
+use App\Models\Organization;
 use App\Models\Passenger;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\JsonResponse;
 use App\Models\Request as Requests;
@@ -16,22 +18,19 @@ class PassengerRequestController extends BaseController
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function index(Request $request): JsonResponse
     {
-        // Ensure the provided date is a valid date format
-        $validator = Validator::make($request->all(), [
-            'date' => 'sometimes|required|date_format:Y-m-d',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->respondWithError('Invalid date provided');
-        }
-
         try {
-            $passenger = auth('passenger')->user();
+            // Ensure the provided date is a valid date format
+            $validator = Validator::make($request->all(), [
+                'date' => 'sometimes|required|date_format:Y-m-d',
+            ]);
 
+            if ($validator->fails()) {
+                return $this->respondWithError('Invalid date provided');
+            }
             $requestStatuses = [
                 Requests::STATUS_APPROVED,
                 Requests::STATUS_PENDING,
@@ -39,6 +38,8 @@ class PassengerRequestController extends BaseController
             ];
 
             $date = $request->date ?? date('Y-m-d');
+
+            $passenger = auth('passenger')->user();
 
             $allRequests = Requests::where('passenger_id', $passenger->id)
                 ->with([
@@ -55,31 +56,17 @@ class PassengerRequestController extends BaseController
             return $this->respondWithSuccess($allRequests, 'Request Lists', 'REQUEST_LISTS');
         } catch (\Throwable $th) {
             // Log the exception for debugging
-            Log::error('Error occurred while fetching request list: ' . $th->getMessage());
             return $this->respondWithError('Error occurred while fetching request list');
         }
     }
 
-
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function create()
+    public function store(Request $request): JsonResponse
     {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        $validator = Validator::make($request->all(),  [
+        $validator = Validator::make($request->all(), [
             'organization_id' => ['required', 'numeric', 'exists:organizations,id',],
             // 'parent_request_id' => ['nullable', 'numeric', 'exists:requests,id',],
             'type' => ['required', 'string', 'in:student,employee,student_guardian,employee_guardian',],
@@ -219,7 +206,7 @@ class PassengerRequestController extends BaseController
             return $this->respondWithError(implode(',', $validator->errors()->all()));
         }
 
-        $request_id =  null;
+        $request_id = null;
         $organization_id = $request->organization_id;
         $passenger = auth('passenger')->user();
         $student_type = $request->student_type;
@@ -249,16 +236,22 @@ class PassengerRequestController extends BaseController
 
         $data = Requests::create($data);
 
+        $organization = Organization::where('id', $organization_id)->first();
+        if (!empty($organization)) {
+            $manager = $organization->manager;
+            if ($manager && $manager->device_token) {
+                notification('New Request', 'New request has been created by ' . $passenger->name, $manager->device_token);
+            }
+        }
+
         return $this->respondWithSuccess($data, 'Request Created Successfully', 'REQUEST_CREATED_SUCCESSFULLY');
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param $id
+     * @return JsonResponse
      */
-    public function show($id)
+    public function show($id): JsonResponse
     {
         try {
             $request = Requests::with([
@@ -276,26 +269,13 @@ class PassengerRequestController extends BaseController
 
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param $id
+     * @return JsonResponse
      */
-    public function edit($id)
+    public function update(Request $request, $id): JsonResponse
     {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        $validator = Validator::make($request->all(),  [
+        $validator = Validator::make($request->all(), [
             'organization_id' => ['required', 'numeric', 'exists:organizations,id',],
             // 'parent_request_id' => ['nullable', 'numeric', 'exists:requests,id',],
             'type' => ['required', 'string', 'in:student,employee,student_guardian,employee_guardian',],
@@ -439,7 +419,7 @@ class PassengerRequestController extends BaseController
         try {
             $request_found = Requests::findOrFail($id);
 
-            $request_id =  null;
+            $request_id = null;
             $organization_id = $request->organization_id;
             $passenger = auth('passenger')->user();
             $data = $request->all();
@@ -465,6 +445,13 @@ class PassengerRequestController extends BaseController
 
             $request_found::update($data);
 
+            $organization = Organization::where('id', $organization_id)->first();
+            if (!empty($organization)) {
+                $manager = $organization->manager;
+                if ($manager && $manager->device_token) {
+                    notification('Request Updated', 'Request updated created by ' . $passenger->name, $manager->device_token);
+                }
+            }
             return $this->respondWithSuccess($data, 'Request Created Successfully', 'REQUEST_CREATED_SUCCESSFULLY');
         } catch (\Throwable $th) {
             Log::error('Error occurred while fetching request list: ' . $th->getMessage());
@@ -472,13 +459,12 @@ class PassengerRequestController extends BaseController
         }
     }
 
+
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param $id
+     * @return JsonResponse
      */
-    public function destroy($id)
+    public function destroy($id): JsonResponse
     {
         try {
             Requests::findOrFail($id)->delete();
@@ -489,7 +475,12 @@ class PassengerRequestController extends BaseController
         }
     }
 
-    public function getRequestDetailByCode($code){
+    /**
+     * @param $code
+     * @return JsonResponse
+     */
+    public function getRequestDetailByCode($code): JsonResponse
+    {
         try {
             $request = Requests::with('organization:id,name')
                 ->with('city:id,name')
