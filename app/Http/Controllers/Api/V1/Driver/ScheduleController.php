@@ -130,7 +130,10 @@ class ScheduleController extends BaseController
                 $manager = $organization->manager;
                 $token = $manager ? $manager->device_token : null;
                 if ($token) {
-                    notification('Driver Online', `Driver {$driver->name} is online now.`, $token);
+                    $time = now()->format('h:i:s A');
+                    $message = "Driver {$driver->name} is online now at {$time}";
+                    Log::info($message);
+                    notification('Driver Online', $message, $token);
                 }
             }
 
@@ -152,7 +155,10 @@ class ScheduleController extends BaseController
                 $manager = $organization->manager;
                 $token = $manager ? $manager->device_token : null;
                 if ($token) {
-                    notification('Driver Offline', `Driver {$driver->name} is offline now.`, $token);
+                    $time = now()->format('h:i:s A');
+                    $message = "Driver {$driver->name} is offline now at {$time}";
+                    Log::info($message);
+                    notification('Driver Offline', $message, $token);
                 }
             }
             return $this->respondWithSuccess(null, 'Driver is offline now.', 'DRIVER_OFFLINE');
