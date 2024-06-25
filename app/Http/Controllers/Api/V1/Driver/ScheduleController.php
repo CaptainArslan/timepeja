@@ -176,7 +176,7 @@ class ScheduleController extends BaseController
     public function startTrip($id): JsonResponse
     {
         $validator = Validator::make(['schedule_id' => $id], [
-            'schedule_id' => ['required', 'integer'],
+            'schedule_id' => ['required', 'integer', 'exists:schedules,id'],
         ], [
             'schedule_id.required' => 'Schedule id is required',
             'schedule_id.integer' => 'Schedule id must be integer',
@@ -187,12 +187,11 @@ class ScheduleController extends BaseController
         }
 
         try {
-            $schedule = Schedule::where('id', $id)
-                ->with('drivers:id,name,license_no')
-                ->with('organizations:id,name,address')
-                ->with('routes:id,name')
-                ->with('vehicles:id,number')
-                ->first();
+            $schedule = Schedule::findOrFail($id);
+            // ->with('drivers:id,name,license_no')
+            // ->with('organizations:id,name,address')
+            // ->with('routes:id,name')
+            // ->with('vehicles:id,number')
 
             if (!$schedule) {
                 return $this->respondWithError('Schedule not found.');
