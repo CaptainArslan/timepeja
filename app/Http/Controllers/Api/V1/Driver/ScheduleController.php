@@ -211,18 +211,14 @@ class ScheduleController extends BaseController
             $organization = Organization::where('id', $schedule->o_id)->first();
             if ($organization) {
                 Log::info('Trip started');
-
-                Log::info('Organization found');
                 $manager = $organization->manager;
-                Log::info('Manager found');
                 $token = $manager ? $manager->device_token : null;
-                Log::info('Token found');
                 $route = Route::where('id', $schedule->route_id)->first();
                 $driver = Driver::where('id', $schedule->d_id)->first();
-                Log::info('Route and Driver found');
                 $time = now()->format('h:i:s A');
-                $message = "Driver {$driver->name} started his trip of route name {$route->name} at {$time}" ;
+                $message = "Driver {$driver->name} started his trip of route name {$route->name} at {$time}";
                 if ($token) {
+                    Log::info('notification send for trip start');
                     notification('Trip Started', $message, $token);
                 }
             }
@@ -265,18 +261,14 @@ class ScheduleController extends BaseController
             $organization = Organization::where('id', $schedule->o_id)->first();
             if ($organization) {
                 Log::info('Trip Eneded');
-
-                Log::info('Organization found');
                 $manager = $organization->manager;
-                Log::info('Manager found');
                 $token = $manager ? $manager->device_token : null;
-                Log::info('Token found');
                 $route = Route::where('id', $schedule->route_id)->first();
                 $driver = Driver::where('id', $schedule->d_id)->first();
-                Log::info('Route and Driver found');
                 $time = now()->format('h:i:s A');
-                $message = "Driver {$driver->name} Ended his trip of route name {$route->name} at {$time}" ;
+                $message = "Driver {$driver->name} Ended his trip of route name {$route->name} at {$time}";
                 if ($token) {
+                    Log::info('Trip Ended');
                     notification('Trip Ended', $message, $token);
                 }
             }
@@ -311,25 +303,22 @@ class ScheduleController extends BaseController
             if (!$schedule) {
                 return $this->respondWithError('Schedule not found.');
             }
+            $reason = $request->delayed_reason;
             $schedule->is_delay = Schedule::TRIP_ISDELAYED;
-            $schedule->delayed_reason = $request->delayed_reason;
+            $schedule->delayed_reason = $reason;
             $schedule->trip_status = Schedule::TRIP_STATUS_DELAYED;
             $schedule->save();
-            $organization = $schedule->organization;
 
             $organization = Organization::where('id', $schedule->o_id)->first();
             if ($organization) {
                 Log::info('Trip Delayed');
-                Log::info('Organization found');
                 $manager = $organization->manager;
-                Log::info('Manager found');
                 $token = $manager ? $manager->device_token : null;
-                Log::info('Token found');
                 $route = Route::where('id', $schedule->route_id)->first();
                 $driver = Driver::where('id', $schedule->d_id)->first();
-                Log::info('Route and Driver found');
-                $message = "Trip toward the route name {$route->name} taken by Driver {$driver->name} has been delayed";
+                $message = "Trip toward the route name {$route->name} taken by Driver {$driver->name} has been delayed due to {$reason}";
                 if ($token) {
+                    Log::info('Trip Delayed');
                     notification('Trip Started', $message, $token);
                 }
             }
