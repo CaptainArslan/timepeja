@@ -40,6 +40,7 @@ class ScheduleController extends BaseController
             $schedules = Schedule::where('d_id', $driver->id)
                 ->where('date', $date)
                 ->where('o_id', $driver->o_id)
+                ->where('trip_status', Schedule::TRIP_STATUS_UPCOMING)
                 // ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time', 'status', 'trip_status', 'created_at')
                 // ->with('organizations:id,name')
                 ->with('routes:id,name,number,from,to')
