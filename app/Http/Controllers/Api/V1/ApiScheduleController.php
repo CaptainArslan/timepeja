@@ -333,6 +333,7 @@ class ApiScheduleController extends BaseController
         $validator = Validator::make($request->all(), [
             'Schedule_ids' => ['required'],
             'Schedule_ids.*' => ['integer'],
+            'date' => ['required', 'date'],
         ], [
             'Schedule_ids.required' => 'Schedule ids are required',
             'Schedule_ids.*.integer' => 'ID must be an integer',
@@ -343,10 +344,10 @@ class ApiScheduleController extends BaseController
             return $this->respondWithError($validator->errors()->first());
         }
 
-        $ScheduleIds = (array)$request->Schedule_ids;
-
         try {
-            DB::transaction(function () use ($ScheduleIds, &$error) {
+            $ScheduleIds = (array)$request->Schedule_ids;
+            $date = $request->date ?? now()->format('Y-m-d');
+            DB::transaction(function () use ($ScheduleIds, &$error, $date) {
                 $error = false;
                 $driverArray = [];
                 foreach ($ScheduleIds as $id) {
@@ -359,7 +360,7 @@ class ApiScheduleController extends BaseController
                 }
                 $deviceTokens = array_unique($driverArray);
                 foreach ($deviceTokens as $token) {
-                    notification('Schedule Published', 'Dear driver, Your schedule has been published', $token);
+                    notification('Schedule Published', "Dear driver, Your schedule has been published for the date of {$date}", $token);
                 }
             });
             return $this->respondWithSuccess(null, 'Schedules published successfully', 'PUBLISH_SCHEDULE');

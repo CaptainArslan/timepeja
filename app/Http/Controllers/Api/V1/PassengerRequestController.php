@@ -4,9 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 
 use App\Models\Organization;
-use App\Models\Passenger;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\JsonResponse;
 use App\Models\Request as Requests;
@@ -15,10 +13,10 @@ use Illuminate\Support\Facades\Validator;
 
 class PassengerRequestController extends BaseController
 {
+
     /**
-     * Display a listing of the resource.
-     *
-     * @return Response
+     * @param Request $request
+     * @return JsonResponse
      */
     public function index(Request $request): JsonResponse
     {
