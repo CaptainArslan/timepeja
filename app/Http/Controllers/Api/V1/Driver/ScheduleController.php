@@ -214,7 +214,7 @@ class ScheduleController extends BaseController
                 Log::info('Manager found');
                 $token = $manager ? $manager->device_token : null;
                 Log::info('Token found');
-                $route = Route::where('id', $schedule->route_id)->first;
+                $route = Route::where('id', $schedule->route_id)->first();
                 $driver = Driver::where('id', $schedule->d_id)->first();
                 Log::info('Route and Driver found');
                 $message = "Driver {$driver->name} started his trip of route name {$route->name}" ;
