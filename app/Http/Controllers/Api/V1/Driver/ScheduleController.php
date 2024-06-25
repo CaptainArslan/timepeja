@@ -237,7 +237,7 @@ class ScheduleController extends BaseController
     public function endTrip(Request $request, $id): JsonResponse
     {
         $validator = Validator::make(['schedule_id' => $id], [
-            'schedule_id' => ['required', 'integer'],
+            'schedule_id' => ['required', 'integer', 'exists:schedules,id'],
         ], [
             'schedule_id.required' => 'Schedule id is required',
             'schedule_id.integer' => 'Schedule id must be integer',
@@ -248,7 +248,7 @@ class ScheduleController extends BaseController
         }
 
         try {
-            $schedule = Schedule::find($id);
+            $schedule = Schedule::findOrFail($id);
             if (!$schedule) {
                 return $this->respondWithError('Schedule not found.');
             }
@@ -287,7 +287,7 @@ class ScheduleController extends BaseController
     public function delayTrip(Request $request, $id): JsonResponse
     {
         $validator = Validator::make(['schedule_id' => $id,], [
-            'schedule_id' => ['required', 'integer'],
+            'schedule_id' => ['required', 'integer', 'exists:schedules,id'],
         ], [
             'schedule_id.required' => 'Schedule id is required',
             'schedule_id.integer' => 'Schedule id must be integer',
@@ -298,7 +298,7 @@ class ScheduleController extends BaseController
         }
 
         try {
-            $schedule = Schedule::find($id);
+            $schedule = Schedule::findOrFail($id);
             if (!$schedule) {
                 return $this->respondWithError('Schedule not found.');
             }
