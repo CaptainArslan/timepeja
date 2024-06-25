@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Driver;
 
+use App\Models\Organization;
 use App\Models\Route;
 use App\Models\Schedule;
 use Illuminate\Http\JsonResponse;
@@ -206,8 +207,8 @@ class ScheduleController extends BaseController
             $schedule->trip_status = Schedule::TRIP_STATUS_INPROGRESS;
             $schedule->save();
 
-            $organization = $schedule->organization;
-            if (!empty($organization)) {
+            $organization = Organization::where('id', $schedule->o_id)->first();
+            if ($organization) {
                 Log::info('Organization found');
                 $manager = $organization->manager;
                 Log::info('Manager found');
