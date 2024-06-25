@@ -212,7 +212,7 @@ class ScheduleController extends BaseController
                 $token = $manager ? $manager->device_token : null;
                 $route = Route::where('id', $schedule->route_id)->first;
                 $driver = Driver::where('id', $schedule->d_id)->first();
-                $message = `Driver "{$driver->name}" started his trip of route name "{$route->name}" `;
+                $message = "Driver {$driver->name} started his trip of route name {$route->name}" ;
                 if ($token) {
                     notification('Trip Started', $message, $token);
                 }
@@ -259,7 +259,7 @@ class ScheduleController extends BaseController
                 $token = $manager ? $manager->device_token : null;
                 $route = Route::where('id', $schedule->route_id)->first;
                 $driver = Driver::where('id', $schedule->d_id)->first();
-                $message = `Driver "{$driver->name}" end his trip of route name "{$route->name}" `;
+                $message = "Driver {$driver->name} end his trip of route name {$route->name}" ;
                 if ($token) {
                     notification('Trip End', $message, $token);
                 }
@@ -306,7 +306,7 @@ class ScheduleController extends BaseController
                 $token = $manager ? $manager->device_token : null;
                 $route = Route::where('id', $schedule->route_id)->first;
                 $driver = Driver::where('id', $schedule->d_id)->first();
-                $message = `Trip toward the route name "{$route->name}" taken by Driver "{$driver->name}" has been delayed`;
+                $message = "Trip toward the route name {$route->name} taken by Driver {$driver->name} has been delayed";
                 if ($token) {
                     notification('Trip Delayed', $message, $token);
                 }
