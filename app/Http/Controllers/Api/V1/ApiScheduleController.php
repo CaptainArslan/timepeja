@@ -333,7 +333,7 @@ class ApiScheduleController extends BaseController
         $validator = Validator::make($request->all(), [
             'Schedule_ids' => ['required'],
             'Schedule_ids.*' => ['integer'],
-            'date' => ['required', 'date'],
+            'date' => ['nullable', 'date'],
         ], [
             'Schedule_ids.required' => 'Schedule ids are required',
             'Schedule_ids.*.integer' => 'ID must be an integer',
