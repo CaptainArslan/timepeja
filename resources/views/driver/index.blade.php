@@ -82,9 +82,6 @@
         @csrf
         <div class="col-12 table-responsive">
             <div class="card">
-                <!-- <div class="card-header">
-                <button type="button" type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#creatDriver"> Add </button>
-            </div> -->
                 <div class="card-header">
                     <div class="d-flex justify-content-around">
                         <div class="col-2">
@@ -437,53 +434,6 @@
             })
         });
 
-        // $('#edit_driver_form').submit(function(e) {
-        //     e.preventDefault();
-        //     // Get form
-        //     var form = $('#edit_driver_form')[0];
-        //     // FormData object 
-        //     var data = new FormData(form);
-        //     console.log(data);
-        //     $.ajaxSetup({
-        //         headers: {
-        //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        //         }
-        //     });
-        //     Swal.fire({
-        //         title: 'Are you sure?',
-        //         icon: 'warning',
-        //         confirmButtonColor: '#e64942',
-        //         showCancelButton: true,
-        //         confirmButtonText: 'Yes',
-        //         cancelButtonText: `No`,
-        //     }).then((result) => {
-        //         if (result.isConfirmed) {
-        //             // var formData = new FormData(this);
-        //             var formData = new FormData($('#edit_driver_form').get(0));
-        //             console.log(formData);
-        //             $.ajax({
-        //                 type: "PUT",
-        //                 url: $(this).attr('action'),
-        //                 // data: $(this).serializeArray(),
-        //                 data: formData,
-        //                 success: function(response) {
-        //                     Swal.fire(
-        //                         'Updated!',
-        //                         'Data Successfully Updated.!',
-        //                         'success'
-        //                     ).then((result) => {
-        //                         location.reload();
-        //                     });
-        //                 },
-        //                 error: (error) => {
-        //                     console.log(JSON.stringify(error));
-        //                 }
-        //             });
-        //         }
-        //     });
-        // });
-
-
         // Listen for changes to child and parent checkboxes
         $('.child_checkbox, .parent_checkbox').on('change', function() {
             // Check if any checkboxes are checked
@@ -571,7 +521,7 @@
             setSuccessMsg('#license');
         }
 
-        //Main validate all the 
+        //Main validate all the
         if ((orgNameErr && nameErr && cnicErr && phoneErr) == false) {
             return false;
         } else {

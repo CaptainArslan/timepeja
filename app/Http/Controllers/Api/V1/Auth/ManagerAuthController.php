@@ -9,15 +9,11 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Api\V1\BaseController;
-use Facade\FlareClient\Api;
+use Throwable;
 
 class ManagerAuthController extends BaseController
 {
-    /**
-     * Create a new AuthController instance.
-     *
-     * @return void
-     */
+
     public function __construct()
     {
         $this->middleware(
@@ -35,11 +31,9 @@ class ManagerAuthController extends BaseController
     }
 
     /**
-     * Manager registration
-     *
-     * @param   Request       Manager registration request
-     *
-     * @return  JsonResponse            return object of Manager after registration
+     * @param Request $request
+     * @return JsonResponse
+     * @throws Throwable
      */
     public function register(Request $request): JsonResponse
     {
@@ -52,7 +46,6 @@ class ManagerAuthController extends BaseController
                 'string',
                 'confirmed',
                 'between:8,25',
-                // 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'
             ],
             'password_confirmation' => ['required', 'string', 'between:8,25'],
             'email' => ['nullable', 'email', 'max:255'],
@@ -66,7 +59,7 @@ class ManagerAuthController extends BaseController
             'password.between' => 'Password must be between :min and :max characters',
             'password.confirmed' => 'Password confirmation does not match',
             'password.regex' =>
-            'The password must contain at least one uppercase letter, one lowercase letter, one number, 
+            'The password must contain at least one uppercase letter, one lowercase letter, one number,
             and one special character.',
             'otp.required' => 'Verification code is required',
         ]);
@@ -94,19 +87,18 @@ class ManagerAuthController extends BaseController
                 ]);
                 return $this->respondWithSuccess($manager, 'Manager registered successfully', 'REGISTER_API_SUCCESS');
             } else {
-                return $this->respondWithError('Manager alreasy exist. Please login.');
+                return $this->respondWithError('Manager already exist. Please login.');
             }
         } catch (\Throwable $th) {
-            throw $th;
+            return $this->respondWithError('Error Occurred while registering manager');
         }
     }
 
+
     /**
-     * [login description]
-     *
-     * @param   Request       $request  [$request description]
-     *
-     * @return  JsonResponse            [return description]
+     * @param Request $request
+     * @return JsonResponse
+     * @throws Throwable
      */
     public function login(Request $request): JsonResponse
     {
@@ -124,7 +116,7 @@ class ManagerAuthController extends BaseController
             'password.required' => 'Password is required',
             'password.between' => 'Password must be between :min and :max characters',
             'password.regex' =>
-            'The password must contain at least one uppercase letter, one lowercase letter, 
+            'The password must contain at least one uppercase letter, one lowercase letter,
             one number, and one special character.'
         ]);
 
@@ -166,11 +158,8 @@ class ManagerAuthController extends BaseController
 
 
     /**
-     * [getVerificationCode description]
-     *
-     * @param   Request       $request  [$request description]
-     *
-     * @return  JsonResponse            [return description]
+     * @param Request $request
+     * @return JsonResponse
      */
     public function getVerificationCode(Request $request): JsonResponse
     {
@@ -190,10 +179,14 @@ class ManagerAuthController extends BaseController
         try {
             $manager = Manager::where('phone', $fields['phone'])->first();
             if (!empty($manager)) {
-                $manager->otp = rand(1000, 9999);
+                $otp = rand(1000, 9999);
+                $manager->otp = $otp;
                 $save = $manager->save();
                 if ($save) {
                     $data = $manager->only('id', 'name', 'phone', 'otp');
+                    if($manager->device_token) {
+                        notification('Otp', 'Your verification code is ' . $otp, $manager->device_token);
+                    }
                     return $this->respondWithSuccess($data, 'Otp Sent Successfully', 'API_GET_CODE');
                 } else {
                     return $this->respondWithError('Error Occured while sending otp');
@@ -202,16 +195,15 @@ class ManagerAuthController extends BaseController
                 return $this->respondWithError('Invalid Phone number provided');
             }
         } catch (\Throwable $th) {
-            throw $th;
+           return $this->respondWithError('Error Occured while sending otp');
         }
     }
 
+
     /**
-     * [forgetPassword description]
-     *
-     * @param   Request  $request  [$request description]
-     *
-     * @return  [type]             [return description]
+     * @param Request $request
+     * @return JsonResponse
+     * @throws Throwable
      */
     public function forgetPassword(Request $request): JsonResponse
     {
@@ -223,7 +215,6 @@ class ManagerAuthController extends BaseController
                 'string',
                 'confirmed',
                 'between:8,25',
-                // 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'
             ],
         ], [
             'phone.required' => 'Phone is required',
@@ -251,14 +242,15 @@ class ManagerAuthController extends BaseController
             }
             return $this->respondWithSuccess($manager, 'Password Updated Successfully', 'PASSWORD_UPDATE');
         } catch (\Throwable $th) {
-            throw $th;
+            return $this->respondWithError('Error Occured while updating password');
         }
     }
 
+
     /**
-     * Get the authenticated User.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * @param Request $request
+     * @return JsonResponse
+     * @throws Throwable
      */
     public function profile(Request $request): JsonResponse
     {
@@ -269,18 +261,17 @@ class ManagerAuthController extends BaseController
                 'MANAGER_PROFILE'
             );
             if (!$data) {
-                $this->respondWithError('Error Occured while fetching profile');
+                $this->respondWithError('Error Occurred while fetching profile');
             }
             return $data;
         } catch (\Throwable $th) {
-            throw $th;
+            return $this->respondWithError('Error Occurred while fetching profile');
         }
     }
 
+
     /**
-     * Log the user out (Invalidate the token).
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function logout(): JsonResponse
     {
@@ -291,19 +282,18 @@ class ManagerAuthController extends BaseController
     /**
      * Refresh a token.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function refresh(): JsonResponse
     {
         return $this->respondWithToken(auth('manager')->refresh());
     }
 
+
     /**
-     * [login description]
-     *
-     * @param   Request       $request  [$request description]
-     *
-     * @return  JsonResponse            [return description]
+     * @param Request $request
+     * @return JsonResponse
+     * @throws Throwable
      */
     public function webLogin(Request $request): JsonResponse
     {
@@ -313,7 +303,6 @@ class ManagerAuthController extends BaseController
                 'required',
                 'string',
                 'between:8,25',
-                // 'regex:/^(?=.*[a-z])(?=.*[A- Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'
             ],
         ], [
             'phone.required' => 'Phone number is required',
@@ -322,7 +311,7 @@ class ManagerAuthController extends BaseController
             'password.required' => 'Password is required',
             'password.between' => 'Password must be between :min and :max characters',
             'password.regex' =>
-            'The password must contain at least one uppercase letter, one lowercase letter, 
+            'The password must contain at least one uppercase letter, one lowercase letter,
             one number, and one special character.'
         ]);
 
@@ -348,7 +337,7 @@ class ManagerAuthController extends BaseController
                 'authorization' => $token
             ]);
         } catch (\Throwable $th) {
-            throw $th;
+            return $this->respondWithError('Error Occurred while login');
         }
     }
 }

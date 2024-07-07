@@ -3,13 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Mail\ContactUsMail;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class ContactController extends Controller
 {
-    public function send(Request $request)
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function send(Request $request): JsonResponse
     {
         // Validate the form data
         $validator = Validator::make($request->all(), [
@@ -28,7 +33,7 @@ class ContactController extends Controller
             Mail::to(env('MAIL_TO'))->send(new ContactUsMail($request->all()));
             return $this->respondWithSuccess(null, 'Thank you for contacting us. We will get back to you shortly.', 'EMAIL_SENT');
         } catch (\Throwable $th) {
-            return $this->respondWithError('Something went wrong. Please try again later.' . $th->getMessage());
+            return $this->respondWithError('Something went wrong. Please try again later.');
         }
     }
 }

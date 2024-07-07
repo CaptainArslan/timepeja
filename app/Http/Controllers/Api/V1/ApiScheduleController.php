@@ -54,7 +54,7 @@ class ApiScheduleController extends BaseController
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request): JsonResponse
@@ -122,7 +122,7 @@ class ApiScheduleController extends BaseController
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id): JsonResponse
@@ -156,7 +156,7 @@ class ApiScheduleController extends BaseController
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id): JsonResponse
@@ -167,8 +167,8 @@ class ApiScheduleController extends BaseController
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id): JsonResponse
@@ -230,7 +230,7 @@ class ApiScheduleController extends BaseController
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id): JsonResponse
@@ -261,7 +261,7 @@ class ApiScheduleController extends BaseController
      *
      * @return JsonResponse
      */
-    public function getOrganizationData(Request $request)
+    public function getOrganizationData(Request $request): JsonResponse
     {
         try {
             $manager = auth('manager')->user();
@@ -313,9 +313,6 @@ class ApiScheduleController extends BaseController
                 'created_schedule' => $draftSchedules
             ];
 
-            // store data in cache
-            // Cache::put('ORGANIZATION_ROUTE_VEHICLE_DRIVER_SCHEDULE_DATA_' . $manager->o_id, $data, 60 * 60 * 24);
-
             return $this->respondWithSuccess(
                 $data,
                 'Organization route, vehicle, driver data, published and created schedule',
@@ -326,17 +323,17 @@ class ApiScheduleController extends BaseController
         }
     }
 
+
     /**
-     * Publish schedule
-     *
      * @param Request $request
-     * @return void
+     * @return JsonResponse
      */
     public function publish(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'Schedule_ids' => ['required'],
             'Schedule_ids.*' => ['integer'],
+            'date' => ['nullable', 'date'],
         ], [
             'Schedule_ids.required' => 'Schedule ids are required',
             'Schedule_ids.*.integer' => 'ID must be an integer',
@@ -347,38 +344,35 @@ class ApiScheduleController extends BaseController
             return $this->respondWithError($validator->errors()->first());
         }
 
-        $ScheduleIds = (array) $request->input('Schedule_ids');
-
         try {
-            $updatedScheduleIds = [];
-            $error = false;
-
-            DB::transaction(function () use ($ScheduleIds, &$updatedScheduleIds, &$error) {
+            $ScheduleIds = (array)$request->Schedule_ids;
+            $date = $request->date ?? now()->format('Y-m-d');
+            DB::transaction(function () use ($ScheduleIds, &$error, $date) {
+                $error = false;
+                $driverArray = [];
                 foreach ($ScheduleIds as $id) {
                     $schedule = Schedule::findOrFail($id);
+                    $driverArray[] = Driver::where('id', $schedule->d_id)->first()->device_token;
                     $schedule->status = Schedule::STATUS_PUBLISHED;
                     if (!$schedule->save()) {
-                        $error = true;
-                        break;
+                        $this->respondWithError('Error Occured while publishing schedule');
                     }
-                    $updatedScheduleIds[] = $id;
                 }
-                if ($error) {
-                    throw new Exception("Failed to update one or more Schedules");
+                $deviceTokens = array_unique($driverArray);
+                foreach ($deviceTokens as $token) {
+                    notification('Schedule Published', "Dear driver, Your schedule has been published for the date of {$date}", $token);
                 }
             });
-
             return $this->respondWithSuccess(null, 'Schedules published successfully', 'PUBLISH_SCHEDULE');
         } catch (Exception $e) {
             return $this->respondWithError($e->getMessage());
         }
     }
 
+
     /**
-     * Make schedule draft
-     *
      * @param Request $request
-     * @return void
+     * @return JsonResponse
      */
     public function draft(Request $request): JsonResponse
     {
@@ -392,30 +386,20 @@ class ApiScheduleController extends BaseController
         ]);
 
         if ($validator->fails()) {
-            // $errors = $validator->errors()->all();
-            // return $this->respondWithError(implode(", ", $errors));
             return $this->respondWithError($validator->errors()->first());
-            // return $this->respondWithError('Invalid schedule id');
         }
 
-        $ScheduleIds = (array) $request->input('Schedule_ids');
+        $ScheduleIds = (array)$request->Schedule_ids;
 
         try {
-            $updatedScheduleIds = [];
-            $error = false;
 
-            DB::transaction(function () use ($ScheduleIds, &$updatedScheduleIds, &$error) {
+            DB::transaction(function () use ($ScheduleIds, &$error) {
                 foreach ($ScheduleIds as $id) {
                     $schedule = Schedule::findOrFail($id);
                     $schedule->status = Schedule::STATUS_DRAFT;
                     if (!$schedule->save()) {
-                        $error = true;
-                        break;
+                        return $this->respondWithError('Error Occured while drafting schedule');
                     }
-                    $updatedScheduleIds[] = $id;
-                }
-                if ($error) {
-                    throw new Exception("Failed to update one or more Schedules");
                 }
             });
 
@@ -425,10 +409,9 @@ class ApiScheduleController extends BaseController
         }
     }
 
+
     /**
-     * published publish schedule by date
-     *
-     * @param [type] $date
+     * @param $date
      * @return JsonResponse
      */
     public function getPublishedScheduleByDate($date): JsonResponse
@@ -464,10 +447,9 @@ class ApiScheduleController extends BaseController
         }
     }
 
+
     /**
-     * get create schedule by date
-     *
-     * @param [type] $date
+     * @param $date
      * @return JsonResponse
      */
     public function getCreatedScheduleByDate($date): JsonResponse
@@ -505,13 +487,12 @@ class ApiScheduleController extends BaseController
         }
     }
 
+
     /**
-     * this function is to replicate schedule
-     *
      * @param Request $request
-     * @return void
+     * @return JsonResponse
      */
-    public function replicate(Request $request)
+    public function replicate(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'schedule_ids' => ['required', 'array', 'exists:schedules,id'],
@@ -544,13 +525,13 @@ class ApiScheduleController extends BaseController
         }
     }
 
+
     /**
-     * replicate single schedule
-     *
-     * @param [type] $schedule
-     * @param [type] $user
-     * @param [type] $date
+     * @param $schedule
+     * @param $user
+     * @param $date
      * @return void
+     * @throws Exception
      */
     private function replicateSingleSchedule($schedule, $user, $date)
     {

@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,23 +16,19 @@ class Request extends Model
     use Notifiable;
 
     protected $table = 'requests';
-
     public const STUDENT = 'student';
     public const EMPLOYEE = 'employee';
     public const STUDENT_GUARDIAN = 'student_guardian';
     public const EMPLOYEE_GUARDIAN = 'employee_guardian';
-
     public const STATUS_PENDING = 'pending';
     public const STATUS_APPROVED = 'approved';
     public const STATUS_DISAPPROVED = 'disapproved';
     public const STATUS_MEET_PERSONALLY = 'meet-personally';
     public const STATUS_CANCELLED = 'cancelled';
     public const STATUS_DELETED = 'deleted';
-
     public const SCHOOL = 'school';
     public const COLLEGE = 'college';
     public const UNIVERSITY = 'university';
-
     public const MAX_GUARDIAN_ALLOWED = 3;
     public const LIMIT = 3;
 
@@ -104,86 +102,50 @@ class Request extends Model
     /**
      * get the request organization
      *
-     * @return void
+     * @return BelongsTo
      */
-    public function organization()
+    public function organization(): BelongsTo
     {
         return $this->belongsTo(Organization::class);
     }
 
+
     /**
-     * get the request passenger
-     *
-     * @return void
+     * @return BelongsTo
      */
-    public function passenger()
+    public function passenger(): BelongsTo
     {
         return $this->belongsTo(Passenger::class);
     }
 
-    // /**
-    //  * Undocumented function
-    //  *
-    //  * @return void
-    //  */
-    // public function student()
-    // {
-    //     return $this->belongsTo(Student::class);
-    // }
-
-    // /**
-    //  * Undocumented function
-    //  *
-    //  * @return void
-    //  */
-    // public function employee()
-    // {
-    //     return $this->belongsTo(Employee::class);
-    // }
-
-    // /**
-    //  * Undocumented function
-    //  *
-    //  * @return void
-    //  */
-    // public function guardians()
-    // {
-    //     // return $this->hasMany(Guardian::class);
-    //     return $this->belongsToMany(Guardian::class, 'request_guardian', 'request_id', 'guardian_id');
-    // }
 
     /**
-     * get the request relation
-     *
-     * @return void
+     * @return BelongsTo
      */
-    public function route()
+    public function route(): BelongsTo
     {
         return $this->belongsTo(Route::class);
     }
 
     /**
-     * GET ALL THE CHILD REQUESTS
-     *
-     * @return void
+     * @return HasMany
      */
-    public function childRequests()
+    public function childRequests(): HasMany
     {
         return $this->hasMany(Request::class, 'parent_request_id');
     }
 
     /**
-     * Get the city of the request
-     *
-     * @return void
+     * @return BelongsTo
      */
-    public function city()
+    public function city(): BelongsTo
     {
         return $this->belongsTo(City::class);
     }
 
-
-    // helper function to get the request type
+    /**
+     * @return mixed|string|void
+     */
     public function getUserId()
     {
         if ($this->type == self::STUDENT) {
@@ -197,6 +159,9 @@ class Request extends Model
         }
     }
 
+    /**
+     * @return mixed|string|void
+     */
     public function getUserClassOrDepartment()
     {
         if ($this->type == self::STUDENT) {

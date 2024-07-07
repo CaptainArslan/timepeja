@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response;
 use PDF;
 use App\Models\Driver;
 use App\Models\Schedule;
@@ -91,7 +94,7 @@ class DriverController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function create(Request $request)
     {
@@ -155,8 +158,8 @@ class DriverController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Driver  $driver
-     * @return \Illuminate\Http\Response
+     * @param Driver $driver
+     * @return Response
      */
     public function show(Driver $driver)
     {
@@ -167,7 +170,7 @@ class DriverController extends Controller
      * function to update driver by using formrequest
      *
      * @param DriverUpdateRequest $request
-     * @return void
+     * @return RedirectResponse
      */
     public function edit(DriverUpdateRequest $request)
     {
@@ -179,25 +182,24 @@ class DriverController extends Controller
         $driver->phone = $request->input('phone');
         $driver->cnic = $request->input('cnic');
         $driver->license_no = $request->input('license_no');
-        // $driver->otp = rand(1000, 9999);
         $driver->status = $request->input('status');
 
         // ----- these function are to remove old picture from the folder
-        if ($request->hasFile('cnic_front')) {
-            removeImage($driver->cnic_front_pic_name, 'drivers/cnic');
-        }
-
-        if ($request->hasFile('cnic_back')) {
-            removeImage($driver->cnic_back_pic_name, 'drivers/cnic');
-        }
-
-        if ($request->hasFile('license_front')) {
-            removeImage($driver->license_no_front_pic_name, 'drivers/license');
-        }
-
-        if ($request->hasFile('license_back')) {
-            removeImage($driver->license_no_back_pic_name, 'drivers/license');
-        }
+        // if ($request->hasFile('cnic_front')) {
+        //     removeImage($driver->cnic_front_pic_name, 'drivers/cnic');
+        // }
+        //
+        // if ($request->hasFile('cnic_back')) {
+        //     removeImage($driver->cnic_back_pic_name, 'drivers/cnic');
+        // }
+        //
+        // if ($request->hasFile('license_front')) {
+        //     removeImage($driver->license_no_front_pic_name, 'drivers/license');
+        // }
+        //
+        // if ($request->hasFile('license_back')) {
+        //     removeImage($driver->license_no_back_pic_name, 'drivers/license');
+        // }
 
         //  Updating image here if user add new it will update the image otherwise same image
         $driver->cnic_front_pic = ($request->file('cnic_front')) ?
@@ -214,6 +216,10 @@ class DriverController extends Controller
             uploadImage($request->file('license_back'), 'drivers/license') :
             $driver->license_no_back_pic_name;
 
+        if($driver->device_token){
+            notification('Profile updated', 'Your manager update your profile', $driver->device_token);
+        }
+
         if ($driver->save()) {
             return redirect()->route('driver.index')
                 ->with('success', 'Driver updated successfully.');
@@ -226,9 +232,9 @@ class DriverController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Driver  $driver
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param Driver $driver
+     * @return Response
      */
     public function update(Request $request, Driver $driver)
     {
@@ -236,27 +242,23 @@ class DriverController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Driver  $driver
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param $id
+     * @return JsonResponse
      */
-    public function destroy(Request $request, $id)
+    public function destroy(Request $request, $id): JsonResponse
     {
         try {
             $driver = Driver::findOrFail($id);
+            if ($driver->device_token) {
+                notification('Profile deleted', `Dear ${$driver->name}! Your manager delete your profile`, $driver->device_token);
+            }
             $driver->delete();
 
             return response()->json(['status' => 'success']);
         } catch (\Exception $e) {
             return response()->json(['status' => 'error'], 500);
         }
-
-        // if (Driver::where('id', $id)->delete()) {
-        //     return response()->json(['status' => 'success']);
-        // } else {
-        //     return response()->json(['status' => 'error']);
-        // }
     }
 
     /**

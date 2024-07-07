@@ -57,7 +57,7 @@ class DriverAuthController extends BaseController
             'password.between' => 'Password must be between :min and :max characters',
             'password.confirmed' => 'Password confirmation does not match',
             'password.regex' =>
-            'The password must contain at least one uppercase letter, one lowercase letter, one number, 
+            'The password must contain at least one uppercase letter, one lowercase letter, one number,
             and one special character.',
             'otp.required' => 'Verification code is required',
         ]);
@@ -116,7 +116,7 @@ class DriverAuthController extends BaseController
             'password.required' => 'Password is required',
             'password.between' => 'Password must be between :min and :max characters',
             'password.regex' =>
-            'The password must contain at least one uppercase letter, one lowercase letter, 
+            'The password must contain at least one uppercase letter, one lowercase letter,
             one number, and one special character.'
         ]);
 

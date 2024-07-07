@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Driver;
 use App\Models\Schedule;
+use Illuminate\Support\Facades\Log;
 use PDF;
 use App\Models\Organization;
 use App\Models\Route;
@@ -43,21 +44,21 @@ class ScheduleController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
         $user = Auth::user();
         $data = [
-            'o_id'         => $request->organization,
-            'u_id'         => $user->id,
-            'route_id'     => $request->route_no,
-            'v_id'         => $request->vehicle,
-            'd_id'         => $request->driver,
-            'date'         => $request->date,
-            'time'         => $request->time,
-            'status'       => Schedule::STATUS_DRAFT,
+            'o_id' => $request->organization,
+            'u_id' => $user->id,
+            'route_id' => $request->route_no,
+            'v_id' => $request->vehicle,
+            'd_id' => $request->driver,
+            'date' => $request->date,
+            'time' => $request->time,
+            'status' => Schedule::STATUS_DRAFT,
         ];
 
         $save = Schedule::updateOrCreate([
@@ -88,7 +89,7 @@ class ScheduleController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -99,7 +100,7 @@ class ScheduleController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -110,8 +111,8 @@ class ScheduleController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
@@ -122,7 +123,7 @@ class ScheduleController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
@@ -172,7 +173,7 @@ class ScheduleController extends Controller
     /**
      * [schedulePublished description]
      *
-     * @param   Request  $request  [$request description]
+     * @param Request $request [$request description]
      *
      * @return  [type]             [return description]
      */
@@ -270,7 +271,7 @@ class ScheduleController extends Controller
     /**
      * [publish description]
      *
-     * @param   Request  $request  [$request description]
+     * @param Request $request [$request description]
      *
      * @return  [type]             [return description]
      */
@@ -278,7 +279,10 @@ class ScheduleController extends Controller
     {
         try {
             DB::transaction(function () use ($request, $status) {
+                $driverArray = [];
                 foreach ($request->schedule_ids as $schedule_id) {
+                    $schedule = Schedule::where('id', $schedule_id)->first();
+                    $driverArray[] = Driver::where('id', $schedule->d_id)->first()->device_token;
                     $update = Schedule::where('id', $schedule_id)->update([
                         'status' => $status == Schedule::STATUS_DRAFT
                             ? Schedule::STATUS_DRAFT
@@ -287,6 +291,11 @@ class ScheduleController extends Controller
                     if (!$update) {
                         throw new \Exception('Error updating schedule.');
                     }
+                }
+                $deviceTokens = array_unique($driverArray);
+                foreach ($deviceTokens as $token) {
+                    // Log::info('sending notification to this device token = ' . $token);
+                    notification('Schedule Published', 'Your schedule has been published', $token);
                 }
             });
             return redirect()->route('schedule.create')
