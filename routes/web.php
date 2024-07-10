@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\ExampleEvent;
 use App\Models\Schedule;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -37,6 +38,37 @@ Route::get('/register', function () {
 Auth::routes();
 
 Route::group(['middleware' => 'auth'], function () {
+
+
+    Route::get('clear-cache', function () {
+        Artisan::call('optimize:clear');
+        return back();
+    });
+
+    Route::get('storage-link', function () {
+        Artisan::call('storage:link');
+        dd("links Completed");
+    });
+
+    Route::get('queue-work', function () {
+        Artisan::call('queue:work --stop-when-empty');
+        dd("Queue working Completed");
+    });
+
+    Route::get('schedule-work', function () {
+        Artisan::call('schedule:work');
+        dd("Schedule stated");
+    });
+    Route::get('schedule-terminate', function () {
+        Artisan::call('schedule:terminate');
+        dd("Schedule Terminated");
+    });
+
+    Route::get('clear-route', function () {
+        Artisan::call('route:clear');
+        return back();
+    });
+
     Route::get('/home', [HomeController::class, 'index'])->name('home');
     // Manager
     Route::prefix('manager')->name('manager.')->group(function () {
@@ -127,7 +159,6 @@ Route::group(['middleware' => 'auth'], function () {
     });
 
 
-
     // Admin Profile
     Route::get('/profile', [HomeController::class, 'profile'])->name('profile');
     Route::put('/profile/{user}', [HomeController::class, 'updateProfile'])->name('profile.update');
@@ -170,7 +201,7 @@ Route::group(['middleware' => 'auth'], function () {
     // Route::get('/passenger/list', function () { return view('passenger.passenger_list'); })->name('passenger_list');
 
     /**
-     * 
+     *
      */
     Route::get('/trans_routes', function () {
         return view('passenger.trans_routes');
@@ -196,7 +227,7 @@ Route::group(['middleware' => 'auth'], function () {
     })->name('expense');
 
     /**
-     * 
+     *
      */
     Route::get('/history/Passenger-to-Passenger', function () {
         return view('history.passenger_to_passenger');
@@ -209,7 +240,7 @@ Route::group(['middleware' => 'auth'], function () {
     })->name('customer.trip');
 
     /**
-     * 
+     *
      */
     Route::get('/modules', function () {
         return view('admin.modules.index');
@@ -250,48 +281,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('schedule/delete/{id}', [ScheduleController::class, 'destroy'])->name('schedule.delete');
     Route::get('get-schedule', [ScheduleController::class, 'getSchedule'])->name('getSchedule');
     Route::get('get-driver-vehicle-route', [ScheduleController::class, 'getDriverVehicleRoute'])->name('getDriverVehicleRoute');
+
+
+    Route::get('example', function (){
+        event(new ExampleEvent(rand(100, 999999)));
+        dd('example events');
+    });
 });
 
-Route::get('clear-cache', function () {
-    Artisan::call('optimize:clear');
-    return back();
-});
-
-// Route::get('migrate-fresh', function () {
-//     Artisan::call('migrate:fresh');
-//     dd("Migration Freshed");
-// });
-
-// Route::get('migrate', function () {
-//     Artisan::call('migrate');
-//     dd("Migration Completed");
-// });
-
-// Route::get('seed', function () {
-//     Artisan::call('db:seed');
-//     dd("Seeding Completed");
-// });
-
-Route::get('storage-link', function () {
-    Artisan::call('storage:link');
-    dd("links Completed");
-});
-
-Route::get('queue-work', function () {
-    Artisan::call('queue:work --stop-when-empty');
-    dd("Queue working Completed");
-});
-
-Route::get('schedule-work', function () {
-    Artisan::call('schedule:work');
-    dd("Schedule stated");
-});
-Route::get('schedule-terminate', function () {
-    Artisan::call('schedule:terminate');
-    dd("Schedule Terminated");
-});
-
-Route::get('clear-route', function () {
-    Artisan::call('route:clear');
-    return back();
-});

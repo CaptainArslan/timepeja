@@ -69,12 +69,6 @@ const isName = (nameval) => {
     return true;
 };
 
-//Email validate function
-/**
- *
- * @param {*} emailval
- * @returns
- */
 const isEmail = (emailval) => {
     var atSymbol = emailval.indexOf("@");
     var emailpattern =
@@ -87,11 +81,6 @@ const isEmail = (emailval) => {
     return true;
 };
 
-/**
- *
- * @param {*} phoneval
- * @returns
- */
 const isPhone = (phoneval) => {
     var phonePattern = /^[0-9]{4}-[0-9]{7}$/;
     var onlyNumbers = /^[0-9]+$/;
@@ -100,11 +89,6 @@ const isPhone = (phoneval) => {
     return true;
 };
 
-/**
- *
- * @param {*} cnicval
- * @returns
- */
 const isCnic = (cnicval) => {
     var cnicPattern = /^[0-9]{13}$/;
     var onlyNumbers = /^[0-9]+$/;
@@ -113,11 +97,6 @@ const isCnic = (cnicval) => {
     return true;
 };
 
-/**
- *
- * @param {*} licenseval
- * @returns
- */
 const isLicense = (licenseval) => {
     var licensePattern = /^[A-Z]{2,3}[-\s][0-9]{2}[-\s][A-Z0-9]{1,4}$/;
     // var onlyNumbers = /^[0-9]+$/;
@@ -126,32 +105,16 @@ const isLicense = (licenseval) => {
     return true;
 };
 
-/**
- *
- * @param {*} input
- * @param {*} errormsgs
- */
 function setErrorMsg(input, errormsgs) {
     $(input).addClass("is-invalid");
     $(input + "_error").html(errormsgs);
 }
 
-/**
- *
- * @param {*} input
- */
 function setSuccessMsg(input) {
     $(input).removeClass("is-invalid");
     $(input + "_error").html("");
 }
 
-/**
- * it return options as we send him the object or data
- *
- * @param   {[type]}  options  response is the response
- *
- * @return  {[type]}       this will make html option and return that options
- */
 function makeOptions(res) {
     let html = '<option value="">Please Select</option>';
     res.map((item) => {
@@ -160,13 +123,6 @@ function makeOptions(res) {
     return html;
 }
 
-/**
- * this function is use to hide all the previous date from calender
- *
- * @param   {[type]}  pramaid  [pramaid description]
- *
- * @return  {[type]}           [return description]
- */
 function preventPreviousDate(pramaid) {
     var today = new Date();
     var day = today.getDate();
@@ -183,13 +139,6 @@ function preventPreviousDate(pramaid) {
     document.getElementById(pramaid).setAttribute("min", today_formatted);
 }
 
-/**
- * [formatTime description]
- *
- * @param   {[type]}  timeString  [timeString description]
- *
- * @return  {[type]}              [return description]
- */
 function formatTime(timeString) {
     const [hourString, minute] = timeString.split(":");
     const hour = +hourString % 24;
@@ -201,11 +150,6 @@ function formatDate(dateString) {
     return `${parts[2]}/${parts[1]}/${parts[0]}`;
 }
 
-/**
- *
- * @param {*} select2class
- * @param {*} formid
- */
 function initializeSelect2(select2class, formid) {
     $(select2class).select2({
         dropdownParent: $(formid), // modal : id modal
@@ -216,10 +160,6 @@ function initializeSelect2(select2class, formid) {
     });
 }
 
-/**
- *
- * @param {*} formIds
- */
 function formSubmitConfirmation(formIds) {
     $(formIds).on("submit", function (e) {
         e.preventDefault(); // Prevent the form from submitting normally
@@ -241,12 +181,6 @@ function formSubmitConfirmation(formIds) {
     });
 }
 
-/**
- * this function reset the dropify image preview
- * @param {*} imageUrl
- * @param {*} inputId
- * @returns
- */
 function resetPreviewDropify(imageUrl, inputId) {
     // alert(imageUrl + '   ' + inputId);
     let imagenUrl = imageUrl;
@@ -261,7 +195,6 @@ function resetPreviewDropify(imageUrl, inputId) {
     drEvent.init();
 }
 
-// this function is use to show the success message
 function showSuccess(message = "Success created") {
     $.toast({
         heading: "Success",
@@ -275,7 +208,6 @@ function showSuccess(message = "Success created") {
     });
 }
 
-// this function is use to show the error message
 function showError(message = "Error Occured!") {
     $.toast({
         heading: "Error",
@@ -288,3 +220,86 @@ function showError(message = "Error Occured!") {
         stack: 5,
     });
 }
+
+function loadingStart(title = "Loading...") {
+    return Swal.fire({
+        title: title,
+        allowEscapeKey: false,
+        allowOutsideClick: false,
+        showCancelButton: false,
+        showConfirmButton: false,
+        didOpen: () => {
+            Swal.showLoading();
+        },
+    });
+}
+
+function loadingStop() {
+    if (swal) {
+        swal.close();
+    }
+}
+
+function renderPagination(data, container) {
+    let html = "";
+
+    if (data.data && data.data.length > 0) {
+        html += `<div class="post-pagination wow fadeInUp" data-wow-delay="0.10s">
+            <ul class="pagination">`;
+
+        if (data.prev_page_url !== null) {
+            html += `<li><a href="javascript:void(0)" data-page="${
+                data.current_page - 1
+            }"><i class="fa-solid fa-arrow-left-long"></i></a></li>`;
+        }
+
+        for (let i = 1; i <= data.last_page; i++) {
+            html += `<li class="${
+                data.current_page == i ? "active" : ""
+            }"><a href="javascript:void(0)" data-page="${i}">${i}</a></li>`;
+        }
+
+        if (data.next_page_url !== null) {
+            html += `<li><a href="javascript:void(0)" data-page="${
+                data.current_page + 1
+            }"><i class="fa-solid fa-arrow-right-long"></i></a></li>`;
+        }
+
+        html += `       </ul>
+    </div>`;
+    }
+
+    $(container).html(html);
+}
+
+function limitString(string, limit = 15) {
+    return string.length > limit ? string.substring(0, limit) + "..." : string;
+}
+
+function formatTimestampHumanReadable(timestamp) {
+    let currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
+    let timestampSeconds = Math.floor(new Date(timestamp).getTime() / 1000); // Timestamp in seconds
+
+    let difference = currentTime - timestampSeconds;
+
+    // Define time intervals in seconds
+    let intervals = {
+        year: 31536000,
+        month: 2592000,
+        week: 604800,
+        day: 86400,
+        hour: 3600,
+        minute: 60,
+    };
+
+    // Loop through intervals to find the appropriate one
+    for (let key in intervals) {
+        let value = Math.floor(difference / intervals[key]);
+        if (value >= 1) {
+            return value + " " + key + (value > 1 ? "s" : "") + " ago";
+        }
+    }
+
+    return "Just now";
+}
+
