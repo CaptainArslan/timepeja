@@ -88,7 +88,7 @@
 
     {{-- <script src="{{ asset('js/app.js') }}"></script>
     <script src="{{ asset('js/socket.js') }}"></script> --}}
-
+    
 
     @yield('page_js')
 
