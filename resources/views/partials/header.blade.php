@@ -3,18 +3,21 @@
     <div class="container-fluid">
         <ul class="list-unstyled topnav-menu float-end mb-0">
             <li class="dropdown d-inline-block d-lg-none">
-                <a class="nav-link dropdown-toggle arrow-none waves-effect waves-light" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
+                <a class="nav-link dropdown-toggle arrow-none waves-effect waves-light" data-bs-toggle="dropdown"
+                    href="#" role="button" aria-haspopup="false" aria-expanded="false">
                     <i class="fe-search noti-icon"></i>
                 </a>
                 <div class="dropdown-menu dropdown-lg dropdown-menu-end p-0">
                     <form class="p-3">
-                        <input type="text" class="form-control" placeholder="Search ..." aria-label="Recipient's username">
+                        <input type="text" class="form-control" placeholder="Search ..."
+                            aria-label="Recipient's username">
                     </form>
                 </div>
             </li>
 
             <li class="dropdown d-none d-lg-inline-block">
-                <a class="nav-link dropdown-toggle arrow-none waves-effect waves-light" data-toggle="fullscreen" href="#">
+                <a class="nav-link dropdown-toggle arrow-none waves-effect waves-light" data-toggle="fullscreen"
+                    href="#">
                     <i class="fe-maximize noti-icon"></i>
                 </a>
             </li>
@@ -29,19 +32,19 @@
                         <div class="row g-0">
                             <div class="col">
                                 <a class="dropdown-icon-item" href="#">
-                                    <img src="{{asset('images/brands/slack.png')}}" alt="slack">
+                                    <img src="{{ asset('images/brands/slack.png') }}" alt="slack">
                                     <span>Slack</span>
                                 </a>
                             </div>
                             <div class="col">
                                 <a class="dropdown-icon-item" href="#">
-                                    <img src="{{asset('images/brands/github.png')}}" alt="Github">
+                                    <img src="{{ asset('images/brands/github.png') }}" alt="Github">
                                     <span>GitHub</span>
                                 </a>
                             </div>
                             <div class="col">
                                 <a class="dropdown-icon-item" href="#">
-                                    <img src="{{asset('images/brands/dribbble.png')}}" alt="dribbble">
+                                    <img src="{{ asset('images/brands/dribbble.png') }}" alt="dribbble">
                                     <span>Dribbble</span>
                                 </a>
                             </div>
@@ -50,19 +53,19 @@
                         <div class="row g-0">
                             <div class="col">
                                 <a class="dropdown-icon-item" href="#">
-                                    <img src="{{asset('images/brands/bitbucket.png')}}" alt="bitbucket">
+                                    <img src="{{ asset('images/brands/bitbucket.png') }}" alt="bitbucket">
                                     <span>Bitbucket</span>
                                 </a>
                             </div>
                             <div class="col">
                                 <a class="dropdown-icon-item" href="#">
-                                    <img src="{{asset('images/brands/dropbox.png')}}" alt="dropbox">
+                                    <img src="{{ asset('images/brands/dropbox.png') }}" alt="dropbox">
                                     <span>Dropbox</span>
                                 </a>
                             </div>
                             <div class="col">
                                 <a class="dropdown-icon-item" href="#">
-                                    <img src="{{asset('images/brands/g-suite')}}.png" alt="G Suite">
+                                    <img src="{{ asset('images/brands/g-suite') }}.png" alt="G Suite">
                                     <span>G Suite</span>
                                 </a>
                             </div>
@@ -74,7 +77,8 @@
             </li> -->
 
             <li class="dropdown notification-list topbar-dropdown">
-                <a class="nav-link dropdown-toggle waves-effect waves-light" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
+                <a class="nav-link dropdown-toggle waves-effect waves-light" data-bs-toggle="dropdown" href="#"
+                    role="button" aria-haspopup="false" aria-expanded="false">
                     <i class="fe-bell noti-icon"></i>
                     <span class="badge bg-danger rounded-circle noti-icon-badge">9</span>
                 </a>
@@ -96,7 +100,8 @@
                         <!-- item-->
                         <a href="javascript:void(0);" class="dropdown-item notify-item active">
                             <div class="notify-icon">
-                                <img src="{{asset('images/users/user-1.jpg')}}" class="img-fluid rounded-circle" alt="" />
+                                <img src="{{ asset('images/users/user-1.jpg') }}" class="img-fluid rounded-circle"
+                                    alt="" />
                             </div>
                             <p class="notify-details">Cristina Pride</p>
                             <p class="text-muted mb-0 user-msg">
@@ -117,7 +122,8 @@
                         <!-- item-->
                         <a href="javascript:void(0);" class="dropdown-item notify-item">
                             <div class="notify-icon">
-                                <img src="{{asset('images/users/user-4.jpg')}}" class="img-fluid rounded-circle" alt="" />
+                                <img src="{{ asset('images/users/user-4.jpg') }}" class="img-fluid rounded-circle"
+                                    alt="" />
                             </div>
                             <p class="notify-details">Karen Robinson</p>
                             <p class="text-muted mb-0 user-msg">
@@ -158,7 +164,8 @@
                     </div>
 
                     <!-- All-->
-                    <a href="javascript:void(0);" class="dropdown-item text-center text-primary notify-item notify-all">
+                    <a href="javascript:void(0);"
+                        class="dropdown-item text-center text-primary notify-item notify-all">
                         View all
                         <i class="fe-arrow-right"></i>
                     </a>
@@ -166,41 +173,49 @@
                 </div>
             </li>
 
-            <li class="dropdown notification-list topbar-dropdown">
-                <a class="nav-link dropdown-toggle nav-user me-0 waves-effect waves-light" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
-                    <img src="@if (auth()->user()->image) {{asset('uploads/managers/profiles/'.auth()->user()->image)}} @else {{asset('uploads/managers/profiles/placeholder.jpg')}} @endif
-                    " alt="user-image" class="rounded-circle">
-                    <span class="pro-user-name ms-1">
-                        {{auth()->user()->user_name}} <i class="mdi mdi-chevron-down"></i>
-                    </span>
-                </a>
-                <div class="dropdown-menu dropdown-menu-end profile-dropdown ">
-                    <!-- item-->
-                    <div class="dropdown-header noti-title">
-                        <h6 class="text-overflow m-0">Welcome {{ (auth()->user()) ? auth()->user()->full_name : '' }}!</h6>
+
+            @auth
+                @php
+                    $user = Auth::user();
+                @endphp
+                <li class="dropdown notification-list topbar-dropdown">
+                    <a class="nav-link dropdown-toggle nav-user me-0 waves-effect waves-light" data-bs-toggle="dropdown"
+                        href="#" role="button" aria-haspopup="false" aria-expanded="false">
+                        <img src="{{ $user->image }}" alt="user-image" class="rounded-circle">
+                        <span class="pro-user-name ms-1">
+                            {{ $user->user_name }} <i class="mdi mdi-chevron-down"></i>
+                        </span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end profile-dropdown ">
+                        <!-- item-->
+                        <div class="dropdown-header noti-title">
+                            <h6 class="text-overflow m-0">Welcome {{ $user->full_name }}!
+                            </h6>
+                        </div>
+
+                        <!-- item-->
+                        <a href="{{ route('profile') }}" class="dropdown-item notify-item">
+                            <i class="fe-user"></i>
+                            <span>My Account</span>
+                        </a>
+
+
+                        <div class="dropdown-divider"></div>
+
+                        <!-- item-->
+                        <a href="{{ route('logout') }}" class="dropdown-item notify-item"
+                            onclick="event.preventDefault();
+                                        document.getElementById('logout-form').submit();">
+                            <i class="fe-log-out"></i>
+                            <span>Logout</span>
+                        </a>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                            @csrf
+                        </form>
+
                     </div>
-
-                    <!-- item-->
-                    <a href="{{ route('profile') }}" class="dropdown-item notify-item">
-                        <i class="fe-user"></i>
-                        <span>My Account</span>
-                    </a>
-
-
-                    <div class="dropdown-divider"></div>
-
-                    <!-- item-->
-                    <a href="{{ route('logout') }}" class="dropdown-item notify-item" onclick="event.preventDefault();
-                                                    document.getElementById('logout-form').submit();">
-                        <i class="fe-log-out"></i>
-                        <span>Logout</span>
-                    </a>
-                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                        @csrf
-                    </form>
-
-                </div>
-            </li>
+                </li>
+            @endauth
 
             <!-- <li class="dropdown notification-list">
                 <a href="javascript:void(0);" class="nav-link right-bar-toggle waves-effect waves-light">
@@ -214,21 +229,21 @@
         <div class="logo-box">
             <a href="index.html" class="logo logo-dark text-center">
                 <span class="logo-sm">
-                    <img src="{{asset('images/logo-sm.png')}}" alt="" height="22">
+                    <img src="{{ asset('images/logo-sm.png') }}" alt="" height="22">
                     <!-- <span class="logo-lg-text-light">UBold</span> -->
                 </span>
                 <span class="logo-lg">
-                    <img src="{{asset('images/logo-dark.png')}}" alt="" height="20">
+                    <img src="{{ asset('images/logo-dark.png') }}" alt="" height="20">
                     <!-- <span class="logo-lg-text-light">U</span> -->
                 </span>
             </a>
 
-            <a href="{{route('home')}}" class="logo logo-light text-center">
+            <a href="{{ route('home') }}" class="logo logo-light text-center">
                 <span class="logo-sm">
-                    <img src="{{asset('images/logo-sm.png')}}" alt="" height="22">
+                    <img src="{{ asset('images/logo-sm.png') }}" alt="" height="22">
                 </span>
                 <span class="logo-lg">
-                    <img src="{{asset('images/logo-light.png')}}" alt="" height="20">
+                    <img src="{{ asset('images/logo-light.png') }}" alt="" height="20">
                 </span>
             </a>
         </div>

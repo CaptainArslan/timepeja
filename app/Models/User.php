@@ -48,4 +48,17 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+
+
+    /**
+     * Get the image URL for the user.
+     *
+     * @param  string|null  $value
+     * @return string|null
+     */
+    public function getImageAttribute($value): string
+    {
+        return ($this->value) ? asset('uploads/managers/profiles/' . $this->value) : asset('placeholder.jpg');
+    }
 }
