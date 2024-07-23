@@ -3,7 +3,11 @@ const domain = origin.splice(0, 2).join(":");
 const port = 3000;
 const ip = domain + ":" + port;
 
-const socket = io("http://localhost:3000");
+// const socket = io("http://localhost:3000");
+// const socket = io("https://node-socket-app.vercel.app", {
+const socket = io("http://socket-test.stoppick.com", {
+    transports: ["polling", "websocket"],
+});
 
 socket.on("connect", () => {
     socket.emit("message", "Hello from client : " + socket.id);
@@ -29,7 +33,3 @@ socket.on("connect", () => {
 socket.on("message", (msg) => {
     console.log("New message received from server: " + msg);
 });
-
-// socket.on("location", (location) => {
-//     console.log("New location received from server: " + location);
-// });
