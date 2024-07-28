@@ -5,7 +5,8 @@ const ip = domain + ":" + port;
 
 // const socket = io("http://localhost:3000");
 // const socket = io("https://node-socket-app.vercel.app", {
-const socket = io("http://socket-test.stoppick.com", {
+console.log("Connecting to: " + ip);
+const socket = io("https://socket-testing.stoppick.com", {
     transports: ["polling", "websocket"],
 });
 
