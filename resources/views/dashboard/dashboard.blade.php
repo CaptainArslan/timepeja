@@ -624,7 +624,7 @@
         socket.on("location", (data) => {
             console.log("Received location data", data);
             // Optionally, center the map on the new location
-            map.setView([data.latitude, data.longitude]);
+            // map.setView([data.latitude, data.longitude]);
 
             // If a marker for this socket ID already exists, update its position
             console.log(markers[data.id]);
