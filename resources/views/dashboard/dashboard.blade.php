@@ -87,24 +87,24 @@
         </div> <!-- end col-->
 
         <!-- <div class="col-md-6 col-xl-3">
-                                                                                                            <div class="widget-rounded-circle card">
-                                                                                                                <div class="card-body">
-                                                                                                                    <div class="row">
-                                                                                                                        <div class="col-6">
-                                                                                                                            <div class="avatar-lg rounded-circle bg-soft-primary border-primary border">
-                                                                                                                                <i class="fe-eye font-22 avatar-title text-primary"></i>
+                                                                                                                        <div class="widget-rounded-circle card">
+                                                                                                                            <div class="card-body">
+                                                                                                                                <div class="row">
+                                                                                                                                    <div class="col-6">
+                                                                                                                                        <div class="avatar-lg rounded-circle bg-soft-primary border-primary border">
+                                                                                                                                            <i class="fe-eye font-22 avatar-title text-primary"></i>
+                                                                                                                                        </div>
+                                                                                                                                    </div>
+                                                                                                                                    <div class="col-6">
+                                                                                                                                        <div class="text-end">
+                                                                                                                                            <h3 class="text-dark mt-1"><span data-plugin="counterup">78.41</span>k</h3>
+                                                                                                                                            <p class="text-muted mb-1 text-truncate">Today's Visits</p>
+                                                                                                                                        </div>
+                                                                                                                                    </div>
+                                                                                                                                </div> end row
                                                                                                                             </div>
-                                                                                                                        </div>
-                                                                                                                        <div class="col-6">
-                                                                                                                            <div class="text-end">
-                                                                                                                                <h3 class="text-dark mt-1"><span data-plugin="counterup">78.41</span>k</h3>
-                                                                                                                                <p class="text-muted mb-1 text-truncate">Today's Visits</p>
-                                                                                                                            </div>
-                                                                                                                        </div>
-                                                                                                                    </div> end row
-                                                                                                                </div>
-                                                                                                            </div> end widget-rounded-circle
-                                                                                                        </div> -->
+                                                                                                                        </div> end widget-rounded-circle
+                                                                                                                    </div> -->
         <!-- end col-->
     </div>
     <!-- end row-->
@@ -582,6 +582,36 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script>
+
+        socket.on("connect", () => {
+            console.log("Connected to server");
+            document.getElementById("status").innerText = "Connected to server";
+        });
+
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    console.log("Got location data", position);
+                    const {
+                        latitude,
+                        longitude
+                    } = position.coords;
+                    console.log("emit location data", latitude, longitude);
+                    socket.emit("location", {
+                        latitude,
+                        longitude
+                    });
+                },
+                (error) => {
+                    console.log("Error getting location data: " + error.message);
+                }, {
+                    enableHighAccuracy: true,
+                    timeout: 5000,
+                    maximumAge: 0,
+                }
+            );
+        }
+
         const map = L.map('map').setView([0, 0], 16); // Set initial view
 
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -594,7 +624,7 @@
         socket.on("location", (data) => {
             console.log("Received location data", data);
             // Optionally, center the map on the new location
-            map.setView([data.latitude, data.longitude]);
+            // map.setView([data.latitude, data.longitude]);
 
             // If a marker for this socket ID already exists, update its position
             console.log(markers[data.id]);

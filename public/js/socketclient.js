@@ -11,24 +11,7 @@ const socket = io("https://socket-testing.stoppick.com", {
 });
 
 socket.on("connect", () => {
-    socket.emit("message", "Hello from client : " + socket.id);
-
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const { latitude, longitude } = position.coords;
-                socket.emit("location", { latitude, longitude });
-            },
-            (error) => {
-                console.log("Error getting location data: " + error.message);
-            },
-            {
-                enableHighAccuracy: true,
-                timeout: 5000,
-                maximumAge: 0,
-            }
-        );
-    }
+    socket.emit("message", "connection request from client");
 });
 
 socket.on("message", (msg) => {
