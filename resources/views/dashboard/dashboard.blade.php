@@ -87,24 +87,24 @@
         </div> <!-- end col-->
 
         <!-- <div class="col-md-6 col-xl-3">
-                                                                                                    <div class="widget-rounded-circle card">
-                                                                                                        <div class="card-body">
-                                                                                                            <div class="row">
-                                                                                                                <div class="col-6">
-                                                                                                                    <div class="avatar-lg rounded-circle bg-soft-primary border-primary border">
-                                                                                                                        <i class="fe-eye font-22 avatar-title text-primary"></i>
-                                                                                                                    </div>
+                                                                                                            <div class="widget-rounded-circle card">
+                                                                                                                <div class="card-body">
+                                                                                                                    <div class="row">
+                                                                                                                        <div class="col-6">
+                                                                                                                            <div class="avatar-lg rounded-circle bg-soft-primary border-primary border">
+                                                                                                                                <i class="fe-eye font-22 avatar-title text-primary"></i>
+                                                                                                                            </div>
+                                                                                                                        </div>
+                                                                                                                        <div class="col-6">
+                                                                                                                            <div class="text-end">
+                                                                                                                                <h3 class="text-dark mt-1"><span data-plugin="counterup">78.41</span>k</h3>
+                                                                                                                                <p class="text-muted mb-1 text-truncate">Today's Visits</p>
+                                                                                                                            </div>
+                                                                                                                        </div>
+                                                                                                                    </div> end row
                                                                                                                 </div>
-                                                                                                                <div class="col-6">
-                                                                                                                    <div class="text-end">
-                                                                                                                        <h3 class="text-dark mt-1"><span data-plugin="counterup">78.41</span>k</h3>
-                                                                                                                        <p class="text-muted mb-1 text-truncate">Today's Visits</p>
-                                                                                                                    </div>
-                                                                                                                </div>
-                                                                                                            </div> end row
-                                                                                                        </div>
-                                                                                                    </div> end widget-rounded-circle
-                                                                                                </div> -->
+                                                                                                            </div> end widget-rounded-circle
+                                                                                                        </div> -->
         <!-- end col-->
     </div>
     <!-- end row-->
@@ -592,10 +592,12 @@
         let markers = {};
 
         socket.on("location", (data) => {
+            console.log("Received location data", data);
             // Optionally, center the map on the new location
             map.setView([data.latitude, data.longitude]);
 
             // If a marker for this socket ID already exists, update its position
+            console.log(markers[data.id]);
             if (markers[data.id]) {
                 console.log("update marker");
                 markers[data.id].setLatLng([data.latitude, data.longitude]);
@@ -607,7 +609,7 @@
         });
 
         socket.on("user-disconnected", (id) => {
-            console.log("Disconnected from server");
+            console.log("Disconnected from server", markers[id]);
             if (markers[id]) {
                 map.removeLayer(markers[id]);
                 delete markers[id];
