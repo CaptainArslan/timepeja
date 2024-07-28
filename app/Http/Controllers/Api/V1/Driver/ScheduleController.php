@@ -43,7 +43,7 @@ class ScheduleController extends BaseController
                 ->where('trip_status', Schedule::TRIP_STATUS_UPCOMING)
                 // ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time', 'status', 'trip_status', 'created_at')
                 // ->with('organizations:id,name')
-                ->with('routes:id,name,number,from,to')
+                ->with('routes:id,name,number,from,from_longitude,from_latitude,to,to_latitude,to_longitude')
                 ->with('vehicles:id,number')
                 ->with('drivers:id,name')
                 ->get();
@@ -66,7 +66,7 @@ class ScheduleController extends BaseController
             }
 
             $schedules = Schedule::where('d_id', $driver->id)
-                ->with('routes:id,name,number,from,to')
+                ->with('routes:id,name,number,from,from_longitude,from_latitude,to,to_latitude,to_longitude')
                 ->with('vehicles:id,number')
                 ->with('drivers:id,name')
                 ->when($date !== null, function ($query) use ($date) {

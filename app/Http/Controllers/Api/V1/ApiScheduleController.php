@@ -30,7 +30,7 @@ class ApiScheduleController extends BaseController
             $manager = auth('manager')->user();
             $schedule = Schedule::where('o_id', $manager->o_id)
                 ->with('organizations:id,name')
-                ->with('routes:id,name,number,from,to')
+                ->with('routes:id,name,number,from,from_longitude,from_latitude,to,to_latitude,to_longitude')
                 ->with('vehicles:id,number')
                 ->with('drivers:id,name')
                 ->get();
@@ -108,7 +108,7 @@ class ApiScheduleController extends BaseController
 
             $data = $schedule->load([
                 'organizations:id,name',
-                'routes:id,name,number,from,to',
+                'routes:id,name,number,from,from_longitude,from_latitude,to,to_latitude,to_longitude',
                 'vehicles:id,number',
                 'drivers:id,name'
             ]);
@@ -141,7 +141,7 @@ class ApiScheduleController extends BaseController
 
         try {
             $schedule = Schedule::with('organizations:id,name')
-                ->with('routes:id,name,number,from,to')
+                ->with('routes:id,name,number,from,from_longitude,from_latitude,to,to_latitude,to_longitude')
                 ->with('vehicles:id,number')
                 ->with('drivers:id,name')
                 ->where('status', Schedule::STATUS_DRAFT)
@@ -215,7 +215,7 @@ class ApiScheduleController extends BaseController
 
             $data = $schedule->load([
                 'organizations:id,name',
-                'routes:id,name,number,from,to',
+                'routes:id,name,number,from,from_longitude,from_latitude,to,to_latitude,to_longitude',
                 'vehicles:id,number',
                 'drivers:id,name'
             ]);
@@ -287,7 +287,7 @@ class ApiScheduleController extends BaseController
                 ->where('date', $date)
                 ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time', 'status', 'created_at')
                 ->with('organizations:id,name')
-                ->with('routes:id,name,number,from,to')
+                ->with('routes:id,name,number,from,from_longitude,from_latitude,to,to_latitude,to_longitude')
                 ->with('vehicles:id,number')
                 ->with('drivers:id,name')
                 ->get();
@@ -430,7 +430,7 @@ class ApiScheduleController extends BaseController
         try {
             $manager = auth('manager')->user();
             $schedules = Schedule::with('organizations:id,name')
-                ->with('routes:id,name,number,from,to')
+                ->with('routes:id,name,number,from,from_longitude,from_latitude,to,to_latitude,to_longitude')
                 ->with('vehicles:id,number')
                 ->with('drivers:id,name')
                 ->where('o_id', $manager->o_id)
@@ -469,7 +469,7 @@ class ApiScheduleController extends BaseController
             $manager = auth('manager')->user();
             // return $manager;
             $schedules = Schedule::with('organizations:id,name')
-                ->with('routes:id,name,number,from,to')
+                ->with('routes:id,name,number,from,from_longitude,from_latitude,to,to_latitude,to_longitude')
                 ->with('vehicles:id,number')
                 ->with('drivers:id,name')
                 ->where('o_id', $manager->o_id)

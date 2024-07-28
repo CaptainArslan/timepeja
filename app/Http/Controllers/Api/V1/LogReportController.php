@@ -69,7 +69,7 @@ class LogReportController extends BaseController
             $result = $query->where('o_id', $manager->o_id)
                 ->where('status', Schedule::STATUS_PUBLISHED)
                 ->with('organizations:id,name,branch_name,branch_code,email,phone,address,code')
-                ->with('routes:id,name,number,from,to')
+                ->with('routes:id,name,number,from,from_longitude,from_latitude,to,to_latitude,to_longitude')
                 ->with('vehicles:id,number')
                 ->with('drivers:id,name')
                 ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time as scheduled_time', 'start_time', 'end_time', 'is_delay', 'trip_status', 'delayed_reason')
@@ -85,7 +85,7 @@ class LogReportController extends BaseController
                     'logreport' => $result,
                     'download_url' => $download_url
                 ];
-    
+
                 return $this->respondWithSuccess($data, 'Log report fetched successfully', 'LOG_REPORT_FETCHED_SUCCESSFULLY');
             }
             else{

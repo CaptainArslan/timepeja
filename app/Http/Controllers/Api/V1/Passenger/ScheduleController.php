@@ -19,13 +19,13 @@ class ScheduleController extends BaseController
             $schedule = Schedule::where('o_id', $id)
                 ->where('date', $date)
                 ->where('status', Schedule::STATUS_PUBLISHED)
-                ->with('routes:id,name,number,from,to')
+                ->with('routes:id,name,number,from,from_longitude,from_latitude,to,to_latitude,to_longitude')
                 ->with('vehicles:id,number')
                 ->with('drivers:id,name')
                 ->with('organizations:id,name')
                 ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time', 'status', 'trip_status')
                 ->get();
-                
+
             $data = [
                 'transport_Schedule' => $schedule,
                 'transport_routes' => $this->getRoutes()
