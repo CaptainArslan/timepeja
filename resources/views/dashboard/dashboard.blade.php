@@ -7,7 +7,7 @@
 
     <style>
         .gmaps {
-            height: 500px;
+            height: 600px;
         }
     </style>
 @endsection
@@ -87,24 +87,24 @@
         </div> <!-- end col-->
 
         <!-- <div class="col-md-6 col-xl-3">
-                                                                                                                                                                            <div class="widget-rounded-circle card">
-                                                                                                                                                                                <div class="card-body">
-                                                                                                                                                                                    <div class="row">
-                                                                                                                                                                                        <div class="col-6">
-                                                                                                                                                                                            <div class="avatar-lg rounded-circle bg-soft-primary border-primary border">
-                                                                                                                                                                                                <i class="fe-eye font-22 avatar-title text-primary"></i>
-                                                                                                                                                                                            </div>
-                                                                                                                                                                                        </div>
-                                                                                                                                                                                        <div class="col-6">
-                                                                                                                                                                                            <div class="text-end">
-                                                                                                                                                                                                <h3 class="text-dark mt-1"><span data-plugin="counterup">78.41</span>k</h3>
-                                                                                                                                                                                                <p class="text-muted mb-1 text-truncate">Today's Visits</p>
-                                                                                                                                                                                            </div>
-                                                                                                                                                                                        </div>
-                                                                                                                                                                                    </div> end row
-                                                                                                                                                                                </div>
-                                                                                                                                                                            </div> end widget-rounded-circle
-                                                                                                                                                                        </div> -->
+                                                                                                                                                                                                                                                                                                                                                                                                                    <div class="widget-rounded-circle card">
+                                                                                                                                                                                                                                                                                                                                                                                                                        <div class="card-body">
+                                                                                                                                                                                                                                                                                                                                                                                                                            <div class="row">
+                                                                                                                                                                                                                                                                                                                                                                                                                                <div class="col-6">
+                                                                                                                                                                                                                                                                                                                                                                                                                                    <div class="avatar-lg rounded-circle bg-soft-primary border-primary border">
+                                                                                                                                                                                                                                                                                                                                                                                                                                        <i class="fe-eye font-22 avatar-title text-primary"></i>
+                                                                                                                                                                                                                                                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                <div class="col-6">
+                                                                                                                                                                                                                                                                                                                                                                                                                                    <div class="text-end">
+                                                                                                                                                                                                                                                                                                                                                                                                                                        <h3 class="text-dark mt-1"><span data-plugin="counterup">78.41</span>k</h3>
+                                                                                                                                                                                                                                                                                                                                                                                                                                        <p class="text-muted mb-1 text-truncate">Today's Visits</p>
+                                                                                                                                                                                                                                                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                            </div> end row
+                                                                                                                                                                                                                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                    </div> end widget-rounded-circle
+                                                                                                                                                                                                                                                                                                                                                                                                                </div> -->
         <!-- end col-->
     </div>
     <!-- end row-->
@@ -578,107 +578,122 @@
 @endsection
 
 @section('page_js')
-    <script src="{{ asset('js\socketclient.js') }}"></script>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-
+    <script src="{{ asset('js/socketclient.js') }}"></script>
     <script>
-        $schedule = @json($schedule);
-        // console.log($schedule);
-        socket.on("connect", () => {
-            console.log("Connected to server");
+        (g => {
+            var h, a, k, p = "The Google Maps JavaScript API",
+                c = "google",
+                l = "importLibrary",
+                q = "__ib__",
+                m = document,
+                b = window;
+            b = b[c] || (b[c] = {});
+            var d = b.maps || (b.maps = {}),
+                r = new Set,
+                e = new URLSearchParams,
+                u = () => h || (h = new Promise(async (f, n) => {
+                    await (a = m.createElement("script"));
+                    e.set("libraries", [...r] + "");
+                    for (k in g) e.set(k.replace(/[A-Z]/g, t => "_" + t[0].toLowerCase()), g[k]);
+                    e.set("callback", c + ".maps." + q);
+                    a.src = `https://maps.${c}apis.com/maps/api/js?` + e;
+                    d[q] = f;
+                    a.onerror = () => h = n(Error(p + " could not load."));
+                    a.nonce = m.querySelector("script[nonce]")?.nonce || "";
+                    m.head.append(a)
+                }));
+            d[l] ? console.warn(p + " only loads once. Ignoring:", g) : d[l] = (f, ...n) => r.add(f) && u().then(() =>
+                d[l](f, ...n))
+        })({
+            key: "AIzaSyAnviR5bZwRYNdstAiky365nBxvVKswzzQ",
+            v: "weekly",
+            // Use the 'v' parameter to indicate the version to use (weekly, beta, alpha, etc.).
+            // Add other bootstrap parameters as needed, using camel case.
         });
-
-        if (navigator.geolocation) {
-            navigator.geolocation.watchPosition(
-                (position) => {
-                    document.getElementById("location-latlong").innerText = ` Lat: ${position.coords.latitude}, Long: ${position.coords.longitude}`;
-                    const {
-                        latitude,
-                        longitude
-                    } = position.coords;
-                    socket.emit("location", {
-                        socket_id: socket.id,
-                        latitude,
-                        longitude,
-                        ...$schedule
-                    });
-                },
-                (error) => {
-                    console.log("Error getting location data: " + error.message);
-                }, {
-                    enableHighAccuracy: true,
-                    timeout: 5000,
-                    maximumAge: 0,
-                }
-            );
-        } else {
-            alert("Geolocation is not supported by this browser.");
-        }
-
-        const map = L.map('map').setView([0, 0], 16); // Set initial view
-
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 20,
-            attribution: '&copy; <a href="http://appaloinc.com/">Appalo inc</a>'
-        }).addTo(map);
-
-        let markers = {};
-
-        socket.on("location", (data) => {
-            console.log(data);
-            // Optionally, center the map on the new location
-            // If a marker for this socket ID already exists, update its position
-            // console.log(markers);
-            if (markers[data.socketid]) {
-                // console.log("update marker");
-                markers[data.socketid].setLatLng([data.latitude, data.longitude]);
-            } else {
-                // console.log("create new marker");
-                // If it doesn't exist, create a new marker
-                map.setView([data.latitude, data.longitude]);
-                markers[data.socketid] = L.marker([data.latitude, data.longitude])
-                    .bindPopup(
-                        `<b>Testing Data:</b><br>Lat: ${data.latitude}<br>Lon: ${data.longitude}`
-                    ).addTo(map);
-                L.circle([data.latitude, data.longitude], {
-                    radius: 200,
-                    // color: 'red',
-                    // fillColor: '#f03',
-                    // fillOpacity: 0.5
-                }).addTo(map);
-            }
-        });
-
-        socket.on("user-disconnected", (id) => {
-            console.log("Disconnected from server", markers[id]);
-            if (markers[id]) {
-                map.removeLayer(markers[id]);
-                delete markers[id];
-            }
-        });
-
-        // Example initial marker
-        // L.marker([32.1955345, 74.2019822]).addTo(map);
     </script>
 
-    <!-- google maps api -->
-    {{-- <script src="https://maps.google.com/maps/api/js?key=AIzaSyDsucrEdmswqYrw0f6ej3bf4M4suDeRgNA"></script>
+    <script>
+        let markers = {};
+        // $schedule = @json($schedule);
 
-    <!-- gmap js-->
-    <script src="{{ asset('libs/gmaps/gmaps.min.js') }}"></script>
+        let initialLocation = {
+            lat: 32.1955303,
+            lng: 74.202066
+        };
+        async function initMap() {
+            // Request needed libraries.
+            const {
+                Map
+            } = await google.maps.importLibrary("maps");
+            const {
+                AdvancedMarkerElement
+            } = await google.maps.importLibrary("marker");
+            const map = new Map(document.getElementById("map"), {
+                center: {
+                    lat: initialLocation.lat,
+                    lng: initialLocation.lng
+                },
+                zoom: 14,
+                mapId: "testid123",
+            });
 
-    <!-- Init js-->
-    <script src="{{ asset('js/pages/google-maps.init.js') }}"></script> --}}
+            if (navigator.geolocation) {
+                navigator.geolocation.watchPosition(
+                    (position) => {
+                        document.getElementById("location-latlong").innerText =
+                            ` Lat: ${position.coords.latitude}, Long: ${position.coords.longitude}`;
+                        const {
+                            latitude,
+                            longitude
+                        } = position.coords;
+                        socket.emit("location", {
+                            socket_id: socket.id,
+                            latitude,
+                            longitude,
+                            // ...$schedule
+                        });
+                    },
+                    (error) => {
+                        console.log("Error getting location data: " + error.message);
+                    }, {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 0,
+                    }
+                );
+            } else {
+                alert("Geolocation is not supported by this browser.");
+                return;
+            }
 
-    <!-- Third Party js-->
-    {{-- <script src="{{ asset('libs/apexcharts/apexcharts.min.js') }}"></script> --}}
-    {{-- <script src="https://apexcharts.com/samples/assets/irregular-data-series.js"></script>
-    <script src="https://apexcharts.com/samples/assets/ohlc.js"></script> --}}
 
-    <!-- Dashboar 1 init js-->
-    {{-- <script src="{{ asset('js/pages/dashboard-1.init.js') }}"></script> --}}
+            socket.on("location", (data) => {
+                // console.log(data);
+                let id = data.socket_id;
+                let latitude = data.latitude;
+                let longitude = data.longitude;
 
-    <!-- init js -->
-    {{-- <script src="{{ asset('js/pages/apexcharts.init.js') }}"></script> --}}
+                console.log("socket id", id);
+
+                if (markers[id]) {
+                    console.log("update marker", markers[id]);
+                    markers[id].setPosition({
+                        lat: latitude,
+                        lng: longitude
+                    });
+                } else {
+                    console.log("create new marker");
+                    markers[id] = new AdvancedMarkerElement({
+                        map,
+                        position: {
+                            lat: data.latitude,
+                            lng: data.longitude
+                        },
+                    });
+                }
+            });
+        }
+
+        initMap();
+    </script>
 @endsection

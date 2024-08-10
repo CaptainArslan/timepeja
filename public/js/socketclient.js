@@ -8,10 +8,10 @@ const socket = io("http://localhost:3000", {
     transports: ["polling", "websocket"],
 });
 
-// socket.on("connect", () => {
-//     console.log("Connected to server");
-//     // socket.emit("message", "connection request from client");
-// });
+socket.on("connect", () => {
+    // console.log("hello server");
+    // socket.emit("message", "connection request from client");
+});
 
 // socket.on("message", (msg) => {
 //     console.log(msg);
