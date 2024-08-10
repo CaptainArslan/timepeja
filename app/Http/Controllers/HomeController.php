@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Vehicle;
 use App\Models\Schedule;
 use App\Models\Passenger;
+use App\Models\Route;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -23,11 +24,12 @@ class HomeController extends Controller
         $tripCount = Schedule::where('trip_status', Schedule::TRIP_STATUS_COMPLETED)->count();
         $vehicleCount = Vehicle::where('status', Vehicle::STATUS_ACTIVE)->count();
         $passengerCount = Passenger::where('status', Passenger::STATUS_ACTIVE)->count();
-        return view('dashboard.dashboard', [
-            'tripCount' => $tripCount,
-            'vehicleCount' => $vehicleCount,
-            'passengerCount' => $passengerCount,
-        ]);
+        $schedule = Schedule::findOrFail(1)->with(['route' => function ($query) {
+            $query->select('id', 'name', 'from', 'to', 'from_longitude', 'from_latitude', 'to_longitude', 'to_latitude');
+        }, 'driver' => function ($query) {
+            $query->select('id', 'name');
+        }])->first();
+        return view('dashboard.dashboard', get_defined_vars());
     }
 
     // Auth Profile
@@ -67,9 +69,9 @@ class HomeController extends Controller
             removeImage(Auth::user()->image, 'managers/profiles');
         }
 
-       $image = ($request->file('profile_image')) ?
-                uploadImage($request->file('profile_image'), 'managers/profiles', 'manager_profile')
-                : Auth::user()->image;
+        $image = ($request->file('profile_image')) ?
+            uploadImage($request->file('profile_image'), 'managers/profiles', 'manager_profile')
+            : Auth::user()->image;
 
         if ($request->filled('password')) {
             $userData['password'] = Hash::make($request->input('password'));
@@ -82,7 +84,7 @@ class HomeController extends Controller
             'image' => $image,
         ];
 
-        if ($user->where('id',Auth::user()->id)->update($userData)) {
+        if ($user->where('id', Auth::user()->id)->update($userData)) {
             return redirect()->route('profile')->with('success', 'Profile updated successfully.');
         }
 

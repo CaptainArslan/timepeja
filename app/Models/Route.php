@@ -55,7 +55,7 @@ class Route extends Model
      * @var array<int, string>
      */
     protected $hidden = [
-        //
+        'deleted_at'
     ];
 
 

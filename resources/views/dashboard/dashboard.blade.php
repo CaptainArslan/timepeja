@@ -4,6 +4,7 @@
 @section('page_css')
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
     <style>
         .gmaps {
             height: 500px;
@@ -14,11 +15,10 @@
     <div class="row">
         <div class="col-12">
             <div class="page-title-box">
-                <h4 class="page-title">Dashboard
-                    <p id="status"></p>
-                    <p id="location"></p>
+                <h4 class="page-title d-flex">Dashboard
+                    <p id="connection-status"> </p>
+                    <p id="location-latlong"> </p>
                 </h4>
-
             </div>
         </div>
     </div>
@@ -87,24 +87,24 @@
         </div> <!-- end col-->
 
         <!-- <div class="col-md-6 col-xl-3">
-                                                                                                                        <div class="widget-rounded-circle card">
-                                                                                                                            <div class="card-body">
-                                                                                                                                <div class="row">
-                                                                                                                                    <div class="col-6">
-                                                                                                                                        <div class="avatar-lg rounded-circle bg-soft-primary border-primary border">
-                                                                                                                                            <i class="fe-eye font-22 avatar-title text-primary"></i>
-                                                                                                                                        </div>
-                                                                                                                                    </div>
-                                                                                                                                    <div class="col-6">
-                                                                                                                                        <div class="text-end">
-                                                                                                                                            <h3 class="text-dark mt-1"><span data-plugin="counterup">78.41</span>k</h3>
-                                                                                                                                            <p class="text-muted mb-1 text-truncate">Today's Visits</p>
-                                                                                                                                        </div>
-                                                                                                                                    </div>
-                                                                                                                                </div> end row
-                                                                                                                            </div>
-                                                                                                                        </div> end widget-rounded-circle
-                                                                                                                    </div> -->
+                                                                                                                                                                            <div class="widget-rounded-circle card">
+                                                                                                                                                                                <div class="card-body">
+                                                                                                                                                                                    <div class="row">
+                                                                                                                                                                                        <div class="col-6">
+                                                                                                                                                                                            <div class="avatar-lg rounded-circle bg-soft-primary border-primary border">
+                                                                                                                                                                                                <i class="fe-eye font-22 avatar-title text-primary"></i>
+                                                                                                                                                                                            </div>
+                                                                                                                                                                                        </div>
+                                                                                                                                                                                        <div class="col-6">
+                                                                                                                                                                                            <div class="text-end">
+                                                                                                                                                                                                <h3 class="text-dark mt-1"><span data-plugin="counterup">78.41</span>k</h3>
+                                                                                                                                                                                                <p class="text-muted mb-1 text-truncate">Today's Visits</p>
+                                                                                                                                                                                            </div>
+                                                                                                                                                                                        </div>
+                                                                                                                                                                                    </div> end row
+                                                                                                                                                                                </div>
+                                                                                                                                                                            </div> end widget-rounded-circle
+                                                                                                                                                                        </div> -->
         <!-- end col-->
     </div>
     <!-- end row-->
@@ -581,25 +581,27 @@
     <script src="{{ asset('js\socketclient.js') }}"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    <script>
 
+    <script>
+        $schedule = @json($schedule);
+        // console.log($schedule);
         socket.on("connect", () => {
             console.log("Connected to server");
-            document.getElementById("status").innerText = "Connected to server";
         });
 
         if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
+            navigator.geolocation.watchPosition(
                 (position) => {
-                    console.log("Got location data", position);
+                    document.getElementById("location-latlong").innerText = ` Lat: ${position.coords.latitude}, Long: ${position.coords.longitude}`;
                     const {
                         latitude,
                         longitude
                     } = position.coords;
-                    console.log("emit location data", latitude, longitude);
                     socket.emit("location", {
+                        socket_id: socket.id,
                         latitude,
-                        longitude
+                        longitude,
+                        ...$schedule
                     });
                 },
                 (error) => {
@@ -610,6 +612,8 @@
                     maximumAge: 0,
                 }
             );
+        } else {
+            alert("Geolocation is not supported by this browser.");
         }
 
         const map = L.map('map').setView([0, 0], 16); // Set initial view
@@ -622,19 +626,27 @@
         let markers = {};
 
         socket.on("location", (data) => {
-            console.log("Received location data", data);
+            console.log(data);
             // Optionally, center the map on the new location
-
             // If a marker for this socket ID already exists, update its position
-            console.log(markers[data.id]);
-            if (markers[data.id]) {
-                console.log("update marker");
-                markers[data.id].setLatLng([data.latitude, data.longitude]);
+            // console.log(markers);
+            if (markers[data.socketid]) {
+                // console.log("update marker");
+                markers[data.socketid].setLatLng([data.latitude, data.longitude]);
             } else {
-                console.log("create new marker");
+                // console.log("create new marker");
                 // If it doesn't exist, create a new marker
                 map.setView([data.latitude, data.longitude]);
-                markers[data.id] = L.marker([data.latitude, data.longitude]).addTo(map);
+                markers[data.socketid] = L.marker([data.latitude, data.longitude])
+                    .bindPopup(
+                        `<b>Testing Data:</b><br>Lat: ${data.latitude}<br>Lon: ${data.longitude}`
+                    ).addTo(map);
+                L.circle([data.latitude, data.longitude], {
+                    radius: 200,
+                    // color: 'red',
+                    // fillColor: '#f03',
+                    // fillOpacity: 0.5
+                }).addTo(map);
             }
         });
 
