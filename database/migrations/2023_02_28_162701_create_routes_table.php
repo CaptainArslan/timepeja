@@ -22,11 +22,11 @@ class CreateRoutesTable extends Migration
             $table->string('name');
             $table->string('number');
             $table->string('from');
-            $table->string('from_longitude')->nullable();
             $table->string('from_latitude')->nullable();
+            $table->string('from_longitude')->nullable();
             $table->string('to');
-            $table->string('to_longitude')->nullable();
             $table->string('to_latitude')->nullable();
+            $table->string('to_longitude')->nullable();
             $table->boolean('status')->default(Route::STATUS_ACTIVE);
             $table->timestamps();
             $table->softDeletes();
