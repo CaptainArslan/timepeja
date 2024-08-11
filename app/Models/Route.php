@@ -46,7 +46,11 @@ class Route extends Model
         'o_id' => 'integer',
         'u_id' => 'integer',
         'number' => 'integer',
-        'status' => 'boolean'
+        'status' => 'boolean',
+        'from_longitude' => 'float',
+        'from_latitude' => 'float',
+        'to_longitude' => 'float',
+        'to_latitude' => 'float'
     ];
 
     /**

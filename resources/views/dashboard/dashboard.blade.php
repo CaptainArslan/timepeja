@@ -87,24 +87,24 @@
         </div> <!-- end col-->
 
         <!-- <div class="col-md-6 col-xl-3">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <div class="widget-rounded-circle card">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <div class="card-body">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <div class="row">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <div class="col-6">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <div class="avatar-lg rounded-circle bg-soft-primary border-primary border">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <i class="fe-eye font-22 avatar-title text-primary"></i>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <div class="col-6">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <div class="text-end">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <h3 class="text-dark mt-1"><span data-plugin="counterup">78.41</span>k</h3>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <p class="text-muted mb-1 text-truncate">Today's Visits</p>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </div> end row
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </div> end widget-rounded-circle
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </div> -->
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <div class="widget-rounded-circle card">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <div class="card-body">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <div class="row">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <div class="col-6">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <div class="avatar-lg rounded-circle bg-soft-primary border-primary border">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <i class="fe-eye font-22 avatar-title text-primary"></i>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <div class="col-6">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <div class="text-end">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <h3 class="text-dark mt-1"><span data-plugin="counterup">78.41</span>k</h3>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <p class="text-muted mb-1 text-truncate">Today's Visits</p>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </div> end row
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </div> end widget-rounded-circle
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </div> -->
         <!-- end col-->
     </div>
     <!-- end row-->
@@ -606,7 +606,7 @@
                 d[l](f, ...n))
         })({
             key: "AIzaSyAnviR5bZwRYNdstAiky365nBxvVKswzzQ",
-            v: "weekly",
+            v: "beta",
             // Use the 'v' parameter to indicate the version to use (weekly, beta, alpha, etc.).
             // Add other bootstrap parameters as needed, using camel case.
         });
@@ -614,6 +614,7 @@
 
     <script>
         let markers = {};
+        let routePath = {};
         let schedule = @json($schedule);
 
         let initialLocation = {
@@ -628,12 +629,14 @@
             const {
                 AdvancedMarkerElement
             } = await google.maps.importLibrary("marker");
+
             const map = new Map(document.getElementById("map"), {
                 center: {
                     lat: initialLocation.lat,
                     lng: initialLocation.lng
                 },
                 zoom: 14,
+                mapTypeId: google.maps.MapTypeId.TERRAIN,
                 mapId: "testid123",
             });
 
@@ -684,7 +687,6 @@
                 alert("Geolocation is not supported by this browser.");
             }
 
-
             socket.on("location", (data) => {
                 let id = data.socket_id;
                 let route = data.route;
@@ -700,44 +702,96 @@
                 };
 
                 let endPosition = {
-                    lat: route.to_latitude, // Corrected to use 'to_latitude' and 'to_longitude'
+                    lat: route.to_latitude,
                     lng: route.to_longitude
                 };
 
                 if (markers[id]) {
-                    // Update marker position
+                    // Update existing marker position
                     // markers[id].setPosition(position);
-
-                    // // Update start and end markers if they exist
-                    // if (markers[id]['start']) {
-                    //     markers[id]['start'].setPosition(startPosition);
-                    // }
-                    // if (markers[id]['destination']) {
-                    //     markers[id]['destination'].setPosition(endPosition);
-                    // }
+                    console.log("Updating marker with ID:", id);
                 } else {
                     // Create new markers
-                    console.log("create new marker " + id);
-                    markers[id] = new AdvancedMarkerElement({
+                    markers[id] = new google.maps.marker.AdvancedMarkerElement({
                         map,
                         position: position,
                         title: "Current Position",
                     });
 
-                    markers[id]['start'] = new AdvancedMarkerElement({
+                    const startPin = createPin(
+                        "https://developers.google.com/maps/documentation/javascript/examples/full/images/google_logo_g.svg",
+                        "white"
+                    );
+
+                    // console.log("Creating start marker with ID:", id);
+                    markers[id]['start'] = new google.maps.marker.AdvancedMarkerElement({
                         map,
-                        position: position,
+                        position: startPosition,
                         title: "Start Position",
+                        content: startPin.element,
                     });
 
-                    markers[id]['destination'] = new AdvancedMarkerElement({
+                    const endPin = createPin(
+                        "https://developers.google.com/maps/documentation/javascript/examples/full/images/google_logo_g.svg",
+                        "white"
+                    );
+                    // console.log("Creating end marker with ID:", id);
+                    markers[id]['end'] = new google.maps.marker.AdvancedMarkerElement({
                         map,
-                        position: position,
+                        position: endPosition,
                         title: "End Position",
+                        content: endPin.element,
+                    });
+
+                    // Get directions between starting and ending points
+                    const directionsService = new google.maps.DirectionsService();
+                    const directionsRenderer = new google.maps.DirectionsRenderer({
+                        map: map,
+                    });
+
+                    const start = new google.maps.LatLng(startPosition.lat, startPosition.lng);
+                    const end = new google.maps.LatLng(endPosition.lat, endPosition.lng);
+                    const currentLocation = new google.maps.LatLng(position.lat, position.lng); // Add current location
+
+                    const request = {
+                        origin: currentLocation, // Use current location as the origin
+                        destination: end,
+                        travelMode: google.maps.TravelMode.DRIVING,
+                    };
+
+                    directionsService.route(request, (result, status) => {
+                        if (status === google.maps.DirectionsStatus.OK) {
+                            directionsRenderer.setDirections(result);
+                        } else {
+                            console.error("Error calculating directions:", status);
+                        }
+                    });
+                }
+
+                function drawPolyline($paths = []) {
+                    // Create and display a polyline
+                    routePath[id] = new google.maps.Polyline({
+
+                        path: $paths,
+                        geodesic: true,
+                        strokeColor: '#FF0000',
+                        strokeOpacity: 1.0,
+                        strokeWeight: 2,
+                        map: map,
+                    });
+                }
+                // Function to create a custom pin
+                function createPin(glyphSrc, glyphColor, scale = 1) {
+                    const glyphImg = document.createElement("img");
+                    glyphImg.src = glyphSrc;
+
+                    return new google.maps.marker.PinElement({
+                        scale: scale,
+                        glyph: glyphImg,
+                        glyphColor: glyphColor,
                     });
                 }
             });
-
         }
 
         initMap();
