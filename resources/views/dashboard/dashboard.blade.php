@@ -391,6 +391,7 @@
             }
 
             socket.on("location", (data) => {
+                console.log('data received from client', data);
                 let id = data.socket_id;
                 let route = data.route;
 
@@ -531,7 +532,6 @@
         // Calculate and display route
         function calculateAndDisplayRoute(map, currentPosition, startPosition, endPosition,
             directionsService, directionsRenderer) {
-            console.log(currentPosition, startPosition, endPosition);
             const request = {
                 origin: currentPosition, // Use current location as the origin
                 destination: endPosition,
