@@ -412,19 +412,19 @@
                 if (markers[id]) {
                     markers[id].position = new google.maps.LatLng(position.lat, position.lng);
 
-                    // calculateAndDisplayRoute(map, position, startPosition, endPosition, directionsService,
-                    //     directionsRenderer);
+                    calculateAndDisplayRoute(map, position, startPosition, endPosition, directionsService,
+                        directionsRenderer);
 
                 } else {
-
+                    showSuccess("New Trips has been started");
                     markers[id] = createAnimatedMarker(id, position, map, "Current Position");
                     markers[id]['start'] = createAnimatedMarker(id, startPosition, map, "Start Position",
                         startPin.element);
                     markers[id]['end'] = createAnimatedMarker(id, endPosition, map, "Start Position",
                         endPin.element);
 
-                    // calculateAndDisplayRoute(map, position, startPosition, endPosition, directionsService,
-                    //     directionsRenderer);
+                    calculateAndDisplayRoute(map, position, startPosition, endPosition, directionsService,
+                        directionsRenderer);
 
                 }
 
@@ -442,9 +442,7 @@
 
             // Add a click event listener to the marker
             marker.addListener("click", () => {
-                alert("Marker clicked: " + marker.title);
                 toggleHighlight(marker, options);
-
             });
 
             // Handle content animation
