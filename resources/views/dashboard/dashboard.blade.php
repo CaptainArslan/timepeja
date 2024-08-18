@@ -291,8 +291,8 @@
             bath: 4.5,
             size: 300,
             position: {
-                lat: 37.50024109655184,
-                lng: -122.28528451834352,
+                lat: 32.1955303,
+                lng: 74.202066
             },
         };
 
@@ -343,52 +343,52 @@
                 "white"
             );
 
-            if (navigator.geolocation) {
-                navigator.geolocation.watchPosition(
-                    (position) => {
-                        // Success callback
-                        const {
-                            latitude,
-                            longitude
-                        } = position.coords;
-                        document.getElementById("location-latlong").innerText =
-                            `Lat: ${latitude}, Long: ${longitude}`;
+            // if (navigator.geolocation) {
+            //     navigator.geolocation.watchPosition(
+            //         (position) => {
+            //             // Success callback
+            //             const {
+            //                 latitude,
+            //                 longitude
+            //             } = position.coords;
+            //             document.getElementById("location-latlong").innerText =
+            //                 `Lat: ${latitude}, Long: ${longitude}`;
 
-                        // Emit location data
-                        socket.emit("location", {
-                            socket_id: socket.id,
-                            latitude,
-                            longitude,
-                            ...schedule
-                        });
-                    },
-                    (error) => {
-                        // Error callback
-                        let errorMessage;
-                        switch (error.code) {
-                            case error.PERMISSION_DENIED:
-                                errorMessage = "User denied the request for Geolocation.";
-                                break;
-                            case error.POSITION_UNAVAILABLE:
-                                errorMessage = "Location information is unavailable.";
-                                break;
-                            case error.TIMEOUT:
-                                errorMessage = "The request to get user location timed out.";
-                                break;
-                            case error.UNKNOWN_ERROR:
-                                errorMessage = "An unknown error occurred.";
-                                break;
-                        }
-                        console.error("Error getting location data: " + errorMessage);
-                    }, {
-                        enableHighAccuracy: true, // Use high accuracy if available
-                        timeout: 10000, // Timeout for obtaining the location
-                        maximumAge: 0 // Do not use cached location
-                    }
-                );
-            } else {
-                alert("Geolocation is not supported by this browser.");
-            }
+            //             // Emit location data
+            //             socket.emit("location", {
+            //                 socket_id: socket.id,
+            //                 latitude,
+            //                 longitude,
+            //                 ...schedule
+            //             });
+            //         },
+            //         (error) => {
+            //             // Error callback
+            //             let errorMessage;
+            //             switch (error.code) {
+            //                 case error.PERMISSION_DENIED:
+            //                     errorMessage = "User denied the request for Geolocation.";
+            //                     break;
+            //                 case error.POSITION_UNAVAILABLE:
+            //                     errorMessage = "Location information is unavailable.";
+            //                     break;
+            //                 case error.TIMEOUT:
+            //                     errorMessage = "The request to get user location timed out.";
+            //                     break;
+            //                 case error.UNKNOWN_ERROR:
+            //                     errorMessage = "An unknown error occurred.";
+            //                     break;
+            //             }
+            //             console.error("Error getting location data: " + errorMessage);
+            //         }, {
+            //             enableHighAccuracy: true, // Use high accuracy if available
+            //             timeout: 10000, // Timeout for obtaining the location
+            //             maximumAge: 0 // Do not use cached location
+            //         }
+            //     );
+            // } else {
+            //     alert("Geolocation is not supported by this browser.");
+            // }
 
             socket.on("location", (data) => {
                 console.log('data received from client:  ' + data.socket_id, data);
