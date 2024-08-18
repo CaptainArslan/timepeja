@@ -9,7 +9,7 @@ const socket = io("http://localhost:3000", {
 });
 
 socket.on("connect", () => {
-    // console.log("hello server");
+    console.log("user Connected");
     // socket.emit("message", "connection request from client");
 });
 
