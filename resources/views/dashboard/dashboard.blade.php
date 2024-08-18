@@ -417,6 +417,8 @@
 
                 } else {
                     showSuccess("New Trips has been started");
+
+                    map.setCenter(position);
                     markers[id] = createAnimatedMarker(id, position, map, "Current Position");
                     markers[id]['start'] = createAnimatedMarker(id, startPosition, map, "Start Position",
                         startPin.element);
