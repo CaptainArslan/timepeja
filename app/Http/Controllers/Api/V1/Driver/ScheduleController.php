@@ -340,8 +340,9 @@ class ScheduleController extends BaseController
                 ->where('date', now()->format('Y-m-d'))
                 ->where('time', '>=', now()->format('H:i:s'))
                 ->where('time', '<=', now()->addMinutes(15)->format('H:i:s'))
-                ->with('routes:id,name')
+                ->with('routes:id,name,number,from,from_longitude,from_latitude,to,to_latitude,to_longitude')
                 ->with('vehicles:id,number')
+                ->with('drivers:id,name')
                 ->first();
             return $this->respondWithSuccess($schedules_notifications, 'Notifications retrieved successfully.', 'DRIVER_NOTIFICATIONS_RETRIEVED');
         } catch (\Throwable $th) {

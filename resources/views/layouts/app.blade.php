@@ -23,6 +23,7 @@
     <link href="{{ asset('css/icons.min.css') }}" rel="stylesheet" type="text/css" />
     <!-- Head js -->
     <script src="{{ asset('js/head.js') }}"></script>
+    <script src="https://use.fontawesome.com/releases/v6.2.0/js/all.js"></script>
 
     <!-- toast -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.css">
@@ -88,7 +89,7 @@
 
     {{-- <script src="{{ asset('js/app.js') }}"></script>
     <script src="{{ asset('js/socket.js') }}"></script> --}}
-    
+
 
     @yield('page_js')
 

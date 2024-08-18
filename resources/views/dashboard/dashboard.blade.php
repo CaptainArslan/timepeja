@@ -2,186 +2,222 @@
 @section('title', 'Dashboard')
 <!-- start page title -->
 @section('page_css')
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-
     <style>
+        /* set the default transition time */
+        :root {
+            --delay-time: .5s;
+        }
+
         .gmaps {
             height: 600px;
+        }
+
+
+        @keyframes drop {
+            0% {
+                transform: translateY(-200px) scaleY(0.9);
+                opacity: 0;
+            }
+
+            5% {
+                opacity: 0.7;
+            }
+
+            50% {
+                transform: translateY(0px) scaleY(1);
+                opacity: 1;
+            }
+
+            65% {
+                transform: translateY(-17px) scaleY(0.9);
+                opacity: 1;
+            }
+
+            75% {
+                transform: translateY(-22px) scaleY(0.9);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(0px) scaleY(1);
+                opacity: 1;
+            }
+        }
+
+        .drop {
+            animation: drop 0.3s linear forwards var(--delay-time);
+        }
+    </style>
+    <style>
+        :root {
+            --building-color: #FF9800;
+            --house-color: #0288D1;
+            --shop-color: #7B1FA2;
+            --warehouse-color: #558B2F;
+        }
+
+        .property {
+            align-items: center;
+            background-color: #FFFFFF;
+            border-radius: 50%;
+            color: #263238;
+            display: flex;
+            font-size: 14px;
+            gap: 15px;
+            height: 30px;
+            justify-content: center;
+            padding: 4px;
+            position: relative;
+            position: relative;
+            transition: all 0.3s ease-out;
+            width: 30px;
+        }
+
+        .property::after {
+            border-left: 9px solid transparent;
+            border-right: 9px solid transparent;
+            border-top: 9px solid #FFFFFF;
+            content: "";
+            height: 0;
+            left: 50%;
+            position: absolute;
+            top: 95%;
+            transform: translate(-50%, 0);
+            transition: all 0.3s ease-out;
+            width: 0;
+            z-index: 1;
+            margin-top: -2px;
+        }
+
+        .property .icon {
+            align-items: center;
+            display: flex;
+            justify-content: center;
+            color: #FFFFFF;
+        }
+
+        .property .icon svg {
+            height: 20px;
+            width: auto;
+        }
+
+        .property .details {
+            display: none;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .property .address {
+            color: #9E9E9E;
+            font-size: 10px;
+            margin-bottom: 10px;
+            margin-top: 5px;
+        }
+
+        .property .features {
+            align-items: flex-end;
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+        }
+
+        .property .features>div {
+            align-items: center;
+            background: #F5F5F5;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            display: flex;
+            font-size: 10px;
+            gap: 5px;
+            padding: 5px;
+        }
+
+        .property.highlight {
+            background-color: #FFFFFF;
+            border-radius: 8px;
+            box-shadow: 10px 10px 5px rgba(0, 0, 0, 0.2);
+            height: 80px;
+            padding: 8px 15px;
+            width: auto;
+        }
+
+        .property.highlight::after {
+            border-top: 9px solid #FFFFFF;
+        }
+
+        .property.highlight .details {
+            display: flex;
+        }
+
+        .property.highlight .icon svg {
+            width: 50px;
+            height: 50px;
+        }
+
+        .property .bed {
+            color: #FFA000;
+        }
+
+        .property .bath {
+            color: #03A9F4;
+        }
+
+        .property .size {
+            color: #388E3C;
+        }
+
+        .property.highlight:has(.fa-house) .icon {
+            color: var(--house-color);
+        }
+
+        .property:not(.highlight):has(.fa-house) {
+            background-color: var(--house-color);
+        }
+
+        .property:not(.highlight):has(.fa-house)::after {
+            border-top: 9px solid var(--house-color);
+        }
+
+        .property.highlight:has(.fa-building) .icon {
+            color: var(--building-color);
+        }
+
+        .property:not(.highlight):has(.fa-building) {
+            background-color: var(--building-color);
+        }
+
+        .property:not(.highlight):has(.fa-building)::after {
+            border-top: 9px solid var(--building-color);
+        }
+
+        .property.highlight:has(.fa-warehouse) .icon {
+            color: var(--warehouse-color);
+        }
+
+        .property:not(.highlight):has(.fa-warehouse) {
+            background-color: var(--warehouse-color);
+        }
+
+        .property:not(.highlight):has(.fa-warehouse)::after {
+            border-top: 9px solid var(--warehouse-color);
+        }
+
+        .property.highlight:has(.fa-shop) .icon {
+            color: var(--shop-color);
+        }
+
+        .property:not(.highlight):has(.fa-shop) {
+            background-color: var(--shop-color);
+        }
+
+        .property:not(.highlight):has(.fa-shop)::after {
+            border-top: 9px solid var(--shop-color);
         }
     </style>
 @endsection
 @section('content')
-    <div class="row">
-        <div class="col-12">
-            <div class="page-title-box">
-                <h4 class="page-title d-flex">Dashboard
-                    <p id="connection-status"> </p>
-                    <p id="location-latlong"> </p>
-                </h4>
-            </div>
-        </div>
-    </div>
-    <!-- end page title -->
 
-    <div class="row">
-        <div class="col-md-6 col-xl-4">
-            <div class="widget-rounded-circle card">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-6">
-                            <div class="avatar-lg rounded-circle bg-soft-info border-info border">
-                                <i class="fe-map font-22 avatar-title text-info"></i>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="text-end">
-                                <h3 class="text-dark mt-1"><span data-plugin="counterup"
-                                        id="trip-count">{{ $tripCount }}</span></h3>
-                                <p class="text-muted mb-1 text-truncate">Total Trips Completed</p>
-                            </div>
-                        </div>
-                    </div> <!-- end row-->
-                </div>
-            </div> <!-- end widget-rounded-circle-->
-        </div> <!-- end col-->
-
-        <div class="col-md-6 col-xl-4">
-            <div class="widget-rounded-circle card">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-6">
-                            <div class="avatar-lg rounded-circle bg-soft-primary border-primary border">
-                                <i class="fe-truck font-22 avatar-title text-primary"></i>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="text-end">
-                                <h3 class="text-dark mt-1"><span data-plugin="counterup">{{ $vehicleCount }}</span></h3>
-                                <p class="text-muted mb-1 text-truncate">Total Active Vehicles</p>
-                            </div>
-                        </div>
-                    </div> <!-- end row-->
-                </div>
-            </div> <!-- end widget-rounded-circle-->
-        </div> <!-- end col-->
-
-        <div class="col-md-6 col-xl-4">
-            <div class="widget-rounded-circle card">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-6">
-                            <div class="avatar-lg rounded-circle bg-soft-info border-info border">
-                                <i class="fe-users font-22 avatar-title text-info"></i>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="text-end">
-                                <h3 class="text-dark mt-1"><span data-plugin="counterup">{{ $passengerCount }}</span></h3>
-                                <p class="text-muted mb-1 text-truncate">Total Passengers</p>
-                            </div>
-                        </div>
-                    </div> <!-- end row-->
-                </div>
-            </div> <!-- end widget-rounded-circle-->
-        </div> <!-- end col-->
-
-        <!-- <div class="col-md-6 col-xl-3">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <div class="widget-rounded-circle card">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <div class="card-body">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <div class="row">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <div class="col-6">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <div class="avatar-lg rounded-circle bg-soft-primary border-primary border">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <i class="fe-eye font-22 avatar-title text-primary"></i>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <div class="col-6">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <div class="text-end">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <h3 class="text-dark mt-1"><span data-plugin="counterup">78.41</span>k</h3>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <p class="text-muted mb-1 text-truncate">Today's Visits</p>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </div> end row
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </div> end widget-rounded-circle
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </div> -->
-        <!-- end col-->
-    </div>
-    <!-- end row-->
-
-    <div class="row">
-        <div class="col-lg-4">
-            <div class="card">
-                <div class="card-body">
-                    <div class="dropdown float-end">
-                        <a href="#" class="dropdown-toggle arrow-none card-drop" data-bs-toggle="dropdown"
-                            aria-expanded="false">
-                            <i class="mdi mdi-dots-vertical"></i>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-end">
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item">Sales Report</a>
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item">Export Report</a>
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item">Profit</a>
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item">Action</a>
-                        </div>
-                    </div>
-
-                    <h4 class="header-title mb-0">Total Revenue</h4>
-
-                    <div class="widget-chart text-center" dir="ltr">
-
-                        <div id="total-revenue" class="mt-0" data-colors="#4fc6e1"></div>
-
-                        <h5 class="text-muted mt-0">Total sales made today</h5>
-                        <h2>$178</h2>
-
-                        <p class="text-muted w-75 mx-auto sp-line-2">Traditional heading elements are designed to work best
-                            in the meat of your page content.</p>
-
-                        <div class="row mt-4">
-                            <div class="col-4">
-                                <p class="text-muted font-13 mb-1 text-truncate">Target</p>
-                                <h4><i class="fe-arrow-down text-danger me-1"></i>$7.8k</h4>
-                            </div>
-                            <div class="col-4">
-                                <p class="text-muted font-13 mb-1 text-truncate">Last week</p>
-                                <h4><i class="fe-arrow-up text-success me-1"></i>$1.4k</h4>
-                            </div>
-                            <div class="col-4">
-                                <p class="text-muted font-13 mb-1 text-truncate">Last Month</p>
-                                <h4><i class="fe-arrow-down text-danger me-1"></i>$15k</h4>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </div> <!-- end card -->
-        </div> <!-- end col-->
-
-        <div class="col-xl-8">
-            <!-- Portlet card -->
-            <div class="card">
-                <div class="card-body">
-                    <div class="card-widgets">
-                        <a href="javascript: void(0);" data-toggle="reload"><i class="mdi mdi-refresh"></i></a>
-                        <a data-bs-toggle="collapse" href="#cardCollpase4" role="button" aria-expanded="false"
-                            aria-controls="cardCollpase4"><i class="mdi mdi-minus"></i></a>
-                        <a href="javascript: void(0);" data-toggle="remove"><i class="mdi mdi-close"></i></a>
-                    </div>
-                    <h4 class="header-title mb-0">Invoices</h4>
-
-                    <div id="cardCollpase4" class="collapse show" dir="ltr">
-                        <div id="apex-area" class="apex-charts pt-3" data-colors="#7e57c2,#f7b84b,#CED4DC"></div>
-                    </div> <!-- collapsed end -->
-                </div> <!-- end card-body -->
-            </div> <!-- end card-->
-        </div> <!-- end col-->
-    </div>
-    <!-- end row -->
+    @include('dashboard.partials.dashborad-page')
 
     <div class="col-lg-12">
         <div class="card">
@@ -192,8 +228,7 @@
                     <div class="input-group">
                         <input type="text" class="form-control" placeholder="Search on map" aria-label="Username"
                             aria-describedby="basic-addon1">
-                        <span class="input-group-text" id="basic-addon1" role="button"><i
-                                class="fas fa-search"></i></span>
+                        <span class="input-group-text" id="basic-addon1" role="button"><i class="fas fa-search"></i></span>
                     </div>
                 </div>
                 <div id="map" class="gmaps"></div>
@@ -201,380 +236,6 @@
         </div> <!-- end card-->
     </div>
 
-    <div class="row">
-        <div class="col-xl-6">
-            <div class="card">
-                <div class="card-body">
-                    <div class="dropdown float-end">
-                        <a href="#" class="dropdown-toggle arrow-none card-drop" data-bs-toggle="dropdown"
-                            aria-expanded="false">
-                            <i class="mdi mdi-dots-vertical"></i>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-end">
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item">Edit Report</a>
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item">Export Report</a>
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item">Action</a>
-                        </div>
-                    </div>
-
-                    <h4 class="header-title mb-3">Vehicle List</h4>
-
-                    <div class="table-responsive">
-                        <table class="table table-borderless table-hover table-nowrap table-centered m-0">
-
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Vehicle</th>
-                                    <th>Vehicle Type</th>
-                                    <th>Route </th>
-                                    <th>Driver</th>
-                                    <th>Organization</th>
-                                    <th>City</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td style="width: 36px;">
-                                        <img src="{{ asset('images/users/user-2.jpg') }}" alt="contact-img"
-                                            title="contact-img" class="rounded-circle avatar-sm" />
-                                    </td>
-
-                                    <td>
-                                        <h5 class="m-0 fw-normal font-13">Tomaslau</h5>
-                                        <p class="mb-0 text-muted"><small>Member Since 2017</small></p>
-                                    </td>
-
-                                    <td>
-                                        <i class="mdi mdi-currency-btc text-primary"></i> BTC
-                                    </td>
-
-                                    <td>
-                                        0.00816117 BTC
-                                    </td>
-
-                                    <td>
-                                        0.00097036 BTC
-                                    </td>
-
-                                    <td>
-                                        <a href="javascript: void(0);" class="btn btn-xs btn-light"><i
-                                                class="mdi mdi-plus"></i></a>
-                                        <a href="javascript: void(0);" class="btn btn-xs btn-danger"><i
-                                                class="mdi mdi-minus"></i></a>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td style="width: 36px;">
-                                        <img src="{{ asset('images/users/user-3.jpg') }}" alt="contact-img"
-                                            title="contact-img" class="rounded-circle avatar-sm" />
-                                    </td>
-
-                                    <td>
-                                        <h5 class="m-0 fw-normal font-13">Erwin E. Brown</h5>
-                                        <p class="mb-0 text-muted"><small>Member Since 2017</small></p>
-                                    </td>
-
-                                    <td>
-                                        <i class="mdi mdi-currency-eth text-primary"></i> ETH
-                                    </td>
-
-                                    <td>
-                                        3.16117008 ETH
-                                    </td>
-
-                                    <td>
-                                        1.70360009 ETH
-                                    </td>
-
-                                    <td>
-                                        <a href="javascript: void(0);" class="btn btn-xs btn-light"><i
-                                                class="mdi mdi-plus"></i></a>
-                                        <a href="javascript: void(0);" class="btn btn-xs btn-danger"><i
-                                                class="mdi mdi-minus"></i></a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="width: 36px;">
-                                        <img src="{{ asset('images/users/user-4.jpg') }}" alt="contact-img"
-                                            title="contact-img" class="rounded-circle avatar-sm" />
-                                    </td>
-
-                                    <td>
-                                        <h5 class="m-0 fw-normal font-13">Margeret V. Ligon</h5>
-                                        <p class="mb-0 text-muted"><small>Member Since 2017</small></p>
-                                    </td>
-
-                                    <td>
-                                        <i class="mdi mdi-currency-eur text-primary"></i> EUR
-                                    </td>
-
-                                    <td>
-                                        25.08 EUR
-                                    </td>
-
-                                    <td>
-                                        12.58 EUR
-                                    </td>
-
-                                    <td>
-                                        <a href="javascript: void(0);" class="btn btn-xs btn-light"><i
-                                                class="mdi mdi-plus"></i></a>
-                                        <a href="javascript: void(0);" class="btn btn-xs btn-danger"><i
-                                                class="mdi mdi-minus"></i></a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="width: 36px;">
-                                        <img src="{{ asset('images/users/user-5.jpg') }}" alt="contact-img"
-                                            title="contact-img" class="rounded-circle avatar-sm" />
-                                    </td>
-
-                                    <td>
-                                        <h5 class="m-0 fw-normal font-13">Jose D. Delacruz</h5>
-                                        <p class="mb-0 text-muted"><small>Member Since 2017</small></p>
-                                    </td>
-
-                                    <td>
-                                        <i class="mdi mdi-currency-cny text-primary"></i> CNY
-                                    </td>
-
-                                    <td>
-                                        82.00 CNY
-                                    </td>
-
-                                    <td>
-                                        30.83 CNY
-                                    </td>
-
-                                    <td>
-                                        <a href="javascript: void(0);" class="btn btn-xs btn-light"><i
-                                                class="mdi mdi-plus"></i></a>
-                                        <a href="javascript: void(0);" class="btn btn-xs btn-danger"><i
-                                                class="mdi mdi-minus"></i></a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="width: 36px;">
-                                        <img src="{{ asset('images/users/user-6.jpg') }}" alt="contact-img"
-                                            title="contact-img" class="rounded-circle avatar-sm" />
-                                    </td>
-
-                                    <td>
-                                        <h5 class="m-0 fw-normal font-13">Luke J. Sain</h5>
-                                        <p class="mb-0 text-muted"><small>Member Since 2017</small></p>
-                                    </td>
-
-                                    <td>
-                                        <i class="mdi mdi-currency-btc text-primary"></i> BTC
-                                    </td>
-
-                                    <td>
-                                        2.00816117 BTC
-                                    </td>
-
-                                    <td>
-                                        1.00097036 BTC
-                                    </td>
-
-                                    <td>
-                                        <a href="javascript: void(0);" class="btn btn-xs btn-light"><i
-                                                class="mdi mdi-plus"></i></a>
-                                        <a href="javascript: void(0);" class="btn btn-xs btn-danger"><i
-                                                class="mdi mdi-minus"></i></a>
-                                    </td>
-                                </tr>
-
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div> <!-- end col -->
-
-        <div class="col-xl-6">
-            <div class="card">
-                <div class="card-body">
-                    <div class="dropdown float-end">
-                        <a href="#" class="dropdown-toggle arrow-none card-drop" data-bs-toggle="dropdown"
-                            aria-expanded="false">
-                            <i class="mdi mdi-dots-vertical"></i>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-end">
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item">Edit Report</a>
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item">Export Report</a>
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item">Action</a>
-                        </div>
-                    </div>
-
-                    <h4 class="header-title mb-3">Revenue History</h4>
-
-                    <div class="table-responsive">
-                        <table class="table table-borderless table-nowrap table-hover table-centered m-0">
-
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Marketplaces</th>
-                                    <th>Date</th>
-                                    <th>Payouts</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <h5 class="m-0 fw-normal font-13">Themes Market</h5>
-                                    </td>
-
-                                    <td>
-                                        Oct 15, 2018
-                                    </td>
-
-                                    <td>
-                                        $5848.68
-                                    </td>
-
-                                    <td>
-                                        <span class="badge bg-soft-warning text-warning">Upcoming</span>
-                                    </td>
-
-                                    <td>
-                                        <a href="javascript: void(0);" class="btn btn-xs btn-light"><i
-                                                class="mdi mdi-pencil"></i></a>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td>
-                                        <h5 class="m-0 fw-normal font-13">Freelance</h5>
-                                    </td>
-
-                                    <td>
-                                        Oct 12, 2018
-                                    </td>
-
-                                    <td>
-                                        $1247.25
-                                    </td>
-
-                                    <td>
-                                        <span class="badge bg-soft-success text-success">Paid</span>
-                                    </td>
-
-                                    <td>
-                                        <a href="javascript: void(0);" class="btn btn-xs btn-light"><i
-                                                class="mdi mdi-pencil"></i></a>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td>
-                                        <h5 class="m-0 fw-normal font-13">Share Holding</h5>
-                                    </td>
-
-                                    <td>
-                                        Oct 10, 2018
-                                    </td>
-
-                                    <td>
-                                        $815.89
-                                    </td>
-
-                                    <td>
-                                        <span class="badge bg-soft-success text-success">Paid</span>
-                                    </td>
-
-                                    <td>
-                                        <a href="javascript: void(0);" class="btn btn-xs btn-light"><i
-                                                class="mdi mdi-pencil"></i></a>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td>
-                                        <h5 class="m-0 fw-normal font-13">Envato's Affiliates</h5>
-                                    </td>
-
-                                    <td>
-                                        Oct 03, 2018
-                                    </td>
-
-                                    <td>
-                                        $248.75
-                                    </td>
-
-                                    <td>
-                                        <span class="badge bg-soft-danger text-danger">Overdue</span>
-                                    </td>
-
-                                    <td>
-                                        <a href="javascript: void(0);" class="btn btn-xs btn-light"><i
-                                                class="mdi mdi-pencil"></i></a>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td>
-                                        <h5 class="m-0 fw-normal font-13">Marketing Revenue</h5>
-                                    </td>
-
-                                    <td>
-                                        Sep 21, 2018
-                                    </td>
-
-                                    <td>
-                                        $978.21
-                                    </td>
-
-                                    <td>
-                                        <span class="badge bg-soft-warning text-warning">Upcoming</span>
-                                    </td>
-
-                                    <td>
-                                        <a href="javascript: void(0);" class="btn btn-xs btn-light"><i
-                                                class="mdi mdi-pencil"></i></a>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td>
-                                        <h5 class="m-0 fw-normal font-13">Advertise Revenue</h5>
-                                    </td>
-
-                                    <td>
-                                        Sep 15, 2018
-                                    </td>
-
-                                    <td>
-                                        $358.10
-                                    </td>
-
-                                    <td>
-                                        <span class="badge bg-soft-success text-success">Paid</span>
-                                    </td>
-
-                                    <td>
-                                        <a href="javascript: void(0);" class="btn btn-xs btn-light"><i
-                                                class="mdi mdi-pencil"></i></a>
-                                    </td>
-                                </tr>
-
-                            </tbody>
-                        </table>
-                    </div> <!-- end .table-responsive-->
-                </div>
-            </div> <!-- end card-->
-        </div> <!-- end col -->
-
-    </div>
-    <!-- end row -->
 @endsection
 
 @section('page_js')
@@ -606,7 +267,7 @@
                 d[l](f, ...n))
         })({
             key: "AIzaSyAnviR5bZwRYNdstAiky365nBxvVKswzzQ",
-            v: "beta",
+            v: "weekly",
             // Use the 'v' parameter to indicate the version to use (weekly, beta, alpha, etc.).
             // Add other bootstrap parameters as needed, using camel case.
         });
@@ -621,20 +282,28 @@
             lat: 32.1955303,
             lng: 74.202066
         };
-
         let options = {
-            address: "108 Squirrel Ln &#128063;, Menlo Park, CA",
-            description: "Townhouse with friendly neighbors",
-            price: "$ 3,050,000",
-            type: "building",
-            bed: 4,
-            bath: 3,
-            size: 200,
+            address: "215 Emily St, MountainView, CA",
+            description: "Single family house with modern design",
+            price: "$ 3,889,000",
+            type: "home",
+            bed: 5,
+            bath: 4.5,
+            size: 300,
             position: {
-                lat: 37.44440882321596,
-                lng: -122.2160620727,
+                lat: 37.50024109655184,
+                lng: -122.28528451834352,
             },
         };
+
+        const intersectionObserver = new IntersectionObserver((entries) => {
+            for (const entry of entries) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("drop");
+                    intersectionObserver.unobserve(entry.target);
+                }
+            }
+        });
 
         async function initMap() {
             // Request needed libraries.
@@ -652,7 +321,7 @@
                 },
                 zoom: 14,
                 mapTypeId: google.maps.MapTypeId.TERRAIN,
-                mapId: "testid123",
+                mapId: "4504f8b37365c3d0",
             });
 
             // Get directions between starting and ending points
@@ -660,6 +329,19 @@
             const directionsRenderer = new google.maps.DirectionsRenderer({
                 map: map,
             });
+
+            const currentPin = createPinFromImage(
+                "white"
+            );
+            const startPin = createPinFromImage(
+                "https://developers.google.com/maps/documentation/javascript/examples/full/images/google_logo_g.svg",
+                "white"
+            );
+
+            const endPin = createPinFromImage(
+                "https://developers.google.com/maps/documentation/javascript/examples/full/images/google_logo_g.svg",
+                "white"
+            );
 
             if (navigator.geolocation) {
                 navigator.geolocation.watchPosition(
@@ -730,62 +412,81 @@
                 if (markers[id]) {
                     markers[id].position = new google.maps.LatLng(position.lat, position.lng);
 
-                    calculateAndDisplayRoute(map, position, startPosition, endPosition, directionsService,
-                        directionsRenderer);
+                    // calculateAndDisplayRoute(map, position, startPosition, endPosition, directionsService,
+                    //     directionsRenderer);
 
                 } else {
-                    // Create new markers
-                    markers[id] = new google.maps.marker.AdvancedMarkerElement({
-                        map,
-                        position: position,
-                        title: "Current Position",
-                    });
 
-                    markers[id].addListener("click", () => {
-                        // toggleHighlight(AdvancedMarkerElement, property);
-                        alert("Origin maker" + markers[id].title);
-                    });
+                    markers[id] = createAnimatedMarker(id, position, map, "Current Position");
+                    markers[id]['start'] = createAnimatedMarker(id, startPosition, map, "Start Position",
+                        startPin.element);
+                    markers[id]['end'] = createAnimatedMarker(id, endPosition, map, "Start Position",
+                        endPin.element);
 
-                    const startPin = createPinFromImage(
-                        "https://developers.google.com/maps/documentation/javascript/examples/full/images/google_logo_g.svg",
-                        "white"
-                    );
-
-                    // console.log("Creating start marker with ID:", id);
-                    markers[id]['start'] = new google.maps.marker.AdvancedMarkerElement({
-                        map,
-                        position: startPosition,
-                        title: "Start Position",
-                        // content: buildContent(options),
-                    });
-
-                    markers[id]['start'].addListener("click", () => {
-                        // toggleHighlight(AdvancedMarkerElement, property);
-                    });
-
-                    const endPin = createPinFromImage(
-                        "https://developers.google.com/maps/documentation/javascript/examples/full/images/google_logo_g.svg",
-                        "white"
-                    );
-                    // console.log("Creating end marker with ID:", id);
-                    markers[id]['end'] = new google.maps.marker.AdvancedMarkerElement({
-                        map,
-                        position: endPosition,
-                        title: "End Position",
-                        content: endPin.element,
-                    });
-
-                    markers[id]['end'].addListener("click", () => {
-                        // toggleHighlight(AdvancedMarkerElement, property);
-                        alert("Origin maker" + markers[id].title);
-                    });
-
-                    calculateAndDisplayRoute(map, position, startPosition, endPosition, directionsService,
-                        directionsRenderer);
+                    // calculateAndDisplayRoute(map, position, startPosition, endPosition, directionsService,
+                    //     directionsRenderer);
 
                 }
 
             });
+        }
+
+        function createAnimatedMarker(id, position, map, title = "Current Position", content = null) {
+            // Create a new marker with the provided parameters
+            const marker = new google.maps.marker.AdvancedMarkerElement({
+                map,
+                position: position,
+                title: title,
+                content: content ?? buildContent(options),
+            });
+
+            // Add a click event listener to the marker
+            marker.addListener("click", () => {
+                alert("Marker clicked: " + marker.title);
+                toggleHighlight(marker, options);
+
+            });
+
+            // Handle content animation
+            const markerContent = marker.content;
+
+            if (markerContent) {
+                markerContent.style.opacity = "0";
+
+                markerContent.addEventListener("animationend", () => {
+                    markerContent.classList.remove("drop");
+                    markerContent.style.opacity = "1";
+                });
+
+                // Set a random delay for the animation
+                const time = 1 + Math.random(); // 1s delay + random for visibility
+                markerContent.style.setProperty("--delay-time", time + "s");
+
+                // Create an IntersectionObserver if needed
+                // Assuming you have a previously defined intersectionObserver
+                if (typeof intersectionObserver !== 'undefined') {
+                    intersectionObserver.observe(markerContent);
+                }
+            }
+
+            return marker;
+        }
+
+        function createMarker(position, map, title, content) {
+            // Create a new marker with the provided parameters
+            const marker = new google.maps.marker.AdvancedMarkerElement({
+                map: map,
+                position: position,
+                title: title,
+                content: content,
+            });
+
+            // Optionally, add a click event listener to the marker
+            marker.addListener("click", () => {
+                alert(`${title} marker clicked!`);
+            });
+
+            return marker;
         }
 
         function removeMarker(id) {
@@ -794,6 +495,7 @@
                 delete markers[id];
             }
         }
+
         // Draw polyline
         function drawPolyline($paths = []) {
             // Create and display a polyline
@@ -809,15 +511,21 @@
         }
 
         // Function to create a custom pin
-        function createPinFromImage(glyphSrc, glyphColor, scale = 1) {
-            const glyphImg = document.createElement("img");
-            glyphImg.src = glyphSrc;
+        function createPinFromImage(glyphSrc = null, glyphColor, scale = 1) {
 
-            return new google.maps.marker.PinElement({
+            pin = new google.maps.marker.PinElement({
                 scale: scale,
-                glyph: glyphImg,
+                // glyph: glyphImg,
                 glyphColor: glyphColor,
             });
+
+            if (glyphSrc) {
+                const glyphImg = document.createElement("img");
+                glyphImg.src = glyphSrc;
+                pin.glyph = glyphImg;
+            }
+
+            return pin;
         }
 
         // Calculate and display route
@@ -850,8 +558,6 @@
         }
 
         function buildContent(property) {
-
-
             const content = document.createElement("div");
 
             content.classList.add("property");
@@ -884,17 +590,6 @@
                 `;
             return content;
         }
-
-        function toggleHighlight(markerView, property) {
-            if (markerView.content.classList.contains("highlight")) {
-                markerView.content.classList.remove("highlight");
-                markerView.zIndex = null;
-            } else {
-                markerView.content.classList.add("highlight");
-                markerView.zIndex = 1;
-            }
-        }
-
         initMap();
     </script>
 @endsection
