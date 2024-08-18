@@ -391,7 +391,7 @@
             }
 
             socket.on("location", (data) => {
-                console.log('data received from client:  ' + data.id, data);
+                console.log('data received from client:  ' + data.socket_id, data);
                 let id = data.socket_id;
                 let route = data.route;
 
