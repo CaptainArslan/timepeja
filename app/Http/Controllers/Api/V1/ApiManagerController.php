@@ -147,7 +147,6 @@ class ApiManagerController extends BaseController
                 'name' => ['required', 'string', 'max:255'],
                 'phone' => ['required', 'string', 'max:255', 'unique:managers,phone,' . $manager->id],
                 'address' => ['required', 'string', 'max:255'],
-<<<<<<< HEAD
                 // 'picture' => [
                 //     'string',
                 //     'required',
@@ -155,8 +154,6 @@ class ApiManagerController extends BaseController
                 //     'mimes:jpeg,png,jpg,gif',
                 //     'max:2048'
                 // ],
-=======
->>>>>>> 15fa5e34d4e36ea93cb4622571ac5635165effd1
             ],
             [
                 'name.required' => 'Full name is required',
@@ -167,15 +164,12 @@ class ApiManagerController extends BaseController
 
                 'address.required' => 'Address is required',
                 'address.string' => 'address must be in string',
-<<<<<<< HEAD
 
                 // 'picture.required' => 'Profile Picture is required',
                 // 'picture.string' => 'address must be in string',
                 // 'picture.image' => 'Profile Picture must be an image',
                 // 'picture.mimes' => 'Profile Picture must be a file of type: jpeg, png, jpg, gif',
                 // 'picture.max' => 'Profile Picture may not be greater than 2048 kilobytes',
-=======
->>>>>>> 15fa5e34d4e36ea93cb4622571ac5635165effd1
             ]
         );
 
@@ -186,7 +180,6 @@ class ApiManagerController extends BaseController
             $manager->name = $request->name;
             $manager->phone = $request->phone;
             $manager->address = $request->address;
-<<<<<<< HEAD
 
             // if ($request->has('picture') && $manager->picture_name != null) {
             //     removeImage($manager->picture_name, '/managers/profiles/');
@@ -194,8 +187,6 @@ class ApiManagerController extends BaseController
 
             // $manager->picture = $request->picture ? $request->picture : $manager->picture_name;
 
-=======
->>>>>>> 15fa5e34d4e36ea93cb4622571ac5635165effd1
             if ($manager->save()) {
                 return $this->respondWithSuccess($manager, 'Profile Updated', 'PROFILE_UPDATED');
             } else {

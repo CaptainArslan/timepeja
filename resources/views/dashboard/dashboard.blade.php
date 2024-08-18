@@ -87,24 +87,24 @@
         </div> <!-- end col-->
 
         <!-- <div class="col-md-6 col-xl-3">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <div class="widget-rounded-circle card">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <div class="card-body">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <div class="row">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <div class="col-6">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <div class="avatar-lg rounded-circle bg-soft-primary border-primary border">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <i class="fe-eye font-22 avatar-title text-primary"></i>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <div class="col-6">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <div class="text-end">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <h3 class="text-dark mt-1"><span data-plugin="counterup">78.41</span>k</h3>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <p class="text-muted mb-1 text-truncate">Today's Visits</p>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </div> end row
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </div> end widget-rounded-circle
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </div> -->
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <div class="widget-rounded-circle card">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <div class="card-body">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <div class="row">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <div class="col-6">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <div class="avatar-lg rounded-circle bg-soft-primary border-primary border">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <i class="fe-eye font-22 avatar-title text-primary"></i>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <div class="col-6">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <div class="text-end">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <h3 class="text-dark mt-1"><span data-plugin="counterup">78.41</span>k</h3>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <p class="text-muted mb-1 text-truncate">Today's Visits</p>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </div> end row
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </div> end widget-rounded-circle
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </div> -->
         <!-- end col-->
     </div>
     <!-- end row-->
@@ -621,6 +621,21 @@
             lat: 32.1955303,
             lng: 74.202066
         };
+
+        let options = {
+            address: "108 Squirrel Ln &#128063;, Menlo Park, CA",
+            description: "Townhouse with friendly neighbors",
+            price: "$ 3,050,000",
+            type: "building",
+            bed: 4,
+            bath: 3,
+            size: 200,
+            position: {
+                lat: 37.44440882321596,
+                lng: -122.2160620727,
+            },
+        };
+
         async function initMap() {
             // Request needed libraries.
             const {
@@ -638,6 +653,12 @@
                 zoom: 14,
                 mapTypeId: google.maps.MapTypeId.TERRAIN,
                 mapId: "testid123",
+            });
+
+            // Get directions between starting and ending points
+            const directionsService = new google.maps.DirectionsService();
+            const directionsRenderer = new google.maps.DirectionsRenderer({
+                map: map,
             });
 
             if (navigator.geolocation) {
@@ -690,7 +711,6 @@
             socket.on("location", (data) => {
                 let id = data.socket_id;
                 let route = data.route;
-                console.log("Location data received:", data);
 
                 let position = {
                     lat: data.latitude,
@@ -709,12 +729,10 @@
 
                 if (markers[id]) {
                     markers[id].position = new google.maps.LatLng(position.lat, position.lng);
-                    // Update existing marker position
-                    // markers[id].position(position);
-                    // const newPosition = new google.maps.LatLng(position.lat, position.lng);
-                    // markers[id].setPosition(newPosition);
 
-                    // console.log("Updating marker with ID:", id);
+                    calculateAndDisplayRoute(map, position, startPosition, endPosition, directionsService,
+                        directionsRenderer);
+
                 } else {
                     // Create new markers
                     markers[id] = new google.maps.marker.AdvancedMarkerElement({
@@ -723,7 +741,12 @@
                         title: "Current Position",
                     });
 
-                    const startPin = createPin(
+                    markers[id].addListener("click", () => {
+                        // toggleHighlight(AdvancedMarkerElement, property);
+                        alert("Origin maker" + markers[id].title);
+                    });
+
+                    const startPin = createPinFromImage(
                         "https://developers.google.com/maps/documentation/javascript/examples/full/images/google_logo_g.svg",
                         "white"
                     );
@@ -733,10 +756,14 @@
                         map,
                         position: startPosition,
                         title: "Start Position",
-                        content: startPin.element,
+                        // content: buildContent(options),
                     });
 
-                    const endPin = createPin(
+                    markers[id]['start'].addListener("click", () => {
+                        // toggleHighlight(AdvancedMarkerElement, property);
+                    });
+
+                    const endPin = createPinFromImage(
                         "https://developers.google.com/maps/documentation/javascript/examples/full/images/google_logo_g.svg",
                         "white"
                     );
@@ -748,56 +775,124 @@
                         content: endPin.element,
                     });
 
-                    // Get directions between starting and ending points
-                    const directionsService = new google.maps.DirectionsService();
-                    const directionsRenderer = new google.maps.DirectionsRenderer({
-                        map: map,
+                    markers[id]['end'].addListener("click", () => {
+                        // toggleHighlight(AdvancedMarkerElement, property);
+                        alert("Origin maker" + markers[id].title);
                     });
 
-                    const start = new google.maps.LatLng(startPosition.lat, startPosition.lng);
-                    const end = new google.maps.LatLng(endPosition.lat, endPosition.lng);
-                    const currentLocation = new google.maps.LatLng(position.lat, position
-                        .lng); // Add current location
+                    calculateAndDisplayRoute(map, position, startPosition, endPosition, directionsService,
+                        directionsRenderer);
 
-                    const request = {
-                        origin: currentLocation, // Use current location as the origin
-                        destination: end,
-                        travelMode: google.maps.TravelMode.DRIVING,
-                    };
-
-                    directionsService.route(request, (result, status) => {
-                        if (status === google.maps.DirectionsStatus.OK) {
-                            directionsRenderer.setDirections(result);
-                        } else {
-                            console.error("Error calculating directions:", status);
-                        }
-                    });
                 }
 
-                function drawPolyline($paths = []) {
-                    // Create and display a polyline
-                    routePath[id] = new google.maps.Polyline({
+            });
+        }
 
-                        path: $paths,
-                        geodesic: true,
-                        strokeColor: '#FF0000',
-                        strokeOpacity: 1.0,
-                        strokeWeight: 2,
-                        map: map,
-                    });
-                }
-                // Function to create a custom pin
-                function createPin(glyphSrc, glyphColor, scale = 1) {
-                    const glyphImg = document.createElement("img");
-                    glyphImg.src = glyphSrc;
+        function removeMarker(id) {
+            if (markers[id]) {
+                markers[id].setMap(null);
+                delete markers[id];
+            }
+        }
+        // Draw polyline
+        function drawPolyline($paths = []) {
+            // Create and display a polyline
+            routePath[id] = new google.maps.Polyline({
 
-                    return new google.maps.marker.PinElement({
-                        scale: scale,
-                        glyph: glyphImg,
-                        glyphColor: glyphColor,
-                    });
+                path: $paths,
+                geodesic: true,
+                strokeColor: '#FF0000',
+                strokeOpacity: 1.0,
+                strokeWeight: 2,
+                map: map,
+            });
+        }
+
+        // Function to create a custom pin
+        function createPinFromImage(glyphSrc, glyphColor, scale = 1) {
+            const glyphImg = document.createElement("img");
+            glyphImg.src = glyphSrc;
+
+            return new google.maps.marker.PinElement({
+                scale: scale,
+                glyph: glyphImg,
+                glyphColor: glyphColor,
+            });
+        }
+
+        // Calculate and display route
+        function calculateAndDisplayRoute(map, currentPosition, startPosition, endPosition,
+            directionsService, directionsRenderer) {
+            console.log(currentPosition, startPosition, endPosition);
+            const request = {
+                origin: currentPosition, // Use current location as the origin
+                destination: endPosition,
+                travelMode: google.maps.TravelMode.DRIVING,
+            };
+
+            directionsService.route(request, (result, status) => {
+                if (status === google.maps.DirectionsStatus.OK) {
+                    directionsRenderer.setDirections(result);
+                } else {
+                    console.error("Error calculating directions:", status);
                 }
             });
+        }
+
+        function toggleHighlight(markerView, property) {
+            if (markerView.content.classList.contains("highlight")) {
+                markerView.content.classList.remove("highlight");
+                markerView.zIndex = null;
+            } else {
+                markerView.content.classList.add("highlight");
+                markerView.zIndex = 1;
+            }
+        }
+
+        function buildContent(property) {
+
+
+            const content = document.createElement("div");
+
+            content.classList.add("property");
+            content.innerHTML = `
+                <div class="icon">
+                    <i aria-hidden="true" class="fa fa-icon fa-${property.type}" title="${property.type}"></i>
+                    <span class="fa-sr-only">${property.type}</span>
+                </div>
+                <div class="details">
+                    <div class="price">${property.price}</div>
+                    <div class="address">${property.address}</div>
+                    <div class="features">
+                    <div>
+                        <i aria-hidden="true" class="fa fa-bed fa-lg bed" title="bedroom"></i>
+                        <span class="fa-sr-only">bedroom</span>
+                        <span>${property.bed}</span>
+                    </div>
+                    <div>
+                        <i aria-hidden="true" class="fa fa-bath fa-lg bath" title="bathroom"></i>
+                        <span class="fa-sr-only">bathroom</span>
+                        <span>${property.bath}</span>
+                    </div>
+                    <div>
+                        <i aria-hidden="true" class="fa fa-ruler fa-lg size" title="size"></i>
+                        <span class="fa-sr-only">size</span>
+                        <span>${property.size} ft<sup>2</sup></span>
+                    </div>
+                    </div>
+                </div>
+                `;
+            return content;
+        }
+
+        function toggleHighlight(markerView, property) {
+            if (markerView.content.classList.contains("highlight")) {
+                markerView.content.classList.remove("highlight");
+                markerView.zIndex = null;
+            } else {
+                markerView.content.classList.add("highlight");
+                markerView.zIndex = 1;
+            }
         }
 
         initMap();
