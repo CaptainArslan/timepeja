@@ -34,7 +34,8 @@ class Route extends Model
         'to',
         'to_longitude',
         'to_latitude',
-        'status'
+        'status',
+        'way_points',
     ];
 
     /**
@@ -180,6 +181,12 @@ class Route extends Model
     public function getUpdatedAtAttribute($value)
     {
         return Carbon::parse($value)->format('Y-m-d');
+    }
+
+
+    public function getWayPointsAttribute($value)
+    {
+        return $value ? json_decode($value, true) : null;
     }
 
 

@@ -56,7 +56,7 @@ class ApiRouteController extends BaseController
     public function store(Request $request): jsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'number' => ['required', 'int'],
+            'number' => ['required'],
             'name' => ['nullable', 'string'],
             'from' => ['required', 'string'],
             'from_longitude' => ['nullable', 'string'],
@@ -64,6 +64,7 @@ class ApiRouteController extends BaseController
             'to' => ['required', 'string'],
             'to_longitude' => ['nullable', 'string'],
             'to_latitude' => ['nullable', 'string'],
+            'way_points' => ['nullable', 'array'],
         ], [
             'number.required' => 'Route number is required',
             'number.unique' => 'Route number already exists',
@@ -115,6 +116,8 @@ class ApiRouteController extends BaseController
             $route1->from_longitude = $request->from_longitude;
             $route1->from_latitude = $request->from_latitude;
 
+            $route1->way_points = $request->way_points ? json_encode($request->way_points) : null;
+
             $route1->name = $request->number . ' - ' . $request->from . ' To ' . $request->to;
             if (!$route1->save()) {
                 return $this->respondWithError('Error occurred while creating 1st route.');
@@ -135,6 +138,8 @@ class ApiRouteController extends BaseController
             $route2->from = $request->to;
             $route2->from_longitude = $request->to_longitude;
             $route2->from_latitude = $request->to_latitude;
+
+            $route2->way_points = $request->way_points ? json_encode($request->way_points) : null;
 
             $route2->name = $request->number . ' - ' . $request->to . ' To ' . $request->from;
             if (!$route2->save()) {
@@ -264,6 +269,8 @@ class ApiRouteController extends BaseController
                 $route1->to_longitude = $request->to_longitude;
                 $route1->to_latitude = $request->to_latitude;
                 $route1->name =  $request->number . ' - ' . $request->to . ' To ' . $request->from;
+                $route1->way_points = $request->way_points ? json_encode($request->way_points) : null;
+
                 $route1Save = $route1->save();
                 if (!$route1Save) {
                     return $this->respondWithError('Error occurred while updating route 1.');
@@ -279,6 +286,7 @@ class ApiRouteController extends BaseController
                 $route2->from_longitude = $request->to_longitude;
                 $route2->from_latitude = $request->to_latitude;
                 $route2->name = $request->number . ' - ' . $request->from . ' To ' . $request->to;
+                $route2->way_points = $request->way_points ? json_encode($request->way_points) : null;
                 $route2Save =  $route2->save();
                 if (!$route2Save) {
                     return $this->respondWithError('Error occurred while updating route 2.');
