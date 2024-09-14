@@ -34,7 +34,8 @@ class Route extends Model
         'to',
         'to_longitude',
         'to_latitude',
-        'status'
+        'status',
+        'way_points',
     ];
 
     /**
@@ -46,7 +47,11 @@ class Route extends Model
         'o_id' => 'integer',
         'u_id' => 'integer',
         'number' => 'integer',
-        'status' => 'boolean'
+        'status' => 'boolean',
+        'from_longitude' => 'float',
+        'from_latitude' => 'float',
+        'to_longitude' => 'float',
+        'to_latitude' => 'float'
     ];
 
     /**
@@ -55,7 +60,7 @@ class Route extends Model
      * @var array<int, string>
      */
     protected $hidden = [
-        //
+        'deleted_at'
     ];
 
 
@@ -176,6 +181,12 @@ class Route extends Model
     public function getUpdatedAtAttribute($value)
     {
         return Carbon::parse($value)->format('Y-m-d');
+    }
+
+
+    public function getWayPointsAttribute($value)
+    {
+        return $value ? json_decode($value, true) : null;
     }
 
 
