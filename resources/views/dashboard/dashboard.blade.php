@@ -330,9 +330,8 @@
                 map: map,
             });
 
-            const currentPin = createPinFromImage(
-                "white"
-            );
+            // const currentPin = createPinFromImage();
+
             const startPin = createPinFromImage(
                 "https://developers.google.com/maps/documentation/javascript/examples/full/images/google_logo_g.svg",
                 "white"
@@ -514,7 +513,7 @@
         }
 
         // Function to create a custom pin
-        function createPinFromImage(glyphSrc = null, glyphColor, scale = 1) {
+        function createPinFromImage(glyphSrc = null, glyphColor = "white", scale = 1) {
 
             pin = new google.maps.marker.PinElement({
                 scale: scale,
