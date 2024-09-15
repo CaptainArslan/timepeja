@@ -24,11 +24,7 @@ class HomeController extends Controller
         $tripCount = Schedule::where('trip_status', Schedule::TRIP_STATUS_COMPLETED)->count();
         $vehicleCount = Vehicle::where('status', Vehicle::STATUS_ACTIVE)->count();
         $passengerCount = Passenger::where('status', Passenger::STATUS_ACTIVE)->count();
-        $schedule = Schedule::findOrFail(1)->with(['route' => function ($query) {
-            $query->select('id', 'name', 'from', 'to', 'from_longitude', 'from_latitude', 'to_longitude', 'to_latitude');
-        }, 'driver' => function ($query) {
-            $query->select('id', 'name');
-        }])->first();
+        $schedule = Schedule::with(['route', 'driver'])->first();
         return view('dashboard.dashboard', get_defined_vars());
     }
 
