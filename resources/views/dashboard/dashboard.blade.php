@@ -411,14 +411,15 @@
                 };
 
                 if (markers[id]) {
+                    console.log('updating marker position with new position');
                     markers[id].position = new google.maps.LatLng(position.lat, position.lng);
 
                     calculateAndDisplayRoute(map, position, startPosition, endPosition, directionsService,
                         directionsRenderer);
 
                 } else {
+                    console.log('creating new marker');
                     showSuccess("New Trips has been started");
-
                     map.setCenter(position);
                     markers[id] = createAnimatedMarker(id, position, map, "Current Position");
                     markers[id]['start'] = createAnimatedMarker(id, startPosition, map, "Start Position",
@@ -426,6 +427,7 @@
                     markers[id]['end'] = createAnimatedMarker(id, endPosition, map, "Start Position",
                         endPin.element);
 
+                    console.log('calculating the route with new marker');
                     calculateAndDisplayRoute(map, position, startPosition, endPosition, directionsService,
                         directionsRenderer);
 
