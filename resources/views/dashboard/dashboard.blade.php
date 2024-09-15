@@ -540,10 +540,10 @@
             const request = {
                 origin: currentPosition, // Use current location as the origin
                 destination: endPosition,
-                waypoints: waypointsArray.map(point => ({
-                    location: new google.maps.LatLng(point.latitude, point.longitude),
-                    stopover: true
-                })), // Extract latitude and longitude for waypoints
+                // waypoints: waypointsArray.map(point => ({
+                //     location: new google.maps.LatLng(point.latitude, point.longitude),
+                //     stopover: true
+                // })), // Extract latitude and longitude for waypoints
                 travelMode: google.maps.TravelMode.DRIVING,
             };
 
