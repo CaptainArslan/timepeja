@@ -409,11 +409,14 @@
                     lng: route.to_longitude
                 };
 
+                let wayPoints = route.waypoints ?? [];
+
                 if (markers[id]) {
                     console.log('updating marker position with new position');
                     markers[id].position = new google.maps.LatLng(position.lat, position.lng);
 
-                    calculateAndDisplayRoute(map, position, startPosition, endPosition, directionsService,
+                    calculateAndDisplayRoute(map, position, startPosition, endPosition, wayPoints,
+                        directionsService,
                         directionsRenderer);
 
                 } else {
@@ -427,7 +430,8 @@
                         endPin.element);
 
                     console.log('calculating the route with new marker');
-                    calculateAndDisplayRoute(map, position, startPosition, endPosition, directionsService,
+                    calculateAndDisplayRoute(map, position, startPosition, endPosition, wayPoints,
+                        directionsService,
                         directionsRenderer);
 
                 }
@@ -531,11 +535,15 @@
         }
 
         // Calculate and display route
-        function calculateAndDisplayRoute(map, currentPosition, startPosition, endPosition,
+        function calculateAndDisplayRoute(map, currentPosition, startPosition, endPosition, waypointsArray,
             directionsService, directionsRenderer) {
             const request = {
                 origin: currentPosition, // Use current location as the origin
                 destination: endPosition,
+                waypoints: waypointsArray.map(point => ({
+                    location: new google.maps.LatLng(point.latitude, point.longitude),
+                    stopover: true
+                })), // Extract latitude and longitude for waypoints
                 travelMode: google.maps.TravelMode.DRIVING,
             };
 
@@ -547,6 +555,7 @@
                 }
             });
         }
+
 
         function toggleHighlight(markerView, property) {
             if (markerView.content.classList.contains("highlight")) {
