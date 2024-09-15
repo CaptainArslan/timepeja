@@ -409,7 +409,7 @@
                     lng: route.to_longitude
                 };
 
-                let wayPoints = route.waypoints ?? [];
+                let wayPoints = route.way_points ?? [];
 
                 if (markers[id]) {
                     console.log('updating marker position with new position');
