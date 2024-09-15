@@ -34,6 +34,16 @@ class RouteFactory extends Factory
             'to_longitude' => 74.203517,
             'status' => Route::STATUS_ACTIVE,
             'created_at' => time(),
+            'waypoints' => json_encode([
+                [
+                    'latitude' => 32.195385,
+                    'longitude' => 74.201953,
+                ],
+                [
+                    'latitude' => 32.194276,
+                    'longitude' => 74.203517,
+                ],
+            ]),
         ];
     }
 }

@@ -159,9 +159,7 @@ Route::group(['middleware' => 'api'], function () {
             Route::put('/offline', [DriverScheduleController::class, 'offline']);
 
             Route::get('/schedule/incoming/{date}', [DriverScheduleController::class, 'index']);
-
             Route::get('/schedules/{date?}', [DriverScheduleController::class, 'schedules']);
-
             Route::post('/schedules/filter', [DriverScheduleController::class, 'filterSchedules']);
 
             Route::put('/schedule/start/{id}', [DriverScheduleController::class, 'startTrip']);
