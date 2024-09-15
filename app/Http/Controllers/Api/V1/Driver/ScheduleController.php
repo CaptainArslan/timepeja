@@ -66,7 +66,7 @@ class ScheduleController extends BaseController
             }
 
             $schedules = Schedule::where('d_id', $driver->id)
-                ->with('routes:id,name,number,from,from_longitude,from_latitude,to,to_latitude,to_longitude')
+                ->with('routes')
                 ->with('vehicles:id,number')
                 ->with('drivers:id,name')
                 ->when($date !== null, function ($query) use ($date) {
@@ -340,7 +340,7 @@ class ScheduleController extends BaseController
                 ->where('date', now()->format('Y-m-d'))
                 ->where('time', '>=', now()->format('H:i:s'))
                 ->where('time', '<=', now()->addMinutes(15)->format('H:i:s'))
-                ->with('routes:id,name,number,from,from_longitude,from_latitude,to,to_latitude,to_longitude')
+                ->with('routes')
                 ->with('vehicles:id,number')
                 ->with('drivers:id,name')
                 ->first();
