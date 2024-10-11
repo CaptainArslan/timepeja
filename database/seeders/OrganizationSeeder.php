@@ -36,12 +36,12 @@ class OrganizationSeeder extends Seeder
             's_id' => State::inRandomOrder()->first()->id,
             'c_id' => City::inRandomOrder()->first()->id,
             'head_name' => 'Test 1',
-            'head_email' => 'mughalarslan
-            996@gmail.com',
+            'head_email' => 'mughalarslan996@gmail.com',
             'head_phone' => '03' . rand(0000000, 9999999),
             'head_address' => 'Test Address',
             'status' => Organization::STATUS_ACTIVE,
         ]);
+
         // Organization::factory(1)->create([
         //     'u_id' => 1,
         //     'name' => 'University Of Lahore',

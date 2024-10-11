@@ -61,6 +61,7 @@ Route::group(['middleware' => 'api'], function () {
 
             // Schedule Api
             Route::resource('/schedule', ApiScheduleController::class);
+            Route::get('/schedules/active', [ApiScheduleController::class, 'activeVehicle']);
             Route::post('/schedule/replicate', [ApiScheduleController::class, 'replicate']);
 
             Route::group(['prefix' => 'schedules'], function () {

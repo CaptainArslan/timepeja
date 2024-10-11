@@ -24,7 +24,8 @@ class ManagerAuthController extends BaseController
                     'register',
                     'getVerificationCode',
                     'forgetPassword',
-                    'webLogin'
+                    'webLogin',
+                    'profile'
                 ]
             ]
         );
@@ -184,7 +185,7 @@ class ManagerAuthController extends BaseController
                 $save = $manager->save();
                 if ($save) {
                     $data = $manager->only('id', 'name', 'phone', 'otp');
-                    if($manager->device_token) {
+                    if ($manager->device_token) {
                         notification('Otp', 'Your verification code is ' . $otp, $manager->device_token);
                     }
                     return $this->respondWithSuccess($data, 'Otp Sent Successfully', 'API_GET_CODE');
@@ -195,7 +196,7 @@ class ManagerAuthController extends BaseController
                 return $this->respondWithError('Invalid Phone number provided');
             }
         } catch (\Throwable $th) {
-           return $this->respondWithError('Error Occured while sending otp');
+            return $this->respondWithError('Error Occured while sending otp');
         }
     }
 
@@ -256,7 +257,7 @@ class ManagerAuthController extends BaseController
     {
         try {
             $data = $this->respondWithSuccess(
-                auth('manager')->user(),
+                auth('manager')->user()->load('organization'),
                 'Manager profile',
                 'MANAGER_PROFILE'
             );
