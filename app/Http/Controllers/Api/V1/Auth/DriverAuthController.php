@@ -137,6 +137,7 @@ class DriverAuthController extends BaseController
         $user = auth('driver')->user();
         $driver = Driver::where('id', $user->id)
             ->with('organization')
+            ->with('organization.manager')
             ->with('organization.city:id,name')
             ->with('organization.state:id,name')
             ->first();
