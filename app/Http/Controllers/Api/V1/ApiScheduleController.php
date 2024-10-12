@@ -323,7 +323,6 @@ class ApiScheduleController extends BaseController
         }
     }
 
-
     /**
      * @param Request $request
      * @return JsonResponse
@@ -369,7 +368,6 @@ class ApiScheduleController extends BaseController
         }
     }
 
-
     /**
      * @param Request $request
      * @return JsonResponse
@@ -409,7 +407,6 @@ class ApiScheduleController extends BaseController
         }
     }
 
-
     /**
      * @param $date
      * @return JsonResponse
@@ -446,7 +443,6 @@ class ApiScheduleController extends BaseController
             return $this->respondWithError('An error occurred while fetching schedules for this date.' . $th->getMessage());
         }
     }
-
 
     /**
      * @param $date
@@ -487,7 +483,6 @@ class ApiScheduleController extends BaseController
         }
     }
 
-
     /**
      * @param Request $request
      * @return JsonResponse
@@ -524,7 +519,6 @@ class ApiScheduleController extends BaseController
             return $this->respondWithError('Error Occrued while replicating scehdule');
         }
     }
-
 
     /**
      * @param $schedule
