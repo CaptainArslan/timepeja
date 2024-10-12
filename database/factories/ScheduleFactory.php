@@ -31,7 +31,6 @@ class ScheduleFactory extends Factory
         // Start with the current time
         $currentDateTime = Carbon::now()->addMinutes(15);
 
-
         return [
             'u_id' => 1,
             'o_id' => Organization::inRandomOrder()->first()->id,
@@ -47,7 +46,10 @@ class ScheduleFactory extends Factory
             'start_time' => $this->faker->time(),
             'end_time' => '',
             'trip_status' => $this->faker->randomElement([
+                Schedule::TRIP_STATUS_UPCOMING,
+                Schedule::TRIP_STATUS_INPROGRESS,
                 Schedule::TRIP_STATUS_COMPLETED,
+
             ]),
             'is_delay' => $isDelayed,
             'delayed_reason' => $delayReason,

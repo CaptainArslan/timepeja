@@ -24,7 +24,7 @@ class ApiScheduleController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(): JsonResponse
     {
         try {
             $manager = auth('manager')->user();
