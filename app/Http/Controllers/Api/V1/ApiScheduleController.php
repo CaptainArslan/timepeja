@@ -564,7 +564,7 @@ class ApiScheduleController extends BaseController
                 ->where('status', Schedule::STATUS_PUBLISHED)
                 ->where('date', $date)
                 ->where('trip_status', Schedule::TRIP_STATUS_INPROGRESS)
-                ->get();
+                ->paginate(getPaginated());
             return $this->respondWithSuccess($schedule, 'Oganization active schedule', 'ORGANIZATION_ACTIVE_SCHEDULE');
         } catch (\Throwable $th) {
             return $this->respondWithError('Error Occured while fetching organization schedule');
