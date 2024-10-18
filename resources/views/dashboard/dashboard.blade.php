@@ -243,7 +243,10 @@
     <script src="{{ asset('js/socketclient.js') }}"></script>
     <script>
         let admin = @json($admin);
-        socket.emit('admin-connected', admin);
+        socket.emit('admin-connected', {
+            socketId: socket.id,
+            ...admin
+        });
     </script>
     <script>
         (g => {
