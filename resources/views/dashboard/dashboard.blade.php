@@ -299,10 +299,10 @@
             delete managers[data.id];
         });
 
-        socket.on('trip-started', (data) => {
-            console.log('trip-started', data);
-            trips[data.id] = data;
-        });
+        // socket.on('trip-started', (data) => {
+        //     console.log('trip-started', data);
+        //     trips[data.id] = data;
+        // });
 
         socket.on('trip-ended', (data) => {
             console.log('trip-ended', data);
@@ -374,52 +374,52 @@
                 "white"
             );
 
-            if (navigator.geolocation) {
-                navigator.geolocation.watchPosition(
-                    (position) => {
-                        // Success callback
-                        const {
-                            latitude,
-                            longitude
-                        } = position.coords;
-                        document.getElementById("location-latlong").innerText =
-                            `Lat: ${latitude}, Long: ${longitude}`;
+            // if (navigator.geolocation) {
+            //     navigator.geolocation.watchPosition(
+            //         (position) => {
+            //             // Success callback
+            //             const {
+            //                 latitude,
+            //                 longitude
+            //             } = position.coords;
+            //             document.getElementById("location-latlong").innerText =
+            //                 `Lat: ${latitude}, Long: ${longitude}`;
 
-                        // Emit location data
-                        socket.emit("trip-started", {
-                            socketId: socket.id,
-                            latitude,
-                            longitude,
-                            ...schedule
-                        });
-                    },
-                    (error) => {
-                        // Error callback
-                        let errorMessage;
-                        switch (error.code) {
-                            case error.PERMISSION_DENIED:
-                                errorMessage = "User denied the request for Geolocation.";
-                                break;
-                            case error.POSITION_UNAVAILABLE:
-                                errorMessage = "Location information is unavailable.";
-                                break;
-                            case error.TIMEOUT:
-                                errorMessage = "The request to get user location timed out.";
-                                break;
-                            case error.UNKNOWN_ERROR:
-                                errorMessage = "An unknown error occurred.";
-                                break;
-                        }
-                        console.error("Error getting location data: " + errorMessage);
-                    }, {
-                        enableHighAccuracy: true, // Use high accuracy if available
-                        timeout: 10000, // Timeout for obtaining the location
-                        maximumAge: 0 // Do not use cached location
-                    }
-                );
-            } else {
-                alert("Geolocation is not supported by this browser.");
-            }
+            //             // Emit location data
+            //             socket.emit("trip-started", {
+            //                 socketId: socket.id,
+            //                 latitude,
+            //                 longitude,
+            //                 ...schedule
+            //             });
+            //         },
+            //         (error) => {
+            //             // Error callback
+            //             let errorMessage;
+            //             switch (error.code) {
+            //                 case error.PERMISSION_DENIED:
+            //                     errorMessage = "User denied the request for Geolocation.";
+            //                     break;
+            //                 case error.POSITION_UNAVAILABLE:
+            //                     errorMessage = "Location information is unavailable.";
+            //                     break;
+            //                 case error.TIMEOUT:
+            //                     errorMessage = "The request to get user location timed out.";
+            //                     break;
+            //                 case error.UNKNOWN_ERROR:
+            //                     errorMessage = "An unknown error occurred.";
+            //                     break;
+            //             }
+            //             console.error("Error getting location data: " + errorMessage);
+            //         }, {
+            //             enableHighAccuracy: true, // Use high accuracy if available
+            //             timeout: 10000, // Timeout for obtaining the location
+            //             maximumAge: 0 // Do not use cached location
+            //         }
+            //     );
+            // } else {
+            //     alert("Geolocation is not supported by this browser.");
+            // }
 
             socket.on("trip-started", (data) => {
                 console.log('data received from client:  ' + data.socketId, data);
@@ -447,24 +447,24 @@
                     console.log('updating marker position with new position');
                     markers[id].position = new google.maps.LatLng(position.lat, position.lng);
 
-                    calculateAndDisplayRoute(map, position, startPosition, endPosition, wayPoints,
-                        directionsService,
-                        directionsRenderer);
+                    // calculateAndDisplayRoute(map, position, startPosition, endPosition, wayPoints,
+                    //     directionsService,
+                    //     directionsRenderer);
 
                 } else {
                     console.log('creating new marker');
                     showSuccess("New Trips has been started");
                     map.setCenter(position);
                     markers[id] = createAnimatedMarker(id, position, map, "Current Position");
-                    markers[id]['start'] = createAnimatedMarker(id, startPosition, map, "Start Position",
-                        startPin.element);
-                    markers[id]['end'] = createAnimatedMarker(id, endPosition, map, "Start Position",
-                        endPin.element);
+                    // markers[id]['start'] = createAnimatedMarker(id, startPosition, map, "Start Position",
+                    //     startPin.element);
+                    // markers[id]['end'] = createAnimatedMarker(id, endPosition, map, "Start Position",
+                    //     endPin.element);
 
                     console.log('calculating the route with new marker');
-                    calculateAndDisplayRoute(map, position, startPosition, endPosition, wayPoints,
-                        directionsService,
-                        directionsRenderer);
+                    // calculateAndDisplayRoute(map, position, startPosition, endPosition, wayPoints,
+                    //     directionsService,
+                    //     directionsRenderer);
 
                 }
 
