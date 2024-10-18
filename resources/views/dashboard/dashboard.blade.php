@@ -377,7 +377,7 @@
             socket.on("trip-started", (data) => {
                 console.log('data received from client of trips :  ' +
                     data);
-                let data = data.selected_schedule;
+                data = data.selected_schedule;
                 let managerId = data.managerId;
                 let scheduleId = data.id;
                 let route = data.route;
@@ -426,7 +426,6 @@
                 //     directionsService,
                 //     directionsRenderer);
                 // }
-
 
                 tripe[managerId][scheduleId] = data;
 
