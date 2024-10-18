@@ -242,13 +242,6 @@
 
     <script src="{{ asset('js/socketclient.js') }}"></script>
     <script>
-        let admin = @json($admin);
-        socket.emit('admin-connected', {
-            socketId: socket.id,
-            ...admin
-        });
-    </script>
-    <script>
         (g => {
             var h, a, k, p = "The Google Maps JavaScript API",
                 c = "google",
@@ -288,7 +281,12 @@
         let schedule = @json($schedule);
         let trips = {};
         let managers = {};
-        const map = null;
+
+        let admin = @json($admin);
+        socket.emit('admin-connected', {
+            socketId: socket.id,
+            ...admin
+        });
 
         socket.on('admin-connected', (data) => {
             console.log('admin connected', data);
@@ -361,25 +359,17 @@
 
         // Listen for socket events outside of the async function
         // Socket event listener
-        socket.on("trip-started", (data) => {
-            console.log('Data received from client of trips: ', data);
-
-            let managerId = data.managerId;
-            let scheduleId = data.id;
-            let selected_schedule = data.selected_schedule;
-            let route = selected_schedule.route;
+        socket.on("trip-started", (trip) => {
+            console.log('trip received from client of trips: ', trip);
+            let managerId = trip.managerId;
+            let scheduleId = trip.selected_schedule.id;
+            let route = trip.selected_schedule.route;
 
             // Ensure trips[managerId] is initialized before adding the schedule
             if (!trips[managerId]) {
                 trips[managerId] = {};
             }
             trips[managerId][scheduleId] = data; // Store trip data
-
-            // Emit socket event back to the client
-            socket.emit('trip-started', {
-                socketId: socket.id,
-                ...data
-            });
 
             let startPosition = {
                 lat: route.from_latitude,
@@ -424,7 +414,6 @@
                 .element);
             markers[scheduleId]['end'] = createAnimatedMarker(scheduleId, endPosition, map, "End", endPin.element);
         });
-
 
         socket.on("trip-location", (data) => {
             console.log('Data received from client of trips: ', data);
