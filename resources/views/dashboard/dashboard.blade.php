@@ -304,10 +304,6 @@
             delete managers[data.id];
         });
 
-        socket.on('trip-ended', (data) => {
-            console.log('trip-ended', data);
-            delete trips[data.id];
-        });
 
         let initialLocation = {
             lat: 32.1955303,
@@ -364,23 +360,26 @@
         }
 
         // Listen for socket events outside of the async function
+        // Socket event listener
         socket.on("trip-started", (data) => {
             console.log('Data received from client of trips: ', data);
+
             let managerId = data.managerId;
             let scheduleId = data.id;
             let selected_schedule = data.selected_schedule;
             let route = selected_schedule.route;
 
-            trips[managerId][scheduleId] = data;
-            socket.to(socket.id).emit('trip-started', {
+            // Ensure trips[managerId] is initialized before adding the schedule
+            if (!trips[managerId]) {
+                trips[managerId] = {};
+            }
+            trips[managerId][scheduleId] = data; // Store trip data
+
+            // Emit socket event back to the client
+            socket.emit('trip-started', {
                 socketId: socket.id,
                 ...data
             });
-
-            let position = {
-                lat: route.from_latitude,
-                lng: route.from_longitude
-            };
 
             let startPosition = {
                 lat: route.from_latitude,
@@ -392,18 +391,19 @@
                 lng: route.to_longitude
             };
 
-            let wayPoints = route.way_points ?? [];
+            let wayPoints = route?.way_points ?? []; // Use optional chaining for safety
 
             console.log('Creating markers for the new trip');
             showSuccess("New Trip has been started: " + scheduleId);
 
             // Ensure map is initialized before setting the center
             if (map) {
-                map.setCenter(position);
+                map.setCenter(startPosition); // Center the map on the start position
             } else {
                 console.error('Map not initialized yet');
             }
 
+            // Create the start and end pins
             const startPin = createPinFromImage(
                 "https://developers.google.com/maps/documentation/javascript/examples/full/images/google_logo_g.svg",
                 "white"
@@ -414,15 +414,25 @@
                 "white"
             );
 
-            markers[scheduleId] = {};
+            // Ensure markers[scheduleId] is initialized before adding individual markers
+            if (!markers[scheduleId]) {
+                markers[scheduleId] = {};
+            }
+
+            // Add start and end markers
             markers[scheduleId]['start'] = createAnimatedMarker(scheduleId, startPosition, map, "Start", startPin
                 .element);
             markers[scheduleId]['end'] = createAnimatedMarker(scheduleId, endPosition, map, "End", endPin.element);
-
         });
+
 
         socket.on("trip-location", (data) => {
             console.log('Data received from client of trips: ', data);
+        });
+
+        socket.on('trip-ended', (data) => {
+            console.log('trip-ended', data);
+            delete trips[data.id];
         });
 
         function createAnimatedMarker(id, position, map, title = "Current Position", content = null) {
