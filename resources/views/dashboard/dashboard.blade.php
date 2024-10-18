@@ -281,6 +281,7 @@
             // Add other bootstrap parameters as needed, using camel case.
         });
     </script>
+    <script src="https://use.fontawesome.com/releases/v6.2.0/js/all.js"></script>
 
     <script>
         let markers = {};
@@ -421,13 +422,21 @@
             // }
 
             socket.on("trip-started", (data) => {
-                console.log('data received from client of trips :  ' + data.socketId, data);
-                let id = data.socketId;
+                console.log('data received from client of trips :  ' +
+                    data);
+                let data = data.selected_schedule;
+                let managerId = data.managerId;
+                let scheduleId = data.id;
                 let route = data.route;
 
+                // let position = {
+                //     lat: data.latitude,
+                //     lng: data.longitude
+                // };
+
                 let position = {
-                    lat: data.latitude,
-                    lng: data.longitude
+                    lat: route.from_latitude,
+                    lng: route.from_longitude
                 };
 
                 let startPosition = {
@@ -442,30 +451,34 @@
 
                 let wayPoints = route.way_points ?? [];
 
-                if (markers[id]) {
-                    console.log('updating marker position with new position');
-                    markers[id].position = new google.maps.LatLng(position.lat, position.lng);
+                // if (markers[scheduleId]) {
+                //     console.log('updating marker position with new position');
+                //     markers[scheduleId].position = new google.maps.LatLng(position.lat, position.lng);
+                //     // calculateAndDisplayRoute(map, position, startPosition, endPosition, wayPoints,
+                //     //     directionsService,
+                //     //     directionsRenderer);
+                // } else {
+                console.log('create markers for the new trip');
+                showSuccess("New Trips has been started" + scheduleId);
+                map.setCenter(position);
+                // markers[scheduleId] = createAnimatedMarker(id, position, map, "Current Position");
+                markers[scheduleId]['start'] = createAnimatedMarker(scheduleId, startPosition, map,
+                    "Start",
+                    startPin.element);
+                markers[scheduleId]['end'] = createAnimatedMarker(scheduleId, endPosition, map,
+                    "End",
+                    endPin.element);
 
-                    // calculateAndDisplayRoute(map, position, startPosition, endPosition, wayPoints,
-                    //     directionsService,
-                    //     directionsRenderer);
+                // console.log('calculating the route with new marker');
+                // calculateAndDisplayRoute(map, position, startPosition, endPosition, wayPoints,
+                //     directionsService,
+                //     directionsRenderer);
+                // }
 
-                } else {
-                    console.log('creating new marker');
-                    showSuccess("New Trips has been started");
-                    map.setCenter(position);
-                    markers[id] = createAnimatedMarker(id, position, map, "Current Position");
-                    // markers[id]['start'] = createAnimatedMarker(id, startPosition, map, "Start Position",
-                    //     startPin.element);
-                    // markers[id]['end'] = createAnimatedMarker(id, endPosition, map, "Start Position",
-                    //     endPin.element);
-
-                    console.log('calculating the route with new marker');
-                    // calculateAndDisplayRoute(map, position, startPosition, endPosition, wayPoints,
-                    //     directionsService,
-                    //     directionsRenderer);
-
-                }
+                socket.emit('trip-started', {
+                    socketId: socket.id,
+                    ...data
+                });
 
             });
         }
