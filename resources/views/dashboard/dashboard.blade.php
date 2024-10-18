@@ -302,11 +302,6 @@
             delete managers[data.id];
         });
 
-        // socket.on('trip-started', (data) => {
-        //     console.log('trip-started', data);
-        //     trips[data.id] = data;
-        // });
-
         socket.on('trip-ended', (data) => {
             console.log('trip-ended', data);
             delete trips[data.id];

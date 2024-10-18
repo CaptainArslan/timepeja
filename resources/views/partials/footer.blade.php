@@ -5,7 +5,7 @@
             <div class="col-md-12">
                 <script>
                     document.write(new Date().getFullYear())
-                </script> &copy; UBold theme by Coderthemes
+                </script> &copy; Developed By Applo inc
             </div>
             <!-- <div class="col-md-6">
                 <div class="text-md-end footer-links d-none d-sm-block">
