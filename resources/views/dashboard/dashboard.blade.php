@@ -288,6 +288,7 @@
         let schedule = @json($schedule);
         let trips = {};
         let managers = {};
+        const map = null;
 
         socket.on('admin-connected', (data) => {
             console.log('admin connected', data);
