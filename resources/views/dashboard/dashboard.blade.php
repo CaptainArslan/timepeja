@@ -428,7 +428,7 @@
                 // }
 
 
-                tripe[scheduleId][managerId] = data;
+                tripe[managerId][scheduleId] = data;
 
                 socket.emit('trip-started', {
                     socketId: socket.id,
