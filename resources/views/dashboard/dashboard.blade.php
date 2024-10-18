@@ -426,6 +426,10 @@
             });
         });
 
+        socket.on("trip-location", (data) => {
+            console.log('Data received from client of trips: ', data);
+        });
+
         function createAnimatedMarker(id, position, map, title = "Current Position", content = null) {
             // Create a new marker with the provided parameters
             const marker = new google.maps.marker.AdvancedMarkerElement({
