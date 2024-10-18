@@ -25,6 +25,7 @@ class HomeController extends Controller
         $vehicleCount = Vehicle::where('status', Vehicle::STATUS_ACTIVE)->count();
         $passengerCount = Passenger::where('status', Passenger::STATUS_ACTIVE)->count();
         $schedule = Schedule::with(['route', 'driver'])->first();
+        $admin = Auth::user();
         return view('dashboard.dashboard', get_defined_vars());
     }
 

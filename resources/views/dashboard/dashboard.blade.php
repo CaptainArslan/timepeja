@@ -239,7 +239,12 @@
 @endsection
 
 @section('page_js')
+
     <script src="{{ asset('js/socketclient.js') }}"></script>
+    <script>
+        let admin = @json($admin);
+        socket.emit('admin-connected', admin);
+    </script>
     <script>
         (g => {
             var h, a, k, p = "The Google Maps JavaScript API",
@@ -277,11 +282,38 @@
         let markers = {};
         let routePath = {};
         let schedule = @json($schedule);
+        let trips = {};
+        let managers = {};
+
+        socket.on('admin-connected', (data) => {
+            console.log('admin connected', data);
+        });
+
+        socket.on('manager-connected', (data) => {
+            console.log('manager connected', data);
+            managers[data.id] = data;
+        });
+
+        socket.on('manager-disconnected', (data) => {
+            console.log('manager disconnected', data);
+            delete managers[data.id];
+        });
+
+        socket.on('trip-started', (data) => {
+            console.log('trip-started', data);
+            trips[data.id] = data;
+        });
+
+        socket.on('trip-ended', (data) => {
+            console.log('trip-ended', data);
+            delete trips[data.id];
+        });
 
         let initialLocation = {
             lat: 32.1955303,
             lng: 74.202066
         };
+
         let options = {
             address: "215 Emily St, MountainView, CA",
             description: "Single family house with modern design",
@@ -342,56 +374,56 @@
                 "white"
             );
 
-            // if (navigator.geolocation) {
-            //     navigator.geolocation.watchPosition(
-            //         (position) => {
-            //             // Success callback
-            //             const {
-            //                 latitude,
-            //                 longitude
-            //             } = position.coords;
-            //             document.getElementById("location-latlong").innerText =
-            //                 `Lat: ${latitude}, Long: ${longitude}`;
+            if (navigator.geolocation) {
+                navigator.geolocation.watchPosition(
+                    (position) => {
+                        // Success callback
+                        const {
+                            latitude,
+                            longitude
+                        } = position.coords;
+                        document.getElementById("location-latlong").innerText =
+                            `Lat: ${latitude}, Long: ${longitude}`;
 
-            //             // Emit location data
-            //             socket.emit("location", {
-            //                 socket_id: socket.id,
-            //                 latitude,
-            //                 longitude,
-            //                 ...schedule
-            //             });
-            //         },
-            //         (error) => {
-            //             // Error callback
-            //             let errorMessage;
-            //             switch (error.code) {
-            //                 case error.PERMISSION_DENIED:
-            //                     errorMessage = "User denied the request for Geolocation.";
-            //                     break;
-            //                 case error.POSITION_UNAVAILABLE:
-            //                     errorMessage = "Location information is unavailable.";
-            //                     break;
-            //                 case error.TIMEOUT:
-            //                     errorMessage = "The request to get user location timed out.";
-            //                     break;
-            //                 case error.UNKNOWN_ERROR:
-            //                     errorMessage = "An unknown error occurred.";
-            //                     break;
-            //             }
-            //             console.error("Error getting location data: " + errorMessage);
-            //         }, {
-            //             enableHighAccuracy: true, // Use high accuracy if available
-            //             timeout: 10000, // Timeout for obtaining the location
-            //             maximumAge: 0 // Do not use cached location
-            //         }
-            //     );
-            // } else {
-            //     alert("Geolocation is not supported by this browser.");
-            // }
+                        // Emit location data
+                        socket.emit("trip-started", {
+                            socketId: socket.id,
+                            latitude,
+                            longitude,
+                            ...schedule
+                        });
+                    },
+                    (error) => {
+                        // Error callback
+                        let errorMessage;
+                        switch (error.code) {
+                            case error.PERMISSION_DENIED:
+                                errorMessage = "User denied the request for Geolocation.";
+                                break;
+                            case error.POSITION_UNAVAILABLE:
+                                errorMessage = "Location information is unavailable.";
+                                break;
+                            case error.TIMEOUT:
+                                errorMessage = "The request to get user location timed out.";
+                                break;
+                            case error.UNKNOWN_ERROR:
+                                errorMessage = "An unknown error occurred.";
+                                break;
+                        }
+                        console.error("Error getting location data: " + errorMessage);
+                    }, {
+                        enableHighAccuracy: true, // Use high accuracy if available
+                        timeout: 10000, // Timeout for obtaining the location
+                        maximumAge: 0 // Do not use cached location
+                    }
+                );
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
 
-            socket.on("location", (data) => {
-                console.log('data received from client:  ' + data.socket_id, data);
-                let id = data.socket_id;
+            socket.on("trip-started", (data) => {
+                console.log('data received from client:  ' + data.socketId, data);
+                let id = data.socketId;
                 let route = data.route;
 
                 let position = {
@@ -556,7 +588,6 @@
             });
         }
 
-
         function toggleHighlight(markerView, property) {
             if (markerView.content.classList.contains("highlight")) {
                 markerView.content.classList.remove("highlight");
@@ -600,6 +631,7 @@
                 `;
             return content;
         }
+
         initMap();
     </script>
 @endsection
