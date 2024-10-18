@@ -371,6 +371,12 @@
             let selected_schedule = data.selected_schedule;
             let route = selected_schedule.route;
 
+            trips[managerId][scheduleId] = data;
+            socket.to(socket.id).emit('trip-started', {
+                socketId: socket.id,
+                ...data
+            });
+
             let position = {
                 lat: route.from_latitude,
                 lng: route.from_longitude
@@ -413,17 +419,6 @@
                 .element);
             markers[scheduleId]['end'] = createAnimatedMarker(scheduleId, endPosition, map, "End", endPin.element);
 
-            // Save trip data
-            if (!tripe[managerId]) {
-                tripe[managerId] = {};
-            }
-            tripe[managerId][scheduleId] = data;
-
-            // Emit socket event back to the server
-            socket.emit('trip-started', {
-                socketId: socket.id,
-                ...data
-            });
         });
 
         socket.on("trip-location", (data) => {
