@@ -374,53 +374,6 @@
                 "white"
             );
 
-            // if (navigator.geolocation) {
-            //     navigator.geolocation.watchPosition(
-            //         (position) => {
-            //             // Success callback
-            //             const {
-            //                 latitude,
-            //                 longitude
-            //             } = position.coords;
-            //             document.getElementById("location-latlong").innerText =
-            //                 `Lat: ${latitude}, Long: ${longitude}`;
-
-            //             // Emit location data
-            //             socket.emit("trip-started", {
-            //                 socketId: socket.id,
-            //                 latitude,
-            //                 longitude,
-            //                 ...schedule
-            //             });
-            //         },
-            //         (error) => {
-            //             // Error callback
-            //             let errorMessage;
-            //             switch (error.code) {
-            //                 case error.PERMISSION_DENIED:
-            //                     errorMessage = "User denied the request for Geolocation.";
-            //                     break;
-            //                 case error.POSITION_UNAVAILABLE:
-            //                     errorMessage = "Location information is unavailable.";
-            //                     break;
-            //                 case error.TIMEOUT:
-            //                     errorMessage = "The request to get user location timed out.";
-            //                     break;
-            //                 case error.UNKNOWN_ERROR:
-            //                     errorMessage = "An unknown error occurred.";
-            //                     break;
-            //             }
-            //             console.error("Error getting location data: " + errorMessage);
-            //         }, {
-            //             enableHighAccuracy: true, // Use high accuracy if available
-            //             timeout: 10000, // Timeout for obtaining the location
-            //             maximumAge: 0 // Do not use cached location
-            //         }
-            //     );
-            // } else {
-            //     alert("Geolocation is not supported by this browser.");
-            // }
-
             socket.on("trip-started", (data) => {
                 console.log('data received from client of trips :  ' +
                     data);
@@ -468,12 +421,14 @@
                 markers[scheduleId]['end'] = createAnimatedMarker(scheduleId, endPosition, map,
                     "End",
                     endPin.element);
-
                 // console.log('calculating the route with new marker');
                 // calculateAndDisplayRoute(map, position, startPosition, endPosition, wayPoints,
                 //     directionsService,
                 //     directionsRenderer);
                 // }
+
+
+                tripe[scheduleId][managerId] = data;
 
                 socket.emit('trip-started', {
                     socketId: socket.id,
