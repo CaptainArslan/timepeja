@@ -363,7 +363,7 @@
             console.log('trip received from client of trips: ', trip);
             let managerId = trip.managerId;
             let scheduleId = trip.selected_schedule.id;
-            let route = trip.selected_schedule.route;
+            let route = trip.selected_schedule.routes;
 
             // Ensure trips[managerId] is initialized before adding the schedule
             if (!trips[managerId]) {
