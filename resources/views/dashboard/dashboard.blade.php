@@ -366,10 +366,10 @@
         // Listen for socket events outside of the async function
         socket.on("trip-started", (data) => {
             console.log('Data received from client of trips: ', data);
-            data = data.selected_schedule;
             let managerId = data.managerId;
             let scheduleId = data.id;
-            let route = data.route;
+            let selected_schedule = data.selected_schedule;
+            let route = selected_schedule.route;
 
             let position = {
                 lat: route.from_latitude,
