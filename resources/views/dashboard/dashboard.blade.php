@@ -422,7 +422,7 @@
             // }
 
             socket.on("trip-started", (data) => {
-                console.log('data received from client:  ' + data.socketId, data);
+                console.log('data received from client of trips :  ' + data.socketId, data);
                 let id = data.socketId;
                 let route = data.route;
 
