@@ -346,7 +346,7 @@
                 AdvancedMarkerElement
             } = await google.maps.importLibrary("marker");
 
-            const map = new Map(document.getElementById("map"), {
+            map = new Map(document.getElementById("map"), {
                 center: {
                     lat: initialLocation.lat,
                     lng: initialLocation.lng
@@ -357,12 +357,46 @@
             });
 
             // Get directions between starting and ending points
-            const directionsService = new google.maps.DirectionsService();
-            const directionsRenderer = new google.maps.DirectionsRenderer({
+            directionsService = new google.maps.DirectionsService();
+            directionsRenderer = new google.maps.DirectionsRenderer({
                 map: map,
             });
+        }
 
-            // const currentPin = createPinFromImage();
+        // Listen for socket events outside of the async function
+        socket.on("trip-started", (data) => {
+            console.log('Data received from client of trips: ', data);
+            data = data.selected_schedule;
+            let managerId = data.managerId;
+            let scheduleId = data.id;
+            let route = data.route;
+
+            let position = {
+                lat: route.from_latitude,
+                lng: route.from_longitude
+            };
+
+            let startPosition = {
+                lat: route.from_latitude,
+                lng: route.from_longitude
+            };
+
+            let endPosition = {
+                lat: route.to_latitude,
+                lng: route.to_longitude
+            };
+
+            let wayPoints = route.way_points ?? [];
+
+            console.log('Creating markers for the new trip');
+            showSuccess("New Trip has been started: " + scheduleId);
+
+            // Ensure map is initialized before setting the center
+            if (map) {
+                map.setCenter(position);
+            } else {
+                console.error('Map not initialized yet');
+            }
 
             const startPin = createPinFromImage(
                 "https://developers.google.com/maps/documentation/javascript/examples/full/images/google_logo_g.svg",
@@ -374,68 +408,23 @@
                 "white"
             );
 
-            socket.on("trip-started", (data) => {
-                console.log('data received from client of trips :  ' +
-                    data);
-                data = data.selected_schedule;
-                let managerId = data.managerId;
-                let scheduleId = data.id;
-                let route = data.route;
+            markers[scheduleId] = {};
+            markers[scheduleId]['start'] = createAnimatedMarker(scheduleId, startPosition, map, "Start", startPin
+                .element);
+            markers[scheduleId]['end'] = createAnimatedMarker(scheduleId, endPosition, map, "End", endPin.element);
 
-                // let position = {
-                //     lat: data.latitude,
-                //     lng: data.longitude
-                // };
+            // Save trip data
+            if (!tripe[managerId]) {
+                tripe[managerId] = {};
+            }
+            tripe[managerId][scheduleId] = data;
 
-                let position = {
-                    lat: route.from_latitude,
-                    lng: route.from_longitude
-                };
-
-                let startPosition = {
-                    lat: route.from_latitude,
-                    lng: route.from_longitude
-                };
-
-                let endPosition = {
-                    lat: route.to_latitude,
-                    lng: route.to_longitude
-                };
-
-                let wayPoints = route.way_points ?? [];
-
-                // if (markers[scheduleId]) {
-                //     console.log('updating marker position with new position');
-                //     markers[scheduleId].position = new google.maps.LatLng(position.lat, position.lng);
-                //     // calculateAndDisplayRoute(map, position, startPosition, endPosition, wayPoints,
-                //     //     directionsService,
-                //     //     directionsRenderer);
-                // } else {
-                console.log('create markers for the new trip');
-                showSuccess("New Trips has been started" + scheduleId);
-                map.setCenter(position);
-                // markers[scheduleId] = createAnimatedMarker(id, position, map, "Current Position");
-                markers[scheduleId]['start'] = createAnimatedMarker(scheduleId, startPosition, map,
-                    "Start",
-                    startPin.element);
-                markers[scheduleId]['end'] = createAnimatedMarker(scheduleId, endPosition, map,
-                    "End",
-                    endPin.element);
-                // console.log('calculating the route with new marker');
-                // calculateAndDisplayRoute(map, position, startPosition, endPosition, wayPoints,
-                //     directionsService,
-                //     directionsRenderer);
-                // }
-
-                tripe[managerId][scheduleId] = data;
-
-                socket.emit('trip-started', {
-                    socketId: socket.id,
-                    ...data
-                });
-
+            // Emit socket event back to the server
+            socket.emit('trip-started', {
+                socketId: socket.id,
+                ...data
             });
-        }
+        });
 
         function createAnimatedMarker(id, position, map, title = "Current Position", content = null) {
             // Create a new marker with the provided parameters
