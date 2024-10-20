@@ -281,22 +281,15 @@
         let schedule = @json($schedule);
         let trips = {};
         let managers = {};
-
         let admin = @json($admin);
 
-
-
-
         socket.on('manager-connected', (data) => {
-            console.log('manager connected', data);
             managers[data.id] = data;
         });
 
         socket.on('manager-disconnected', (data) => {
-            console.log('manager disconnected', data);
             delete managers[data.id];
         });
-
 
         let initialLocation = {
             lat: 32.1955303,
@@ -364,7 +357,9 @@
         // Listen for socket events outside of the async function
         // Socket event listener
         socket.on("trip-started", (trip) => {
-            console.log('trip received from client of trips: ', trip);
+
+            console.log('All trips: ', trips);
+            console.log('trip statrted from client of trips: ', trip);
             let managerId = trip.managerId;
             let scheduleId = trip.selected_schedule.id;
             let route = trip.selected_schedule.routes;
@@ -374,6 +369,11 @@
                 trips[managerId] = {};
             }
             trips[managerId][scheduleId] = trip; // Store trip data
+
+            let currentPosition = {
+                lat: trip.latitude,
+                lng: trip.longitude
+            };
 
             let startPosition = {
                 lat: route.from_latitude,
@@ -386,8 +386,6 @@
             };
 
             let wayPoints = route?.way_points ?? []; // Use optional chaining for safety
-
-            console.log('Creating markers for the new trip');
             showSuccess("New Trip has been started: " + scheduleId);
 
             // Ensure map is initialized before setting the center
@@ -413,43 +411,139 @@
                 markers[scheduleId] = {};
             }
 
-            markers[scheduleId]['current'] = createAnimatedMarker(scheduleId, startPosition, map, "Start", startPin
-                .element);
+            markers[scheduleId]['current'] = createMarker(currentPosition, map, "Current Location");
+
+            if (map) {
+                map.setCenter(currentPosition);
+            } else {
+                console.error('Map not initialized yet');
+            }
+
             // Add start and end markers
-            markers[scheduleId]['start'] = createAnimatedMarker(scheduleId, startPosition, map, "Start", startPin
+            markers[scheduleId]['start'] = createAnimatedMarker(startPosition, map, "Start", startPin
                 .element);
-            markers[scheduleId]['end'] = createAnimatedMarker(scheduleId, endPosition, map, "End", endPin.element);
+            markers[scheduleId]['end'] = createAnimatedMarker(endPosition, map, "End", endPin.element);
         });
 
         socket.on("trip-location", (trip) => {
-            console.log('Trip current location: ', trip);
             let managerId = trip.managerId;
             let scheduleId = trip.selected_schedule.id;
             let route = trip.selected_schedule.routes;
+
+            // Create the start and end pins
+            const startPin = createPinFromImage(
+                "https://developers.google.com/maps/documentation/javascript/examples/full/images/google_logo_g.svg",
+                "white"
+            );
+
+            const endPin = createPinFromImage(
+                "https://developers.google.com/maps/documentation/javascript/examples/full/images/google_logo_g.svg",
+                "white"
+            );
 
             let currentPosition = {
                 lat: trip.latitude,
                 lng: trip.longitude
             };
 
+            let startPosition = {
+                lat: route.from_latitude,
+                lng: route.from_longitude
+            };
+
+            let endPosition = {
+                lat: route.to_latitude,
+                lng: route.to_longitude
+            };
+
             let wayPoints = route?.way_points ?? []; // Use optional chaining for safety
-
-            // update marker position
+            // Check if the schedule already has markers
             if (markers[scheduleId]) {
-                markers[scheduleId]['current'].setPosition(currentPosition);
-            }
+                // map.setCenter(currentPosition);
+                // Update current marker position if it exists
+                if (markers[scheduleId]['current']) {
+                    console.log('latest location received from client:', trip);
+                    if (map) {
+                        map.setCenter(currentPosition); // Center the map on the start position
+                    } else {
+                        console.error('Map not initialized yet');
+                    }
 
-            console.log('Creating markers for the new trip');
-            showSuccess("New Trip has been started: " + scheduleId);
+                    console.log('current marker:', markers[scheduleId]);
+
+                    // Update the existing marker's position
+                    markers[scheduleId]['current'].setPosition(new google.maps.LatLng(currentPosition.lat,
+                        currentPosition.lng));
+
+                } else {
+                    console.error('No current marker found for scheduleId:', scheduleId);
+                    // Create the current location marker if it doesn't exist
+                    markers[scheduleId]['current'] = createMarker(currentPosition, map, "Current Location");
+                }
+
+                // Update start and end markers if they exist, otherwise create them
+                if (!markers[scheduleId]['start']) {
+                    markers[scheduleId]['start'] = createAnimatedMarker(startPosition, map, "Start",
+                        startPin.element);
+                }
+                if (!markers[scheduleId]['end']) {
+                    markers[scheduleId]['end'] = createAnimatedMarker(endPosition, map, "End", endPin
+                        .element);
+                }
+            } else {
+                // If no markers for this schedule, initialize and create all markers
+                markers[scheduleId] = {};
+                // Create current, start, and end markers
+                markers[scheduleId]['current'] = createAnimatedMarker(currentPosition, map,
+                    "Current Location",
+                    startPin.element);
+                markers[scheduleId]['start'] = createAnimatedMarker(startPosition, map, "Start",
+                    startPin.element);
+                markers[scheduleId]['end'] = createAnimatedMarker(endPosition, map, "End", endPin
+                    .element);
+            }
         });
 
         socket.on('trip-ended', (data) => {
-            console.log('trip-ended', data);
-            delete trips[data.id];
+            let scheduleId = data.id; // Assuming data.id contains the schedule/trip ID
+
+            // Check if there are markers for the trip in the `markers` object
+            if (markers[scheduleId]) {
+                console.log(`Removing markers for schedule: ${scheduleId}`);
+
+                // Remove all markers associated with this trip
+                if (markers[scheduleId]['current']) {
+                    markers[scheduleId]['current'].setMap(null);
+                }
+                if (markers[scheduleId]['start']) {
+                    markers[scheduleId]['start'].setMap(null);
+                }
+                if (markers[scheduleId]['end']) {
+                    markers[scheduleId]['end'].setMap(null);
+                }
+
+                // Delete the markers from the markers object
+                delete markers[scheduleId];
+            } else {
+                console.error(`No markers found for schedule: ${scheduleId}`);
+            }
+
+            // Remove the trip from the `trips` object
+            if (trips[scheduleId]) {
+                delete trips[scheduleId];
+            } else {
+                console.error(`No trip found with ID: ${scheduleId}`);
+            }
+
+            // Emit a new socket event acknowledging that the trip has ended
+            socket.emit('trip-ended-acknowledged', {
+                scheduleId: scheduleId,
+                message: `Trip ${scheduleId} has been successfully ended and markers removed.`
+            });
         });
 
-        function createAnimatedMarker(id, position, map, title = "Current Position", content = null) {
-            // Create a new marker with the provided parameters
+        function createAnimatedMarker(position, map, title = "Current Position", content = null) {
+            // Create a new marker with the provided parameters and assign a unique id
             const marker = new google.maps.marker.AdvancedMarkerElement({
                 map,
                 position: position,
@@ -487,21 +581,24 @@
             return marker;
         }
 
+
         function createMarker(position, map, title, content) {
             // Create a new marker with the provided parameters
             const marker = new google.maps.marker.AdvancedMarkerElement({
                 map: map,
                 position: position,
                 title: title,
-                content: content,
+                content: content ?? buildContent(options),
             });
 
             // Optionally, add a click event listener to the marker
             marker.addListener("click", () => {
                 alert(`${title} marker clicked!`);
+                toggleHighlight(marker, options);
             });
 
             return marker;
+
         }
 
         function removeMarker(id) {
