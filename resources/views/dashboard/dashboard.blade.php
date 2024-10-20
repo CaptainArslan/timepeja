@@ -283,14 +283,9 @@
         let managers = {};
 
         let admin = @json($admin);
-        socket.emit('admin-connected', {
-            socketId: socket.id,
-            ...admin
-        });
 
-        socket.on('admin-connected', (data) => {
-            console.log('admin connected', data);
-        });
+
+
 
         socket.on('manager-connected', (data) => {
             console.log('manager connected', data);
@@ -355,7 +350,16 @@
             directionsRenderer = new google.maps.DirectionsRenderer({
                 map: map,
             });
+
+            socket.emit('admin-connected', {
+                socketId: socket.id,
+                ...admin
+            });
         }
+
+        socket.on('admin-connected', (data) => {
+            console.log('admin connected', data);
+        });
 
         // Listen for socket events outside of the async function
         // Socket event listener
@@ -369,7 +373,7 @@
             if (!trips[managerId]) {
                 trips[managerId] = {};
             }
-            trips[managerId][scheduleId] = data; // Store trip data
+            trips[managerId][scheduleId] = trip; // Store trip data
 
             let startPosition = {
                 lat: route.from_latitude,
@@ -409,14 +413,34 @@
                 markers[scheduleId] = {};
             }
 
+            markers[scheduleId]['current'] = createAnimatedMarker(scheduleId, startPosition, map, "Start", startPin
+                .element);
             // Add start and end markers
             markers[scheduleId]['start'] = createAnimatedMarker(scheduleId, startPosition, map, "Start", startPin
                 .element);
             markers[scheduleId]['end'] = createAnimatedMarker(scheduleId, endPosition, map, "End", endPin.element);
         });
 
-        socket.on("trip-location", (data) => {
-            console.log('Data received from client of trips: ', data);
+        socket.on("trip-location", (trip) => {
+            console.log('Trip current location: ', trip);
+            let managerId = trip.managerId;
+            let scheduleId = trip.selected_schedule.id;
+            let route = trip.selected_schedule.routes;
+
+            let currentPosition = {
+                lat: trip.latitude,
+                lng: trip.longitude
+            };
+
+            let wayPoints = route?.way_points ?? []; // Use optional chaining for safety
+
+            // update marker position
+            if (markers[scheduleId]) {
+                markers[scheduleId]['current'].setPosition(currentPosition);
+            }
+
+            console.log('Creating markers for the new trip');
+            showSuccess("New Trip has been started: " + scheduleId);
         });
 
         socket.on('trip-ended', (data) => {
