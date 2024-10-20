@@ -48,6 +48,9 @@
             animation: drop 0.3s linear forwards var(--delay-time);
         }
     </style>
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+
     <style>
         :root {
             --building-color: #FF9800;
@@ -241,6 +244,7 @@
 @section('page_js')
 
     <script src="{{ asset('js/socketclient.js') }}"></script>
+    <script src="https://use.fontawesome.com/releases/v6.2.0/js/all.js"></script>
     <script>
         (g => {
             var h, a, k, p = "The Google Maps JavaScript API",
@@ -273,7 +277,6 @@
             // Add other bootstrap parameters as needed, using camel case.
         });
     </script>
-    <script src="https://use.fontawesome.com/releases/v6.2.0/js/all.js"></script>
 
     <script>
         let markers = {};
@@ -296,19 +299,24 @@
             lng: 74.202066
         };
 
-        let options = {
+        let infoWindoowoptions = {
             address: "215 Emily St, MountainView, CA",
             description: "Single family house with modern design",
-            price: "$ 3,889,000",
-            type: "home",
-            bed: 5,
-            bath: 4.5,
-            size: 300,
-            position: {
-                lat: 32.1955303,
-                lng: 74.202066
-            },
+            type: "bus",
+            driver: "John Doe",
+            route: 0,
+            size: 1,
         };
+
+        let labelOptions = {
+            text: "\ue530", // codepoint from https://fonts.google.com/icons
+            fontFamily: "Material Icons",
+            color: "#ffffff",
+            fontSize: "20px",
+        };
+
+        const labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        let labelIndex = 0;
 
         const intersectionObserver = new IntersectionObserver((entries) => {
             for (const entry of entries) {
@@ -363,6 +371,7 @@
             let managerId = trip.managerId;
             let scheduleId = trip.selected_schedule.id;
             let route = trip.selected_schedule.routes;
+            let driver = trip.selected_schedule.driver;
 
             // Ensure trips[managerId] is initialized before adding the schedule
             if (!trips[managerId]) {
@@ -411,7 +420,18 @@
                 markers[scheduleId] = {};
             }
 
-            markers[scheduleId]['current'] = createMarker(currentPosition, map, "Current Location");
+            infoWindoowoptions = {
+                address: route.name,
+                description: route.name,
+                type: "bus",
+                driver: trip.selected_schedule.drivers,
+                route: route,
+                size: 1,
+            };
+
+            markers[scheduleId]['current'] = createMarker(currentPosition, map, "Current Location",
+                infoWindoowoptions,
+                labelOptions);
 
             if (map) {
                 map.setCenter(currentPosition);
@@ -420,12 +440,26 @@
             }
 
             // Add start and end markers
-            markers[scheduleId]['start'] = createAnimatedMarker(startPosition, map, "Start", startPin
-                .element);
-            markers[scheduleId]['end'] = createAnimatedMarker(endPosition, map, "End", endPin.element);
+            markers[scheduleId]['start'] = createMarker(startPosition, map, "Start", infoWindoowoptions, {
+                text: "\ue88a",
+                fontFamily: "Material Icons",
+                color: "#ffffff",
+                fontSize: "20px",
+            });
+            markers[scheduleId]['end'] = createMarker(endPosition, map, "End", infoWindoowoptions, {
+                text: "\ue7f1",
+                fontFamily: "Material Icons",
+                color: "#ffffff",
+                fontSize: "20px",
+            });
+
+            // calculateAndDisplayRoute(map, currentPosition, startPosition, endPosition, wayPoints,
+            //     directionsService, directionsRenderer);
+
         });
 
         socket.on("trip-location", (trip) => {
+            console.log('trip location received from client:', trip);
             let managerId = trip.managerId;
             let scheduleId = trip.selected_schedule.id;
             let route = trip.selected_schedule.routes;
@@ -456,53 +490,79 @@
                 lng: route.to_longitude
             };
 
+            infoWindoowoptions = {
+                address: route.name,
+                description: route.name,
+                type: "bus",
+                driver: trip.selected_schedule.drivers,
+                route: route,
+                size: 1,
+            };
+
             let wayPoints = route?.way_points ?? []; // Use optional chaining for safety
+
             // Check if the schedule already has markers
             if (markers[scheduleId]) {
-                // map.setCenter(currentPosition);
                 // Update current marker position if it exists
                 if (markers[scheduleId]['current']) {
-                    console.log('latest location received from client:', trip);
-                    if (map) {
-                        map.setCenter(currentPosition); // Center the map on the start position
-                    } else {
-                        console.error('Map not initialized yet');
-                    }
-
-                    console.log('current marker:', markers[scheduleId]);
+                    console.log('latest location received from client:', trip, markers[scheduleId]['current']);
 
                     // Update the existing marker's position
                     markers[scheduleId]['current'].setPosition(new google.maps.LatLng(currentPosition.lat,
                         currentPosition.lng));
-
                 } else {
                     console.error('No current marker found for scheduleId:', scheduleId);
                     // Create the current location marker if it doesn't exist
-                    markers[scheduleId]['current'] = createMarker(currentPosition, map, "Current Location");
+                    markers[scheduleId]['current'] = createMarker(currentPosition, map, "Current Location",
+                        infoWindoowoptions,
+                        labelOptions);
+
                 }
 
                 // Update start and end markers if they exist, otherwise create them
                 if (!markers[scheduleId]['start']) {
-                    markers[scheduleId]['start'] = createAnimatedMarker(startPosition, map, "Start",
-                        startPin.element);
+                    markers[scheduleId]['start'] = createMarker(startPosition, map, "Start", infoWindoowoptions, {
+                        text: "\ue88a",
+                        fontFamily: "Material Icons",
+                        color: "#ffffff",
+                        fontSize: "20px",
+                    });
+                    // markers[scheduleId]['start'] = createMarker(startPosition, map, "Start", startPin
+                    //     .element);
                 }
                 if (!markers[scheduleId]['end']) {
-                    markers[scheduleId]['end'] = createAnimatedMarker(endPosition, map, "End", endPin
-                        .element);
+                    markers[scheduleId]['end'] = createMarker(endPosition, map, "End", infoWindoowoptions, {
+                        text: "\ue7f1",
+                        fontFamily: "Material Icons",
+                        color: "#ffffff",
+                        fontSize: "20px",
+                    });
                 }
             } else {
                 // If no markers for this schedule, initialize and create all markers
                 markers[scheduleId] = {};
                 // Create current, start, and end markers
-                markers[scheduleId]['current'] = createAnimatedMarker(currentPosition, map,
-                    "Current Location",
-                    startPin.element);
-                markers[scheduleId]['start'] = createAnimatedMarker(startPosition, map, "Start",
-                    startPin.element);
-                markers[scheduleId]['end'] = createAnimatedMarker(endPosition, map, "End", endPin
-                    .element);
+                markers[scheduleId]['current'] = createMarker(currentPosition, map, "Current Location",
+                    infoWindoowoptions, labelOptions);
+                markers[scheduleId]['start'] = createMarker(startPosition, map, "Start", infoWindoowoptions, {
+                    text: "\ue88a",
+                    fontFamily: "Material Icons",
+                    color: "#ffffff",
+                    fontSize: "20px",
+                });
+                markers[scheduleId]['end'] = createMarker(endPosition, map, "End", infoWindoowoptions, {
+                    text: "\ue7f1",
+                    fontFamily: "Material Icons",
+                    color: "#ffffff",
+                    fontSize: "20px",
+                });
+
+                // calculate the route
+                // calculateAndDisplayRoute(map, currentPosition, startPosition, endPosition, wayPoints,
+                //     directionsService, directionsRenderer);
             }
         });
+
 
         socket.on('trip-ended', (data) => {
             let scheduleId = data.id; // Assuming data.id contains the schedule/trip ID
@@ -548,12 +608,11 @@
                 map,
                 position: position,
                 title: title,
-                content: content ?? buildContent(options),
             });
 
             // Add a click event listener to the marker
             marker.addListener("click", () => {
-                toggleHighlight(marker, options);
+                toggleHighlight(marker, infoWindoowoptions);
             });
 
             // Handle content animation
@@ -581,24 +640,27 @@
             return marker;
         }
 
-
-        function createMarker(position, map, title, content) {
-            // Create a new marker with the provided parameters
-            const marker = new google.maps.marker.AdvancedMarkerElement({
-                map: map,
+        function createMarker(position, map, title, infoWindoowoptions, label = null) {
+            // Create a new marker using the standard google.maps.Marker class
+            const marker = new google.maps.Marker({
                 position: position,
+                map: map,
+                label: label,
                 title: title,
-                content: content ?? buildContent(options),
             });
 
-            // Optionally, add a click event listener to the marker
+            // Create an info window with custom content
+            const infoWindow = new google.maps.InfoWindow({
+                content: buildContent(infoWindoowoptions)
+            });
+
+            // Add a click event listener to open the info window
             marker.addListener("click", () => {
-                alert(`${title} marker clicked!`);
-                toggleHighlight(marker, options);
+                // Open the info window on marker click
+                infoWindow.open(map, marker);
             });
 
             return marker;
-
         }
 
         function removeMarker(id) {
@@ -663,46 +725,35 @@
         }
 
         function toggleHighlight(markerView, property) {
-            if (markerView.content.classList.contains("highlight")) {
+            if (markerView.content && markerView.content.classList.contains("highlight")) {
                 markerView.content.classList.remove("highlight");
-                markerView.zIndex = null;
+                markerView.setZIndex(null);
             } else {
                 markerView.content.classList.add("highlight");
-                markerView.zIndex = 1;
+                markerView.setZIndex(1);
             }
         }
 
         function buildContent(property) {
+            console.log('property:', property);
             const content = document.createElement("div");
 
-            content.classList.add("property");
+            // content.classList.add("property");
             content.innerHTML = `
                 <div class="icon">
                     <i aria-hidden="true" class="fa fa-icon fa-${property.type}" title="${property.type}"></i>
                     <span class="fa-sr-only">${property.type}</span>
                 </div>
                 <div class="details">
-                    <div class="price">${property.price}</div>
                     <div class="address">${property.address}</div>
                     <div class="features">
-                    <div>
-                        <i aria-hidden="true" class="fa fa-bed fa-lg bed" title="bedroom"></i>
-                        <span class="fa-sr-only">bedroom</span>
-                        <span>${property.bed}</span>
-                    </div>
-                    <div>
-                        <i aria-hidden="true" class="fa fa-bath fa-lg bath" title="bathroom"></i>
-                        <span class="fa-sr-only">bathroom</span>
-                        <span>${property.bath}</span>
-                    </div>
-                    <div>
-                        <i aria-hidden="true" class="fa fa-ruler fa-lg size" title="size"></i>
-                        <span class="fa-sr-only">size</span>
-                        <span>${property.size} ft<sup>2</sup></span>
-                    </div>
+                        <div>
+                            <i class="fa-solid fa-user" title="Driver"></i>
+                            <span>${property.driver.name}</span>
+                        </div>
                     </div>
                 </div>
-                `;
+            `;
             return content;
         }
 

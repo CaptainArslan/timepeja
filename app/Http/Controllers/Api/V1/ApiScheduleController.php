@@ -557,14 +557,14 @@ class ApiScheduleController extends BaseController
             $date = $request->date ?? date('Y-m-d');
 
             $schedule = Schedule::where('o_id', $manager->o_id)
-                ->with('organizations:id,name')
-                ->with('routes:id,name,number,from,from_longitude,from_latitude,to,to_latitude,to_longitude')
+                // ->with('organizations:id,name')
+                // ->with('routes:id,name,number,from,from_longitude,from_latitude,to,to_latitude,to_longitude')
                 ->with('vehicles:id,number')
-                ->with('drivers:id,name')
+                // ->with('drivers:id,name')
                 ->where('status', Schedule::STATUS_PUBLISHED)
                 ->where('date', $date)
                 ->where('trip_status', Schedule::TRIP_STATUS_INPROGRESS)
-                ->paginate(getPaginated());
+                ->get();
             return $this->respondWithSuccess($schedule, 'Oganization active schedule', 'ORGANIZATION_ACTIVE_SCHEDULE');
         } catch (\Throwable $th) {
             return $this->respondWithError('Error Occured while fetching organization schedule');
