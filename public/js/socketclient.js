@@ -9,7 +9,7 @@ const socket = io("https://socket-testing.stoppick.com", {
 });
 
 socket.on("connect", () => {
-    console.log("user Connected");
+    // console.log("user Connected");
     // socket.emit("message", "connection request from client");
 });
 
