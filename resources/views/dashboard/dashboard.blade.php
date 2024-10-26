@@ -317,9 +317,6 @@
             fontSize: "20px",
         };
 
-        const labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        let labelIndex = 0;
-
         const intersectionObserver = new IntersectionObserver((entries) => {
             for (const entry of entries) {
                 if (entry.isIntersecting) {
@@ -447,7 +444,6 @@
         });
 
         // Listen for socket events outside of the async function
-        // Socket event listener
         socket.on("trip-started", (trip) => {
             console.log('trip statrted from client of trips: ', trip);
             let managerId = trip.managerId;
