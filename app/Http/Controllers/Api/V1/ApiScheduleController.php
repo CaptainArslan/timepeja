@@ -564,6 +564,7 @@ class ApiScheduleController extends BaseController
                 ->where('status', Schedule::STATUS_PUBLISHED)
                 ->where('date', $date)
                 ->where('trip_status', Schedule::TRIP_STATUS_INPROGRESS)
+                ->select('id','v_id')
                 ->get();
             return $this->respondWithSuccess($schedule, 'Oganization active schedule', 'ORGANIZATION_ACTIVE_SCHEDULE');
         } catch (\Throwable $th) {
