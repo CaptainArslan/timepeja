@@ -49,11 +49,11 @@ class DatabaseSeeder extends Seeder
             RouteSeeder::class,
             VehicleSeeder::class,
             DriverSeeder::class,
-            ScheduleSeeder::class,
+            // ScheduleSeeder::class,
             // TripSeeder::class
             PassengerSeeder::class,
-            RequestSeeder::class,
-            LocationSeeder::class,
+            // RequestSeeder::class,
+            // LocationSeeder::class,
         ]);
     }
 }

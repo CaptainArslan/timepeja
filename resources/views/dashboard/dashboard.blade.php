@@ -539,7 +539,7 @@
         });
 
         socket.on("trip-location", (trip) => {
-            console.log('Current location received from client:');
+            console.log('Current location received from client:', trip);
             let managerId = trip.managerId;
             let scheduleId = trip.selected_schedule.id;
             let route = trip.selected_schedule.routes;
