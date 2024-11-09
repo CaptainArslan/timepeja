@@ -1,3 +1,49 @@
+{{-- <style>
+    /* set the default transition time */
+    :root {
+        --delay-time: .5s;
+    }
+
+    .gmaps {
+        height: 600px;
+    }
+
+
+    @keyframes drop {
+        0% {
+            transform: translateY(-200px) scaleY(0.9);
+            opacity: 0;
+        }
+
+        5% {
+            opacity: 0.7;
+        }
+
+        50% {
+            transform: translateY(0px) scaleY(1);
+            opacity: 1;
+        }
+
+        65% {
+            transform: translateY(-17px) scaleY(0.9);
+            opacity: 1;
+        }
+
+        75% {
+            transform: translateY(-22px) scaleY(0.9);
+            opacity: 1;
+        }
+
+        100% {
+            transform: translateY(0px) scaleY(1);
+            opacity: 1;
+        }
+    }
+
+    .drop {
+        animation: drop 0.3s linear forwards var(--delay-time);
+    }
+</style> --}}
 <div class="row">
     <div class="col-12">
         <div class="page-title-box">
@@ -560,51 +606,136 @@
 <!-- end row -->
 
 
-<script>
-    // if (navigator.geolocation) {
-    //     navigator.geolocation.watchPosition(
-    //         (position) => {
-    //             // Success callback
-    //             const {
-    //                 latitude,
-    //                 longitude
-    //             } = position.coords;
-    //             document.getElementById("location-latlong").innerText =
-    //                 `Lat: ${latitude}, Long: ${longitude}`;
+{{-- <script>
+    if (navigator.geolocation) {
+        navigator.geolocation.watchPosition(
+            (position) => {
+                // Success callback
+                const {
+                    latitude,
+                    longitude
+                } = position.coords;
+                document.getElementById("location-latlong").innerText =
+                    `Lat: ${latitude}, Long: ${longitude}`;
 
-    //             // Emit location data
-    //             socket.emit("trip-started", {
-    //                 socketId: socket.id,
-    //                 latitude,
-    //                 longitude,
-    //                 ...schedule
-    //             });
-    //         },
-    //         (error) => {
-    //             // Error callback
-    //             let errorMessage;
-    //             switch (error.code) {
-    //                 case error.PERMISSION_DENIED:
-    //                     errorMessage = "User denied the request for Geolocation.";
-    //                     break;
-    //                 case error.POSITION_UNAVAILABLE:
-    //                     errorMessage = "Location information is unavailable.";
-    //                     break;
-    //                 case error.TIMEOUT:
-    //                     errorMessage = "The request to get user location timed out.";
-    //                     break;
-    //                 case error.UNKNOWN_ERROR:
-    //                     errorMessage = "An unknown error occurred.";
-    //                     break;
-    //             }
-    //             console.error("Error getting location data: " + errorMessage);
-    //         }, {
-    //             enableHighAccuracy: true, // Use high accuracy if available
-    //             timeout: 10000, // Timeout for obtaining the location
-    //             maximumAge: 0 // Do not use cached location
-    //         }
-    //     );
-    // } else {
-    //     alert("Geolocation is not supported by this browser.");
-    // }
-</script>
+                // Emit location data
+                socket.emit("trip-started", {
+                    socketId: socket.id,
+                    latitude,
+                    longitude,
+                    ...schedule
+                });
+            },
+            (error) => {
+                // Error callback
+                let errorMessage;
+                switch (error.code) {
+                    case error.PERMISSION_DENIED:
+                        errorMessage = "User denied the request for Geolocation.";
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        errorMessage = "Location information is unavailable.";
+                        break;
+                    case error.TIMEOUT:
+                        errorMessage = "The request to get user location timed out.";
+                        break;
+                    case error.UNKNOWN_ERROR:
+                        errorMessage = "An unknown error occurred.";
+                        break;
+                }
+                console.error("Error getting location data: " + errorMessage);
+            }, {
+                enableHighAccuracy: true, // Use high accuracy if available
+                timeout: 10000, // Timeout for obtaining the location
+                maximumAge: 0 // Do not use cached location
+            }
+        );
+    } else {
+        alert("Geolocation is not supported by this browser.");
+    }
+</script> --}}
+
+{{-- <script>
+
+    const intersectionObserver = new IntersectionObserver((entries) => {
+            for (const entry of entries) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("drop");
+                    intersectionObserver.unobserve(entry.target);
+                }
+            }
+        });
+
+    function createAnimatedMarker(position, map, title = "Current Position", content = null) {
+        // Create a new marker with the provided parameters and assign a unique id
+        const marker = new google.maps.marker.AdvancedMarkerElement({
+            map,
+            position: position,
+            title: title,
+        });
+
+        // Add a click event listener to the marker
+        marker.addListener("click", () => {
+            toggleHighlight(marker, infoWindoowoptions);
+        });
+
+        // Handle content animation
+        const markerContent = marker.content;
+
+        if (markerContent) {
+            markerContent.style.opacity = "0";
+
+            markerContent.addEventListener("animationend", () => {
+                markerContent.classList.remove("drop");
+                markerContent.style.opacity = "1";
+            });
+
+            // Set a random delay for the animation
+            const time = 1 + Math.random(); // 1s delay + random for visibility
+            markerContent.style.setProperty("--delay-time", time + "s");
+
+            // Create an IntersectionObserver if needed
+            // Assuming you have a previously defined intersectionObserver
+            if (typeof intersectionObserver !== 'undefined') {
+                intersectionObserver.observe(markerContent);
+            }
+        }
+
+        return marker;
+    }
+</script> --}}
+
+{{-- <script>
+    function removeMarker(id) {
+        if (markers[id]) {
+            markers[id].setMap(null);
+            delete markers[id];
+        }
+    }
+
+    // Draw polyline
+    function drawPolyline($paths = []) {
+        // Create and display a polyline
+        routePath[id] = new google.maps.Polyline({
+
+            path: $paths,
+            geodesic: true,
+            strokeColor: '#FF0000',
+            strokeOpacity: 1.0,
+            strokeWeight: 2,
+            map: map,
+        });
+    }
+</script> --}}
+
+{{-- <script>
+    function toggleHighlight(markerView, property) {
+        if (markerView.content && markerView.content.classList.contains("highlight")) {
+            markerView.content.classList.remove("highlight");
+            markerView.setZIndex(null);
+        } else {
+            markerView.content.classList.add("highlight");
+            markerView.setZIndex(1);
+        }
+    }
+</script> --}}
