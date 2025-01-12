@@ -163,21 +163,21 @@ class Schedule extends Model
         return  $query->where('is_notified', 1);
     }
 
-    public function scopeSearch($query, $search)
-    {
-        return $query->where('date', 'like', '%' . $search . '%')
-            ->orWhere('time', 'like', '%' . $search . '%')
-            ->orWhereHas('organizations', function ($query) use ($search) {
-                $query->where('name', 'like', '%' . $search . '%');
-            })
-            ->orWhereHas('routes', function ($query) use ($search) {
-                $query->where('name', 'like', '%' . $search . '%');
-            })
-            ->orWhereHas('vehicles', function ($query) use ($search) {
-                $query->where('name', 'like', '%' . $search . '%');
-            })
-            ->orWhereHas('drivers', function ($query) use ($search) {
-                $query->where('name', 'like', '%' . $search . '%');
-            });
-    }
+    // public function scopeBySearch($query, $search)
+    // {
+    //     return $query->where('date', 'like', '%' . $search . '%')
+    //         ->orWhere('time', 'like', '%' . $search . '%')
+    //         ->orWhereHas('organizations', function ($query) use ($search) {
+    //             $query->where('name', 'like', '%' . $search . '%');
+    //         })
+    //         ->orWhereHas('routes', function ($query) use ($search) {
+    //             $query->where('name', 'like', '%' . $search . '%');
+    //         })
+    //         ->orWhereHas('vehicles', function ($query) use ($search) {
+    //             $query->where('name', 'like', '%' . $search . '%');
+    //         })
+    //         ->orWhereHas('drivers', function ($query) use ($search) {
+    //             $query->where('name', 'like', '%' . $search . '%');
+    //         });
+    // }
 }
