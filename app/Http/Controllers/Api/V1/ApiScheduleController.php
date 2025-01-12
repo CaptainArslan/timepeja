@@ -545,7 +545,7 @@ class ApiScheduleController extends BaseController
         }
     }
 
-    public function activeVehicle()
+    public function activeVehicle(Request $request)
     {
         try {
             $manager = auth('manager')->user();
@@ -557,10 +557,10 @@ class ApiScheduleController extends BaseController
             $date = $request->date ?? date('Y-m-d');
 
             $schedule = Schedule::where('o_id', $manager->o_id)
+                ->bySearch($request->string)
                 // ->with('organizations:id,name')
                 // ->with('routes:id,name,number,from,from_longitude,from_latitude,to,to_latitude,to_longitude')
                 ->with('vehicles:id,number')
-                // ->with('drivers:id,name')
                 ->where('status', Schedule::STATUS_PUBLISHED)
                 ->where('date', $date)
                 ->where('trip_status', Schedule::TRIP_STATUS_INPROGRESS)
