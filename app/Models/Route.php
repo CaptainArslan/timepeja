@@ -6,6 +6,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Route extends Model
 {
@@ -15,63 +16,34 @@ class Route extends Model
     public const STATUS_ACTIVE = true;
     public const STATUS_INACTIVE = false;
 
-    // for pagination
-    public const ROUTE_LIMIT_PER_PAGE = 10;
-
-    /**
-     * array for fillable
-     *
-     * @var array
-     */
     protected $fillable = [
-        'o_id',
-        'u_id',
+        'organization_id',
         'name',
         'number',
         'from',
-        'from_longitude',
-        'from_latitude',
         'to',
-        'to_longitude',
-        'to_latitude',
         'status',
         'way_points',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array
-     */
     protected $casts = [
-        'o_id' => 'integer',
-        'u_id' => 'integer',
+        'organization_id' => 'integer',
         'number' => 'integer',
         'status' => 'boolean',
-        'from_longitude' => 'float',
-        'from_latitude' => 'float',
-        'to_longitude' => 'float',
-        'to_latitude' => 'float'
+        'from ' => 'array',
+        'to' => 'array',
+        'way_points' => 'array',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'deleted_at'
     ];
 
 
-    /**
-     * organization relation with routes
-     *
-     * @return  [type]  [return description]
-     */
+    // ------------------- Relationships --------------------------------
     public function organization()
     {
-        return $this->belongsTo(Organization::class, 'o_id', 'id');
+        return $this->belongsTo(Organization::class);
     }
 
     public function passengers()
@@ -79,118 +51,47 @@ class Route extends Model
         return $this->belongsToMany(Passenger::class, 'passenger_route');
     }
 
-    // /**
-    //  * organization relation with routes
-    //  *
-    //  * @return  [type]  [return description]
-    //  */
-    // public function organizations()
-    // {
-    //     return $this->belongsTo(Organization::class, 'o_id', 'id');
-    // }
-
-
-
-    // ----------------------------------------------------------------
-    // ------------------ Accessors & Mutator -------------------------
-    // ----------------------------------------------------------------
-
-    /**
-     * Set the name attribute.
-     *
-     * @param  string  $value
-     * @return void
-     */
-    public function setNameAttribute($value)
+    // ------------------- Accessors and Mutators --------------------------------
+    protected function name(): Attribute
     {
-        $this->attributes['name'] = ucwords(strtolower($value));
+        return new Attribute(
+            get: fn($value) => ucwords(strtolower($value)),
+            set: fn($value) => ucwords(strtolower($value)),
+        );
     }
 
-    /**
-     * Get the name attribute.
-     *
-     * @param  string  $value
-     * @return string
-     */
-    public function getNameAttribute($value)
+    protected function from(): Attribute
     {
-        return ucwords(strtolower($value));
+        return new Attribute(
+            get: fn($value) => ucwords(strtolower($value)),
+            set: fn($value) => ucwords(strtolower($value)),
+        );
     }
 
-    /**
-     * Set the from attribute.
-     *
-     * @param  string  $value
-     * @return void
-     */
-    public function setFromAttribute($value)
+    protected function to(): Attribute
     {
-        $this->attributes['from'] = ucwords(strtolower($value));
+        return new Attribute(
+            get: fn($value) => ucwords(strtolower($value)),
+            set: fn($value) => ucwords(strtolower($value)),
+        );
     }
 
-    /**
-     * Get the from attribute.
-     *
-     * @param  string  $value
-     * @return string
-     */
-    public function getFromAttribute($value)
+    protected function createdAt(): Attribute
     {
-        return ucwords(strtolower($value));
+        return new  Attribute(
+            get: fn($value) => Carbon::parse($value)->format('Y-m-d'),
+        );
     }
 
-    /**
-     * Set the to attribute.
-     *
-     * @param  string  $value
-     * @return void
-     */
-    public function setToAttribute($value)
+    protected function updatedAt(): Attribute
     {
-        $this->attributes['to'] = ucwords(strtolower($value));
-    }
-
-    /**
-     * Get the to attribute.
-     *
-     * @param  string  $value
-     * @return string
-     */
-    public function getToAttribute($value)
-    {
-        return ucwords(strtolower($value));
-    }
-
-    /**
-     * Get the created_at.
-     *
-     * @param  string  $value
-     * @return string|null
-     */
-    public function getCreatedAtAttribute($value)
-    {
-        return Carbon::parse($value)->format('Y-m-d');
-    }
-
-    /**
-     * Get the updated_at.
-     *
-     * @param  string  $value
-     * @return string|null
-     */
-    public function getUpdatedAtAttribute($value)
-    {
-        return Carbon::parse($value)->format('Y-m-d');
+        return new Attribute(
+            get: fn($value) => Carbon::parse($value)->format('Y-m-d'),
+        );
     }
 
 
-    public function getWayPointsAttribute($value)
-    {
-        return $value ? json_decode($value, true) : null;
-    }
-
-
-
+    // ------------------- Scopes --------------------------------
     public function scopeByOrganization($query, $organization_id)
     {
         return $query->when($organization_id, function ($query) use ($organization_id) {

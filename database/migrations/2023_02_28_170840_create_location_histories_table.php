@@ -17,21 +17,13 @@ class CreateLocationHistoriesTable extends Migration
     {
         Schema::create('location_histories', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('user_id')->index('user_id')->nullable();
-            $table->unsignedBigInteger('organization_id')->index('organization_id')->nullable();
-            $table->string('name');
-            $table->unsignedBigInteger('passenger_id')->index('passenger_id')->nullable();
-            $table->unsignedBigInteger('vehicle_id')->index('vehicle_id')->nullable();
-            $table->unsignedBigInteger('driver_id')->index('driver_id')->nullable();
+            $table->json('location');
+            $table->foreignId('passenger_id')->nullable()->constrained()->onDelete('cascade');
+            $table->foreignId('vehicle_id')->nullable()->constrained()->onDelete('cascade');
+            $table->foreignId('driver_id')->nullable()->constrained()->onDelete('cascade');
             $table->enum('type', ['vehicle','driver','passenger']);
-            $table->string('latitude');
-            $table->string('longitude');
             $table->timestamps();
             $table->softDeletes();
-            $table->foreign('organization_id')->references('id')->on('organizations')->onUpdate('cascade');
-            $table->foreign('passenger_id')->references('id')->on('passengers')->onUpdate('cascade');
-            $table->foreign('vehicle_id')->references('id')->on('vehicles')->onUpdate('cascade');
-            $table->foreign('driver_id')->references('id')->on('drivers')->onUpdate('cascade');
         });
     }
 

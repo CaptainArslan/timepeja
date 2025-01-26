@@ -10,6 +10,42 @@ class LocationHistory extends Model
     use HasFactory;
 
     protected $fillable = [
-        'u_id', 'o_id', 'name', 'p_id', 'v_id', 'd_id', 'type', 'latitude', 'longitude'
+        'location',
+        'passenger_id',
+        'vehicle_id',
+        'driver_id',
+        'type',
     ];
+
+
+    public function passenger()
+    {
+        return $this->belongsTo(Passenger::class);
+    }
+
+    public function vehicle()
+    {
+        return $this->belongsTo(Vehicle::class);
+    }
+
+    public function driver()
+    {
+        return $this->belongsTo(Driver::class);
+    }
+
+    // ----------------- SCOPES -----------------
+    public function scopePassenger($query)
+    {
+        return $query->where('type', 'passenger');
+    }
+
+    public function scopeVehicle($query)
+    {
+        return $query->where('type', 'vehicle');
+    }
+
+    public function scopeDriver($query)
+    {
+        return $query->where('type', 'driver');
+    }
 }

@@ -19,12 +19,10 @@ class DriverFactory extends Factory
     public function definition()
     {
         return [
-            'o_id' => Organization::inRandomOrder()->first()->id,
-            'u_id' => 1,
+            'organization_id' => Organization::inRandomOrder()->first()->id,
             'name' =>  $this->faker->name(),
             'email' => $this->faker->safeEmail(),
-            // 'password' => Hash::make('12345678'),
-            'password' => '',
+            'password' => Hash::make('12345678A'),
             'phone' => '03' . $this->faker->regexify('/^[0-9+]{2}-[0-9+]{7}$/'),
             'cnic' => $this->faker->regexify('/^[0-9+]{13}$/'),
             'cnic_front_pic' => $this->faker->imageUrl(),
@@ -35,11 +33,10 @@ class DriverFactory extends Factory
             'license_no_back_pic' => $this->faker->imageUrl(),
             'license_expiry_date' => Carbon::now(),
             'otp' => '',
-            // 'token' => Str::random(10),
-            'status' => 1,
+            'status' => Driver::STATUS_ACTIVE,
             'online_status' => $this->faker->randomElement([
-                Driver::STATUS_ONLINE,
-                Driver::STATUS_OFFLINE
+                Driver::ONLINE,
+                Driver::OFFLINE
             ]),
         ];
     }

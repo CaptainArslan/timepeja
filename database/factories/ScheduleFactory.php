@@ -25,18 +25,14 @@ class ScheduleFactory extends Factory
             Schedule::TRIP_ISDELAYED,
             Schedule::TRIP_NOTDELAYED
         ]);
-
         $delayReason = $isDelayed == Schedule::TRIP_ISDELAYED ? $this->faker->sentence() : null;
-
-        // Start with the current time
         $currentDateTime = Carbon::now()->addMinutes(15);
 
         return [
-            'u_id' => 1,
-            'o_id' => Organization::inRandomOrder()->first()->id,
+            'organization_id' => Organization::inRandomOrder()->first()->id,
             'route_id' => Route::inRandomOrder()->first()->id,
-            'v_id' => Vehicle::inRandomOrder()->first()->id,
-            'd_id' => 1,
+            'vehicle_id' => Vehicle::inRandomOrder()->first()->id,
+            'driver_id' => 1,
             'date' => $currentDateTime->toDateString(),
             'time' => $currentDateTime->toTimeString(),
             'status' => $this->faker->randomElement([
@@ -44,14 +40,13 @@ class ScheduleFactory extends Factory
                 Schedule::STATUS_PUBLISHED
             ]),
             'start_time' => $this->faker->time(),
-            'end_time' => '',
+            'end_time' => null,
             'trip_status' => $this->faker->randomElement([
                 Schedule::TRIP_STATUS_UPCOMING,
                 Schedule::TRIP_STATUS_INPROGRESS,
                 Schedule::TRIP_STATUS_COMPLETED,
-
             ]),
-            'is_delay' => $isDelayed,
+            'is_delayed' => $isDelayed,
             'delayed_reason' => $delayReason,
         ];
     }

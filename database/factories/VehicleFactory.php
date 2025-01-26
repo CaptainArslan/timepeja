@@ -3,8 +3,8 @@
 namespace Database\Factories;
 
 use App\Models\Organization;
+use App\Models\Vehicle;
 use App\Models\VehicleType;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class VehicleFactory extends Factory
@@ -17,16 +17,15 @@ class VehicleFactory extends Factory
     public function definition()
     {
         return [
-            'u_id' => 1,
-            'v_type_id' => VehicleType::inRandomOrder()->first()->id,
+            'vehicle_type_id' => VehicleType::inRandomOrder()->first()->id,
             'number' => $this->faker->regexify('[A-Z]{2}[0-9]{2}[A-Z]{2}[0-9]{4}'),
-            'o_id' =>  Organization::inRandomOrder()->first()->id,
+            'organization_id' =>  Organization::inRandomOrder()->first()->id,
             'no_of_seat' => rand(0, 72),
             'front_pic' => $this->faker->imageUrl(),
             'back_pic' => $this->faker->imageUrl(),
             'number_pic' => $this->faker->imageUrl(),
-            'status' => 1,
             'created_at' => $this->faker->time(),
+            'status' => Vehicle::STATUS_ACTIVE,
         ];
     }
 }

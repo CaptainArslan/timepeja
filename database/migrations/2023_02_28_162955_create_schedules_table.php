@@ -16,11 +16,10 @@ class CreateSchedulesTable extends Migration
     {
         Schema::create('schedules', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('u_id')->index('u_id')->nullable();
-            $table->unsignedBigInteger('o_id')->index('o_id')->nullable();
-            $table->unsignedBigInteger('route_id')->index('route_id');
-            $table->unsignedBigInteger('v_id')->index('v_id');
-            $table->unsignedBigInteger('d_id')->index('d_id');
+            $table->foreignId('organization_id')->constrained()->onDelete('cascade');
+            $table->foreignId('route_id')->constrained()->onDelete('cascade');
+            $table->foreignId('vehicle_id')->constrained()->onDelete('cascade');
+            $table->foreignId('driver_id')->constrained()->onDelete('cascade');
             $table->date('date');
             $table->time('time');
             $table->enum('status', [
@@ -29,24 +28,19 @@ class CreateSchedulesTable extends Migration
             ])->default(Schedule::STATUS_DRAFT);
             $table->time('start_time')->nullable();
             $table->time('end_time')->nullable();
-
-            $table->tinyInteger('is_delay')->default(Schedule::TRIP_NOTDELAYED);
-
+            $table->tinyInteger('is_delayed')->default(Schedule::TRIP_NOTDELAYED);
             $table->enum('trip_status', [
                 Schedule::TRIP_STATUS_UPCOMING,
                 Schedule::TRIP_STATUS_INPROGRESS,
                 Schedule::TRIP_STATUS_COMPLETED,
                 Schedule::TRIP_STATUS_DELAYED,
             ])->default(Schedule::TRIP_STATUS_UPCOMING);
+
             $table->boolean('is_notified')->default(false);
-            $table->timestamps();
             $table->text('delayed_reason')->nullable();
+            $table->timestamps();
             $table->softDeletes();
-            // $table->foreign('u_id')->references('id')->on('users')->onUpdate('cascade');
-            $table->foreign('o_id')->references('id')->on('organizations')->onUpdate('cascade');
-            $table->foreign('route_id')->references('id')->on('routes');
-            $table->foreign('v_id')->references('id')->on('vehicles');
-            $table->foreign('d_id')->references('id')->on('drivers');
+
         });
     }
 

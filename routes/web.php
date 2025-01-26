@@ -27,8 +27,7 @@ use App\Http\Controllers\PassengerController;
 |
 */
 
-//User Roles
-// Route::resource('roles', 'RoleController');
+
 Route::get('/', function () {
     return redirect()->route('login');
 });
@@ -163,20 +162,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/profile', [HomeController::class, 'profile'])->name('profile');
     Route::put('/profile/{user}', [HomeController::class, 'updateProfile'])->name('profile.update');
 
-    // Route::get('/pdf', function () {
-    //     return view('pdf.logreport');
-    // });
-
-    // Route::get('/transpot/schedule', function () { return view('manager.transport_scheduled'); })->name('transpot.schedule');
-    // Route::get('/awaiting/approval', function () {
-    //     return view('manager.approval.awaiting_approved_form');
-    // })->name('awaiting.approval');
-    // Route::get('/pastuser', function () {
-    //     return view('manager.approval.pastuser');
-    // })->name('pastuser');
-    // Route::get('/user/disapproved', function () {
-    //     return view('manager.approval.disapproved_user');
-    // })->name('user.disapproved');
 
     Route::get('/user/approval', function () {
         return view('manager.approval.user_approval_form');
@@ -188,21 +173,11 @@ Route::group(['middleware' => 'auth'], function () {
         return view('manager.users.transport_users');
     })->name('transpot.users');
 
-
-    /**
-     * request
-     */
     Route::get('/request', [RequestController::class, 'index'])->name('request');
     Route::get('/request/list', function () {
         return view('request.list');
     })->name('request.list');
 
-
-    // Route::get('/passenger/list', function () { return view('passenger.passenger_list'); })->name('passenger_list');
-
-    /**
-     *
-     */
     Route::get('/trans_routes', function () {
         return view('passenger.trans_routes');
     })->name('trans_routes');
@@ -218,7 +193,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('driver/tripstatus', function () {
         return view('driver.tripstatus');
     })->name('driver.tripstatus');
-    // Route::get('/route', function () { return view('route.index');})->name('route');
+
     Route::get('/revenue', function () {
         return view('report.revenue');
     })->name('revenue');
@@ -226,9 +201,6 @@ Route::group(['middleware' => 'auth'], function () {
         return view('report.expense');
     })->name('expense');
 
-    /**
-     *
-     */
     Route::get('/history/Passenger-to-Passenger', function () {
         return view('history.passenger_to_passenger');
     })->name('bus.passenger');
@@ -239,15 +211,6 @@ Route::group(['middleware' => 'auth'], function () {
         return view('history.customer_trip');
     })->name('customer.trip');
 
-    /**
-     *
-     */
-    Route::get('/modules', function () {
-        return view('admin.modules.index');
-    })->name('modules.index');
-    Route::get('/module-groups', function () {
-        return view('admin.module-groups.index');
-    })->name('module-groups.index');
     Route::get('/roles', function () {
         return view('admin.roles.index');
     })->name('roles.index');

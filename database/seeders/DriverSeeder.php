@@ -17,8 +17,7 @@ class DriverSeeder extends Seeder
     public function run()
     {
         Driver::factory(1)->create([
-            'o_id' => 1,
-            'u_id' => 1,
+            'organization_id' => 1,
             'name' =>  'Muhammad Arslan',
             'email' => 'mughalarslan996@gmail.com',
             'password' => Hash::make('12345678A'),
@@ -33,9 +32,8 @@ class DriverSeeder extends Seeder
             'license_expiry_date' => Carbon::now(),
             'otp' => 1234,
             'status' => 1,
-            'online_status' => Driver::STATUS_ONLINE,
-            'device_token' => 'fLE6PePxTFmDxCzeFeM_H_:APA91bGJWQC2gBwv-wQT8iE3Esn0cRkm6cnLg5WaNj2FJSyTEso6TUuo-5pfcE0EDEqTD1LX_MFBpf7kNxHO-FhgUFHxuGMHk-cZKi1zknP9doMo7GZso89VLBVGfP1Veh80WgFvs-hy'
+            'online_status' => Driver::ONLINE,
+            'device_token' => null,
         ]);
-        // Driver::factory(5)->create();
     }
 }

@@ -6,6 +6,7 @@ use Illuminate\Support\Carbon;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -16,15 +17,13 @@ class Manager extends Authenticatable implements JWTSubject
     use Notifiable;
 
     protected $table = 'managers';
-    // protected $appends = ['picture'];
 
     public const STATUS_ACTIVE = true;
     public const STATUS_INACTIVE = false;
 
     protected $fillable = [
         'id',
-        'u_id',
-        'o_id',
+        'organization_id',
         'name',
         'email',
         'phone',
@@ -38,8 +37,7 @@ class Manager extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $casts = [
-        'o_id' => 'integer',
-        'u_id' => 'integer',
+        'organization_id' => 'integer',
         'status' => 'boolean',
     ];
 
@@ -83,33 +81,10 @@ class Manager extends Authenticatable implements JWTSubject
     // ----------------------------------------------------------------
     // ------------------ Relationships --------------------------------
     // ----------------------------------------------------------------
-
-    public function organization()
+    public function organization(): BelongsTo
     {
-        return $this->belongsTo(Organization::class, 'o_id');
+        return $this->belongsTo(Organization::class);
     }
-
-    public function managerOrganization()
-    {
-        return $this->hasOne(Manager::class, 'id', 'o_id');
-    }
-
-    public function city()
-    {
-        return $this->hasOne(City::class, 'id', 'c_id');
-    }
-
-    public function state()
-    {
-        return $this->hasOne(State::class, 'id', 's_id');
-    }
-
-    // not sure about this relationship not removing yet
-    public function organizationType()
-    {
-        return $this->hasOne(OrganizationType::class, 'o_type_id', 'id');
-    }
-
 
 
     // ----------------------------------------------------------------

@@ -4,9 +4,10 @@ namespace App\Models;
 
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 
 class Schedule extends Model
@@ -24,15 +25,13 @@ class Schedule extends Model
     public const TRIP_ISDELAYED = true;
     public const SCHEDULE_TIME = 15;
 
-
     protected $table = 'schedules';
 
     protected $fillable = [
-        'o_id',
-        'u_id',
+        'organization_id',
         'route_id',
-        'v_id',
-        'd_id',
+        'vehicle_id',
+        'driver_id',
         'date',
         'time',
         'status'
@@ -45,108 +44,60 @@ class Schedule extends Model
      * @var array
      */
     protected $casts = [
-        'o_id' => 'integer',
-        'u_id' => 'integer',
+        'organization_id' => 'integer',
         'route_id' => 'integer',
-        'v_id' => 'integer',
-        'd_id' => 'integer',
-        'id_delay' => 'boolean',
-        'created_at' => 'datetime:Y-m-d H:i:s',
+        'vehicle_id' => 'integer',
+        'driver_id' => 'integer',
+        'is_delayed' => 'boolean',
         'date' => 'string'
-        // 'trip_status' => 'boolean'
     ];
 
-
-
-    // ----------------------------------------------------------------
-    // -------------------------- Relations ---------------------------
-    // ----------------------------------------------------------------
-
-    /**
-     * relation with organization
-     *
-     * @return  [type]  return relation
-     */
-    public function organizations()
+    // ------------------- Relationships --------------------------------
+    public function organization()
     {
-        return $this->belongsTo(Organization::class, 'o_id', 'id');
+        return $this->belongsTo(Organization::class);
     }
 
-    /**
-     * relation with route
-     *
-     * @return  [type]  return relation
-     */
-    public function routes()
-    {
-        return $this->belongsTo(Route::class, 'route_id', 'id');
-    }
-
-    /**
-     * relation with route
-     *
-     * @return  [type]  return relation
-     */
     public function route()
     {
-        return $this->belongsTo(Route::class, 'route_id', 'id');
-    }
-    /**
-     * RELATION WITH VEHICLE
-     *
-     * @return  [type]  return relation
-     */
-    public function vehicles()
-    {
-        return $this->belongsTo(Vehicle::class, 'v_id', 'id');
+        return $this->belongsTo(Route::class);
     }
 
     public function vehicle()
     {
-        return $this->belongsTo(Vehicle::class, 'v_id', 'id');
-    }
-
-    public function drivers()
-    {
-        return $this->belongsTo(Driver::class, 'd_id', 'id');
+        return $this->belongsTo(Vehicle::class);
     }
 
     public function driver()
     {
-        return $this->belongsTo(Driver::class, 'd_id', 'id');
+        return $this->belongsTo(Driver::class);
     }
-
-    /**
-     * relation with user
-     *
-     * @return  [type]  [return description]
-     */
-
-    public function users()
-    {
-        return $this->belongsTo(User::class, 'u_id', 'id');
-    }
-
 
     // ----------------------------------------------------------------
     // ------------------ Accessors & Mutator -------------------------
     // ----------------------------------------------------------------
 
-    public function getTimeAttribute($value)
+    protected function time(): Attribute
     {
-        return Carbon::parse($value)->format('h:i A');
+        return new Attribute(
+            get: fn($value) => Carbon::parse($value)->format('h:i A'),
+        );
     }
 
-
-    public function getCreatedAtAttribute($value)
+    protected function createdAt(): Attribute
     {
-        return Carbon::parse($value)->format('Y-m-d');
+        return new Attribute(
+            get: fn($value) => Carbon::parse($value)->format('Y-m-d'),
+        );
     }
 
-    public function getUpdatedAtAttribute($value)
+    protected function updatedAt(): Attribute
     {
-        return Carbon::parse($value)->format('Y-m-d');
+        return new Attribute(
+            get: fn($value) => Carbon::parse($value)->format('Y-m-d'),
+        );
     }
+
 
     // ----------------------------------------------------------------
     // -------------------------- Scopes ------------------------------
@@ -162,22 +113,4 @@ class Schedule extends Model
     {
         return  $query->where('is_notified', 1);
     }
-
-    // public function scopeBySearch($query, $search)
-    // {
-    //     return $query->where('date', 'like', '%' . $search . '%')
-    //         ->orWhere('time', 'like', '%' . $search . '%')
-    //         ->orWhereHas('organizations', function ($query) use ($search) {
-    //             $query->where('name', 'like', '%' . $search . '%');
-    //         })
-    //         ->orWhereHas('routes', function ($query) use ($search) {
-    //             $query->where('name', 'like', '%' . $search . '%');
-    //         })
-    //         ->orWhereHas('vehicles', function ($query) use ($search) {
-    //             $query->where('name', 'like', '%' . $search . '%');
-    //         })
-    //         ->orWhereHas('drivers', function ($query) use ($search) {
-    //             $query->where('name', 'like', '%' . $search . '%');
-    //         });
-    // }
 }

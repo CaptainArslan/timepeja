@@ -14,10 +14,6 @@ use Illuminate\Support\Facades\Validator;
 
 class ScheduleController extends BaseController
 {
-    // public function __construct()
-    // {
-    //     $this->middleware('auth:driver');
-    // }
 
     public function index($date)
     {
@@ -33,7 +29,7 @@ class ScheduleController extends BaseController
 
         try {
             $driver = auth('driver')->user();
-            if ($driver->online_status == Driver::STATUS_OFFLINE) {
+            if ($driver->online_status == Driver::OFFLINE) {
                 return $this->respondWithError('Driver is offline. Please make yourself available to view schedules.');
             }
 
@@ -41,8 +37,6 @@ class ScheduleController extends BaseController
                 ->where('date', $date)
                 ->where('o_id', $driver->o_id)
                 ->where('trip_status', Schedule::TRIP_STATUS_UPCOMING)
-                // ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time', 'status', 'trip_status', 'created_at')
-                // ->with('organizations:id,name')
                 ->with('routes')
                 ->with('vehicles:id,number')
                 ->with('drivers:id,name')
@@ -61,7 +55,7 @@ class ScheduleController extends BaseController
             $date = $date ? $date : now()->format('Y-m-d');
             $driver = auth('driver')->user();
 
-            if ($driver->online_status == Driver::STATUS_OFFLINE) {
+            if ($driver->online_status == Driver::OFFLINE) {
                 return $this->respondWithError('Driver is offline. Please make yourself available to view schedules.');
             }
 
@@ -125,7 +119,7 @@ class ScheduleController extends BaseController
     {
         try {
             $driver = auth('driver')->user();
-            $driver->online_status = Driver::STATUS_ONLINE;
+            $driver->online_status = Driver::ONLINE;
             $driver->save();
             $organization = $driver->organization;
             if (!empty($organization)) {
@@ -149,7 +143,7 @@ class ScheduleController extends BaseController
     {
         try {
             $driver = auth('driver')->user();
-            $driver->online_status = Driver::STATUS_OFFLINE;
+            $driver->online_status = Driver::OFFLINE;
             $driver->save();
 
             $organization = $driver->organization;

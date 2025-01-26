@@ -2,12 +2,11 @@
 
 
 
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateModulesTable extends Migration
+class CreatePassengerFavouriteRoutesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -16,13 +15,11 @@ class CreateModulesTable extends Migration
      */
     public function up()
     {
-        Schema::create('modules', function (Blueprint $table) {
+        Schema::create('passenger_route', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name');
-            $table->string('icon')->nullable();
-            $table->string('status');
-            $table->bigInteger('sort')->nullable();
-            $table->string('type');
+            $table->foreignId('passenger_id')->constrained('passengers');
+            $table->foreignId('route_id')->constrained('routes');
+            // $table->boolean('status');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -35,6 +32,6 @@ class CreateModulesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('modules');
+        Schema::dropIfExists('favourite_routes');
     }
 }

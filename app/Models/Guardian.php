@@ -11,9 +11,6 @@ class Guardian extends Model
     protected $table = 'guardians';
 
     protected $fillable = [
-        // 'request_id',
-        // 'student_id',
-        // 'employee_id',
         'name',
         'image',
         'phone',

@@ -26,7 +26,7 @@ class ApiDriverController extends BaseController
             $manager = auth('manager')->user();
             $driver = Driver::where('o_id', $manager->o_id)
                 ->where('status', Driver::STATUS_ACTIVE)
-                ->paginate(Driver::DRIVER_LIMIT_PER_PAGE);
+                ->paginate(getPaginated());
             return $this->respondWithSuccess($driver, 'Oganization All Driver', 'ORGANIZATION_DRIVER');
         } catch (\Throwable $th) {
             return $this->respondWithError('Error Occured while fetching organization driver' . $th->getMessage());
@@ -323,7 +323,7 @@ class ApiDriverController extends BaseController
                 $request->license_back :
                 $driver->license_no_back_pic_name;
             $save = $driver->save();
-            if($driver->device_token){
+            if ($driver->device_token) {
                 notification('Profile updated', 'Your profile has been updated by your organization manager', $driver->device_token);
             }
             return $this->respondWithSuccess($driver, 'Driver updated successfully', 'API_DRIVER_UPDATED');

@@ -27,7 +27,6 @@ class Trip extends Model
      */
     protected $fillable = [
         'organization_id',
-        'u_id',
         'schedule_id',
         'delay_reason',
         'delay_time',
@@ -48,11 +47,6 @@ class Trip extends Model
     public function organization()
     {
         return $this->belongsTo(Organization::class);
-    }
-
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'u_id');
     }
 
     public function schedule()

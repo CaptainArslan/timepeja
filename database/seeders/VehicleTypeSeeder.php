@@ -17,27 +17,27 @@ class VehicleTypeSeeder extends Seeder
         VehicleType::insert([
             [
                 'name' => 'Bus AC',
-                'desc' => '12 seats',
+                'description' => '12 seats',
             ],
             [
                 'name' => 'Bus Non-AC',
-                'desc' => '15 seats',
+                'description' => '15 seats',
             ],
             [
                 'name' => 'Coaster AC',
-                'desc' => '34 seats',
+                'description' => '34 seats',
             ],
             [
                 'name' => 'Coaster Non-AC',
-                'desc' => '34 seats',
+                'description' => '34 seats',
             ],
             [
                 'name' => 'Toyota Hiace-AC',
-                'desc' => '34 seats',
+                'description' => '34 seats',
             ],
             [
                 'name' => 'Toyota Hiace Non-AC',
-                'desc' => '34 seats',
+                'description' => '34 seats',
             ],
         ]);
     }

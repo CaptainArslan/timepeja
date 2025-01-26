@@ -10,12 +10,6 @@ use Illuminate\Support\Facades\Validator;
 
 class MediaController extends BaseController
 {
-    /**
-     * Upload image
-     *
-     * @param Request $request
-     * @return void
-     */
     public function uploadMedia(Request $request): JsonResponse
     {
         $validator = Validator::make(

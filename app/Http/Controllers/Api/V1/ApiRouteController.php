@@ -14,22 +14,15 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ApiRouteController extends BaseController
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index(): JsonResponse
     {
         try {
             $manager = auth('manager')->user();
-            // DRIVER_LIMIT_PER_PAGE
             $routes = Route::where('o_id', $manager->o_id)
                 ->where('status', Route::STATUS_ACTIVE)
-                ->paginate(Route::ROUTE_LIMIT_PER_PAGE);
-            // if ($routes->isEmpty()) {
-            //     return $this->respondWithError('No data found');
-            // }
+                ->paginate(getPaginated());
+            
             return $this->respondWithSuccess($routes, 'Organization Routes', 'ORGANIZATION_ROUTES');
         } catch (\Throwable $th) {
             return $this->respondWithError('Error Occured while fetching organization driver');
@@ -353,17 +346,9 @@ class ApiRouteController extends BaseController
                 ->orWhere('number', 'LIKE', '%' . $string . '%')
                 ->orWhere('from', 'LIKE', '%' . $string . '%')
                 ->orWhere('to', 'LIKE', '%' . $string . '%')
-                // ->orWhere('from_longitude', 'LIKE', '%' . $string . '%')
-                // ->orWhere('from_latitude', 'LIKE', '%' . $string . '%')
-                // ->orWhere('to_longitude', 'LIKE', '%' . $string . '%')
-                // ->orWhere('to_latitude', 'LIKE', '%' . $string . '%')
                 ->where('o_id', $manager->o_id)
                 ->select('id', 'name')
                 ->get();
-            // ->paginate(Route::ROUTE_LIMIT_PER_PAGE);
-            // if ($routes->isEmpty()) {
-            //     return $this->respondWithError('No Route found');
-            // }
             return $this->respondWithSuccess($routes, 'Routes retrieved successfully', 'API_ROUTE_SEARCH_RESULT');
         } catch (ModelNotFoundException $e) {
             throw new NotFoundHttpException('No routes found');

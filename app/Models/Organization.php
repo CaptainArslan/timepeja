@@ -33,26 +33,29 @@ class Organization extends Model
      * @var array
      */
     protected $fillable = [
+        'organization_type_id',
         'name',
         'branch_name',
+        'branch_code',
         'email',
         'phone',
-        's_id',
-        'c_id',
-        'o_type_id',
+        'code',
+        'state_id',
+        'city_id',
         'address',
         'head_name',
         'head_email',
         'head_phone',
         'head_address',
-        'status'
+        'status',
+        'deactivate_code',
     ];
 
     protected $hidden = [
+        'deactivate_code',
         'created_at',
         'updated_at',
         'deleted_at',
-        'deactivate_code',
     ];
 
 
@@ -62,31 +65,20 @@ class Organization extends Model
      * @var array
      */
     protected $casts = [
-        'u_id' => 'integer',
-        's_id' => 'integer',
-        'c_id' => 'integer',
-        'o_type_id' => 'integer',
+        'state_id' => 'integer',
+        'city_id' => 'integer',
+        'organization_type_id' => 'integer',
     ];
 
 
     public function manager(): HasOne
     {
-        return $this->hasOne(Manager::class, 'o_id');
-    }
-
-    public function city(): BelongsTo
-    {
-        return $this->belongsTo(City::class, 'c_id', 'id');
-    }
-
-    public function state(): BelongsTo
-    {
-        return $this->belongsTo(State::class, 's_id', 'id');
+        return $this->hasOne(Manager::class);
     }
 
     public function organizationType(): BelongsTo
     {
-        return $this->belongsTo(OrganizationType::class, 'o_type_id', 'id');
+        return $this->belongsTo(OrganizationType::class);
     }
 
     public function passengers(): HasMany
@@ -96,7 +88,7 @@ class Organization extends Model
 
     public function drivers(): HasMany
     {
-        return $this->hasMany(Driver::class, 'o_id', 'id');
+        return $this->hasMany(Driver::class);
     }
 
     public function vehicles(): HasMany
@@ -106,7 +98,7 @@ class Organization extends Model
 
     public function routes(): HasMany
     {
-        return $this->hasMany(Route::class, 'o_id', 'id');
+        return $this->hasMany(Route::class);
     }
 
     public function schedules(): HasMany
@@ -129,7 +121,6 @@ class Organization extends Model
     // ----------------------------------------------------------------
     // ------------------ Accessors & Mutator -------------------------
     // ----------------------------------------------------------------
-
     public function setNameAttribute($value)
     {
         $this->attributes['name'] = ucwords(strtolower($value));

@@ -2,63 +2,49 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class VehicleType extends Model
 {
     use HasFactory;
     use SoftDeletes;
 
-    protected $fillable = ['name', 'desc'];
-
     protected $table = 'vehicle_types';
-
     public const STATUS_ACTIVE = true;
     public const STATUS_INACTIVE = false;
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array
-     */
+    protected $fillable = [
+        'name',
+        'description',
+        'status',
+    ];
+
     protected $casts = [
         'status' => 'boolean',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
+
     protected $hidden = [
-        //
+        'deleted_at'
     ];
 
-    // ----------------------------------------------------------------
-    // ------------------ Accessors & Mutator -------------------------
-    // ----------------------------------------------------------------
 
-    /**
-     * Set the name attribute.
-     *
-     * @param  string  $value
-     * @return void
-     */
-    public function setNameAttribute($value)
+    // ------------------- Relationships --------------------------------
+    public function vehicles(): HasMany
     {
-        $this->attributes['name'] = ucwords(strtolower($value));
+        return $this->hasMany(Vehicle::class);
     }
 
-    /**
-     * Get the name attribute.
-     *
-     * @param  string  $value
-     * @return string
-     */
-    public function getNameAttribute($value)
+    // ------------------ Accessors & Mutator -------------------------
+    protected function name(): Attribute
     {
-        return ucwords(strtolower($value));
+        return new Attribute(
+            get: fn($value) => ucwords(strtolower($value)),
+            set: fn($value) => ucwords(strtolower($value)),
+        );
     }
 }

@@ -16,21 +16,19 @@ class CreateManagersTable extends Migration
     {
         Schema::create('managers', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('o_id')->index('o_id');
-            $table->string('u_id');
+            $table->foreignId('organization_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
             $table->string('name');
             $table->string('email')->unique()->nullable();
             $table->string('phone')->unique();
             $table->string('password');
             $table->string('otp');
             $table->string('device_token')->nullable();
-            $table->longText('picture')->nullable();
+            $table->string('picture')->nullable();
             $table->longText('about')->nullable();
             $table->tinyInteger('status')->default(Manager::STATUS_ACTIVE);
-            $table->longText('address')->nullable();
+            $table->json('address')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->foreign('o_id')->references('id')->on('organizations')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 

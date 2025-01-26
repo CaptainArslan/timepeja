@@ -18,12 +18,7 @@ class CreateFinancialsTable extends Migration
     {
         Schema::create('financials', function (Blueprint $table) {
             $table->bigIncrements('id');
-
-            $table->unsignedBigInteger('u_id')->index('u_id');
-            // $table->foreign('u_id')->references('id')->on('users');
-
-            $table->unsignedBigInteger('o_id')->index('o_id');
-
+            $table->foreignId('organization_id')->constrained('organizations')->onDelete('cascade');
             $table->boolean('org_wallet')->default(0);
             $table->boolean('org_payment')->default(0);
             $table->float('org_amount')->nullable();
@@ -44,7 +39,6 @@ class CreateFinancialsTable extends Migration
 
             $table->timestamps();
             $table->softDeletes();
-            $table->foreign('o_id')->references('id')->on('organizations')->onDelete('cascade');
         });
     }
 

@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -17,18 +16,9 @@ class Vehicle extends Model
     public const STATUS_ACTIVE = true;
     public const STATUS_DEACTIVE = false;
 
-    // for pagination
-    public const VEHICLE_LIMIT_PER_PAGE = 10;
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
-        'o_id',
-        'u_id',
-        'v_type_id',
+        'organization_id',
+        'vehicle_type_id',
         'number',
         'no_of_seat',
         'front_pic',
@@ -51,9 +41,8 @@ class Vehicle extends Model
      * @var array
      */
     protected $casts = [
-        'o_id' => 'integer',
-        'u_id' => 'integer',
-        'v_type_id' => 'integer',
+        'organization_id' => 'integer',
+        'vehicle_type_id' => 'integer',
         'status' => 'boolean'
     ];
 
@@ -76,28 +65,15 @@ class Vehicle extends Model
     ];
 
 
-    // ----------------------------------------------------------------
     // -------------------------- Relations ---------------------------
-    // ----------------------------------------------------------------
-
     public function organization()
     {
-        return $this->belongsTo(Organization::class, 'o_id', 'id');
+        return $this->belongsTo(Organization::class);
     }
 
     public function vehiclesType()
     {
-        return $this->belongsTo(VehicleType::class, 'v_type_id', 'id');
-    }
-
-    public function vehiclesTypes()
-    {
-        return $this->belongsTo(VehicleType::class, 'v_type_id', 'id');
-    }
-
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'u_id', 'id');
+        return $this->belongsTo(VehicleType::class);
     }
 
     public function locations()
@@ -110,17 +86,7 @@ class Vehicle extends Model
         return $this->hasMany(Trip::class, 'vehicle_id', 'id');
     }
 
-
-    // ----------------------------------------------------------------
     // ------------------ Accessors & Mutator -------------------------
-    // ----------------------------------------------------------------
-
-    /**
-     * Get the front picture of the vehicle.
-     *
-     * @param  string  $value
-     * @return string|null
-     */
     public function getFrontPicAttribute($value)
     {
         if (filter_var($value, FILTER_VALIDATE_URL)) {
@@ -129,39 +95,21 @@ class Vehicle extends Model
             $value = asset('uploads/vehicles/placeholder.jpg');
         }
         return $value;
-        // return $this->attributes['front_pic'] ? asset('uploads/vehicles/' . $this->attributes['front_pic']) : asset('uploads/vehicles/placeholder.jpg');
     }
 
-    /**
-     * Get the front picture name of the vehicle.
-     *
-     * @param  string  $value
-     * @return string|null
-     */
     public function getFrontPicNameAttribute()
     {
         $url = $this->attributes['front_pic'] ?? null;
 
-        // Extract the image name from the URL if it's present
         if ($url && filter_var($url, FILTER_VALIDATE_URL)) {
             $path = parse_url($url, PHP_URL_PATH);
             $name = basename($path);
 
             return $name;
         }
-
-        // Return the simple name if it's already present
         return $this->attributes['front_pic'] ?? null;
-
-        // return $this->attributes['front_pic'];
     }
 
-    /**
-     * Get the back picture of the vehicle.
-     *
-     * @param  string  $value
-     * @return string|null
-     */
     public function getBackPicAttribute($value)
     {
         if (filter_var($value, FILTER_VALIDATE_URL)) {
@@ -170,20 +118,12 @@ class Vehicle extends Model
             $value = asset('uploads/vehicles/placeholder.jpg');
         }
         return $value;
-        // return $this->attributes['back_pic'] ? asset('uploads/vehicles/' . $this->attributes['back_pic']) : asset('uploads/vehicles/placeholder.jpg');
     }
 
-    /**
-     * Get the back picture of the vehicle.
-     *
-     * @param  string  $value
-     * @return string|null
-     */
     public function getBackPicNameAttribute()
     {
         $url = $this->attributes['back_pic'] ?? null;
 
-        // Extract the image name from the URL if it's present
         if ($url && filter_var($url, FILTER_VALIDATE_URL)) {
             $path = parse_url($url, PHP_URL_PATH);
             $name = basename($path);
@@ -191,17 +131,9 @@ class Vehicle extends Model
             return $name;
         }
 
-        // Return the simple name if it's already present
         return $this->attributes['back_pic'] ?? null;
-        // return $this->attributes['back_pic'];
     }
 
-    /**
-     * Get the number plate picture of the vehicle.
-     *
-     * @param  string  $value
-     * @return string|null
-     */
     public function getNumberPicAttribute($value)
     {
         if (filter_var($value, FILTER_VALIDATE_URL)) {
@@ -210,62 +142,21 @@ class Vehicle extends Model
             $value = asset('uploads/vehicles/placeholder.jpg');
         }
         return $value;
-        // return $this->attributes['number_pic'] ? asset('uploads/vehicles/' . $this->attributes['number_pic']) : asset('uploads/vehicles/placeholder.jpg');
     }
 
-    /**
-     * Get the number plate picture of the vehicle.
-     *
-     * @param  string  $value
-     * @return string|null
-     */
     public function getNumberPicNameAttribute()
     {
         $url = $this->attributes['number_pic'] ?? null;
 
-        // Extract the image name from the URL if it's present
         if ($url && filter_var($url, FILTER_VALIDATE_URL)) {
             $path = parse_url($url, PHP_URL_PATH);
-            $name = basename($path);
-
-            return $name;
+            return basename($path);
         }
-
-        // Return the simple name if it's already present
         return $this->attributes['number_pic'] ?? null;
-        // return $this->attributes['number_pic'];
     }
 
-    /**
-     * Get the registration date of the vehicle.
-     *
-     * @param  string  $value
-     * @return string|null
-     */
     public function getRegDateAttribute()
     {
         return $this->attributes['reg_date'] ? date('d-m-Y', strtotime($this->attributes['reg_date'])) : asset('uploads/vehicles/placeholder.jpg');
     }
-
-    // /**
-    //  * Get the created_at.
-    //  *
-    //  * @param  string  $value
-    //  * @return string|null
-    //  */
-    // public function getCreatedAtAttribute($value)
-    // {
-    //     return Carbon::parse($value)->format('Y-m-d');
-    // }
-
-    // /**
-    //  * Get the updated_at.
-    //  *
-    //  * @param  string  $value
-    //  * @return string|null
-    //  */
-    // public function getUpdatedAtAttribute($value)
-    // {
-    //     return Carbon::parse($value)->format('Y-m-d');
-    // }
 }

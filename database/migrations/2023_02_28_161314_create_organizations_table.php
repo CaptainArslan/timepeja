@@ -15,28 +15,24 @@ class CreateOrganizationsTable extends Migration
     {
         Schema::create('organizations', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->foreignId('organization_type_id')->index('organization_type_id')->nullable();
             $table->string('name');
-            $table->unsignedBigInteger('u_id')->index('u_id')->nullable();
             $table->string('branch_name')->nullable();
             $table->string('branch_code')->nullable();
-            $table->unsignedBigInteger('o_type_id')->index('o_type_id')->nullable();
             $table->string('email');
             $table->string('phone');
             $table->string('code');
-            $table->unsignedBigInteger('s_id')->nullable();
-            $table->unsignedBigInteger('c_id')->nullable();
-            $table->string('address');
+            $table->foreignId('state_id')->nullable()->constrained('states');
+            $table->foreignId('city_id')->nullable()->constrained('cities');
+            $table->json('address');
             $table->string('head_name');
             $table->string('head_email');
             $table->string('head_phone');
-            $table->string('head_address')->nullable();
+            $table->json('head_address')->nullable();
             $table->boolean('status');
             $table->string('deactivate_code')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->foreign('o_type_id')->references('id')->on('organization_types');
-            $table->foreign('s_id')->references('id')->on('states')->onUpdate('cascade');
-            $table->foreign('c_id')->references('id')->on('cities')->onUpdate('cascade');
         });
     }
 

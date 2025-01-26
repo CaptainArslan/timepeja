@@ -11,7 +11,16 @@ class Location extends Model
     use HasFactory;
 
     protected $fillable = [
-        'id', 'user_id', 'organization_id', 'name', 'passenger_id', 'vehicle_id', 'driver_id', 'type', 'latitude', 'longitude',
+        'id',
+        'user_id',
+        'organization_id',
+        'name',
+        'passenger_id',
+        'vehicle_id',
+        'driver_id',
+        'type',
+        'latitude',
+        'longitude',
     ];
 
     /**
@@ -69,5 +78,4 @@ class Location extends Model
     {
         return $query->where('driver_id', $id)->where('type', 'passenger')->latest()->first();
     }
-
 }

@@ -11,41 +11,21 @@ use Illuminate\Support\Facades\Auth;
 
 class VehicleController extends Controller
 {
-    /**
-     * roles and permission middleware
-     *
-     * @return  [type]  [return description]
-     */
-    public function __construct()
-    {
-        // $this->middleware(function ($request, $next) {
-        //     app(UserController::class)->main();
-        //     return $next($request);
-        // });
-    }
 
-    /**
-     * Undocumented function
-     *
-     * @param Request $request
-     * @return void
-     */
     public function index(Request $request)
     {
         $organizations = Organization::where('status', Organization::STATUS_ACTIVE)->get();
         $vehicle_types = VehicleType::get();
         $vehicles = Vehicle::with(['organization' => function ($query) {
-            $query->select('id', 'name')->orderBy('id', 'DESC'); // Select the id and name columns from the organizations table
+            $query->select('id', 'name')->orderBy('id', 'DESC'); 
         }])
             ->with(['vehiclesTypes' => function ($query) {
-                $query->select('id', 'name'); // Select the id and name columns from the vehicles_types table
+                $query->select('id', 'name'); 
             }])
             ->latest()
             ->take(10)
+            ->get(); 
 
-            ->get(); // Select only the id and name columns from the vehicles table
-
-        // dd($vehicles->toArray());
         if ($request->isMethod('post')) {
             if ($request->has('filter')) {
                 $vehicles = $this->filter($request);
@@ -58,12 +38,6 @@ class VehicleController extends Controller
         ]);
     }
 
-    /**
-     * Undocumented function
-     *
-     * @param Request $request
-     * @return void
-     */
     public function filter(Request $request)
     {
         $request->validate([
@@ -99,15 +73,9 @@ class VehicleController extends Controller
             })
             ->get();
 
-        // Return the filtered records to the view
         return $records;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         $organizations = Organization::where('status', Organization::STATUS_ACTIVE)->get();
@@ -116,7 +84,6 @@ class VehicleController extends Controller
             ->latest()
             ->take(10)
             ->get();
-        // dd($vehicles->toArray());
         return view('vehicle.index', [
             'organizations' => $organizations,
             'vehicle_types' => $vehicle_types,
@@ -124,12 +91,6 @@ class VehicleController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         $this->validate($request, [
@@ -173,23 +134,11 @@ class VehicleController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Vehicle  $vehicle
-     * @return \Illuminate\Http\Response
-     */
     public function show(Vehicle $vehicle)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Vehicle  $vehicle
-     * @return \Illuminate\Http\Response
-     */
     public function edit(Request $request)
     {
         $this->validate($request, [
@@ -242,24 +191,6 @@ class VehicleController extends Controller
         }
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Vehicle  $vehicle
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Vehicle $vehicle)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Vehicle  $vehicle
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Request $request, Vehicle $vehicle)
     {
         $delete = $vehicle::find($request->id)->delete();
@@ -274,12 +205,6 @@ class VehicleController extends Controller
         }
     }
 
-    /**
-     * Undocumented function
-     *
-     * @param Request $request
-     * @return void
-     */
     public function multiDelete(Request $request)
     {
         try {

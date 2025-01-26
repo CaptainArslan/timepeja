@@ -55,8 +55,7 @@ Route::group(['middleware' => 'api'], function () {
                 Route::put('/web/update', [ApiManagerController::class, 'profileUpdateWeb']);
             });
 
-            // Upload Media Api
-            Route::post('upload-media', [MediaController::class, 'uploadMedia']);
+
             Route::get('/get-organization-data', [ApiScheduleController::class, 'getOrganizationData']);
 
             // Schedule Api
@@ -70,7 +69,7 @@ Route::group(['middleware' => 'api'], function () {
                 Route::get('/published/{date}', [ApiScheduleController::class, 'getPublishedScheduleByDate']);
                 Route::get('/created/{date}', [ApiScheduleController::class, 'getCreatedScheduleByDate']);
             });
-            Route::get('/created-schedule/pdf/{date}', [PdfController::class    , 'createdSchedule']);
+            Route::get('/created-schedule/pdf/{date}', [PdfController::class, 'createdSchedule']);
             Route::get('/published-schedule/pdf/{date}', [PdfController::class, 'publishedSchedule']);
 
             // Vehicle Type
@@ -216,6 +215,9 @@ Route::group(['middleware' => 'api'], function () {
             Route::get('/organization/{code}', [ApiOrganizationController::class, 'show']);
         });
     });
+
+    // Upload Media Api
+    Route::post('upload-media', [MediaController::class, 'uploadMedia']);
 
     Route::prefix('v1')->group(function () {
         Route::post('/contact-us', [ContactController::class, 'send'])->name('send');

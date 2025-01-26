@@ -25,17 +25,12 @@ class ApiVehicleController extends BaseController
         try {
             $manager = auth('manager')->user();
             $vehicles = Vehicle::where('o_id', $manager->o_id)
-                ->select('id', 'o_id', 'v_type_id', 'number', 'front_pic', 'number_pic', 'status', 'created_at', 'updated_at')
-                // ->with('organizations', function ($query) {
-                //     $query->select('id', 'name', 'branch_name', 'address', 'phone', 'email');
-                // })
                 ->with('vehiclesTypes', function ($query) {
                     $query->select('id', 'name', 'desc');
-                })->where('status', Vehicle::STATUS_ACTIVE)
-                ->paginate(Vehicle::VEHICLE_LIMIT_PER_PAGE);
-            // if ($vehicles->isEmpty()) {
-            //     return $this->respondWithError('No data found');
-            // }
+                })
+                ->where('status', Vehicle::STATUS_ACTIVE)
+                ->paginate(getPaginated());
+
             return $this->respondWithSuccess($vehicles, 'Oganization All Vehicle', 'ORGANIZATION_VEHICLE');
         } catch (\Throwable $th) {
             return $this->respondWithError('Error Occured while fetching organization driver');

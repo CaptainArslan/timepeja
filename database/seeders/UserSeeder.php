@@ -17,7 +17,6 @@ class UserSeeder extends Seeder
     {
         User::insert([
             [
-                'r_id' => 1,
                 'full_name' => "Admin",
                 'user_name' => "admin",
                 'email' => "admin@admin.com",
@@ -28,7 +27,6 @@ class UserSeeder extends Seeder
                 'status' => 0
             ],
             [
-                'r_id' => 1,
                 'full_name' => "Arslan",
                 'user_name' => "arslan",
                 'email' => "mughalarslan996@gmail.com",

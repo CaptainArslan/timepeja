@@ -16,21 +16,15 @@ class CreateRoutesTable extends Migration
     {
         Schema::create('routes', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('o_id')->index('o_id')->nullable();
-            $table->unsignedBigInteger('u_id')->index('u_id')->nullable();
-            // $table->foreign('u_id')->references('id')->on('users')->onUpdate('cascade');
+            $table->foreignId('organization_id')->constrained('organizations')->onDelete('cascade');
             $table->string('name');
             $table->string('number');
-            $table->string('from');
-            $table->string('from_latitude')->nullable();
-            $table->string('from_longitude')->nullable();
-            $table->string('to');
-            $table->string('to_latitude')->nullable();
-            $table->string('to_longitude')->nullable();
+            $table->json('from');
+            $table->json('to');
+            $table->json('way_points')->nullable();
             $table->boolean('status')->default(Route::STATUS_ACTIVE);
             $table->timestamps();
             $table->softDeletes();
-            $table->foreign('o_id')->references('id')->on('organizations')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 

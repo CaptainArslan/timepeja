@@ -17,16 +17,23 @@ class ManagerFactory extends Factory
     public function definition()
     {
         return [
-            'o_id' => Organization::inRandomOrder()->first()->id,
-            'u_id' => 1,
+            'organization_id' => Organization::inRandomOrder()->first()->id,
             'name' => $this->faker->name(),
             'email' => $this->faker->safeEmail(),
-            // 'phone' => '03174407032',
             'phone' => '03' . $this->faker->regexify('/^[0-9+]{9}$/'),
             'password' => Hash::make('12345678A'),
             'picture' => 'placeholder.jpg',
             'otp' => rand(1000, 9999),
-            'address' => $this->faker->address(),
+            'address' => json_encode([
+                'address' => $this->faker->address(),
+                'street' => $this->faker->streetName(),
+                'city' => $this->faker->city(),
+                'zip' => $this->faker->postcode(),
+                'coords' => [
+                    'lat' => $this->faker->latitude(),
+                    'lng' => $this->faker->longitude()
+                ]
+            ]),
             'status' => 1,
         ];
     }

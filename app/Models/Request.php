@@ -32,11 +32,7 @@ class Request extends Model
     public const MAX_GUARDIAN_ALLOWED = 3;
     public const LIMIT = 3;
 
-    /**
-     * Fillabel for mass assignment
-     *
-     * @var array
-     */
+
     protected $fillable = [
         'organization_id',
         'parent_request_id',
@@ -99,53 +95,32 @@ class Request extends Model
         'created_user_id',
     ];
 
-    /**
-     * get the request organization
-     *
-     * @return BelongsTo
-     */
+    // ------------------ Relationships ------------------
     public function organization(): BelongsTo
     {
         return $this->belongsTo(Organization::class);
     }
 
-
-    /**
-     * @return BelongsTo
-     */
     public function passenger(): BelongsTo
     {
         return $this->belongsTo(Passenger::class);
     }
 
-
-    /**
-     * @return BelongsTo
-     */
     public function route(): BelongsTo
     {
         return $this->belongsTo(Route::class);
     }
 
-    /**
-     * @return HasMany
-     */
     public function childRequests(): HasMany
     {
         return $this->hasMany(Request::class, 'parent_request_id');
     }
 
-    /**
-     * @return BelongsTo
-     */
     public function city(): BelongsTo
     {
         return $this->belongsTo(City::class);
     }
 
-    /**
-     * @return mixed|string|void
-     */
     public function getUserId()
     {
         if ($this->type == self::STUDENT) {
@@ -159,9 +134,6 @@ class Request extends Model
         }
     }
 
-    /**
-     * @return mixed|string|void
-     */
     public function getUserClassOrDepartment()
     {
         if ($this->type == self::STUDENT) {

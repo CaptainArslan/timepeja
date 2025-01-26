@@ -17,7 +17,7 @@ class CreateVehicleTypesTable extends Migration
         Schema::create('vehicle_types', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
-            $table->text('desc');
+            $table->text('description')->nullable();
             $table->boolean('status')->default(VehicleType::STATUS_ACTIVE);
             $table->timestamps();
             $table->softDeletes();

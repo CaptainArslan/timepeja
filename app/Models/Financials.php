@@ -2,45 +2,45 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Financials extends Model
 {
     use HasFactory;
     use SoftDeletes;
 
-    /**
-     * Table name
-     *
-     * @var string
-     */
     protected $table = 'financials';
 
-
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'o_id' => 'integer',
-        'u_id' => 'integer',
-    ];
-
-    /**
-     * the attributes that are mass assignable
-     *
-     * @var array
-     */
     protected $fillable = [
-        'u_id',
-        'org_trail_days',
-        'org_start_date',
-        'org_end_date'
+        'organization_id',
+        'org_wallet',
+        'org_payment',
+        'org_amount',
+        'org_trail_start_date',
+        'org_trail_end_date',
+        'driver_wallet',
+        'driver_payment',
+        'driver_amount',
+        'driver_trail_start_date',
+        'driver_trail_end_date',
+        'passenger_wallet',
+        'passenger_payment',
+        'passenger_amount',
+        'passenger_trail_start_date',
+        'passenger_trail_end_date'
+    ];
+
+    protected $casts = [
+        'organization_id' => 'integer',
     ];
 
 
-    
+    public function organization() : BelongsTo
+    {
+        return $this->belongsTo(Organization::class);
+    }
+
 }

@@ -4,9 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Organization;
 use App\Models\Route;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Faker\Generator as Faker;
 
 class RouteFactory extends Factory
 {
@@ -17,26 +15,35 @@ class RouteFactory extends Factory
      */
     public function definition()
     {
-        $from = $this->faker->city();
-        $to = $this->faker->city();
+        $city = $this->faker->city();
         $number = rand(1000, 9999);
-        $name = $number . '-' . $from . ' To ' . $to;
+        $name = $number . '-' . $city . ' To ' . $city;
         return [
-            'o_id' => Organization::inRandomOrder()->first()->id,
-            'u_id' => 1,
+            'organization_id' => Organization::inRandomOrder()->first()->id,
             'name' => $name,
             'number' => $number,
-            'from' => $from,
-            'from_latitude' => 32.195385,
-            'from_longitude' => 74.201953,
-            'to' => $to,
-            'to_latitude' => 32.194276,
-            'to_longitude' => 74.203517,
+            'from' => json_encode([
+                'adderss' => $this->faker->address(),
+                'state' => $this->faker->state(),
+                'city' => $this->faker->city(),
+                'coordinates' => [
+                    'latitude' => $this->faker->latitude(),
+                    'longitude' => $this->faker->longitude(),
+                ],
+            ]),
+            'to' => json_encode([
+                'adderss' => $this->faker->address(),
+                'state' => $this->faker->state(),
+                'city' => $this->faker->city(),
+                'coordinates' => [
+                    'latitude' => $this->faker->latitude(),
+                    'longitude' => $this->faker->longitude(),
+                ],
+            ]),
             'status' => Route::STATUS_ACTIVE,
-            'created_at' => time(),
             'way_points' => json_encode([
                 [
-                    'latitude' => 32.195385,
+                    'latitude' => 32.194276,
                     'longitude' => 74.201953,
                 ],
                 [

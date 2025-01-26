@@ -16,9 +16,7 @@ class CreateDriversTable extends Migration
     {
         Schema::create('drivers', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('o_id')->index('o_id')->nullable();
-            $table->unsignedBigInteger('u_id')->index('u_id')->nullable();
-            // $table->foreign('u_id')->references('id')->on('users')->onUpdate('cascade');
+            $table->foreignId('organization_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
             $table->string('name');
             $table->string('email')->unique()->nullable();
             $table->string('password')->nullable();
@@ -34,12 +32,11 @@ class CreateDriversTable extends Migration
             $table->date('license_expiry_date')->nullable();
             $table->string('otp')->nullable();
             $table->string('device_token')->nullable();
-            $table->integer('status')->default(Driver::STATUS_ACTIVE);
-            $table->integer('online_status')->default(Driver::STATUS_OFFLINE);
-            $table->text('address')->nullable();
+            $table->boolean('status')->default(Driver::STATUS_ACTIVE);
+            $table->boolean('online_status')->default(Driver::OFFLINE);
+            $table->json('address')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->foreign('o_id')->references('id')->on('organizations')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 

@@ -24,42 +24,39 @@ class OrganizationSeeder extends Seeder
     public function run()
     {
         Organization::factory(1)->create([
-            'u_id' => 1,
             'name' => 'University Of Lahore',
             'branch_name' => 'Main Campus',
             'branch_code' => substr(uniqid(), -4),
-            'o_type_id' =>  OrganizationType::inRandomOrder()->first()->id,
+            'organization_type_id' =>  OrganizationType::inRandomOrder()->first()->id,
             'email' => 'mughalarslan996@gmail.com',
             'phone' => '03' . rand(0000000, 9999999),
             'code' => substr(uniqid(), -8),
-            'address' => '',
-            's_id' => State::inRandomOrder()->first()->id,
-            'c_id' => City::inRandomOrder()->first()->id,
+            'address' => json_encode([
+                'address' => 'complete address',
+                'street' => 'Test Street',
+                'city' => 'Test City',
+                'zip' => '12345',
+                'coords' => [
+                    'lat' => 31.5204,
+                    'lng' => 74.3587
+                ]
+            ]),
+            'state_id' => State::inRandomOrder()->first()->id,
+            'city_id' => City::inRandomOrder()->first()->id,
             'head_name' => 'Test 1',
             'head_email' => 'mughalarslan996@gmail.com',
             'head_phone' => '03' . rand(0000000, 9999999),
-            'head_address' => 'Test Address',
+            'head_address' => json_encode([
+                'address' => 'complete address',
+                'street' => 'Test Street',
+                'city' => 'Test City',
+                'zip' => '12345',
+                'coords' => [
+                    'lat' => 31.5204,
+                    'lng' => 74.3587
+                ]
+            ]),
             'status' => Organization::STATUS_ACTIVE,
         ]);
-
-        // Organization::factory(1)->create([
-        //     'u_id' => 1,
-        //     'name' => 'University Of Lahore',
-        //     'branch_name' => 'Main Campus',
-        //     'branch_code' => substr(uniqid(), -4),
-        //     'o_type_id' =>  OrganizationType::inRandomOrder()->first()->id,
-        //     'email' => 'awabsabir373@gmail.com',
-        //     'phone' => '03' . rand(0000000, 9999999),
-        //     'code' => substr(uniqid(), -8),
-        //     'address' => '',
-        //     's_id' => State::inRandomOrder()->first()->id,
-        //     'c_id' => City::inRandomOrder()->first()->id,
-        //     'head_name' => 'Test 1',
-        //     'head_email' => 'awabsabir373@gmail.com',
-        //     'head_phone' => '03' . rand(0000000, 9999999),
-        //     'head_address' => 'Test Address',
-        //     'status' => Organization::STATUS_ACTIVE,
-        // ]);
-        // Organization::factory(5)->create();
     }
 }
