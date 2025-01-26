@@ -31,11 +31,6 @@ class ManagerAuthController extends BaseController
         );
     }
 
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     * @throws Throwable
-     */
     public function register(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
@@ -95,12 +90,6 @@ class ManagerAuthController extends BaseController
         }
     }
 
-
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     * @throws Throwable
-     */
     public function login(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
@@ -130,8 +119,6 @@ class ManagerAuthController extends BaseController
 
             $user = Manager::where('phone', $credentials['phone'])
                 ->with('organization')
-                ->with('organization.city:id,name')
-                ->with('organization.state:id,name')
                 ->first();
 
             if (!$user) {
@@ -157,11 +144,6 @@ class ManagerAuthController extends BaseController
         }
     }
 
-
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
     public function getVerificationCode(Request $request): JsonResponse
     {
         $fields = $request->all();
@@ -200,12 +182,6 @@ class ManagerAuthController extends BaseController
         }
     }
 
-
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     * @throws Throwable
-     */
     public function forgetPassword(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
@@ -247,12 +223,6 @@ class ManagerAuthController extends BaseController
         }
     }
 
-
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     * @throws Throwable
-     */
     public function profile(Request $request): JsonResponse
     {
         try {
@@ -270,32 +240,17 @@ class ManagerAuthController extends BaseController
         }
     }
 
-
-    /**
-     * @return JsonResponse
-     */
     public function logout(): JsonResponse
     {
         auth('manager')->logout();
         return $this->respondWithSuccess(null, 'Successfully logged out', 'API_LOGOUT');
     }
 
-    /**
-     * Refresh a token.
-     *
-     * @return JsonResponse
-     */
     public function refresh(): JsonResponse
     {
         return $this->respondWithToken(auth('manager')->refresh());
     }
 
-
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     * @throws Throwable
-     */
     public function webLogin(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
