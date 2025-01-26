@@ -9,7 +9,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Api\V1\BaseController;
 
-class RouteController extends BaseController
+class RouteController extends Controller
 {
 
     public function getFavoriteRoute() {

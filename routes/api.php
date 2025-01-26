@@ -11,8 +11,9 @@ use App\Http\Controllers\Api\V1\PassengerController;
 use App\Http\Controllers\Api\V1\ApiVehicleController;
 use App\Http\Controllers\Api\V1\ApiScheduleController;
 use App\Http\Controllers\Api\V1\VehicletypeController;
+use App\Http\Controllers\Api\V1\Manager\AuthController as ManagerAuthController;
+
 use App\Http\Controllers\Api\V1\Auth\DriverAuthController;
-use App\Http\Controllers\Api\V1\Auth\ManagerAuthController;
 use App\Http\Controllers\Api\V1\PassengerRequestController;
 use App\Http\Controllers\Api\V1\Auth\PassengerAuthController;
 use App\Http\Controllers\Api\V1\RequestController as ApiRequestController;
@@ -41,12 +42,11 @@ Route::group(['middleware' => 'api'], function () {
             Route::post('/register', [ManagerAuthController::class, 'register']);
             Route::post('/login', [ManagerAuthController::class, 'login']);
             Route::post('/login/web', [ManagerAuthController::class, 'webLogin']);
-            Route::post('/get-code', [ManagerAuthController::class, 'getVerificationCode'])
-                ->middleware('throttle:ratelimit');
-            Route::post('/refresh', [ManagerAuthController::class, 'refresh']);
+            Route::post('/get-code', [ManagerAuthController::class, 'getVerificationCode'])->middleware('throttle:5,1');
             Route::post('/forget-password', [ManagerAuthController::class, 'forgetPassword']);
-            
+
             Route::middleware(['jwt.verify:manager'])->group(function () {
+                Route::post('/refresh', [ManagerAuthController::class, 'refresh']);
                 Route::post('/logout', [ManagerAuthController::class, 'logout']);
 
                 Route::group(['prefix' => 'profile'], function () {
@@ -70,7 +70,7 @@ Route::group(['middleware' => 'api'], function () {
                     Route::get('/published/{date}', [ApiScheduleController::class, 'getPublishedScheduleByDate']);
                     Route::get('/created/{date}', [ApiScheduleController::class, 'getCreatedScheduleByDate']);
                 });
-                
+
                 Route::get('/created-schedule/pdf/{date}', [PdfController::class, 'createdSchedule']);
                 Route::get('/published-schedule/pdf/{date}', [PdfController::class, 'publishedSchedule']);
 

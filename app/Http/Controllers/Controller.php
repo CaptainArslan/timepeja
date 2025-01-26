@@ -10,9 +10,7 @@ use Illuminate\Routing\Controller as BaseController;
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
-    /**
-     * success response method.
-     */
+
     public static function respondWithSuccess($data = null, $message = null, $code = null, $headers = [], $statusCode = 200)
     {
         return response()->json([
@@ -23,9 +21,6 @@ class Controller extends BaseController
         ], $statusCode, $headers);
     }
 
-    /**
-     * return error response.
-     */
     public static function respondWithError($message = null, $code = 400)
     {
         return response()->json([
@@ -34,15 +29,45 @@ class Controller extends BaseController
         ], $code);
     }
 
-    /**
-     * success response method.
-     */
     public static function respondWithDelete($message = null, $code = null, $headers = [], $statusCode = 200)
     {
         return response()->json([
             'success' => true,
             'code' => $code,
             'message' => $message,
+        ], $statusCode, $headers);
+    }
+
+    public function sendResponse($result, $message)
+    {
+        $response = [
+            'success' => true,
+            'data' => $result,
+            'message' => $message
+        ];
+        return response()->json($response, 200);
+    }
+
+    public function sendError($error, $errorMessages = [], $code = 404)
+    {
+        $response = [
+            'success' => false,
+            'message' => $error
+        ];
+        if (!empty($errorMessages)) {
+            $response['data'] = $errorMessages;
+        }
+        return response()->json($response, $code);
+    }
+
+    public static function respondWithSuccessLogReport($data = null, $download_url = null, $message = null, $code = null, $headers = [], $statusCode = 200)
+    {
+        return response()->json([
+            'success' => true,
+            'code' => $code,
+            'message' => $message,
+            'data' => $data,
+            'download_url' => $download_url,
         ], $statusCode, $headers);
     }
 }

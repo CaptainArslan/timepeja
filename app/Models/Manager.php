@@ -86,6 +86,11 @@ class Manager extends Authenticatable implements JWTSubject
         return $this->belongsTo(Organization::class);
     }
 
+    public function deviceTokens()
+    {
+        return $this->morphMany(DeviceToken::class, 'deviceable');
+    }
+
 
     // ----------------------------------------------------------------
     // ------------------ Accessors & Mutator -------------------------

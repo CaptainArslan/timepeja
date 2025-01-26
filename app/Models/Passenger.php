@@ -8,8 +8,10 @@ use App\Models\Manager;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Passenger extends Authenticatable implements JWTSubject
 {
@@ -77,26 +79,12 @@ class Passenger extends Authenticatable implements JWTSubject
         'otp',
     ];
 
-    // ----------------------------------------------------------------
-    // ------------------ Jwt Auth  -----------------------------------
-    // ----------------------------------------------------------------
-
-    // Rest omitted for brevity
-    /**
-     * Get the identifier that will be stored in the subject claim of the JWT.
-     *
-     * @return mixed
-     */
+    // ------------------------ Relationships ----------------------------
     public function getJWTIdentifier()
     {
         return $this->getKey();
     }
 
-    /**
-     * Return a key value array, containing any custom claims to be added to the JWT.
-     *
-     * @return array
-     */
     public function getJWTCustomClaims()
     {
         return [
@@ -104,99 +92,45 @@ class Passenger extends Authenticatable implements JWTSubject
         ];
     }
 
-    // ----------------------------------------------------------------
-    // ------------------ Accessors & Mutator -------------------------
-    // ----------------------------------------------------------------
+    public function requests(): HasMany
+    {
+        return $this->hasMany(Request::class);
+    }
 
-    /**
-     * Set the name attribute.
-     *
-     * @param  string  $value
-     * @return void
-     */
+    public function routes(): BelongsToMany
+    {
+        return $this->belongsToMany(Route::class, 'passenger_route');
+    }
+
+
+    // ------------------ Accessors & Mutator -------------------------
     public function setNameAttribute($value)
     {
         $this->attributes['name'] = ucwords(strtolower($value));
     }
 
-    /**
-     * Get the name attribute.
-     *
-     * @param  string  $value
-     * @return string
-     */
     public function getNameAttribute($value)
     {
         return ucwords(strtolower($value));
     }
 
-    /**
-     * Set the phone number attribute.
-     *
-     * @param  string  $value
-     * @return void
-     */
     public function setPhoneAttribute($value)
     {
         $this->attributes['phone'] = str_replace('-', '', $value);
     }
 
-    /**
-     * Get the phone number attribute.
-     *
-     * @param  string  $value
-     * @return string
-     */
     public function getPhoneAttribute($value)
     {
         return $value;
-        // return substr($value, 0, 4) . '-' . substr($value, 4, 8);
     }
 
-    /**
-     * Get the front picture of the cnic.
-     *
-     * @param  string  $value
-     * @return string|null
-     */
     public function getImageAttribute()
     {
-        return $this->attributes['image'] ??
-            // ? asset('uploads/passengers/profile/' . $this->attributes['image'])
-            asset('uploads/placeholder.jpg');
+        return $this->attributes['image'] ?? asset('uploads/placeholder.jpg');
     }
 
-    /**
-     * Get the front picture name of the vehicle.
-     *
-     * @param  string  $value
-     * @return string|null
-     */
     public function getImageNameAttribute()
     {
         return $this->attributes['image'];
-    }
-
-
-
-
-    // ----------------------------------------------------------------
-    // -------------------------- Relations ---------------------------
-    // ----------------------------------------------------------------
-
-    /**
-     * relation of passenger and requests
-     *
-     * @return void
-     */
-    public function requests()
-    {
-        return $this->hasMany(Request::class);
-    }
-
-
-    public function routes()
-    {
-        return $this->belongsToMany(Route::class, 'passenger_route');
     }
 }

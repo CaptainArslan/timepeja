@@ -1,19 +1,18 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\Auth;
+namespace App\Http\Controllers\Api\V1\Manager;
 
 use ApiHelper;
 use App\Models\Manager;
 use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use App\Http\Controllers\Api\V1\BaseController;
-use Throwable;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Http\Requests\Manager\Auth\RegisterRequest as ManagerRegisterRequest;
 
-class ManagerAuthController extends BaseController
+class AuthController extends Controller
 {
-
     public function __construct()
     {
         $this->middleware(
@@ -31,38 +30,8 @@ class ManagerAuthController extends BaseController
         );
     }
 
-    public function register(Request $request): JsonResponse
+    public function register(ManagerRegisterRequest $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'name' => ['required', 'string', 'min:3', 'max:255'],
-            'phone' => ['required', 'numeric'],
-            'otp' => ['required', 'string'],
-            'password' => [
-                'required',
-                'string',
-                'confirmed',
-                'between:8,25',
-            ],
-            'password_confirmation' => ['required', 'string', 'between:8,25'],
-            'email' => ['nullable', 'email', 'max:255'],
-        ], [
-            'name.required' => 'Name is required',
-            'phone.required' => 'Phone number is required',
-            'phone.numeric' => 'Phone number must be numeric',
-            'phone.digits' => 'Phone number must be 11 digits',
-            'email.email' => 'Email must be a valid email address',
-            'password.required' => 'Password is required',
-            'password.between' => 'Password must be between :min and :max characters',
-            'password.confirmed' => 'Password confirmation does not match',
-            'password.regex' =>
-            'The password must contain at least one uppercase letter, one lowercase letter, one number,
-            and one special character.',
-            'otp.required' => 'Verification code is required',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->respondWithError($validator->errors()->first());
-        }
         try {
             $manager = Manager::where('phone', $request->phone)
                 ->where('otp', $request->otp)
@@ -72,8 +41,8 @@ class ManagerAuthController extends BaseController
                 return $this->respondWithError("Invalid phone number or verification code");
             }
 
-            if ($manager->organization->status !== 1) {
-                return $this->respondWithError("Organization is not active");
+            if ($manager->organization->isActive() === false) {
+                return $this->respondWithError("please contact your organization admin to activate your account");
             }
 
             if (empty($manager->password)) {

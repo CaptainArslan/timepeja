@@ -47,7 +47,6 @@ class ApiHelper
      */
     public static function saveDeviceToken($request, $user): bool
     {
-        Log::info('Device Token: ' . $request->device_token);
         if($request->device_token){
             $user->device_token = $request->device_token;
             $user->save();

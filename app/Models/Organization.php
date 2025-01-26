@@ -117,10 +117,8 @@ class Organization extends Model
     }
 
 
-
-    // ----------------------------------------------------------------
     // ------------------ Accessors & Mutator -------------------------
-    // ----------------------------------------------------------------
+
     public function setNameAttribute($value)
     {
         $this->attributes['name'] = ucwords(strtolower($value));
@@ -160,5 +158,11 @@ class Organization extends Model
     public function getOrgHeadPhoneAttribute($value)
     {
         return ucwords(strtolower($this->attributes['head_phone']));
+    }
+
+    // ------------------ Custom Functions -------------------
+    public function isActive(): bool
+    {
+        return $this->status === self::STATUS_ACTIVE;
     }
 }

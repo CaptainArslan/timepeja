@@ -16,30 +16,30 @@ class MediaController extends BaseController
         try {
             // Check if the request has files
             if (!$request->hasFile('media')) {
-                return $this->sendError('No media file provided.', Response::HTTP_BAD_REQUEST);
+                return $this->respondWithError('No media file provided.', Response::HTTP_BAD_REQUEST);
             }
 
-            foreach ($request->file('media') as $media) {
+            foreach ($request->file('media') as $key => $media) {
                 // Check if the file is valid
                 if (!$media->isValid()) {
-                    return $this->sendError("Invalid media file: {$media->getClientOriginalName()}.", Response::HTTP_BAD_REQUEST);
+                    return $this->respondWithError("Invalid media file: {$media->getClientOriginalName()}.", Response::HTTP_BAD_REQUEST);
                 }
 
                 try {
                     $path = $media->store('media', 'public');
-                    $paths[] = Storage::url($path); 
+                    $paths[$key] = Storage::url($path);
                 } catch (\Exception $e) {
-                    return $this->sendError("Failed to upload file: {$media->getClientOriginalName()}. " . $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+                    return $this->respondWithError("Failed to upload file: {$media->getClientOriginalName()}. " . $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
                 }
             }
         } catch (\Exception $e) {
-            return $this->sendError('Unexpected error occurred: ' . $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+            return $this->respondWithError('Unexpected error occurred: ' . $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         if (empty($paths)) {
-            return $this->sendError('No files were successfully uploaded.', Response::HTTP_INTERNAL_SERVER_ERROR);
+            return $this->respondWithError('No files were successfully uploaded.', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        return $this->sendResponse($paths, 'Media uploaded successfully.', 'API_IMAGE_UPLOAD_SUCCESS');
+        return $this->respondWithSuccess($paths, 'Media uploaded successfully.', 'FILE_UPLOAD_SUCCESS');
     }
 }
