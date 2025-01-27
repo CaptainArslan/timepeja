@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Validator;
 
 trait UserRequest
 {
-
     public function validateStatus(Request $request)
     {
         return Validator::make($request->all(), [
@@ -23,7 +22,6 @@ trait UserRequest
             ])],
         ]);
     }
-
 
     public  function filterReport($request)
     {
@@ -85,12 +83,6 @@ trait UserRequest
         return $result;
     }
 
-    /**
-     * Export user requests to pdf
-     *
-     * @param $request
-     * @return mixed
-     */
     public function exportUserRequestsToPDF($requests, $requestData)
     {
         $data = [
@@ -123,13 +115,6 @@ trait UserRequest
         return $requests;
     }
 
-
-    /**
-     * Get user requests
-     *
-     * @param $request
-     * @return mixed
-     */
     public function filterUserRequest($request)
     {
         $query = ModelsRequest::query();

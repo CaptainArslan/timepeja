@@ -115,19 +115,27 @@ function getPaginated($limit = 10)
     return $limit;
 }
 
-function notification($title, $body, $device_token)
+function notification($title, $body, $device_tokens)
 {
     try {
         $SERVER_API_KEY = config('app.firebase_key');
 
+        // Check if device_tokens is an array or single token
+        $isMultipleTokens = is_array($device_tokens);
+
+        if (empty($device_tokens) && $isMultipleTokens) {
+            Log::info('No device tokens provided');
+            return;
+        }
+
         $data = [
-            "to" => $device_token,
+            $isMultipleTokens ? "registration_ids" : "to" => $device_tokens, // Use 'registration_ids' for multiple tokens
             "notification" => [
                 "title" => $title,
                 "body" => $body,
             ],
-
         ];
+
         $dataString = json_encode($data);
         $headers = [
             'Authorization: key=' . $SERVER_API_KEY,
@@ -150,4 +158,3 @@ function notification($title, $body, $device_token)
         return $response;
     }
 }
-

@@ -23,8 +23,7 @@ class ManagerSeeder extends Seeder
             'phone' => '03177638978',
             'password' => Hash::make('12345678A'),
             'picture' => 'placeholder.jpg',
-            'otp' => rand(1000, 9999),
-            'address' => json_encode([
+            'address' => [
                 'address' => 'complete address',
                 'street' => 'Test Street',
                 'city' => 'Test City',
@@ -33,7 +32,7 @@ class ManagerSeeder extends Seeder
                     'lat' => 31.5204,
                     'lng' => 74.3587
                 ]
-            ]),
+            ],
             'status' => Manager::STATUS_ACTIVE,
         ]);
     }

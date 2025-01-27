@@ -23,8 +23,7 @@ class ManagerFactory extends Factory
             'phone' => '03' . $this->faker->regexify('/^[0-9+]{9}$/'),
             'password' => Hash::make('12345678A'),
             'picture' => 'placeholder.jpg',
-            'otp' => rand(1000, 9999),
-            'address' => json_encode([
+            'address' => [
                 'address' => $this->faker->address(),
                 'street' => $this->faker->streetName(),
                 'city' => $this->faker->city(),
@@ -33,7 +32,7 @@ class ManagerFactory extends Factory
                     'lat' => $this->faker->latitude(),
                     'lng' => $this->faker->longitude()
                 ]
-            ]),
+            ],
             'status' => 1,
         ];
     }

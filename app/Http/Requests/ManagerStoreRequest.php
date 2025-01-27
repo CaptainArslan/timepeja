@@ -28,12 +28,12 @@ class ManagerStoreRequest extends FormRequest
             'org_name' => 'required|string|max:255',
             'org_type ' => 'nullable|numeric',
             'org_email' => 'required|email|unique:organizations,email',
-            'org_phone' => 'required|regex:/^03\d{2}-\d{7}$/',
-            'org_state' => 'required|numeric',
-            'org_city' => 'required|numeric',
+            'org_phone' => 'required',
+            'org_state' => 'nullable|numeric',
+            'org_city' => 'nullable|numeric',
 
             'org_head_name' => 'required|string|max:255',
-            'org_head_phone' => 'required|regex:/^03\d{2}-\d{7}$/',
+            'org_head_phone' => 'required',
             'org_head_email' => 'required|email|unique:organizations,head_email',
 
             'man_name' => 'required|string|max:255',

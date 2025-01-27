@@ -42,7 +42,7 @@ Route::group(['middleware' => 'api'], function () {
             Route::post('/register', [ManagerAuthController::class, 'register']);
             Route::post('/login', [ManagerAuthController::class, 'login']);
             Route::post('/login/web', [ManagerAuthController::class, 'webLogin']);
-            Route::post('/get-code', [ManagerAuthController::class, 'getVerificationCode'])->middleware('throttle:5,1');
+            Route::post('/get-code', [ManagerAuthController::class, 'getCode']);
             Route::post('/forget-password', [ManagerAuthController::class, 'forgetPassword']);
 
             Route::middleware(['jwt.verify:manager'])->group(function () {

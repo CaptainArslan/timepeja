@@ -29,5 +29,11 @@ return [
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
+    
+    'fcm' => [
+        'key' => env('FCM_KEY'),
+        'project_id' => env('FCM_PROJECT_ID'),
+        'credentials_file_path' => env('FCM_CREDENTIALS_FILE_PATH', storage_path('app/firebase/firebase.json')),
+    ],
 
 ];

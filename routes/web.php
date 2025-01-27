@@ -34,6 +34,7 @@ Route::get('/', function () {
 Route::get('/register', function () {
     return view('auth.register');
 })->name('register');
+
 Auth::routes();
 
 Route::group(['middleware' => 'auth'], function () {

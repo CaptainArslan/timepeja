@@ -18,14 +18,8 @@ use PDF;
 
 class ManagerController extends Controller
 {
-
     use UserRequest;
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index(Request $request)
     {
         $organization_types = OrganizationType::get();
@@ -52,11 +46,6 @@ class ManagerController extends Controller
         ]);
     }
 
-    /**
-     * [filter description]
-     *
-     * @return  [type]  [return description]
-     */
     public function filterManager($request)
     {
         $request->validate(
@@ -108,24 +97,9 @@ class ManagerController extends Controller
         return $result;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create(Request $request)
-    {
-        dd('create');
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(ManagerStoreRequest $request)
     {
+        dd($request->all());
         $user = Auth::user();
         $error = false;
         DB::beginTransaction();
@@ -152,8 +126,8 @@ class ManagerController extends Controller
         $org->phone         = $request->input('org_phone');
         $org->address       = $request->input('org_address');
         $org->code          = substr(uniqid(), -8);
-        $org->s_id          = $request->input('org_state');
-        $org->c_id          = $request->input('org_city');
+        // $org->s_id          = $request->input('org_state');
+        // $org->c_id          = $request->input('org_city');
         $org->head_name     = $request->input('org_head_name');
         $org->head_phone    = $request->input('org_head_phone');
         $org->head_email    = $request->input('org_head_email');
@@ -221,13 +195,6 @@ class ManagerController extends Controller
         return response();
     }
 
-    /**
-     * [deleteOrganization description]
-     *
-     * @param   [type]  $id  [$id description]
-     *
-     * @return  [type]       [return description]
-     */
     public function deleteOrganization($id)
     {
         $delOrg = Organization::where('id', $id)->delete();
@@ -279,80 +246,6 @@ class ManagerController extends Controller
         ]);
     }
 
-
-    /**
-     * This function is to filter record
-     *
-     * @param [type] $request
-     * @return void
-     */
-    // protected function filterReport($request)
-    // {
-    //     $query = Schedule::query();
-    //     if (gettype($request->input('selection')) === "string") {
-    //         $selection = explode(",", $request->input('selection'));
-    //     } else {
-    //         $selection = $request->input('selection');
-    //     }
-
-    //     switch ($request->type) {
-    //         case 'driver':
-    //             if ($selection[0] == 'all') {
-    //                 $query->whereNotNull('d_id');
-    //             } else {
-    //                 $query->whereIn('d_id', $selection);
-    //             }
-    //             break;
-    //         case 'vehicle':
-    //             if ($selection[0] == 'all') {
-    //                 $query->whereNotNull('v_id');
-    //             } else {
-    //                 $query->whereIn('v_id', $selection);
-    //             }
-    //             break;
-    //         case 'route':
-    //             if ($selection[0] == 'all') {
-    //                 $query->whereNotNull('route_id');
-    //             } else {
-    //                 $query->whereIn('route_id', $selection);
-    //             }
-    //             break;
-    //         default:
-    //             break;
-    //     }
-
-    //     $query->when($request->filled('from') && $request->filled('to'), function ($query) use ($request) {
-    //         $query->whereBetween('date', [$request->input('from'), $request->input('to')]);
-    //     });
-
-    //     $query->when($request->filled('from'), function ($query) use ($request) {
-    //         $query->where('date', '>=', $request->input('from'));
-    //     });
-
-    //     $query->when($request->filled('to'), function ($query) use ($request) {
-    //         $query->where('date', '<=', $request->input('to'));
-    //     });
-
-    //     $result = $query->where('o_id', $request->o_id)
-    //         ->where('status', Schedule::STATUS_PUBLISHED)
-    //         ->with('organizations:id,name,branch_name,branch_code,email,phone,address,code')
-    //         ->with('routes:id,name,number,from,to')
-    //         ->with('vehicles:id,number')
-    //         ->with('drivers:id,name')
-    //         ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time as scheduled_time', 'start_time', 'end_time', 'is_delay', 'trip_status', 'delayed_reason')
-    //         ->orderby('trip_status', 'desc')
-    //         ->get();
-
-    //     return $result;
-    // }
-
-
-    /**
-     * This function is to filter record
-     *
-     * @param [type] $request
-     * @return void
-     */
     public function awaitingApproval(Request $request)
     {
         $organizations = Organization::where('status', Organization::STATUS_ACTIVE)->get();
@@ -384,12 +277,6 @@ class ManagerController extends Controller
         ]);
     }
 
-    /**
-     * This function is to filter record
-     *
-     * @param [type] $request
-     * @return void
-     */
     public function approvedUser(Request $request)
     {
         $organizations = Organization::where('status', Organization::STATUS_ACTIVE)->get();
@@ -413,12 +300,6 @@ class ManagerController extends Controller
         ]);
     }
 
-    /**
-     * This function is to filter record
-     *
-     * @param [type] $request
-     * @return void
-     */
     public function disapprovedUser()
     {
         $organizations = Organization::where('status', Organization::STATUS_ACTIVE)->get();
@@ -427,12 +308,6 @@ class ManagerController extends Controller
         ]);
     }
 
-    /**
-     * This function is to filter record
-     *
-     * @param [type] $request
-     * @return void
-     */
     public function pastUser()
     {
         $organizations = Organization::where('status', Organization::STATUS_ACTIVE)->get();

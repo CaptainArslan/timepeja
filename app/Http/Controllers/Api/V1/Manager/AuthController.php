@@ -3,12 +3,17 @@
 namespace App\Http\Controllers\Api\V1\Manager;
 
 use ApiHelper;
+use App\Models\Otp;
 use App\Models\Manager;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\Manager\Auth\GetCodeRequest;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Http\Requests\Manager\Auth\ForgetPasswordRequest;
+use App\Http\Requests\Manager\Auth\LoginRequest as ManagerLoginRequest;
 use App\Http\Requests\Manager\Auth\RegisterRequest as ManagerRegisterRequest;
 
 class AuthController extends Controller
@@ -21,7 +26,7 @@ class AuthController extends Controller
                 'except' => [
                     'login',
                     'register',
-                    'getVerificationCode',
+                    'getCode',
                     'forgetPassword',
                     'webLogin',
                     'profile'
@@ -33,9 +38,22 @@ class AuthController extends Controller
     public function register(ManagerRegisterRequest $request): JsonResponse
     {
         try {
-            $manager = Manager::where('phone', $request->phone)
+            $date = now()->toDateString();
+
+            $otp = Otp::where('phone', $request->phone)
                 ->where('otp', $request->otp)
+                ->whereDate('created_at', $date)
                 ->first();
+
+            if (!$otp) {
+                return $this->respondWithError('Invalid phone number or verification code');
+            }
+
+            if ($otp->isActive() === false) {
+                return $this->respondWithError('Verification code has expired');
+            }
+
+            $manager = Manager::where('phone', $request->phone)->first();
 
             if (!$manager) {
                 return $this->respondWithError("Invalid phone number or verification code");
@@ -45,148 +63,131 @@ class AuthController extends Controller
                 return $this->respondWithError("please contact your organization admin to activate your account");
             }
 
-            if (empty($manager->password)) {
-                $manager::where('phone', $request->phone)->update([
-                    'password' => Hash::make($request->password),
-                    'status' => Manager::STATUS_ACTIVE,
-                ]);
-                return $this->respondWithSuccess($manager, 'Manager registered successfully', 'REGISTER_API_SUCCESS');
-            } else {
+            if (!empty($manager->password)) {
                 return $this->respondWithError('Manager already exist. Please login.');
             }
+
+            $manager->update([
+                'password' => Hash::make($request->password),
+                'status' => Manager::STATUS_ACTIVE,
+            ]);
+
+            $otp->update([
+                'is_verified' => true,
+                'verified_at' => now(),
+            ]);
+
+            return $this->respondWithSuccess($manager, 'Manager registered successfully', 'REGISTER_API_SUCCESS');
         } catch (\Throwable $th) {
-            return $this->respondWithError('Error Occurred while registering manager');
+            return $this->respondWithError('Error Occurred while registering manager' . $th->getMessage());
         }
     }
 
-    public function login(Request $request): JsonResponse
+    public function login(ManagerLoginRequest $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'phone' => ['required', 'numeric'],
-            'password' => [
-                'required',
-                'string',
-                'between:8,25',
-            ],
-        ], [
-            'phone.required' => 'Phone number is required',
-            'phone.numeric' => 'Phone number must be numeric',
-            'phone.digits' => 'Phone number must be 11 digits',
-            'password.required' => 'Password is required',
-            'password.between' => 'Password must be between :min and :max characters',
-            'password.regex' =>
-            'The password must contain at least one uppercase letter, one lowercase letter,
-            one number, and one special character.'
-        ]);
-
-        if ($validator->fails()) {
-            return $this->respondWithError($validator->errors()->first());
-        }
-
         try {
             $credentials = $request->only(['phone', 'password']);
 
-            $user = Manager::where('phone', $credentials['phone'])
+            $manager = Manager::where('phone', $credentials['phone'])
                 ->with('organization')
                 ->first();
 
-            if (!$user) {
+            if (!$manager) {
                 return $this->respondWithError('Invalid phone number or password');
             }
 
-            if ($user->status !== Manager::STATUS_ACTIVE) {
+            if ($manager->status !== Manager::STATUS_ACTIVE) {
                 return $this->respondWithError('Account is not active');
             }
 
-            ApiHelper::saveDeviceToken($request, $user);
-
-            if (!$token = auth('manager')->attempt($credentials)) {
+            if (!$token = Auth::guard('manager')->attempt($credentials)) {
                 return $this->respondWithError('Invalid phone number or password');
             }
 
-            return $this->respondWithSuccess($user, 'Login successfully', 'LOGIN_API_SUCCESS', [
+            if ($request->device_token && $request->device_type) {
+                $manager->deviceTokens()->firstOrCreate(
+                    [
+                        'token' => $request->device_token,
+                        'device_type' => $request->device_type
+                    ],
+                    [
+                        'created_at' => now(),
+                        'updated_at' => now()
+                    ]
+                );
+            }
+
+            return $this->respondWithSuccess($manager, 'Login successfully', 'LOGIN_API_SUCCESS', [
                 'content-type' => 'application/json',
                 'authorization' => $token
             ]);
         } catch (\Throwable $th) {
-            throw $th;
+            return $this->respondWithError('Error Occurred while login' . $th->getMessage());
         }
     }
 
-    public function getVerificationCode(Request $request): JsonResponse
+    public function getCode(GetCodeRequest $request): JsonResponse
     {
-        $fields = $request->all();
-        $validator = Validator::make($fields, [
-            'phone' => ['required', 'numeric'],
-        ], [
-            'phone.required' => 'Phone number is required',
-            'phone.numeric' => 'Phone number must be numeric',
-            'phone.digits' => 'Phone number must be 11 digits',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->respondWithError($validator->errors()->first());
-        }
-
         try {
-            $manager = Manager::where('phone', $fields['phone'])->first();
-            if (!empty($manager)) {
-                $otp = rand(1000, 9999);
-                $manager->otp = $otp;
-                $save = $manager->save();
-                if ($save) {
-                    $data = $manager->only('id', 'name', 'phone', 'otp');
-                    if ($manager->device_token) {
-                        notification('Otp', 'Your verification code is ' . $otp, $manager->device_token);
-                    }
-                    return $this->respondWithSuccess($data, 'Otp Sent Successfully', 'API_GET_CODE');
-                } else {
-                    return $this->respondWithError('Error Occured while sending otp');
-                }
-            } else {
-                return $this->respondWithError('Invalid Phone number provided');
+            $manager = Manager::where('phone', $request->phone)->first();
+
+            if (!$manager) {
+                return $this->respondWithError('Phone number does not exist');
             }
+
+            $otp = rand(1000, 9999);
+
+            $oneTimePassword = Otp::updateOrCreate(
+                ['phone' => $request->phone],
+                [
+                    'otp' => $otp,
+                    'expires_at' => now()->addMinutes(5),
+                ]
+            );
+
+            if (!$oneTimePassword) {
+                return $this->respondWithError('Error Occured while sending otp');
+            }
+
+            return $this->respondWithSuccess($oneTimePassword, 'Otp Sent Successfully', 'API_GET_CODE');
         } catch (\Throwable $th) {
-            return $this->respondWithError('Error Occured while sending otp');
+            return $this->respondWithError('Error Occured while sending otp' . $th->getMessage());
         }
     }
 
-    public function forgetPassword(Request $request): JsonResponse
+    public function forgetPassword(ForgetPasswordRequest $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'otp' => ['required', 'string'],
-            'phone' => ['required', 'numeric'],
-            'password' => [
-                'required',
-                'string',
-                'confirmed',
-                'between:8,25',
-            ],
-        ], [
-            'phone.required' => 'Phone is required',
-            'password.required' => 'Password is required',
-            'otp.required' => 'Verification code is required',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->respondWithError($validator->errors()->first());
-        }
-
         try {
-            $manager = Manager::where('phone', $request->phone)
+            $date = now()->toDateString();
+
+            $otp = Otp::where('phone', $request->phone)
                 ->where('otp', $request->otp)
+                ->whereDate('created_at', $date)
                 ->first();
+
+            if (!$otp) {
+                return $this->respondWithError('Invalid phone number or verification code');
+            }
+
+            if ($otp->isActive() === false) {
+                return $this->respondWithError('Verification code has expired');
+            }
+
+            $manager = Manager::where('phone', $request->phone)->first();
 
             if (!$manager) {
                 return $this->respondWithError('invalid phone or verification code');
             }
 
-            $manager->password = Hash::make($request->password);
-            $save = $manager->save();
-            if (!$save) {
+            $update = $manager->update([
+                'password' => Hash::make($request->password),
+            ]);
+
+            if (!$update) {
                 return $this->respondWithError('Error Occured while updating password');
             }
-            return $this->respondWithSuccess($manager, 'Password Updated Successfully', 'PASSWORD_UPDATE');
+
+            return $this->respondWithSuccess(null, 'Password Updated Successfully', 'PASSWORD_UPDATE');
         } catch (\Throwable $th) {
             return $this->respondWithError('Error Occured while updating password');
         }
@@ -196,7 +197,7 @@ class AuthController extends Controller
     {
         try {
             $data = $this->respondWithSuccess(
-                auth('manager')->user()->load('organization'),
+                Manager::with('organization')->find(Auth::guard('manager')->id()),
                 'Manager profile',
                 'MANAGER_PROFILE'
             );
@@ -211,7 +212,14 @@ class AuthController extends Controller
 
     public function logout(): JsonResponse
     {
-        auth('manager')->logout();
+        $manager = Auth::guard('manager')->user();
+
+        // Delete device tokens associated with the manager
+        $manager->deviceTokens()->delete();
+
+        // Log out the manager using the manager guard
+        Auth::guard('manager')->logout();
+
         return $this->respondWithSuccess(null, 'Successfully logged out', 'API_LOGOUT');
     }
 

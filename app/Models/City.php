@@ -14,21 +14,20 @@ class City extends Model
     protected $fillable = [
         'id',
         'name',
-        'state_id',
-        'country_id',
-        'status'
+        's_id',
+        'latitude',
+        'longitude',
+        'wikiDataId',
+        'flag',
     ];
 
     protected $casts = [
-        'state_id' => 'integer',
-        'country_id' => 'integer',
-        'status' => 'boolean',
+        's_id' => 'integer',
     ];
 
 
     public function state()
     {
-        return $this->belongsTo(State::class, 's_id', 'id');
+        return $this->belongsTo(State::class, 's_id');
     }
-    
 }

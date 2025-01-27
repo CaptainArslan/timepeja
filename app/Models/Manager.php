@@ -6,7 +6,9 @@ use Illuminate\Support\Carbon;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -22,54 +24,35 @@ class Manager extends Authenticatable implements JWTSubject
     public const STATUS_INACTIVE = false;
 
     protected $fillable = [
-        'id',
         'organization_id',
         'name',
         'email',
         'phone',
+        'password',
         'picture',
-        'address'
+        'about',
+        'status',
+        'address',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array
-     */
     protected $casts = [
         'organization_id' => 'integer',
         'status' => 'boolean',
+        'address' => 'array',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
-        'otp',
         'deleted_at',
-        'device_token',
     ];
 
-    // Rest omitted for brevity
-    /**
-     * Get the identifier that will be stored in the subject claim of the JWT.
-     *
-     * @return mixed
-     */
+    // ------------------ Relationships --------------------------------
     public function getJWTIdentifier()
     {
         return $this->getKey();
     }
 
-    /**
-     * Return a key value array, containing any custom claims to be added to the JWT.
-     *
-     * @return array
-     */
     public function getJWTCustomClaims()
     {
         return [
@@ -77,129 +60,62 @@ class Manager extends Authenticatable implements JWTSubject
         ];
     }
 
-
-    // ----------------------------------------------------------------
-    // ------------------ Relationships --------------------------------
-    // ----------------------------------------------------------------
     public function organization(): BelongsTo
     {
         return $this->belongsTo(Organization::class);
     }
 
-    public function deviceTokens()
+    public function deviceTokens(): MorphMany
     {
         return $this->morphMany(DeviceToken::class, 'deviceable');
     }
 
 
-    // ----------------------------------------------------------------
     // ------------------ Accessors & Mutator -------------------------
-    // ----------------------------------------------------------------
-
-    /**
-     * Set the name attribute.
-     *
-     * @param  string  $value
-     * @return void
-     */
-    public function setNameAttribute($value)
+    protected function name(): Attribute
     {
-        $this->attributes['name'] = ucwords(strtolower($value));
+        return new Attribute(
+            get: fn($value) => ucwords(strtolower($value)),
+            set: fn($value) => ucwords(strtolower($value))
+        );
     }
 
-    /**
-     * Get the name attribute.
-     *
-     * @param  string  $value
-     * @return string
-     */
-    public function getNameAttribute($value)
+    protected function picture(): Attribute
     {
-        return ucwords(strtolower($value));
+        return new Attribute(
+            get: function ($value) {
+                if (filter_var($value, FILTER_VALIDATE_URL)) {
+                    return $value;
+                } elseif ($value) {
+                    return asset('uploads/managers/profiles/' . $value);
+                } else {
+                    return asset('uploads/managers/profiles/placeholder.jpg');
+                }
+            }
+        );
     }
 
-
-    /**
-     * Set the phone number attribute.
-     *
-     * @param  string  $value
-     * @return void
-     */
-    public function setPhoneAttribute($value)
+    protected function pictureName(): Attribute
     {
-        $this->attributes['phone'] = str_replace('-', '', $value);
+        return new Attribute(
+            get: function () {
+                $url = $this->attributes['picture'] ?? null;
+
+                if ($url && filter_var($url, FILTER_VALIDATE_URL)) {
+                    $path = parse_url($url, PHP_URL_PATH);
+                    return basename($path);
+                }
+
+                return $this->attributes['picture'] ?? null;
+            }
+        );
     }
 
-    /**
-     * Get the phone number attribute.
-     *
-     * @param  string  $value
-     * @return string
-     */
-    public function getPhoneAttribute($value)
+    protected function address(): Attribute
     {
-        return $value;
-        // return substr($value, 0, 4) . '-' . substr($value, 4, 8);
-    }
-
-    /**
-     * Manager Picture Accessor
-     *
-     * @return  [image with path]  [this function will return the manager image with full path]
-     */
-    public function getPictureAttribute($value)
-    {
-        if (filter_var($value, FILTER_VALIDATE_URL)) {
-            return $value; // If it's a valid URL, return it directly
-        } elseif ($value) {
-            return asset('uploads/managers/profiles/' . $value); // If not a URL but has a value, return asset URL
-        } else {
-            return asset('uploads/managers/profiles/placeholder.jpg'); // If empty or not set, return placeholder URL
-        }
-    }
-
-    /**
-     * Get the front picture name of the vehicle.
-     *
-     * @param  string  $value
-     * @return string|null
-     */
-    public function getPictureNameAttribute()
-    {
-        $url = $this->attributes['picture'] ?? null;
-
-        // Extract the image name from the URL if it's present
-        if ($url && filter_var($url, FILTER_VALIDATE_URL)) {
-            $path = parse_url($url, PHP_URL_PATH);
-            $name = basename($path);
-
-            return $name;
-        }
-
-        // Return the simple name if it's already present
-        return $this->attributes['picture'] ?? null;
-        // return $this->attributes['picture'];
-    }
-
-    /**
-     * Get the created_at.
-     *
-     * @param  string  $value
-     * @return string|null
-     */
-    public function getCreatedAtAttribute($value)
-    {
-        return Carbon::parse($value)->format('Y-m-d');
-    }
-
-    /**
-     * Get the updated_at.
-     *
-     * @param  string  $value
-     * @return string|null
-     */
-    public function getUpdatedAtAttribute($value)
-    {
-        return Carbon::parse($value)->format('Y-m-d');
+        return new Attribute(
+            get: fn($value) => json_decode($value, true),
+            set: fn($value) => json_encode($value)
+        );
     }
 }

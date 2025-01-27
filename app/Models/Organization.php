@@ -2,9 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\City;
 use App\Models\Route;
-use App\Models\State;
 use App\Models\Driver;
 use App\Models\Manager;
 use App\Models\Vehicle;
@@ -18,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Organization extends Model
 {
@@ -27,11 +26,6 @@ class Organization extends Model
     public const STATUS_ACTIVE = 1;
     public const STATUS_DEACTIVE = 0;
 
-    /**
-     * array for fillable
-     *
-     * @var array
-     */
     protected $fillable = [
         'organization_type_id',
         'name',
@@ -58,19 +52,13 @@ class Organization extends Model
         'deleted_at',
     ];
 
-
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array
-     */
     protected $casts = [
         'state_id' => 'integer',
         'city_id' => 'integer',
         'organization_type_id' => 'integer',
     ];
 
-
+    // ------------------ Relationships --------------------------------
     public function manager(): HasOne
     {
         return $this->hasOne(Manager::class);
@@ -117,50 +105,39 @@ class Organization extends Model
     }
 
 
-    // ------------------ Accessors & Mutator -------------------------
-
-    public function setNameAttribute($value)
+    // ------------------ Accessors & Mutator --------------------------------
+    protected function name(): Attribute
     {
-        $this->attributes['name'] = ucwords(strtolower($value));
+        return new Attribute(
+            get: fn($value) => strtolower($value),
+            set: fn($value) => ucwords(strtolower($value))
+        );
     }
 
-    public function getNameAttribute($value)
+    protected function address(): Attribute
     {
-        return ucwords(strtolower($value));
+        return new Attribute(
+            get: fn($value) => json_decode($value, true),
+            set: fn($value) => json_encode($value)
+        );
     }
 
-    public function setPhoneAttribute($value)
+    protected function headAddress(): Attribute
     {
-        $this->attributes['phone'] = str_replace('-', '', $value);
+        return new Attribute(
+            get: fn($value) => json_decode($value, true),
+            set: fn($value) => json_encode($value)
+        );
     }
 
-    public function getPhoneAttribute($value)
+    protected function status(): Attribute
     {
-        return substr($value, 0, 4) . '-' . substr($value, 4, 8);
+        return new Attribute(
+            get: fn($value) => $value === self::STATUS_ACTIVE ? 'Active' : 'Deactive',
+            set: fn($value) => $value === 'Active' ? self::STATUS_ACTIVE : self::STATUS_DEACTIVE
+        );
     }
-
-    public function setHeadPhoneAttribute($value)
-    {
-        $this->attributes['head_phone'] = str_replace('-', '', $value);
-    }
-
-    public function getHeadPhoneAttribute($value)
-    {
-        return substr($value, 0, 4) . '-' . substr($value, 4, 8);
-        // return substr($value, 0, 4) . '-' . substr($value, 7);
-    }
-
-    public function setOrgHeadPhoneAttribute($value)
-    {
-        $this->attributes['head_phone'] = ucwords(strtolower($value));
-    }
-
-    public function getOrgHeadPhoneAttribute($value)
-    {
-        return ucwords(strtolower($this->attributes['head_phone']));
-    }
-
-    // ------------------ Custom Functions -------------------
+    // ------------------ Custom Functions --------------------------------
     public function isActive(): bool
     {
         return $this->status === self::STATUS_ACTIVE;

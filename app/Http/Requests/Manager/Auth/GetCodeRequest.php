@@ -1,13 +1,13 @@
 <?php
 
-namespace {{ namespace }};
+namespace App\Http\Requests\Manager\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Symfony\Component\HttpFoundation\Response;
 
-class {{ class }} extends FormRequest
+class GetCodeRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,14 +27,15 @@ class {{ class }} extends FormRequest
     public function rules()
     {
         return [
-            //
+            'phone' => ['required', 'string', 'exists:managers,phone'],
         ];
     }
 
     public function messages()
     {
         return [
-            //
+            'phone.required' => 'Phone number is required',
+            'phone.exists' => 'Phone number does not exist',
         ];
     }
 

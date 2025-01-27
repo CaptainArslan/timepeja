@@ -25,7 +25,7 @@ class OrganizationFactory extends Factory
             'email' => $this->faker->safeEmail(),
             'phone' => '03' . $this->faker->regexify('/^[0-9+]{2}-[0-9+]{7}$/'),
             'code' => substr(uniqid(), -8),
-            'address' => json_encode([
+            'address' => [
                 'address' => $this->faker->address(),
                 'street' => $this->faker->streetName(),
                 'city' => $this->faker->city(),
@@ -34,7 +34,7 @@ class OrganizationFactory extends Factory
                     'lat' => $this->faker->latitude(),
                     'lng' => $this->faker->longitude()
                 ]
-            ]),
+            ],
             'state_id' => State::inRandomOrder()->first()->id,
             'city_id' => City::inRandomOrder()->first()->id,
             'head_name' => $this->faker->name(),

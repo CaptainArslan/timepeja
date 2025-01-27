@@ -31,7 +31,7 @@ class OrganizationSeeder extends Seeder
             'email' => 'mughalarslan996@gmail.com',
             'phone' => '03' . rand(0000000, 9999999),
             'code' => substr(uniqid(), -8),
-            'address' => json_encode([
+            'address' => [
                 'address' => 'complete address',
                 'street' => 'Test Street',
                 'city' => 'Test City',
@@ -40,13 +40,13 @@ class OrganizationSeeder extends Seeder
                     'lat' => 31.5204,
                     'lng' => 74.3587
                 ]
-            ]),
+            ],
             'state_id' => State::inRandomOrder()->first()->id,
             'city_id' => City::inRandomOrder()->first()->id,
             'head_name' => 'Test 1',
             'head_email' => 'mughalarslan996@gmail.com',
             'head_phone' => '03' . rand(0000000, 9999999),
-            'head_address' => json_encode([
+            'head_address' => [
                 'address' => 'complete address',
                 'street' => 'Test Street',
                 'city' => 'Test City',
@@ -55,7 +55,7 @@ class OrganizationSeeder extends Seeder
                     'lat' => 31.5204,
                     'lng' => 74.3587
                 ]
-            ]),
+            ],
             'status' => Organization::STATUS_ACTIVE,
         ]);
     }

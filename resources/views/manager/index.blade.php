@@ -165,7 +165,6 @@
                             </td>
                         </tr>
                         @empty
-                        <!--  -->
                         @endforelse
                     </tbody>
                 </table>
@@ -199,21 +198,19 @@
                                         </li>
                                         <li class="nav-item">
                                             <a href="#company_head" data-bs-toggle="tab" id="company_head_tab" data-toggle="tab" class="nav-link rounded-0 pt-2 pb-2"
-                                            onclick="checkOrgDetailForm()" disabled="disabled">
+                                                onclick="checkOrgDetailForm()" disabled="disabled">
                                                 <i class="fas fa-user"></i>
                                                 <span class="d-none d-sm-inline">Company Head</span>
                                             </a>
                                         </li>
                                         <li class="nav-item">
                                             <a href="#transport_manager" data-bs-toggle="tab" data-toggle="tab" id="transport_manager_tab" class="nav-link rounded-0 pt-2 pb-2" onclick="checkOrgHeadForm()" disabled="disabled">
-                                                <!--  -->
                                                 <i class="fas fa-bus-alt"></i>
                                                 <span class="d-none d-sm-inline">Transport Manager</span>
                                             </a>
                                         </li>
                                         <li class="nav-item">
                                             <a href="#financials" id="financials_tabs" value="financials" data-bs-toggle="tab" data-toggle="tab" class="nav-link rounded-0 pt-2 pb-2" onclick="checkTransportManagerForm()" disabled="disabled">
-                                                <!--  -->
                                                 <i class=" fas fa-money-bill-wave"></i>
                                                 <span class="d-none d-sm-inline">Financial</span>
                                             </a>
@@ -221,120 +218,123 @@
                                     </ul>
                                     <div class="tab-content b-0 mb-0 pt-0">
                                         <!-- Oganization detail -->
-                                        <div class="tab-pane" id="company">
-                                            <div class="row">
-                                                <div class="col-lg-6">
-                                                    <div class="mb-3">
-                                                        <label for="org_name" class="form-label">Organization Name</label>
-                                                        <input type="text" id="org_name" name="org_name" value="{{ old('org_name') }}" class="form-control" placeholder="Punjab University" required>
-                                                        <span class="text-danger" id="org_name_error"></span>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label for="org_branch_code" class="form-label">Branch code</label>
-                                                        <input type="text" id="org_branch_code" name="org_branch_code" value="{{ old('org_branch_code') }}" class="form-control" data-toggle="input-mask" data-mask-format="00000000000" placeholder="12345">
-                                                        <span class="text-danger" id="org_branch_code_error"></span>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label for="org_email" class="form-label">Email</label>
-                                                        <input type="email" id="org_email" name="org_email" class="form-control" value="{{ old('org_email') }}" placeholder="text@gmail.com" required>
-                                                        <span class="text-danger" id="org_email_error"></span>
-                                                    </div>
+                                        <hr>
+                                        <!-- <div class="tab-pane" id="company"> -->
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <div class="mb-3">
+                                                    <label for="org_name" class="form-label">Organization Name</label>
+                                                    <input type="text" id="org_name" name="org_name" value="{{ old('org_name') }}" class="form-control" placeholder="Punjab University" required>
+                                                    <span class="text-danger" id="org_name_error"></span>
                                                 </div>
-                                                <div class="col-lg-6">
-                                                    <div class="mb-3">
-                                                        <label for="org_branch_name" class="form-label">Branch Name</label>
-                                                        <input type="text" id="org_branch_name" name="org_branch_name" class="form-control" value="{{ old('org_branch_name') }}" placeholder="Lahore branch">
-                                                        <span class="text-danger" id="org_branch_name_error"></span>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label for="org_type" class="form-label">Company Title</label>
-                                                        <select class="form-select select2" id="org_type" name="org_type" required>
-                                                            <option value="" selected>Please Select Organization Type</option>
-                                                            @forelse ($organization_types as $organizaton_type)
-                                                            <option value="{{$organizaton_type->id}}">{{$organizaton_type->name}} ({{$organizaton_type->desc}})</option>
-                                                            @empty
-                                                            <option>No Option Found</option>
-                                                            @endforelse
-                                                        </select>
-                                                        <span class="text-danger" id="org_type_error"></span>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label for="org_phone" class="form-label">Phone No</label>
-                                                        <input type="text" id="org_phone" name="org_phone" class="form-control" data-toggle="input-mask" data-mask-format="0000-0000000" value="{{ old('org_phone') }}" placeholder="0300-1234567" required>
-                                                        <span class="text-danger" id="org_phone_error"></span>
-                                                    </div>
+                                                <div class="mb-3">
+                                                    <label for="org_branch_code" class="form-label">Branch code</label>
+                                                    <input type="text" id="org_branch_code" name="org_branch_code" value="{{ old('org_branch_code') }}" class="form-control" placeholder="12345">
+                                                    <span class="text-danger" id="org_branch_code_error"></span>
                                                 </div>
-                                                <div class="col-lg-12 row">
-                                                    <div class="mb-3 col-4">
-                                                        <label for="org_state" class="form-label">State</label>
-                                                        <select class="form-select select2" id="org_state" name="org_state" required>
-                                                            <option value="" selected>Please Select State</option>
-                                                            @forelse ($states as $state)
-                                                            <option value="{{$state->id}}">{{ $state->name }}</option>
-                                                            @empty
-                                                            <option>No Avaiable</option>
-                                                            @endforelse
-                                                        </select>
-                                                        <span class="text-danger" id="org_state_error"></span>
-                                                    </div>
-                                                    <div class="mb-3 col-4">
-                                                        <label for="org_city" class="form-label">City</label>
-                                                        <select class="form-select select2" id="org_city" name="org_city" required>
-                                                            <option value="" selected>Please Select City</option>
-                                                        </select>
-                                                        <span class="text-danger" id="org_city_error"></span>
-                                                    </div>
-                                                    <div class="mb-3 col-4">
-                                                        <label for="org_address" class="form-label">Address</label>
-                                                        <input class="form-control" id="org_address" name="org_address" value="{{ old('org_address') }}">
-                                                        <span class="text-danger" id="org_address_error"></span>
-                                                    </div>
+                                                <div class="mb-3">
+                                                    <label for="org_email" class="form-label">Email</label>
+                                                    <input type="email" id="org_email" name="org_email" class="form-control" value="{{ old('org_email') }}" placeholder="text@gmail.com" required>
+                                                    <span class="text-danger" id="org_email_error"></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <div class="mb-3">
+                                                    <label for="org_branch_name" class="form-label">Branch Name</label>
+                                                    <input type="text" id="org_branch_name" name="org_branch_name" class="form-control" value="{{ old('org_branch_name') }}" placeholder="Lahore branch">
+                                                    <span class="text-danger" id="org_branch_name_error"></span>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="org_type" class="form-label">Company Title</label>
+                                                    <select class="form-select select2" id="org_type" name="org_type" required>
+                                                        <option value="" selected>Please Select Organization Type</option>
+                                                        @forelse ($organization_types as $organizaton_type)
+                                                        <option value="{{$organizaton_type->id}}">{{$organizaton_type->name}} ({{$organizaton_type->desc}})</option>
+                                                        @empty
+                                                        <option>No Option Found</option>
+                                                        @endforelse
+                                                    </select>
+                                                    <span class="text-danger" id="org_type_error"></span>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="org_phone" class="form-label">Phone No</label>
+                                                    <input type="text" id="org_phone" name="org_phone" class="form-control" value="{{ old('org_phone') }}" placeholder="0300-1234567" required>
+                                                    <span class="text-danger" id="org_phone_error"></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-12 row">
+                                                <div class="mb-3 col-4">
+                                                    <label for="org_state" class="form-label">State</label>
+                                                    <select class="form-select select2" id="org_state" name="org_state" required>
+                                                        <option value="" selected>Please Select State</option>
+                                                        @forelse ($states as $state)
+                                                        <option value="{{$state->id}}">{{ $state->name }}</option>
+                                                        @empty
+                                                        <option>No Avaiable</option>
+                                                        @endforelse
+                                                    </select>
+                                                    <span class="text-danger" id="org_state_error"></span>
+                                                </div>
+                                                <div class="mb-3 col-4">
+                                                    <label for="org_city" class="form-label">City</label>
+                                                    <select class="form-select select2" id="org_city" name="org_city">
+                                                        <option value="" selected>Please Select City</option>
+                                                    </select>
+                                                    <span class="text-danger" id="org_city_error"></span>
+                                                </div>
+                                                <div class="mb-3 col-4">
+                                                    <label for="org_address" class="form-label">Address</label>
+                                                    <input class="form-control" id="org_address" name="org_address" value="{{ old('org_address') }}">
+                                                    <span class="text-danger" id="org_address_error"></span>
                                                 </div>
                                             </div>
                                         </div>
+                                        <!-- </div> -->
 
+                                        <hr>
                                         <!-- Oganization head -->
-                                        <div class="tab-pane" id="company_head">
-                                            <div class="row">
-                                                <div class="col-lg-6">
-                                                    <div class="mb-3">
-                                                        <label for="org_head_name" class="form-label">Head Name</label>
-                                                        <input type="text" id="org_head_name" name="org_head_name" placeholder="John Doe" value="{{ old('org_head_name') }}" class="form-control" required>
-                                                        <span class="text-danger" id="org_head_name_error"></span>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label for="org_head_phone" class="form-label">Phone No</label>
-                                                        <input type="text" id="org_head_phone" name="org_head_phone" data-toggle="input-mask" data-mask-format="0000-0000000" value="{{ old('org_head_phone') }}" placeholder="0300-1234567" class="form-control" required>
-                                                        <span class="text-danger" id="org_head_phone_error"></span>
-                                                    </div>
+                                        <!-- <div class="tab-pane" id="company_head"> -->
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <div class="mb-3">
+                                                    <label for="org_head_name" class="form-label">Head Name</label>
+                                                    <input type="text" id="org_head_name" name="org_head_name" placeholder="John Doe" value="{{ old('org_head_name') }}" class="form-control" required>
+                                                    <span class="text-danger" id="org_head_name_error"></span>
                                                 </div>
-                                                <div class="col-lg-6">
-                                                    <div class="mb-3">
-                                                        <label for="org_head_email" class="form-label">Email</label>
-                                                        <input type="email" id="org_head_email" name="org_head_email" placeholder="test@gmail.com" value="{{ old('org_head_email') }}" class="form-control" placeholder="Email" required>
-                                                        <span class="text-danger" id="org_head_email_error"></span>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label for="org_head_address" class="form-label">Address</label>
-                                                        <input class="form-control" id="org_head_address" name="org_head_address" value="{{ old('org_head_address') }}" rows="5"></input>
-                                                    </div>
+                                                <div class="mb-3">
+                                                    <label for="org_head_phone" class="form-label">Phone No</label>
+                                                    <input type="text" id="org_head_phone" name="org_head_phone" value="{{ old('org_head_phone') }}" placeholder="0300-1234567" class="form-control" required>
+                                                    <span class="text-danger" id="org_head_phone_error"></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <div class="mb-3">
+                                                    <label for="org_head_email" class="form-label">Email</label>
+                                                    <input type="email" id="org_head_email" name="org_head_email" placeholder="test@gmail.com" value="{{ old('org_head_email') }}" class="form-control" placeholder="Email" required>
+                                                    <span class="text-danger" id="org_head_email_error"></span>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="org_head_address" class="form-label">Address</label>
+                                                    <input class="form-control" id="org_head_address" name="org_head_address" value="{{ old('org_head_address') }}" rows="5"></input>
                                                 </div>
                                             </div>
                                         </div>
+                                        <!-- </div> -->
 
+                                        <hr>
                                         <!-- Company transport manager -->
-                                        <div class="tab-pane" id="transport_manager">
-                                            <div class="row">
-                                                <div class="col-lg-6">
-                                                    <div class="mb-3">
-                                                        <label for="man_name" class="form-label">Name</label>
-                                                        <input type="text" id="man_name" name="man_name" value="{{ old('man_name') }}" placeholder="John Doe" class="form-control" required>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label for="phone" class="form-label">Phone No</label>
-                                                        <input type="text" id="man_phone" name="man_phone" data-toggle="input-mask" data-mask-format="0000-0000000" value="{{ old('phone') }}" placeholder="0300-1234567" class="form-control" required>
-                                                    </div>
-                                                    <!-- <div class="mb-3">
+                                        <!-- <div class="tab-pane" id="transport_manager"> -->
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <div class="mb-3">
+                                                    <label for="man_name" class="form-label">Name</label>
+                                                    <input type="text" id="man_name" name="man_name" value="{{ old('man_name') }}" placeholder="John Doe" class="form-control" required>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="phone" class="form-label">Phone No</label>
+                                                    <input type="text" id="man_phone" name="man_phone" value="{{ old('phone') }}" placeholder="0300-1234567" class="form-control" required>
+                                                </div>
+                                                <!-- <div class="mb-3">
                                                         <label for="man_password" class="form-label">Password</label>
                                                         <div class="input-group input-group-merge">
                                                             <input type="password" id="password" class="form-control" placeholder="Enter your password" name="password">
@@ -343,17 +343,17 @@
                                                             </div>
                                                         </div>
                                                     </div> -->
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <div class="mb-3">
+                                                    <label for="man_email" class="form-label">Email</label>
+                                                    <input type="email" id="man_email" name="man_email" value="{{ old('man_email') }}" aria-placeholder="text@gmail.com" class="form-control" placeholder="Email" required>
                                                 </div>
-                                                <div class="col-lg-6">
-                                                    <div class="mb-3">
-                                                        <label for="man_email" class="form-label">Email</label>
-                                                        <input type="email" id="man_email" name="man_email" value="{{ old('man_email') }}" aria-placeholder="text@gmail.com" class="form-control" placeholder="Email" required>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label for="man_pic" class="form-label">Manager Picture</label>
-                                                        <input type="file" id="man_pic" name="man_pic" value="{{ old('man_pic') }}" class="form-control">
-                                                    </div>
-                                                    <!-- <div class="mb-3">
+                                                <div class="mb-3">
+                                                    <label for="man_pic" class="form-label">Manager Picture</label>
+                                                    <input type="file" id="man_pic" name="man_pic" value="{{ old('man_pic') }}" class="form-control">
+                                                </div>
+                                                <!-- <div class="mb-3">
                                                         <label for="password_confirmation" class="form-label">Confirm Password</label>
                                                         <div class="input-group input-group-merge">
                                                             <input type="password" id="password_confirmation" class="form-control" placeholder="Enter your password" name="password_confirmation">
@@ -362,103 +362,104 @@
                                                             </div>
                                                         </div>
                                                     </div> -->
-                                                </div>
-                                                <div class="col-lg-12">
-                                                    <div class="mb-3">
-                                                        <label for="man_address" class="form-label">Address</label>
-                                                        <textarea class="form-control" name="man_address" id="man_address" value="{{ old('man_address') }}" cols="30" rows="2" placeholder="123 Street lahore, Pakistan"></textarea>
-                                                    </div>
+                                            </div>
+                                            <div class="col-lg-12">
+                                                <div class="mb-3">
+                                                    <label for="man_address" class="form-label">Address</label>
+                                                    <textarea class="form-control" name="man_address" id="man_address" value="{{ old('man_address') }}" cols="30" rows="2" placeholder="123 Street lahore, Pakistan"></textarea>
                                                 </div>
                                             </div>
                                         </div>
+                                        <!-- </div> -->
 
+                                        <hr>
                                         <!-- Company financials -->
-                                        <div class="tab-pane" id="financials">
-                                            <!-- Wallet Activation -->
-                                            <div class="row">
-                                                <div class="col-md-12 mt-2">
-                                                    <h4 class="header-title">Who we will charge the fee from:</h4>
-                                                    <div class="form-check mb-2 form-check-primary">
-                                                        <input class="form-check-input" type="checkbox" name="wallet[]" id="org_wallet" value="org_wallet" required>
-                                                        <label class="form-check-label" for="org_wallet">Organization</label>
-                                                    </div>
-                                                    <div class="form-check mb-2 form-check-primary">
-                                                        <input class="form-check-input" type="checkbox" name="wallet[]" id="driver_wallet" value="driver_wallet" onclick="driverWallet(this)">
-                                                        <label class="form-check-label" for="driver_wallet">Sub Contracting Driver</label>
-                                                    </div>
-                                                    <div class="form-check mb-2 form-check-primary">
-                                                        <input class="form-check-input" type="checkbox" name="wallet[]" id="passenger_wallet" value="passenger_wallet" onclick="passengerWallet(this)">
-                                                        <label class="form-check-label" for="passenger_wallet">Passengers</label>
-                                                    </div>
+                                        <!-- <div class="tab-pane" id="financials"> -->
+                                        <!-- Wallet Activation -->
+                                        <div class="row">
+                                            <div class="col-md-12 mt-2">
+                                                <h4 class="header-title">Who we will charge the fee from:</h4>
+                                                <div class="form-check mb-2 form-check-primary">
+                                                    <input class="form-check-input" type="checkbox" name="wallet[]" id="org_wallet" value="org_wallet" required>
+                                                    <label class="form-check-label" for="org_wallet">Organization</label>
                                                 </div>
-
-                                                <!-- Amount of all users -->
-                                                <div class="col-md-12 mt-3 mb-2">
-                                                    <h4 class="header-title">Basis of payment calculation:</h4>
-                                                    <div class="row">
-                                                        <div class="col-3 d-flex align-items-center">
-                                                            <input class="form-check-input" type="checkbox" name="payment[]" id="org_payment" value="org_payment" onchange="orgPaymentCheck()">
-                                                            <label class="form-check-label mx-1" for="org_payment">Organization</label>
-                                                        </div>
-                                                        <div class="col-2">
-                                                            <label for="org_amount" class="form-label">Amount</label>
-                                                            <input class="form-control" type="number" placeholder="Amount" name="org_amount" id="org_amount" value="{{ old('org_amount') }}">
-                                                        </div>
-                                                        <div class="col-1">
-                                                            <label for="org_trial_days" class="form-label"> Days</label>
-                                                            <input class="form-control " type="number" name="org_trial_days" id="org_trial_days" value="{{ old('org_trial_days') }}" onchange="setNextDate('#org_trial_days', '#org_trail_start_date', '#org_trail_end_date')">
-                                                        </div>
-                                                        <div class="col-3">
-                                                            <label for="org_trail_start_date" class="form-label">Starting Date</label>
-                                                            <input type="date" class="form-control today-date" id="org_trail_start_date" name="org_trail_start_date" value="{{ old('org_trail_start_date') }}" name="date" onchange="setDays('#org_trail_start_date','#org_trail_end_date','#org_trial_days'); setNextDate('#org_trial_days', '#org_trail_start_date', '#org_trail_end_date')">
-                                                        </div>
-                                                        <div class="col-3">
-                                                            <label for="org_trail_end_date" class="form-label">Ending Date</label>
-                                                            <input type="date" class="form-control" id="org_trail_end_date" name="org_trail_end_date" value="{{ old('org_trail_end_date') }}" name="date" onchange="setDays('#org_trail_start_date','#org_trail_end_date','#org_trial_days')">
-                                                        </div>
-                                                    </div>
-                                                    <div class="row mt-2">
-                                                        <div class="col-3 d-flex align-items-center">
-                                                            <input class="form-check-input" type="checkbox" name="payment[]" id="driver_payment" value="driver_payment" onchange="driverPaymentCheck()">
-                                                            <label class="form-check-label mx-1" for="driver_payment">Driver</label>
-                                                        </div>
-                                                        <div class="col-2 ">
-                                                            <input class="form-control" type="number" placeholder="Amount" name="driver_amount" value="{{ old('driver_amount') }}" id="driver_amount">
-                                                        </div>
-                                                        <div class="col-1 ">
-                                                            <input class="form-control " type="number" name="driver_trial_days" id="driver_trial_days" value="{{ old('driver_trial_days') }}" onchange="setNextDate('#driver_trial_days', '#driver_trial_start_date', '#driver_trial_end_date')">
-                                                        </div>
-                                                        <div class="col-3">
-                                                            <input type="date" class="form-control today-date" id="driver_trial_start_date" name="driver_trial_start_date" value="{{ old('driver_trial_start_date') }}" name="date" onchange="setDays('#driver_trial_start_date','#driver_trial_end_date','#driver_trial_days'); setNextDate('#driver_trial_days', '#driver_trial_start_date', '#driver_trial_end_date')">
-                                                        </div>
-                                                        <div class="col-3">
-                                                            <input type="date" class="form-control" id="driver_trial_end_date" name="driver_trial_end_date" value="{{ old('driver_trial_end_date') }}" name="date" onchange="setDays('#driver_trial_start_date','#driver_trial_end_date','#driver_trial_days')">
-                                                        </div>
-                                                    </div>
-                                                    <div class="row mt-2">
-                                                        <div class="col-3 d-flex align-items-center">
-                                                            <input class="form-check-input" type="checkbox" name="payment[]" id="passenger_payment" value="passenger_payment" onchange="passengerPaymentCheck()">
-                                                            <label class="form-check-label mx-1" for="passenger_payment">Passenger</label>
-                                                        </div>
-                                                        <div class="col-2 ">
-                                                            <input class="form-control" type="number" placeholder="Amount" name="passenger_amount" id="passenger_amount" value="{{ old('passenger_amount') }}">
-                                                        </div>
-                                                        <div class="col-1 ">
-                                                            <input class="form-control" type="number" name="passenger_trial_days" id="passenger_trial_days" value="{{ old('passenger_trial_days') }}" onchange="setNextDate('#passenger_trial_days', '#passenger_trail_start_date', '#passenger_trail_end_date')">
-                                                        </div>
-                                                        <div class="col-3">
-                                                            <input type="date" class="form-control today-date" id="passenger_trail_start_date" name="passenger_trail_start_date" value="{{ old('passenger_trail_start_date') }}" name="date">
-                                                        </div>
-                                                        <div class="col-3">
-                                                            <input type="date" class="form-control" id="passenger_trail_end_date" name="passenger_trail_end_date" value="{{ old('passenger_trail_end_date') }}" name="date" onchange="setDays('#driver_trial_start_date','#driver_trial_end_date','#driver_trial_days')">
-                                                        </div>
-                                                    </div>
+                                                <div class="form-check mb-2 form-check-primary">
+                                                    <input class="form-check-input" type="checkbox" name="wallet[]" id="driver_wallet" value="driver_wallet" onclick="driverWallet(this)">
+                                                    <label class="form-check-label" for="driver_wallet">Sub Contracting Driver</label>
+                                                </div>
+                                                <div class="form-check mb-2 form-check-primary">
+                                                    <input class="form-check-input" type="checkbox" name="wallet[]" id="passenger_wallet" value="passenger_wallet" onclick="passengerWallet(this)">
+                                                    <label class="form-check-label" for="passenger_wallet">Passengers</label>
                                                 </div>
                                             </div>
-                                            <div class="text-end mt-3">
-                                                <button type="submit" class="btn btn-success waves-effect waves-light">Save</button>
+
+                                            <!-- Amount of all users -->
+                                            <div class="col-md-12 mt-3 mb-2">
+                                                <h4 class="header-title">Basis of payment calculation:</h4>
+                                                <div class="row">
+                                                    <div class="col-3 d-flex align-items-center">
+                                                        <input class="form-check-input" type="checkbox" name="payment[]" id="org_payment" value="org_payment" onchange="orgPaymentCheck()">
+                                                        <label class="form-check-label mx-1" for="org_payment">Organization</label>
+                                                    </div>
+                                                    <div class="col-2">
+                                                        <label for="org_amount" class="form-label">Amount</label>
+                                                        <input class="form-control" type="number" placeholder="Amount" name="org_amount" id="org_amount" value="{{ old('org_amount') }}">
+                                                    </div>
+                                                    <div class="col-1">
+                                                        <label for="org_trial_days" class="form-label"> Days</label>
+                                                        <input class="form-control " type="number" name="org_trial_days" id="org_trial_days" value="{{ old('org_trial_days') }}" onchange="setNextDate('#org_trial_days', '#org_trail_start_date', '#org_trail_end_date')">
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <label for="org_trail_start_date" class="form-label">Starting Date</label>
+                                                        <input type="date" class="form-control today-date" id="org_trail_start_date" name="org_trail_start_date" value="{{ old('org_trail_start_date') }}" name="date" onchange="setDays('#org_trail_start_date','#org_trail_end_date','#org_trial_days'); setNextDate('#org_trial_days', '#org_trail_start_date', '#org_trail_end_date')">
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <label for="org_trail_end_date" class="form-label">Ending Date</label>
+                                                        <input type="date" class="form-control" id="org_trail_end_date" name="org_trail_end_date" value="{{ old('org_trail_end_date') }}" name="date" onchange="setDays('#org_trail_start_date','#org_trail_end_date','#org_trial_days')">
+                                                    </div>
+                                                </div>
+                                                <div class="row mt-2">
+                                                    <div class="col-3 d-flex align-items-center">
+                                                        <input class="form-check-input" type="checkbox" name="payment[]" id="driver_payment" value="driver_payment" onchange="driverPaymentCheck()">
+                                                        <label class="form-check-label mx-1" for="driver_payment">Driver</label>
+                                                    </div>
+                                                    <div class="col-2 ">
+                                                        <input class="form-control" type="number" placeholder="Amount" name="driver_amount" value="{{ old('driver_amount') }}" id="driver_amount">
+                                                    </div>
+                                                    <div class="col-1 ">
+                                                        <input class="form-control " type="number" name="driver_trial_days" id="driver_trial_days" value="{{ old('driver_trial_days') }}" onchange="setNextDate('#driver_trial_days', '#driver_trial_start_date', '#driver_trial_end_date')">
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <input type="date" class="form-control today-date" id="driver_trial_start_date" name="driver_trial_start_date" value="{{ old('driver_trial_start_date') }}" name="date" onchange="setDays('#driver_trial_start_date','#driver_trial_end_date','#driver_trial_days'); setNextDate('#driver_trial_days', '#driver_trial_start_date', '#driver_trial_end_date')">
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <input type="date" class="form-control" id="driver_trial_end_date" name="driver_trial_end_date" value="{{ old('driver_trial_end_date') }}" name="date" onchange="setDays('#driver_trial_start_date','#driver_trial_end_date','#driver_trial_days')">
+                                                    </div>
+                                                </div>
+                                                <div class="row mt-2">
+                                                    <div class="col-3 d-flex align-items-center">
+                                                        <input class="form-check-input" type="checkbox" name="payment[]" id="passenger_payment" value="passenger_payment" onchange="passengerPaymentCheck()">
+                                                        <label class="form-check-label mx-1" for="passenger_payment">Passenger</label>
+                                                    </div>
+                                                    <div class="col-2 ">
+                                                        <input class="form-control" type="number" placeholder="Amount" name="passenger_amount" id="passenger_amount" value="{{ old('passenger_amount') }}">
+                                                    </div>
+                                                    <div class="col-1 ">
+                                                        <input class="form-control" type="number" name="passenger_trial_days" id="passenger_trial_days" value="{{ old('passenger_trial_days') }}" onchange="setNextDate('#passenger_trial_days', '#passenger_trail_start_date', '#passenger_trail_end_date')">
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <input type="date" class="form-control today-date" id="passenger_trail_start_date" name="passenger_trail_start_date" value="{{ old('passenger_trail_start_date') }}" name="date">
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <input type="date" class="form-control" id="passenger_trail_end_date" name="passenger_trail_end_date" value="{{ old('passenger_trail_end_date') }}" name="date" onchange="setDays('#driver_trial_start_date','#driver_trial_end_date','#driver_trial_days')">
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
+                                        <div class="text-end mt-3">
+                                            <button type="submit" class="btn btn-success waves-effect waves-light">Save</button>
+                                        </div>
+                                        <!-- </div> -->
                                     </div>
                                 </div> <!-- tab-content -->
                             </form>
@@ -479,10 +480,6 @@
 
 <!-- Plugins js-->
 <script src="/libs/twitter-bootstrap-wizard/jquery.bootstrap.wizard.min.js"></script>
-
-<!-- Jquery validation -->
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script> -->
-
 
 <!-- Init js-->
 <script src="/js/pages/form-wizard.init.js"></script>
@@ -548,7 +545,6 @@
             $("#driver_trial_end_date").prop("required", true);
         }
     }
-
 
     function passengerPaymentCheck() {
         $("#passenger_amount").prop("required", false);
@@ -679,14 +675,6 @@
             orgStateErr = false;
         } else {
             setSuccessMsg('#org_state');
-        }
-
-        //validate Phone
-        if (orgCity === "") {
-            setErrorMsg('#org_city', "* Required!");
-            orgCityErr = false;
-        } else {
-            setSuccessMsg('#org_city');
         }
 
         if ((orgNameErr && orgTypeErr && orgEmailErr && orgPhoneErr && orgStateErr && orgCityErr) == false) {
