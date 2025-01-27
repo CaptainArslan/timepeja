@@ -2,14 +2,18 @@
 
 namespace App\Models;
 
+use App\Traits\HasOrganization;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Vehicle extends Model
 {
     use HasFactory;
     use SoftDeletes;
+    use HasOrganization;
 
     protected $table = 'vehicles';
 
@@ -17,51 +21,23 @@ class Vehicle extends Model
     public const STATUS_DEACTIVE = false;
 
     protected $fillable = [
-        'organization_id',
         'vehicle_type_id',
+        'organization_id',
         'number',
         'no_of_seat',
         'front_pic',
         'back_pic',
-        'number_pic',
-        'reg_date',
-        'expiry_date',
-        'model_no',
-        'brand_name',
-        'color',
-        'chassis_no',
-        'engine_no',
-        'car_accessories',
-        'status'
+        'number_plate',
+        'status',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array
-     */
     protected $casts = [
         'organization_id' => 'integer',
         'vehicle_type_id' => 'integer',
-        'status' => 'boolean'
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
-        'no_of_seat',
-        'back_pic',
-        'reg_date',
-        'expiry_date',
-        'model_no',
-        'brand_name',
-        'color',
-        'chassis_no',
-        'engine_no',
-        'car_accessories'
+        'deleted_at',
     ];
 
 
@@ -71,14 +47,14 @@ class Vehicle extends Model
         return $this->belongsTo(Organization::class);
     }
 
-    public function vehiclesType()
+    public function vehicleType()
     {
         return $this->belongsTo(VehicleType::class);
     }
 
-    public function locations()
+    public function location()
     {
-        return $this->hasMany(Location::class, 'vehicle_id', 'id');
+        return $this->hasMany(Location::class);
     }
 
     public function trips()
@@ -87,76 +63,37 @@ class Vehicle extends Model
     }
 
     // ------------------ Accessors & Mutator -------------------------
-    public function getFrontPicAttribute($value)
+    protected function status(): Attribute
     {
-        if (filter_var($value, FILTER_VALIDATE_URL)) {
-            $value = $this->attributes['front_pic'];
-        } else {
-            $value = asset('uploads/vehicles/placeholder.jpg');
-        }
-        return $value;
+        return new Attribute(
+            get: fn($value) => $value == self::STATUS_ACTIVE ? 'Active' : 'Deactive',
+            set: fn($value) => $value == 'Active' ? self::STATUS_ACTIVE : self::STATUS_DEACTIVE
+        );
     }
 
-    public function getFrontPicNameAttribute()
+    // -------------------------- Scopes ------------------------------
+    public function scopeActive(Builder $query): Builder
     {
-        $url = $this->attributes['front_pic'] ?? null;
-
-        if ($url && filter_var($url, FILTER_VALIDATE_URL)) {
-            $path = parse_url($url, PHP_URL_PATH);
-            $name = basename($path);
-
-            return $name;
-        }
-        return $this->attributes['front_pic'] ?? null;
+        return $query->where('status', self::STATUS_ACTIVE);
     }
 
-    public function getBackPicAttribute($value)
+    public function scopeDeactive(Builder $query)
     {
-        if (filter_var($value, FILTER_VALIDATE_URL)) {
-            $value = $this->attributes['back_pic'];
-        } else {
-            $value = asset('uploads/vehicles/placeholder.jpg');
-        }
-        return $value;
+        return $query->where('status', self::STATUS_DEACTIVE);
     }
 
-    public function getBackPicNameAttribute()
+    public function scopeSearch(Builder $query, $search = null): Builder
     {
-        $url = $this->attributes['back_pic'] ?? null;
-
-        if ($url && filter_var($url, FILTER_VALIDATE_URL)) {
-            $path = parse_url($url, PHP_URL_PATH);
-            $name = basename($path);
-
-            return $name;
-        }
-
-        return $this->attributes['back_pic'] ?? null;
-    }
-
-    public function getNumberPicAttribute($value)
-    {
-        if (filter_var($value, FILTER_VALIDATE_URL)) {
-            $value = $this->attributes['number_pic'];
-        } else {
-            $value = asset('uploads/vehicles/placeholder.jpg');
-        }
-        return $value;
-    }
-
-    public function getNumberPicNameAttribute()
-    {
-        $url = $this->attributes['number_pic'] ?? null;
-
-        if ($url && filter_var($url, FILTER_VALIDATE_URL)) {
-            $path = parse_url($url, PHP_URL_PATH);
-            return basename($path);
-        }
-        return $this->attributes['number_pic'] ?? null;
-    }
-
-    public function getRegDateAttribute()
-    {
-        return $this->attributes['reg_date'] ? date('d-m-Y', strtotime($this->attributes['reg_date'])) : asset('uploads/vehicles/placeholder.jpg');
+        return $query->when($search, function ($q) use ($search) {
+            $q->where('number', 'like', "%$search%")
+                ->orWhere('number_plate', 'like', "%$search%")
+                ->orWhere('no_of_seat', 'like', "%$search%")
+                ->orWhereHas('vehicleType', function ($q) use ($search) {
+                    $q->where('name', 'like', "%$search%");
+                })
+                ->orWhereHas('organization', function ($q) use ($search) {
+                    $q->where('name', 'like', "%$search%");
+                });
+        });
     }
 }

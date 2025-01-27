@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasOrganization;
 use Illuminate\Database\Eloquent\Builder;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
@@ -17,12 +18,13 @@ class Driver extends Authenticatable implements JWTSubject
     use HasFactory;
     use SoftDeletes;
     use Notifiable;
+    use HasOrganization;
 
     public const ONLINE = true;
     public const OFFLINE = false;
 
     public const STATUS_ACTIVE = true;
-    public const STATUS_INACTIVE = false;
+    public const STATUS_DEACTIVE = false;
 
     protected $fillable = [
         'organization_id',
@@ -44,7 +46,6 @@ class Driver extends Authenticatable implements JWTSubject
 
     protected $casts = [
         'organization_id' => 'integer',
-        'status' => 'boolean',
         'online_status' => 'boolean'
     ];
 
@@ -112,142 +113,13 @@ class Driver extends Authenticatable implements JWTSubject
     protected function status(): Attribute
     {
         return new Attribute(
-            get: fn($value) => $value === self::STATUS_ACTIVE ? 'Active' : 'Deactive',
-            set: fn($value) => $value === 'Active' ? self::STATUS_ACTIVE : self::STATUS_INACTIVE
+            get: fn($value) => $value == self::STATUS_ACTIVE ? 'Active' : 'Deactive',
+            set: fn($value) => $value == 'Active' ? self::STATUS_ACTIVE : self::STATUS_DEACTIVE
         );
     }
 
-    public function getCnicAttribute($value)
-    {
-        return $value;
-    }
-
-    public function getCnicFrontPicAttribute($value)
-    {
-        if (filter_var($value, FILTER_VALIDATE_URL)) {
-            $value = $this->attributes['cnic_front_pic'];
-        } else {
-            $value = asset('uploads/drivers/placeholder.jpg');
-        }
-        return $value;
-    }
-
-    public function getCnicFrontPicNameAttribute()
-    {
-        $url = $this->attributes['cnic_front_pic'] ?? null;
-
-        if ($url && filter_var($url, FILTER_VALIDATE_URL)) {
-            $path = parse_url($url, PHP_URL_PATH);
-            return  basename($path);
-        }
-        return $this->attributes['cnic_front_pic'] ?? null;
-    }
-
-    public function getCnicBackPicAttribute($value)
-    {
-        if (filter_var($value, FILTER_VALIDATE_URL)) {
-            $value = $this->attributes['cnic_back_pic'];
-        } else {
-            $value = asset('uploads/drivers/placeholder.jpg');
-        }
-        return $value;
-    }
-
-    public function getCnicBackPicNameAttribute()
-    {
-        $url = $this->attributes['cnic_back_pic'] ?? null;
-
-        if ($url && filter_var($url, FILTER_VALIDATE_URL)) {
-            $path = parse_url($url, PHP_URL_PATH);
-            $name = basename($path);
-
-            return $name;
-        }
-        return $this->attributes['cnic_back_pic'] ?? null;
-    }
-
-    public function getLicenseNoFrontPicAttribute($value)
-    {
-        if (filter_var($value, FILTER_VALIDATE_URL)) {
-            $value = $this->attributes['license_no_front_pic'];
-        } else {
-            $value = asset('uploads/drivers/placeholder.jpg');
-        }
-        return $value;
-    }
-
-    public function getLicenseNoFrontPicNameAttribute()
-    {
-        $url = $this->attributes['license_no_front_pic'] ?? null;
-
-        // Extract the image name from the URL if it's present
-        if ($url && filter_var($url, FILTER_VALIDATE_URL)) {
-            $path = parse_url($url, PHP_URL_PATH);
-            $name = basename($path);
-            return $name;
-        }
-        return $this->attributes['license_no_front_pic'] ?? null;
-    }
-
-    public function getLicenseNoBackPicAttribute($value)
-    {
-
-        if (filter_var($value, FILTER_VALIDATE_URL)) {
-            $value = $this->attributes['license_no_back_pic'];
-        } else {
-            $value = asset('uploads/drivers/placeholder.jpg');
-        }
-        return $value;
-    }
-
-    public function getLicenseNoBackPicNameAttribute()
-    {
-        $url = $this->attributes['license_no_back_pic'] ?? null;
-
-        if ($url && filter_var($url, FILTER_VALIDATE_URL)) {
-            $path = parse_url($url, PHP_URL_PATH);
-            $name = basename($path);
-
-            return $name;
-        }
-
-        return $this->attributes['license_no_back_pic'] ?? null;
-    }
-
-    public function getProfilePictureAttribute($value)
-    {
-
-        if (filter_var($value, FILTER_VALIDATE_URL)) {
-            $value = $this->attributes['profile_picture'];
-        } else {
-            $value = asset('uploads/drivers/placeholder.jpg');
-        }
-        return $value;
-    }
-
-    public function getProfilePictureNameAttribute()
-    {
-        $url = $this->attributes['profile_picture'] ?? null;
-
-        if ($url && filter_var($url, FILTER_VALIDATE_URL)) {
-            $path = parse_url($url, PHP_URL_PATH);
-            $name = basename($path);
-
-            return $name;
-        }
-
-        return $this->attributes['profile_picture'] ?? null;
-    }
 
     // ------------------ Scopes -----------------------------------
-
-    public function scopeByCompany(Builder $query, $organizationId = null): Builder
-    {
-        return $query->when($organizationId, function ($query, $organizationId) {
-            return $query->where('organization_id', $organizationId);
-        });
-    }
-
     public function scopeActive(Builder $query): Builder
     {
         return $query->where('status', self::STATUS_ACTIVE);
@@ -255,7 +127,7 @@ class Driver extends Authenticatable implements JWTSubject
 
     public function scopeInactive(Builder $query): Builder
     {
-        return $query->where('status', self::STATUS_INACTIVE);
+        return $query->where('status', self::STATUS_DEACTIVE);
     }
 
     public function scopeSearch(Builder $query, $search): Builder

@@ -12,6 +12,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\Manager\Driver\DriverCreateRequest;
 use App\Http\Requests\Manager\Driver\DriverupdateRequest;
+use Illuminate\Support\Facades\Storage;
 
 class DriverController extends Controller
 {
@@ -24,7 +25,7 @@ class DriverController extends Controller
         }
 
         $driver = Driver::with('organization')
-            ->ByCompany($manager->organization_id)
+            ->ByOrganization($manager->organization_id)
             ->search($request->search)
             ->paginate(getPaginated($request->limit));
 
@@ -77,6 +78,22 @@ class DriverController extends Controller
 
         if (!$driver) {
             return $this->respondWithError('Driver not found');
+        }
+
+        if ($request->cnic_front) {
+            Storage::delete($driver->cnic_front);
+        }
+
+        if ($request->cnic_back) {
+            Storage::delete($driver->cnic_back);
+        }
+
+        if ($request->license_front) {
+            Storage::delete($driver->license_front);
+        }
+
+        if ($request->license_back) {
+            Storage::delete($driver->license_back);
         }
 
         $driver->update([

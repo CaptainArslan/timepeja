@@ -13,6 +13,7 @@ class VehicleType extends Model
     use HasFactory;
     use SoftDeletes;
 
+
     protected $table = 'vehicle_types';
     public const STATUS_ACTIVE = true;
     public const STATUS_INACTIVE = false;
@@ -44,7 +45,7 @@ class VehicleType extends Model
     {
         return new Attribute(
             get: fn($value) => ucwords(strtolower($value)),
-            set: fn($value) => ucwords(strtolower($value)),
+            set: fn($value) => strtolower($value),
         );
     }
 }

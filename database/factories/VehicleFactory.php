@@ -23,8 +23,7 @@ class VehicleFactory extends Factory
             'no_of_seat' => rand(0, 72),
             'front_pic' => $this->faker->imageUrl(),
             'back_pic' => $this->faker->imageUrl(),
-            'number_pic' => $this->faker->imageUrl(),
-            'created_at' => $this->faker->time(),
+            'number_plate' => $this->faker->imageUrl(),
             'status' => Vehicle::STATUS_ACTIVE,
         ];
     }

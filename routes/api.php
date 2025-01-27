@@ -10,8 +10,9 @@ use App\Http\Controllers\Api\V1\LogReportController;
 use App\Http\Controllers\Api\V1\PassengerController;
 use App\Http\Controllers\Api\V1\ApiVehicleController;
 use App\Http\Controllers\Api\V1\ApiScheduleController;
-use App\Http\Controllers\Api\V1\VehicletypeController;
 use App\Http\Controllers\Api\V1\Manager\DriverController as ManagerDriverController;
+use App\Http\Controllers\Api\V1\Manager\VehicletypeController as ManagerVehicletypeController;
+use App\Http\Controllers\Api\V1\Manager\VehicleController as ManagerVehicleController;
 
 use App\Http\Controllers\Api\V1\Auth\DriverAuthController;
 use App\Http\Controllers\Api\V1\PassengerRequestController;
@@ -70,8 +71,6 @@ Route::group(['middleware' => 'api'], function () {
                 Route::get('/created-schedule/pdf/{date}', [PdfController::class, 'createdSchedule']);
                 Route::get('/published-schedule/pdf/{date}', [PdfController::class, 'publishedSchedule']);
 
-                // Vehicle Type
-                Route::get('vehicle-types', [VehicleTypeController::class, 'index']);
 
                 // Driver Api
                 Route::get('/driver', [ManagerDriverController::class, 'index']);
@@ -82,9 +81,13 @@ Route::group(['middleware' => 'api'], function () {
                 Route::get('/drivers/pdf', [ManagerDriverController::class, 'createPdf']);
 
                 // Vehicle Api
-                Route::resource('/vehicle', ApiVehicleController::class);
-                Route::get('/vehicles/pdf', [ApiVehicleController::class, 'createPdf']);
-                Route::get('/search/vehicle', [ApiVehicleController::class, 'search']);
+                Route::get('vehicle-types', [ManagerVehicletypeController::class, 'index']);
+                Route::get('/vehicle', [ManagerVehicleController::class, 'index']);
+                Route::post('/vehicle', [ManagerVehicleController::class, 'store']);
+                Route::get('/vehicle/{id}', [ManagerVehicleController::class, 'show']);
+                Route::put('/vehicle/{id}', [ManagerVehicleController::class, 'update']);
+                Route::delete('/vehicle/{id}', [ManagerVehicleController::class, 'destroy']);
+                Route::get('/vehicles/pdf', [ManagerVehicleController::class, 'createPdf']);
 
                 // Organization Api
                 Route::get('/get-all-organizations', [ApiOrganizationController::class, 'index']);
