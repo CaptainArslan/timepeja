@@ -23,7 +23,7 @@ class OrganizationSeeder extends Seeder
      */
     public function run()
     {
-        Organization::factory(1)->create([
+        Organization::create([
             'name' => 'University Of Lahore',
             'branch_name' => 'Main Campus',
             'branch_code' => substr(uniqid(), -4),
@@ -58,5 +58,7 @@ class OrganizationSeeder extends Seeder
             ],
             'status' => Organization::STATUS_ACTIVE,
         ]);
+
+        Organization::factory(5)->create();
     }
 }

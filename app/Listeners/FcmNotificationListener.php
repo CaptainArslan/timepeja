@@ -49,7 +49,7 @@ class FcmNotificationListener
         try {
             $projectId = config('services.fcm.project_id');
             $credentialsFilePath = config('services.fcm.credentials_file_path');
-            
+
             Log::info("FCM Project Details: ", [
                 'project_id' => $projectId,
                 'credentials_file_path' => $credentialsFilePath,
@@ -100,8 +100,6 @@ class FcmNotificationListener
                 } else {
                     Log::info("FCM Notification Response: " . $response);
                 }
-
-                sleep(1); // 1-second delay
             }
         } catch (Exception $e) {
             Log::error("Exception in FCM Notification: " . $e->getMessage());

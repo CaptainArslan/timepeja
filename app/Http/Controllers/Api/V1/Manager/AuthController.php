@@ -29,7 +29,6 @@ class AuthController extends Controller
                     'getCode',
                     'forgetPassword',
                     'webLogin',
-                    'profile'
                 ]
             ]
         );
@@ -190,23 +189,6 @@ class AuthController extends Controller
             return $this->respondWithSuccess(null, 'Password Updated Successfully', 'PASSWORD_UPDATE');
         } catch (\Throwable $th) {
             return $this->respondWithError('Error Occured while updating password');
-        }
-    }
-
-    public function profile(Request $request): JsonResponse
-    {
-        try {
-            $data = $this->respondWithSuccess(
-                Manager::with('organization')->find(Auth::guard('manager')->id()),
-                'Manager profile',
-                'MANAGER_PROFILE'
-            );
-            if (!$data) {
-                $this->respondWithError('Error Occurred while fetching profile');
-            }
-            return $data;
-        } catch (\Throwable $th) {
-            return $this->respondWithError('Error Occurred while fetching profile');
         }
     }
 

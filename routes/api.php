@@ -11,7 +11,7 @@ use App\Http\Controllers\Api\V1\PassengerController;
 use App\Http\Controllers\Api\V1\ApiVehicleController;
 use App\Http\Controllers\Api\V1\ApiScheduleController;
 use App\Http\Controllers\Api\V1\VehicletypeController;
-use App\Http\Controllers\Api\V1\Manager\AuthController as ManagerAuthController;
+use App\Http\Controllers\Api\V1\Manager\DriverController as ManagerDriverController;
 
 use App\Http\Controllers\Api\V1\Auth\DriverAuthController;
 use App\Http\Controllers\Api\V1\PassengerRequestController;
@@ -19,8 +19,10 @@ use App\Http\Controllers\Api\V1\Auth\PassengerAuthController;
 use App\Http\Controllers\Api\V1\RequestController as ApiRequestController;
 use App\Http\Controllers\Api\V1\ApiDriverController as ApiDriverController;
 use App\Http\Controllers\Api\V1\ApiManagerController as ApiManagerController;
+use App\Http\Controllers\Api\V1\Manager\AuthController as ManagerAuthController;
 use App\Http\Controllers\Api\V1\OrganizationController as ApiOrganizationController;
 use App\Http\Controllers\Api\V1\Driver\ScheduleController as DriverScheduleController;
+use App\Http\Controllers\Api\V1\Manager\ProfileController as ManagerProfileController;
 use App\Http\Controllers\Api\V1\Passenger\RouteController as PassengerRouteController;
 use App\Http\Controllers\Api\V1\Passenger\ScheduleController as PassengerScheduleController;
 
@@ -49,12 +51,9 @@ Route::group(['middleware' => 'api'], function () {
                 Route::post('/refresh', [ManagerAuthController::class, 'refresh']);
                 Route::post('/logout', [ManagerAuthController::class, 'logout']);
 
-                Route::group(['prefix' => 'profile'], function () {
-                    Route::get('/', [ManagerAuthController::class, 'profile']);
-                    Route::post('/upload', [ApiManagerController::class, 'profileUpload']);
-                    Route::put('/update', [ApiManagerController::class, 'profileUpdate']);
-                    Route::put('/web/update', [ApiManagerController::class, 'profileUpdateWeb']);
-                });
+                Route::get('profile/', [ManagerProfileController::class, 'index']);
+                Route::post('profile/upload', [ManagerProfileController::class, 'upload']);
+                Route::put('profile/update', [ManagerProfileController::class, 'update']);
 
                 // Upload Media Api
                 Route::get('/get-organization-data', [ApiScheduleController::class, 'getOrganizationData']);
@@ -63,13 +62,10 @@ Route::group(['middleware' => 'api'], function () {
                 Route::resource('/schedule', ApiScheduleController::class);
                 Route::get('/schedules/active', [ApiScheduleController::class, 'activeVehicle']);
                 Route::post('/schedule/replicate', [ApiScheduleController::class, 'replicate']);
-
-                Route::group(['prefix' => 'schedules'], function () {
-                    Route::put('/publish', [ApiScheduleController::class, 'publish']);
-                    Route::put('/draft', [ApiScheduleController::class, 'draft']);
-                    Route::get('/published/{date}', [ApiScheduleController::class, 'getPublishedScheduleByDate']);
-                    Route::get('/created/{date}', [ApiScheduleController::class, 'getCreatedScheduleByDate']);
-                });
+                Route::put('/schedules/publish', [ApiScheduleController::class, 'publish']);
+                Route::put('/schedules/draft', [ApiScheduleController::class, 'draft']);
+                Route::get('/schedules/published/{date}', [ApiScheduleController::class, 'getPublishedScheduleByDate']);
+                Route::get('/schedules/created/{date}', [ApiScheduleController::class, 'getCreatedScheduleByDate']);
 
                 Route::get('/created-schedule/pdf/{date}', [PdfController::class, 'createdSchedule']);
                 Route::get('/published-schedule/pdf/{date}', [PdfController::class, 'publishedSchedule']);
@@ -78,26 +74,17 @@ Route::group(['middleware' => 'api'], function () {
                 Route::get('vehicle-types', [VehicleTypeController::class, 'index']);
 
                 // Driver Api
-                Route::resource('/driver', ApiDriverController::class);
-                Route::get('/drivers/pdf', [ApiDriverController::class, 'createPdf']);
-                Route::get('/search/driver', [ApiDriverController::class, 'search']);
-
-                // Driver api for web
-                Route::get('web/driver/', [ApiDriverController::class, 'getDriver']);
-                Route::post('web/driver/', [ApiDriverController::class, 'storeWeb']);
-                Route::put('web/driver/{id}', [ApiDriverController::class, 'updateWeb']);
+                Route::get('/driver', [ManagerDriverController::class, 'index']);
+                Route::post('/driver', [ManagerDriverController::class, 'store']);
+                Route::get('/driver/{id}', [ManagerDriverController::class, 'show']);
+                Route::put('/driver/{id}', [ManagerDriverController::class, 'update']);
+                Route::delete('/driver/{id}', [ManagerDriverController::class, 'destroy']);
+                Route::get('/drivers/pdf', [ManagerDriverController::class, 'createPdf']);
 
                 // Vehicle Api
                 Route::resource('/vehicle', ApiVehicleController::class);
                 Route::get('/vehicles/pdf', [ApiVehicleController::class, 'createPdf']);
                 Route::get('/search/vehicle', [ApiVehicleController::class, 'search']);
-
-                // Vehicle apo for web
-                Route::group(['prefix' => 'web/vehicle'], function () {
-                    Route::get('/', [ApiVehicleController::class, 'getVehicle']);
-                    Route::post('/', [ApiVehicleController::class, 'storeWeb']);
-                    Route::put('/{id}', [ApiVehicleController::class, 'updateWeb']);
-                });
 
                 // Organization Api
                 Route::get('/get-all-organizations', [ApiOrganizationController::class, 'index']);
@@ -219,5 +206,23 @@ Route::group(['middleware' => 'api'], function () {
 
         Route::post('upload-media', [MediaController::class, 'upload']);
         Route::post('/contact-us', [ContactController::class, 'send'])->name('send');
+    });
+
+    // Driver api for web
+    Route::prefix('v1')->group(function () {
+        Route::prefix('manager')->name('manager.')->group(function () {
+            Route::get('web/driver/', [ApiDriverController::class, 'getDriver']);
+            Route::post('web/driver/', [ApiDriverController::class, 'storeWeb']);
+            Route::put('web/driver/{id}', [ApiDriverController::class, 'updateWeb']);
+        });
+
+        Route::put('profile/web/update', [ApiManagerController::class, 'profileUpdateWeb']);
+
+        // Vehicle apo for web
+        Route::group(['prefix' => 'web/vehicle'], function () {
+            Route::get('/', [ApiVehicleController::class, 'getVehicle']);
+            Route::post('/', [ApiVehicleController::class, 'storeWeb']);
+            Route::put('/{id}', [ApiVehicleController::class, 'updateWeb']);
+        });
     });
 });

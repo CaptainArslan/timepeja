@@ -80,21 +80,6 @@ class Manager extends Authenticatable implements JWTSubject
         );
     }
 
-    protected function picture(): Attribute
-    {
-        return new Attribute(
-            get: function ($value) {
-                if (filter_var($value, FILTER_VALIDATE_URL)) {
-                    return $value;
-                } elseif ($value) {
-                    return asset('uploads/managers/profiles/' . $value);
-                } else {
-                    return asset('uploads/managers/profiles/placeholder.jpg');
-                }
-            }
-        );
-    }
-
     protected function pictureName(): Attribute
     {
         return new Attribute(

@@ -16,24 +16,22 @@ class DriverSeeder extends Seeder
      */
     public function run()
     {
-        Driver::factory(1)->create([
+        Driver::create([
             'organization_id' => 1,
             'name' =>  'Muhammad Arslan',
             'email' => 'mughalarslan996@gmail.com',
             'password' => Hash::make('12345678A'),
             'phone' => '03177638978',
             'cnic' => '34101' . rand(00000000, 99999999),
-            'cnic_front_pic' => null,
-            'cnic_back_pic' => null,
-            'cnic_expiry_date' => Carbon::now(),
+            'cnic_front' => null,
+            'cnic_back' => null,
             'license_no' => '0512345ABC',
-            'license_no_front_pic' => null,
-            'license_no_back_pic' => null,
-            'license_expiry_date' => Carbon::now(),
-            'otp' => 1234,
-            'status' => 1,
+            'license_front' => null,
+            'license_back' => null,
+            'status' => Driver::STATUS_ACTIVE,
             'online_status' => Driver::ONLINE,
-            'device_token' => null,
         ]);
+
+        Driver::factory(100)->create();
     }
 }

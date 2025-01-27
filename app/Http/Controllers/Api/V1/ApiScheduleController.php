@@ -19,11 +19,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ApiScheduleController extends BaseController
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index(): JsonResponse
     {
         try {
@@ -41,22 +36,11 @@ class ApiScheduleController extends BaseController
         }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create(Request $request): JsonResponse
     {
         return $this->respondWithError($request->all());
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
@@ -119,12 +103,6 @@ class ApiScheduleController extends BaseController
         }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id): JsonResponse
     {
         $validator = Validator::make(['id' => $id], [
@@ -153,24 +131,11 @@ class ApiScheduleController extends BaseController
         }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id): JsonResponse
     {
         return $this->respondWithError($id);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id): JsonResponse
     {
         $validator = Validator::make($request->all(), [
@@ -227,12 +192,6 @@ class ApiScheduleController extends BaseController
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id): JsonResponse
     {
         $validator = Validator::make(['id' => $id], [
@@ -256,11 +215,6 @@ class ApiScheduleController extends BaseController
         }
     }
 
-    /**
-     * Get organization data
-     *
-     * @return JsonResponse
-     */
     public function getOrganizationData(Request $request): JsonResponse
     {
         try {
@@ -323,10 +277,6 @@ class ApiScheduleController extends BaseController
         }
     }
 
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
     public function publish(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
@@ -368,10 +318,6 @@ class ApiScheduleController extends BaseController
         }
     }
 
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
     public function draft(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
@@ -407,10 +353,6 @@ class ApiScheduleController extends BaseController
         }
     }
 
-    /**
-     * @param $date
-     * @return JsonResponse
-     */
     public function getPublishedScheduleByDate($date): JsonResponse
     {
         $validator = Validator::make(['date' => $date], [
@@ -444,10 +386,6 @@ class ApiScheduleController extends BaseController
         }
     }
 
-    /**
-     * @param $date
-     * @return JsonResponse
-     */
     public function getCreatedScheduleByDate($date): JsonResponse
     {
         $validator = Validator::make(['date' => $date], [
@@ -483,10 +421,6 @@ class ApiScheduleController extends BaseController
         }
     }
 
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
     public function replicate(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
@@ -520,13 +454,6 @@ class ApiScheduleController extends BaseController
         }
     }
 
-    /**
-     * @param $schedule
-     * @param $user
-     * @param $date
-     * @return void
-     * @throws Exception
-     */
     private function replicateSingleSchedule($schedule, $user, $date)
     {
         $newSchedule = Schedule::create([

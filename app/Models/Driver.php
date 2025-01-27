@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -30,23 +32,18 @@ class Driver extends Authenticatable implements JWTSubject
         'phone',
         'cnic',
         'profile_picture',
-        'cnic_front_pic',
-        'cnic_back_pic',
-        'cnic_expiry_date',
+        'cnic_front',
+        'cnic_back',
         'license_no',
-        'license_no_front_pic',
-        'license_no_back_pic',
-        'license_expiry_date',
-        'otp',
-        'device_token',
+        'license_front',
+        'license_back',
         'status',
         'online_status',
         'address',
     ];
 
     protected $casts = [
-        'o_id' => 'integer',
-        'u_id' => 'integer',
+        'organization_id' => 'integer',
         'status' => 'boolean',
         'online_status' => 'boolean'
     ];
@@ -69,9 +66,7 @@ class Driver extends Authenticatable implements JWTSubject
         'deleted_at',
     ];
 
-    // ----------------------------------------------------------------
     // ------------------ Jwt Auth  -----------------------------------
-    // ----------------------------------------------------------------
     public function getJWTIdentifier(): mixed
     {
         return $this->getKey();
@@ -85,10 +80,7 @@ class Driver extends Authenticatable implements JWTSubject
     }
 
 
-
-    // ----------------------------------------------------------------
     // ------------------ Relations -----------------------------------
-    // ----------------------------------------------------------------
     public function organization(): BelongsTo
     {
         return $this->belongsTo(Organization::class);
@@ -100,44 +92,29 @@ class Driver extends Authenticatable implements JWTSubject
     }
 
 
-    // ----------------------------------------------------------------
     // ------------------ Accessors & Mutator -------------------------
-    // ----------------------------------------------------------------
-
-    public function setNameAttribute($value)
+    protected function name(): Attribute
     {
-        $this->attributes['name'] = ucwords(strtolower($value));
+        return new Attribute(
+            set: fn($value) => ucwords(strtolower($value)),
+            get: fn($value) => ucwords(strtolower($value))
+        );
     }
 
-    public function getNameAttribute($value)
+    protected function address(): Attribute
     {
-        return ucwords(strtolower($value));
+        return new Attribute(
+            set: fn($value) => json_encode($value),
+            get: fn($value) => json_decode($value, true)
+        );
     }
 
-    public function setPhoneAttribute($value)
+    protected function status(): Attribute
     {
-        $this->attributes['phone'] = str_replace('-', '', $value);
-    }
-
-    public function getPhoneAttribute($value)
-    {
-        return $value;
-        // return substr($value, 0, 4) . '-' . substr($value, 4, 8);
-    }
-
-    public function setLicenseNoAttribute($value)
-    {
-        $this->attributes['license_no'] = str_replace('-', '', $value);
-    }
-
-    public function getLicenseNoAttribute($value)
-    {
-        return $value;
-    }
-
-    public function setCnicAttribute($value)
-    {
-        $this->attributes['cnic'] = str_replace('-', '', $value);
+        return new Attribute(
+            get: fn($value) => $value === self::STATUS_ACTIVE ? 'Active' : 'Deactive',
+            set: fn($value) => $value === 'Active' ? self::STATUS_ACTIVE : self::STATUS_INACTIVE
+        );
     }
 
     public function getCnicAttribute($value)
@@ -260,5 +237,35 @@ class Driver extends Authenticatable implements JWTSubject
         }
 
         return $this->attributes['profile_picture'] ?? null;
+    }
+
+    // ------------------ Scopes -----------------------------------
+
+    public function scopeByCompany(Builder $query, $organizationId = null): Builder
+    {
+        return $query->when($organizationId, function ($query, $organizationId) {
+            return $query->where('organization_id', $organizationId);
+        });
+    }
+
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_ACTIVE);
+    }
+
+    public function scopeInactive(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_INACTIVE);
+    }
+
+    public function scopeSearch(Builder $query, $search): Builder
+    {
+        return $query->when($search, function ($query, $search) {
+            return $query->where('name', 'like', '%' . $search . '%')
+                ->orWhere('email', 'like', '%' . $search . '%')
+                ->orWhere('phone', 'like', '%' . $search . '%')
+                ->orWhere('cnic', 'like', '%' . $search . '%')
+                ->orWhere('license_no', 'like', '%' . $search . '%');
+        });
     }
 }
