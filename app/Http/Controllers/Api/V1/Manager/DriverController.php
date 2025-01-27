@@ -27,6 +27,7 @@ class DriverController extends Controller
         $driver = Driver::with('organization')
             ->ByOrganization($manager->organization_id)
             ->search($request->search)
+            ->latest()
             ->paginate(getPaginated($request->limit));
 
         return $this->respondWithSuccess($driver, 'Oganization All Driver', 'ORGANIZATION_DRIVER');

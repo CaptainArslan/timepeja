@@ -24,6 +24,7 @@ class VehicleController extends Controller
         $vehicles = Vehicle::with('vehicleType:id,name')
             ->ByOrganization($manager->organization_id)
             ->search($request->search)
+            ->latest()
             ->paginate(getPaginated($request->limit));
 
         return $this->respondWithSuccess($vehicles, 'Oganization All Vehicle', 'ORGANIZATION_VEHICLE');

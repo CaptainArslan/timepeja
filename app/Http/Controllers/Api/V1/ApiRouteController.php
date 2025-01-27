@@ -5,200 +5,79 @@ namespace App\Http\Controllers\Api\V1;
 use PDF;
 use App\Models\Route;
 use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
 use App\Models\Pdf as ModelsPdf;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ApiRouteController extends BaseController
 {
-
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        try {
-            $manager = auth('manager')->user();
-            $routes = Route::where('o_id', $manager->o_id)
-                ->where('status', Route::STATUS_ACTIVE)
-                ->paginate(getPaginated());
-            
-            return $this->respondWithSuccess($routes, 'Organization Routes', 'ORGANIZATION_ROUTES');
-        } catch (\Throwable $th) {
-            return $this->respondWithError('Error Occured while fetching organization driver');
-            throw $th;
+        $manager = Auth::guard('manager')->user();
+
+        if (!$manager) {
+            return $this->respondWithError('Manager not found');
         }
+
+        $routes = Route::with('organization')
+            ->ByOrganization($manager->organization_id)
+            ->search($request->search)
+            ->latest()
+            ->paginate(getPaginated($request->limit));
+
+        return $this->respondWithSuccess($routes, 'Organization Routes', 'ORGANIZATION_ROUTES');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create(): jsonResponse
-    {
-        return $this->respondWithError('Method not allowed');
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request): jsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'number' => ['required'],
-            'name' => ['nullable', 'string'],
-            'from' => ['required', 'string'],
-            'from_longitude' => ['nullable', 'string'],
-            'from_latitude' => ['nullable', 'string'],
-            'to' => ['required', 'string'],
-            'to_longitude' => ['nullable', 'string'],
-            'to_latitude' => ['nullable', 'string'],
-            'way_points' => ['nullable', 'array'],
-        ], [
-            'number.required' => 'Route number is required',
-            'number.unique' => 'Route number already exists',
-            'from.required' => 'Route from location is required',
-            'to.required' => 'Route to location is required',
-            'from_longitude.required' => 'Route from longitude is required',
-            'from_latitude.required' => 'Route from latitude is required',
-            'to_longitude.required' => 'Route to longitude is required',
-            'to_latitude.required' => 'Route to latitude is required',
-            'number.int' => 'Route number must be an integer',
-            'from.string' => 'Route from location must be a string',
-            'to.string' => 'Route to location must be a string',
-            'from_longitude.string' => 'Route from longitude must be a string',
-            'from_latitude.string' => 'Route from latitude must be a string',
-            'to_longitude.string' => 'Route to longitude must be a string',
-            'to_latitude.string' => 'Route to latitude must be a string',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->respondWithError($validator->errors()->first());
-        }
-
         $manager = auth('manager')->user();
 
-        $routeNumCheck = Route::where('o_id', $manager->id)
-            ->where('number', $request->number)
-            ->count();
+        if (!$manager) {
+            return $this->respondWithError('Manager not found');
+        }
 
-        if ($routeNumCheck > 1) {
-            return $this->respondWithError('Route Number Already exist');
+        $routeExists = Route::where('organization_id', $manager->organization_id)
+            ->where('number', $request->number)
+            ->exists();
+
+        if ($routeExists) {
+            return $this->respondWithError('Route Number already exists');
         }
 
         try {
-            DB::beginTransaction();
-
-            $routes = [];
-
-            // 1st route
-            $route1 = new Route();
-            $route1->u_id = $manager->id;
-            $route1->o_id = $manager->o_id;
-            $route1->number = $request->number;
-
-            $route1->to = $request->to;
-            $route1->to_longitude = $request->to_longitude;
-            $route1->to_latitude = $request->to_latitude;
-
-            $route1->from = $request->from;
-            $route1->from_longitude = $request->from_longitude;
-            $route1->from_latitude = $request->from_latitude;
-
-            $route1->way_points = $request->way_points ? json_encode($request->way_points) : null;
-
-            $route1->name = $request->number . ' - ' . $request->from . ' To ' . $request->to;
-            if (!$route1->save()) {
-                return $this->respondWithError('Error occurred while creating 1st route.');
-                // throw new \Exception('Error occurred while creating 1st route.');
-            }
-            $routes[] = $route1;
-
-            // 2nd route
-            $route2 = new Route();
-            $route2->u_id = $manager->id;
-            $route2->o_id = $manager->o_id;
-            $route2->number = $request->number;
-
-            $route2->to = $request->from;
-            $route2->to_longitude = $request->from_longitude;
-            $route2->to_latitude = $request->from_latitude;
-
-            $route2->from = $request->to;
-            $route2->from_longitude = $request->to_longitude;
-            $route2->from_latitude = $request->to_latitude;
-
-            $route2->way_points = $request->way_points ? json_encode($request->way_points) : null;
-
-            $route2->name = $request->number . ' - ' . $request->to . ' To ' . $request->from;
-            if (!$route2->save()) {
-                return $this->respondWithError('Error occurred while creating 2nd route.');
-                // throw new \Exception('Error occurred while creating 2nd route.');
-            }
-            $routes[] = $route2;
-
-            DB::commit();
-
-            return $this->respondWithSuccess($routes, 'Routes created successfully', 'API_ROUTE_CREATED');
+            
         } catch (\Exception $e) {
-            DB::rollBack();
             return $this->respondWithError($e->getMessage(), 'API_ERROR');
         }
 
         return $this->respondWithError('Error Occured while route creation.');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id): jsonResponse
     {
-        $validator = Validator::make(['id' => $id], [
-            'id' => ['required', 'numeric', 'exists:routes,id']
-        ], [
-            'id.required' => 'Route id is required',
-            'id.exists' => 'Route id not found'
-        ]);
+        $manager  = Auth::guard('manager')->user();
 
-        if ($validator->fails()) {
-            return $this->respondWithError($validator->errors()->first());
+        if (!$manager) {
+            return $this->respondWithError('Manager not found');
         }
-        try {
-            // $manager = auth('manager')->user();
-            $route = Route::findOrFail($id);
 
-            return $this->respondWithSuccess($route, 'Get Route', 'API_GET_ROUTE');
-        } catch (ModelNotFoundException $e) {
-            return $this->respondWithError('Route id not found');
-            // throw new NotFoundHttpException('Route id not found');
+        $route = Route::with('organization')->withTrashed()->findOrFail($id);
+
+        if (!$route) {
+            return $this->respondWithError('Route not found');
         }
+
+        if ($route->organization_id != $manager->organization_id) {
+            return $this->respondWithError('Route not belongs to your organization');
+        }
+
+        return $this->respondWithSuccess($route, 'Get Route', 'API_GET_ROUTE');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id): jsonResponse
-    {
-        return $this->respondWithError('Method not allowed', 'API_METHOD_NOT_ALLOWED');
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
         try {
@@ -302,16 +181,12 @@ class ApiRouteController extends BaseController
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id): jsonResponse
     {
         $validator = Validator::make(['id' => $id], [
-            'id' => 'required', 'numeric', 'exists:routes,id'
+            'id' => 'required',
+            'numeric',
+            'exists:routes,id'
         ], [
             'id.required' => 'Driver id is required',
             'id.exists' => 'Driver id not found'
@@ -331,36 +206,6 @@ class ApiRouteController extends BaseController
         }
     }
 
-    /**
-     * Search routes.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function search(): jsonResponse
-    {
-        try {
-            $string = request()->input('string');
-            $manager = auth('manager')->user();
-            $routes = Route::where('name', 'LIKE', '%' . $string . '%')
-                ->orWhere('number', 'LIKE', '%' . $string . '%')
-                ->orWhere('from', 'LIKE', '%' . $string . '%')
-                ->orWhere('to', 'LIKE', '%' . $string . '%')
-                ->where('o_id', $manager->o_id)
-                ->select('id', 'name')
-                ->get();
-            return $this->respondWithSuccess($routes, 'Routes retrieved successfully', 'API_ROUTE_SEARCH_RESULT');
-        } catch (ModelNotFoundException $e) {
-            throw new NotFoundHttpException('No routes found');
-        }
-    }
-
-    /**
-     * Get route.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function getRoute(): jsonResponse
     {
         try {
@@ -375,12 +220,6 @@ class ApiRouteController extends BaseController
         }
     }
 
-    /**
-     * Create Pdf for drivers
-     *
-     * @param Request $request
-     * @return void
-     */
     public function createPdf(Request $request)
     {
         try {

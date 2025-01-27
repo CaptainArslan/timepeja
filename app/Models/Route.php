@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasOrganization;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -12,6 +13,7 @@ class Route extends Model
 {
     use HasFactory;
     use SoftDeletes;
+    use HasOrganization;
 
     public const STATUS_ACTIVE = true;
     public const STATUS_INACTIVE = false;
@@ -30,9 +32,6 @@ class Route extends Model
         'organization_id' => 'integer',
         'number' => 'integer',
         'status' => 'boolean',
-        'from ' => 'array',
-        'to' => 'array',
-        'way_points' => 'array',
     ];
 
     protected $hidden = [
@@ -56,23 +55,31 @@ class Route extends Model
     {
         return new Attribute(
             get: fn($value) => ucwords(strtolower($value)),
-            set: fn($value) => ucwords(strtolower($value)),
+            set: fn($value) => strtolower($value),
         );
     }
 
     protected function from(): Attribute
     {
         return new Attribute(
-            get: fn($value) => ucwords(strtolower($value)),
-            set: fn($value) => ucwords(strtolower($value)),
+            set: fn($value) => json_encode($value),
+            get: fn($value) => json_decode($value, true)
         );
     }
 
     protected function to(): Attribute
     {
         return new Attribute(
-            get: fn($value) => ucwords(strtolower($value)),
-            set: fn($value) => ucwords(strtolower($value)),
+            set: fn($value) => json_encode($value),
+            get: fn($value) => json_decode($value, true)
+        );
+    }
+    
+    protected function wayPoints(): Attribute
+    {
+        return new Attribute(
+            set: fn($value) => json_encode($value),
+            get: fn($value) => json_decode(json_decode($value, true), true)
         );
     }
 
@@ -91,13 +98,23 @@ class Route extends Model
     }
 
 
+
     // ------------------- Scopes --------------------------------
-    public function scopeByOrganization($query, $organization_id)
+    public function scopeActive($query)
     {
-        return $query->when($organization_id, function ($query) use ($organization_id) {
-            return $query->where('o_id', $organization_id);
-        }, function ($query) {
-            return $query;
-        });
+        return $query->where('status', self::STATUS_ACTIVE);
+    }
+
+    public function scopeInactive($query)
+    {
+        return $query->where('status', self::STATUS_INACTIVE);
+    }
+
+    public function scopeSearch($query, $search)
+    {
+        return $query->where('name', 'like', "%$search%")
+            ->orWhere('number', 'like', "%$search%")
+            ->orWhere('from', 'like', "%$search%")
+            ->orWhere('to', 'like', "%$search%");
     }
 }

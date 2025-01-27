@@ -56,22 +56,6 @@ Route::group(['middleware' => 'api'], function () {
                 Route::post('profile/upload', [ManagerProfileController::class, 'upload']);
                 Route::put('profile/update', [ManagerProfileController::class, 'update']);
 
-                // Upload Media Api
-                Route::get('/get-organization-data', [ApiScheduleController::class, 'getOrganizationData']);
-
-                // Schedule Api
-                Route::resource('/schedule', ApiScheduleController::class);
-                Route::get('/schedules/active', [ApiScheduleController::class, 'activeVehicle']);
-                Route::post('/schedule/replicate', [ApiScheduleController::class, 'replicate']);
-                Route::put('/schedules/publish', [ApiScheduleController::class, 'publish']);
-                Route::put('/schedules/draft', [ApiScheduleController::class, 'draft']);
-                Route::get('/schedules/published/{date}', [ApiScheduleController::class, 'getPublishedScheduleByDate']);
-                Route::get('/schedules/created/{date}', [ApiScheduleController::class, 'getCreatedScheduleByDate']);
-
-                Route::get('/created-schedule/pdf/{date}', [PdfController::class, 'createdSchedule']);
-                Route::get('/published-schedule/pdf/{date}', [PdfController::class, 'publishedSchedule']);
-
-
                 // Driver Api
                 Route::get('/driver', [ManagerDriverController::class, 'index']);
                 Route::post('/driver', [ManagerDriverController::class, 'store']);
@@ -89,17 +73,37 @@ Route::group(['middleware' => 'api'], function () {
                 Route::delete('/vehicle/{id}', [ManagerVehicleController::class, 'destroy']);
                 Route::get('/vehicles/pdf', [ManagerVehicleController::class, 'createPdf']);
 
+                // Route Api
+                Route::get('/route', [ApiRouteController::class, 'index']);
+                Route::post('/route', [ApiRouteController::class, 'store']);
+                Route::get('/route/{id}', [ApiRouteController::class, 'show']);
+                Route::put('/route/{id}', [ApiRouteController::class, 'update']);
+                Route::delete('/route/{id}', [ApiRouteController::class, 'destroy']);
+                Route::get('/routes/pdf', [ApiRouteController::class, 'createPdf']);
+                Route::get('web/route', [ApiRouteController::class, 'getRoute']);
+                Route::get('/search/route', [ApiRouteController::class, 'search']);
+
                 // Organization Api
                 Route::get('/get-all-organizations', [ApiOrganizationController::class, 'index']);
                 Route::get('/organization/{code}', [ApiOrganizationController::class, 'show']);
                 Route::post('/organization/deactivation/code', [ApiOrganizationController::class, 'deactivateCode']);
                 Route::post('/organization/deactivate', [ApiOrganizationController::class, 'deactivate']);
 
-                // Route Api
-                Route::resource('/route', ApiRouteController::class);
-                Route::get('/routes/pdf', [ApiRouteController::class, 'createPdf']);
-                Route::get('web/route', [ApiRouteController::class, 'getRoute']);
-                Route::get('/search/route', [ApiRouteController::class, 'search']);
+                // Upload Media Api
+                Route::get('/get-organization-data', [ApiScheduleController::class, 'getOrganizationData']);
+
+                // Schedule Api
+                Route::resource('/schedule', ApiScheduleController::class);
+                Route::get('/schedules/active', [ApiScheduleController::class, 'activeVehicle']);
+                Route::post('/schedule/replicate', [ApiScheduleController::class, 'replicate']);
+                Route::put('/schedules/publish', [ApiScheduleController::class, 'publish']);
+                Route::put('/schedules/draft', [ApiScheduleController::class, 'draft']);
+                Route::get('/schedules/published/{date}', [ApiScheduleController::class, 'getPublishedScheduleByDate']);
+                Route::get('/schedules/created/{date}', [ApiScheduleController::class, 'getCreatedScheduleByDate']);
+
+                Route::get('/created-schedule/pdf/{date}', [PdfController::class, 'createdSchedule']);
+                Route::get('/published-schedule/pdf/{date}', [PdfController::class, 'publishedSchedule']);
+
 
                 // Log Report Api
                 Route::post('/logreport', [LogReportController::class, 'index']);
