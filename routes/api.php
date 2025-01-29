@@ -24,6 +24,7 @@ use App\Http\Controllers\Api\V1\Manager\AuthController as ManagerAuthController;
 use App\Http\Controllers\Api\V1\OrganizationController as ApiOrganizationController;
 use App\Http\Controllers\Api\V1\Driver\ScheduleController as DriverScheduleController;
 use App\Http\Controllers\Api\V1\Manager\ProfileController as ManagerProfileController;
+use App\Http\Controllers\Api\V1\Manager\RouteController as ManagerRouteController; 
 use App\Http\Controllers\Api\V1\Passenger\RouteController as PassengerRouteController;
 use App\Http\Controllers\Api\V1\Passenger\ScheduleController as PassengerScheduleController;
 
@@ -74,14 +75,13 @@ Route::group(['middleware' => 'api'], function () {
                 Route::get('/vehicles/pdf', [ManagerVehicleController::class, 'createPdf']);
 
                 // Route Api
-                Route::get('/route', [ApiRouteController::class, 'index']);
-                Route::post('/route', [ApiRouteController::class, 'store']);
-                Route::get('/route/{id}', [ApiRouteController::class, 'show']);
-                Route::put('/route/{id}', [ApiRouteController::class, 'update']);
-                Route::delete('/route/{id}', [ApiRouteController::class, 'destroy']);
-                Route::get('/routes/pdf', [ApiRouteController::class, 'createPdf']);
-                Route::get('web/route', [ApiRouteController::class, 'getRoute']);
-                Route::get('/search/route', [ApiRouteController::class, 'search']);
+                Route::get('/route', [ManagerRouteController::class, 'index']);
+                Route::post('/route', [ManagerRouteController::class, 'store']);
+                Route::get('/route/{id}', [ManagerRouteController::class, 'show']);
+                Route::put('/route/{id}', [ManagerRouteController::class, 'update']);
+                Route::delete('/route/{id}', [ManagerRouteController::class, 'destroy']);
+                Route::get('/routes/pdf', [ManagerRouteController::class, 'createPdf']);
+                Route::get('web/route', [ManagerRouteController::class, 'getRoute']);
 
                 // Organization Api
                 Route::get('/get-all-organizations', [ApiOrganizationController::class, 'index']);
