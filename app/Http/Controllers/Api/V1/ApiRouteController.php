@@ -10,8 +10,9 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\Manager\Route\CreateRouteRequest;
+use App\Http\Requests\Manager\Route\UpdateRouteRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ApiRouteController extends BaseController
 {
@@ -23,8 +24,7 @@ class ApiRouteController extends BaseController
             return $this->respondWithError('Manager not found');
         }
 
-        $routes = Route::with('organization')
-            ->ByOrganization($manager->organization_id)
+        $routes = Route::ByOrganization($manager->organization_id)
             ->search($request->search)
             ->latest()
             ->paginate(getPaginated($request->limit));
@@ -32,7 +32,7 @@ class ApiRouteController extends BaseController
         return $this->respondWithSuccess($routes, 'Organization Routes', 'ORGANIZATION_ROUTES');
     }
 
-    public function store(Request $request): jsonResponse
+    public function store(CreateRouteRequest $request): jsonResponse
     {
         $manager = auth('manager')->user();
 
@@ -40,7 +40,7 @@ class ApiRouteController extends BaseController
             return $this->respondWithError('Manager not found');
         }
 
-        $routeExists = Route::where('organization_id', $manager->organization_id)
+        $routeExists = Route::byOrganization($manager->organization_id)
             ->where('number', $request->number)
             ->exists();
 
@@ -49,12 +49,34 @@ class ApiRouteController extends BaseController
         }
 
         try {
-            
+            $createdRoutes = DB::transaction(function () use ($manager, $request) {
+                $routes = [];
+                $routes  = Route::create([
+                    'organization_id' => $manager->organization_id,
+                    'name' =>  $request->number . ' - ' . $request->from['city'] . ' To ' . $request->to['city'],
+                    'number' => $request->number,
+                    'from' => $request->from,
+                    'to' => $request->to,
+                    'status' => Route::STATUS_ACTIVE,
+                    'way_points' => $request->way_points,
+                ]);
+
+                $routes = Route::create([
+                    'organization_id' => $manager->organization_id,
+                    'name' =>  $request->number . ' - ' . $request->to['city'] . ' To ' . $request->from['city'],
+                    'number' => $request->number,
+                    'from' => $request->from,
+                    'to' => $request->to,
+                    'status' => Route::STATUS_ACTIVE,
+                    'way_points' => $request->way_points,
+                ]);
+                return $routes;
+            });
+
+            return $this->respondWithSuccess($createdRoutes, 'Route created successfully', 'API_ROUTE_CREATED');
         } catch (\Exception $e) {
             return $this->respondWithError($e->getMessage(), 'API_ERROR');
         }
-
-        return $this->respondWithError('Error Occured while route creation.');
     }
 
     public function show($id): jsonResponse
@@ -65,7 +87,7 @@ class ApiRouteController extends BaseController
             return $this->respondWithError('Manager not found');
         }
 
-        $route = Route::with('organization')->withTrashed()->findOrFail($id);
+        $route = Route::withTrashed()->findOrFail($id);
 
         if (!$route) {
             return $this->respondWithError('Route not found');
@@ -78,106 +100,62 @@ class ApiRouteController extends BaseController
         return $this->respondWithSuccess($route, 'Get Route', 'API_GET_ROUTE');
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateRouteRequest $request, $id)
     {
+        $manager = Auth::guard('manager')->user();
+
+        if (!$manager) {
+            return $this->respondWithError('Manager not found');
+        }
+
+        $route = Route::withTrashed()->findOrFail($id);
+
+        if (!$route) {
+            return $this->respondWithError('Route not found');
+        }
+
         try {
-            $route = Route::findOrFail($id);
+            DB::beginTransaction();
 
-            $validator = Validator::make(
-                $request->all(),
-                [
-                    'number' => ['required', 'string',],
-                    'name' => ['nullable', 'string'],
-                    'from' => ['required', 'string'],
-                    'from_longitude' => ['nullable', 'string'],
-                    'from_latitude' => ['nullable', 'string'],
-                    'to' => ['required', 'string'],
-                    'to_longitude' => ['nullable', 'string'],
-                    'to_latitude' => ['nullable', 'string'],
-                ],
-                [
-                    'number.required' => 'Route number is required',
-                    'number.unique' => 'Route number already exists',
-                    'from.required' => 'Route from location is required',
-                    'to.required' => 'Route to location is required',
-                    'from_longitude.required' => 'Route from longitude is required',
-                    'from_latitude.required' => 'Route from latitude is required',
-                    'to_longitude.required' => 'Route to longitude is required',
-                    'to_latitude.required' => 'Route to latitude is required',
-                    'name.required' => 'Route name is required',
-                    'name.string' => 'Route name must be a string',
-                    'from.string' => 'Route from location must be a string',
-                    'from_longitude.string' => 'Route from longitude must be a string',
-                    'from_latitude.string' => 'Route from latitude must be a string',
-                    'to.string' => 'Route to location must be a string',
-                    'to_longitude.string' => 'Route to longitude must be a string',
-                    'to_latitude.string' => 'Route to latitude must be a string',
-                ]
-            );
+            $routes = Route::where('number', $route->number)
+                ->ByOrganization($manager->organization_id)
+                ->where('status', Route::STATUS_ACTIVE)
+                ->get()->toArray();
 
-            if ($validator->fails()) {
-                return $this->respondWithError(implode(",", $validator->errors()->all()));
+            if (!$routes) {
+                return $this->respondWithError('Route not found');
             }
 
-            try {
-                DB::beginTransaction();
+            $updatedRoutes = DB::transaction(function () use ($routes, $manager, $request) {
+                $route1 = $routes[0];
+                $route2 = $routes[1];
 
-                $routes = [];
-                $data = Route::where('number', $route->number)
-                    ->where('o_id', $route->o_id)
-                    ->where('status', Route::STATUS_ACTIVE)
-                    ->get();
+                $route1->update([
+                    'organization_id' => $manager->organization_id,
+                    'name' =>  $request->number . ' - ' . $request->from['city'] . ' To ' . $request->to['city'],
+                    'number' => $request->number,
+                    'from' => $request->from,
+                    'to' => $request->to,
+                    'status' => Route::STATUS_ACTIVE,
+                    'way_points' => $request->way_points,
+                ]);
 
-                if (!$data) {
-                    return $this->respondWithError('Route not found');
-                }
+                $route2->update([
+                    'organization_id' => $manager->organization_id,
+                    'name' =>  $request->number . ' - ' . $request->to['city'] . ' To ' . $request->from['city'],
+                    'number' => $request->number,
+                    'from' => $request->from,
+                    'to' => $request->to,
+                    'status' => Route::STATUS_ACTIVE,
+                    'way_points' => $request->way_points,
+                ]);
 
-                $route1 = $data[0];
-                $route1->number = $request->number;
-                $route1->from = $request->from;
-                $route1->from_longitude = $request->from_longitude;
-                $route1->from_latitude = $request->from_latitude;
-                $route1->to = $request->to;
-                $route1->to_longitude = $request->to_longitude;
-                $route1->to_latitude = $request->to_latitude;
-                $route1->name =  $request->number . ' - ' . $request->to . ' To ' . $request->from;
-                $route1->way_points = $request->way_points ? json_encode($request->way_points) : null;
+                return $routes;
+            });
 
-                $route1Save = $route1->save();
-                if (!$route1Save) {
-                    return $this->respondWithError('Error occurred while updating route 1.');
-                }
-                $routes[] = $route1;
-
-                $route2 = $data[1];
-                $route2->number = $request->number;
-                $route2->to = $request->from;
-                $route2->to_longitude = $request->from_longitude;
-                $route2->to_latitude = $request->from_latitude;
-                $route2->from = $request->to;
-                $route2->from_longitude = $request->to_longitude;
-                $route2->from_latitude = $request->to_latitude;
-                $route2->name = $request->number . ' - ' . $request->from . ' To ' . $request->to;
-                $route2->way_points = $request->way_points ? json_encode($request->way_points) : null;
-                $route2Save =  $route2->save();
-                if (!$route2Save) {
-                    return $this->respondWithError('Error occurred while updating route 2.');
-                }
-                $routes[] = $route2;
-                if ($route1Save && $route2Save) {
-                    DB::commit();
-                    return $this->respondWithSuccess($routes, 'Route updated successfully', 'API_ROUTE_UPDATED');
-                } else {
-                    DB::rollBack();
-                    return $this->respondWithError('Error occurred while updating routes.');
-                }
-            } catch (\Throwable $th) {
-                DB::rollBack();
-                throw $th;
-            }
-        } catch (ModelNotFoundException $e) {
-            return $this->respondWithError('Route id not found');
-            // throw new NotFoundHttpException('Route id not found');
+            return $this->respondWithSuccess($updatedRoutes, 'Route updated successfully', 'API_ROUTE_UPDATED');
+        } catch (\Throwable $th) {
+            return $this->respondWithError('Error occurred while updating route: ' . $th->getMessage());
         }
     }
 

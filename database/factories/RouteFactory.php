@@ -15,33 +15,34 @@ class RouteFactory extends Factory
      */
     public function definition()
     {
-        $city = $this->faker->city();
+        $city1 = $this->faker->city();
+        $city2 = $this->faker->city();
         $number = rand(1000, 9999);
-        $name = $number . '-' . $city . ' To ' . $city;
+        $name = $number . '-' . $city1 . ' To ' . $city2;
         return [
             'organization_id' => Organization::inRandomOrder()->first()->id,
             'name' => $name,
             'number' => $number,
-            'from' => json_encode([
+            'from' => [
                 'adderss' => $this->faker->address(),
                 'state' => $this->faker->state(),
-                'city' => $this->faker->city(),
+                'city' => $city1,
                 'coordinates' => [
                     'latitude' => $this->faker->latitude(),
                     'longitude' => $this->faker->longitude(),
                 ],
-            ]),
-            'to' => json_encode([
+            ],
+            'to' => [
                 'adderss' => $this->faker->address(),
                 'state' => $this->faker->state(),
-                'city' => $this->faker->city(),
+                'city' => $city2,
                 'coordinates' => [
                     'latitude' => $this->faker->latitude(),
                     'longitude' => $this->faker->longitude(),
                 ],
-            ]),
+            ],
             'status' => Route::STATUS_ACTIVE,
-            'way_points' => json_encode([
+            'way_points' => [
                 [
                     'latitude' => 32.194276,
                     'longitude' => 74.201953,
@@ -50,7 +51,7 @@ class RouteFactory extends Factory
                     'latitude' => 32.194276,
                     'longitude' => 74.203517,
                 ],
-            ]),
+            ],
         ];
     }
 }

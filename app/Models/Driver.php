@@ -114,7 +114,6 @@ class Driver extends Authenticatable implements JWTSubject
     {
         return new Attribute(
             get: fn($value) => $value == self::STATUS_ACTIVE ? 'Active' : 'Deactive',
-            set: fn($value) => $value == 'Active' ? self::STATUS_ACTIVE : self::STATUS_DEACTIVE
         );
     }
 

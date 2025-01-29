@@ -16,7 +16,7 @@ class Route extends Model
     use HasOrganization;
 
     public const STATUS_ACTIVE = true;
-    public const STATUS_INACTIVE = false;
+    public const STATUS_DEACTIVE = false;
 
     protected $fillable = [
         'organization_id',
@@ -74,12 +74,20 @@ class Route extends Model
             get: fn($value) => json_decode($value, true)
         );
     }
-    
+
+    protected function status(): Attribute
+    {
+        return new Attribute(
+            get: fn($value) => $value == self::STATUS_ACTIVE ? 'Active' : 'Deactive',
+        );
+    }
+
+
     protected function wayPoints(): Attribute
     {
         return new Attribute(
             set: fn($value) => json_encode($value),
-            get: fn($value) => json_decode(json_decode($value, true), true)
+            get: fn($value) => json_decode($value, true)
         );
     }
 
@@ -107,7 +115,7 @@ class Route extends Model
 
     public function scopeInactive($query)
     {
-        return $query->where('status', self::STATUS_INACTIVE);
+        return $query->where('status', self::STATUS_DEACTIVE);
     }
 
     public function scopeSearch($query, $search)
