@@ -24,8 +24,8 @@ class DriverController extends Controller
             return $this->respondWithError('Manager not found');
         }
 
-        $driver = Driver::with('organization')
-            ->ByOrganization($manager->organization_id)
+        $driver = Driver::ByOrganization($manager->organization_id)
+            // with('organization')
             ->search($request->search)
             ->latest()
             ->paginate(getPaginated($request->limit));

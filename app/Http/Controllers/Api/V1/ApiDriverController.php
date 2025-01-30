@@ -10,7 +10,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Api\V1\BaseController;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-
+use Illuminate\Support\Facades\Auth;
 
 class ApiDriverController extends BaseController
 {
@@ -276,14 +276,21 @@ class ApiDriverController extends BaseController
     public function createPdf(Request $request)
     {
         try {
-            $manager = auth('manager')->user();
-            $drivers = Driver::where('o_id', $manager->o_id)
-                ->with('organization:id,name,branch_name,branch_code,email,phone,address,code')
+            $manager = Auth::guard('manager')->user();
+
+            if (!$manager) {
+                return $this->respondWithError('Manager not found');
+            }
+
+            $drivers = Driver::where('organization_id', $manager->organization_id)
+                ->with('organization')
                 ->get();
+
             $data = [
                 'drivers' => $drivers->toArray(),
                 'request' => $request->all()
             ];
+
             $pdf = PDF::loadview('pdf.driver', $data);
             $pdf->setPaper('A4', 'landscape');
 
@@ -305,10 +312,6 @@ class ApiDriverController extends BaseController
                 return $this->respondWithError('Error occurred while creating the PDF. Failed to save the model.');
             }
         } catch (\Throwable $th) {
-            // Delete the saved PDF file if an exception occurred
-            // if (file_exists($filePath)) {
-            //     unlink($filePath);
-            // }
             return $this->respondWithError('Error occurred while creating the PDF: ' . $th->getMessage());
         }
     }

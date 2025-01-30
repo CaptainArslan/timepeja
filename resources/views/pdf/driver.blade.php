@@ -16,7 +16,7 @@
             Drivers
         </h1>
         <div id="company" class="clearfix">
-            <div>Stoppick</div>
+            <div>{{ env('APP_NAME') }}</div>
             <div>Stoppick Association</div>
             <div>+92 300-1234567</div>
         </div>
