@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
-    public function index(): jsonResponse
+    public function index(Request $request): jsonResponse
     {
         $manager = Auth::guard('manager')->user();
 
@@ -22,14 +22,24 @@ class DashboardController extends Controller
 
         $routes = Route::where('organization_id', $manager->organization_id)
             ->select('id', 'name')
+            ->when(($request->type == 'routes'), function ($query) use ($request) {
+                return $query->search($request->search);
+            })
+            ->latest()
             ->get();
 
         $vehicles = Vehicle::where('organization_id', $manager->organization_id)
             ->select('id', 'number')
+            ->when(($request->type == 'vehicles'), function ($query) use ($request) {
+                return $query->search($request->search);
+            })
             ->get();
 
         $drivers = Driver::where('organization_id', $manager->organization_id)
             ->select('id', 'name')
+            ->when(($request->type == 'drivers'), function ($query) use ($request) {
+                return $query->search($request->search);
+            })
             ->get();
 
         $data = [

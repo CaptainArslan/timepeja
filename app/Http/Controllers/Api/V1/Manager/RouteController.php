@@ -23,7 +23,6 @@ class RouteController extends Controller
 
         $routes = Route::ByOrganization($manager->organization_id)
             ->search($request->search)
-            
             ->latest()
             ->paginate(getPaginated($request->limit));
 

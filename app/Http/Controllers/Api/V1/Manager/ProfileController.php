@@ -6,7 +6,7 @@ use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use App\Http\Requests\Manager\Profile\ProfilePicUpdateRequest;
+use App\Http\Requests\Manager\Profile\ProfileUpdateRequest;
 use App\Http\Requests\Manager\Profile\ProfilePicUploadRequest;
 
 class ProfileController extends Controller
@@ -45,7 +45,7 @@ class ProfileController extends Controller
         return $this->respondWithSuccess($manager, 'Profile Picture Updated', 'PROFILE_PICTURE_UPDATED');
     }
 
-    public function update(ProfilePicUpdateRequest $request): jsonResponse
+    public function update(ProfileUpdateRequest $request): jsonResponse
     {
         $manager = Auth::guard('manager')->user();
 

@@ -60,7 +60,8 @@ Route::group(['middleware' => 'api'], function () {
 
                 //main screen wrapper
                 Route::get('/main-screen-wrapper', [ManagerDashboardController::class, 'index']);
-                Route::get('/log-report-wrapper', [ApiManagerController::class, 'wrapper']);
+                Route::get('/log-report-wrapper', [ManagerDashboardController::class, 'index']);
+                // Route::get('/log-report-wrapper', [ApiManagerController::class, 'wrapper']);
 
                 // Driver Api
                 Route::get('/driver', [ManagerDriverController::class, 'index']);
@@ -225,7 +226,7 @@ Route::group(['middleware' => 'api'], function () {
             Route::put('web/driver/{id}', [ApiDriverController::class, 'updateWeb']);
         });
 
-        Route::put('profile/web/update', [ApiManagerController::class, 'profileUpdateWeb']);
+        Route::put('profile/web/update', [ManagerProfileController::class, 'update']);
 
         // Vehicle apo for web
         Route::group(['prefix' => 'web/vehicle'], function () {
