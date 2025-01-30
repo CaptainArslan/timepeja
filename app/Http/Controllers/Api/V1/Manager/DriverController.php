@@ -14,6 +14,7 @@ use App\Http\Requests\Manager\Driver\DriverCreateRequest;
 use App\Http\Requests\Manager\Driver\DriverupdateRequest;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Pdf as ModelsPdf;
+use PDF;
 
 class DriverController extends Controller
 {
@@ -134,45 +135,44 @@ class DriverController extends Controller
 
     public function createPdf(Request $request)
     {
-        // try {
-        $manager = Auth::guard('manager')->user();
+        try {
+            $manager = Auth::guard('manager')->user();
 
-        if (!$manager) {
-            return $this->respondWithError('Manager not found');
-        }
-
-        $drivers = Driver::where('organization_id', $manager->organization_id)
-            ->with('organization')
-            ->get();
-
-        $data = [
-            'drivers' => $drivers->toArray(),
-            'request' => $request->except(['_token']) // Sanitize request data
-        ];
-
-
-        $pdf = PDF::loadview('pdf.driver', $data);
-        $pdf->setPaper('A4', 'landscape');
-
-        $filename = date('Ymd_His') . '_Driver_Report.pdf'; // Generate a unique filename
-        $filePath = public_path('uploads/pdf/' . $filename); // Get the full file path
-
-        $pdf->save($filePath); // Save the PDF to the specified folder
-
-        $pdfModel = new ModelsPdf();
-        $pdfModel->url = asset('/uploads/pdf/' . $filename);
-
-        if ($pdfModel->save()) {
-            return $this->respondWithSuccess($pdfModel, 'Pdf Created Successfully', 'LOG_REPORT_PDF_CREATED_SUCCESSFULLY');
-        } else {
-            // Delete the saved PDF file if model saving failed
-            if (file_exists($filePath)) {
-                unlink($filePath);
+            if (!$manager) {
+                return $this->respondWithError('Manager not found');
             }
-            return $this->respondWithError('Error occurred while creating the PDF. Failed to save the model.');
+
+            $drivers = Driver::where('organization_id', $manager->organization_id)
+                ->with('organization')
+                ->get();
+
+            $data = [
+                'drivers' => $drivers->toArray(),
+                'request' => $request->except(['_token']) // Sanitize request data
+            ];
+
+            $pdf = PDF::loadview('pdf.driver', $data);
+            $pdf->setPaper('A4', 'landscape');
+
+            $filename = date('Ymd_His') . '_Driver_Report.pdf'; // Generate a unique filename
+            $filePath = public_path('uploads/pdf/' . $filename); // Get the full file path
+
+            $pdf->save($filePath); // Save the PDF to the specified folder
+
+            $pdfModel = new ModelsPdf();
+            $pdfModel->url = asset('/uploads/pdf/' . $filename);
+
+            if ($pdfModel->save()) {
+                return $this->respondWithSuccess($pdfModel, 'Pdf Created Successfully', 'LOG_REPORT_PDF_CREATED_SUCCESSFULLY');
+            } else {
+                // Delete the saved PDF file if model saving failed
+                if (file_exists($filePath)) {
+                    unlink($filePath);
+                }
+                return $this->respondWithError('Error occurred while creating the PDF. Failed to save the model.');
+            }
+        } catch (\Throwable $th) {
+            return $this->respondWithError('Error occurred while creating the PDF: ' . $th->getMessage());
         }
-        // } catch (\Throwable $th) {
-        //     return $this->respondWithError('Error occurred while creating the PDF: ' . $th->getMessage());
-        // }
     }
 }
