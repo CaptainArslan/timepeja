@@ -58,6 +58,11 @@ class Organization extends Model
         'organization_type_id' => 'integer',
     ];
 
+    protected $appends = [
+        'full_address',
+        'full_name'
+    ];
+
     // ------------------ Relationships --------------------------------
     public function manager(): HasOne
     {
@@ -136,6 +141,34 @@ class Organization extends Model
             get: fn($value) => $value == self::STATUS_ACTIVE ? 'Active' : 'Deactive',
         );
     }
+
+    protected function fullName(): Attribute
+    {
+        return new Attribute(
+            get: function () {
+                $branchCode = $this->branch_code ?? '';
+                $name = $this->name ?? '';
+                $branchName = $this->branch_name ?? '';
+                $city = $this->address['city'] ?? '';
+
+                return trim("$branchCode - $name, $branchName, $city", ' ,');
+            }
+        );
+    }
+
+    protected function fullAddress(): Attribute
+    {
+        return new Attribute(
+            get: function () {
+                $address = $this->address['address'] ?? '';
+                $city = $this->address['city'] ?? '';
+                $state = $this->address['state'] ?? '';
+
+                return trim("$address, $city, $state", ' ,');
+            }
+        );
+    }
+
     // ------------------ Custom Functions --------------------------------
     public function isActive(): bool
     {

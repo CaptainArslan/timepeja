@@ -19,7 +19,6 @@ use App\Http\Controllers\Api\V1\PassengerRequestController;
 use App\Http\Controllers\Api\V1\Auth\PassengerAuthController;
 use App\Http\Controllers\Api\V1\RequestController as ApiRequestController;
 use App\Http\Controllers\Api\V1\ApiDriverController as ApiDriverController;
-use App\Http\Controllers\Api\V1\ApiManagerController as ApiManagerController;
 use App\Http\Controllers\Api\V1\Manager\AuthController as ManagerAuthController;
 use App\Http\Controllers\Api\V1\OrganizationController as ApiOrganizationController;
 use App\Http\Controllers\Api\V1\Driver\ScheduleController as DriverScheduleController;
@@ -87,7 +86,6 @@ Route::group(['middleware' => 'api'], function () {
                 Route::put('/route/{id}', [ManagerRouteController::class, 'update']);
                 Route::delete('/route/{id}', [ManagerRouteController::class, 'destroy']);
                 Route::get('/routes/pdf', [ManagerRouteController::class, 'createPdf']);
-                Route::get('web/route', [ManagerRouteController::class, 'getRoute']);
 
                 // Organization Api
                 Route::get('/get-all-organizations', [ApiOrganizationController::class, 'index']);
@@ -219,7 +217,7 @@ Route::group(['middleware' => 'api'], function () {
     });
 
     // Driver api for web
-    Route::prefix('v1')->group(function () {
+    Route::prefix('v1/')->group(function () {
         Route::prefix('manager')->name('manager.')->group(function () {
             Route::get('web/driver/', [ApiDriverController::class, 'getDriver']);
             Route::post('web/driver/', [ApiDriverController::class, 'storeWeb']);
@@ -227,6 +225,8 @@ Route::group(['middleware' => 'api'], function () {
         });
 
         Route::put('profile/web/update', [ManagerProfileController::class, 'update']);
+
+        Route::get('web/route', [ManagerRouteController::class, 'getRoute']);
 
         // Vehicle apo for web
         Route::group(['prefix' => 'web/vehicle'], function () {
