@@ -27,7 +27,8 @@ class MediaController extends BaseController
 
                 try {
                     $path = $media->store('media', 'public');
-                    $paths[$key] = Storage::url($path);
+                    $paths[$key]['path'] = Storage::url($path);
+                    $paths[$key]['url'] = asset(Storage::url($path));
                 } catch (\Exception $e) {
                     return $this->respondWithError("Failed to upload file: {$media->getClientOriginalName()}. " . $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
                 }
