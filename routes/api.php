@@ -23,8 +23,9 @@ use App\Http\Controllers\Api\V1\ApiManagerController as ApiManagerController;
 use App\Http\Controllers\Api\V1\Manager\AuthController as ManagerAuthController;
 use App\Http\Controllers\Api\V1\OrganizationController as ApiOrganizationController;
 use App\Http\Controllers\Api\V1\Driver\ScheduleController as DriverScheduleController;
+use App\Http\Controllers\Api\V1\Manager\DashboardController as ManagerDashboardController;
 use App\Http\Controllers\Api\V1\Manager\ProfileController as ManagerProfileController;
-use App\Http\Controllers\Api\V1\Manager\RouteController as ManagerRouteController; 
+use App\Http\Controllers\Api\V1\Manager\RouteController as ManagerRouteController;
 use App\Http\Controllers\Api\V1\Passenger\RouteController as PassengerRouteController;
 use App\Http\Controllers\Api\V1\Passenger\ScheduleController as PassengerScheduleController;
 
@@ -56,6 +57,10 @@ Route::group(['middleware' => 'api'], function () {
                 Route::get('profile/', [ManagerProfileController::class, 'index']);
                 Route::post('profile/upload', [ManagerProfileController::class, 'upload']);
                 Route::put('profile/update', [ManagerProfileController::class, 'update']);
+
+                //main screen wrapper
+                Route::get('/main-screen-wrapper', [ManagerDashboardController::class, 'index']);
+                Route::get('/log-report-wrapper', [ApiManagerController::class, 'wrapper']);
 
                 // Driver Api
                 Route::get('/driver', [ManagerDriverController::class, 'index']);
@@ -110,9 +115,6 @@ Route::group(['middleware' => 'api'], function () {
                 Route::get('/logreport/pdf', [PdfController::class, 'logReport']);
                 Route::post('/get-user-request/pdf', [PdfController::class, 'userRequests']);
 
-                //main screen wrapper
-                Route::get('/main-screen-wrapper', [ApiManagerController::class, 'wrapper']);
-                Route::get('/log-report-wrapper', [ApiManagerController::class, 'wrapper']);
 
                 // get transport user requests
                 Route::get('/requests', [ApiRequestController::class, 'index']);
