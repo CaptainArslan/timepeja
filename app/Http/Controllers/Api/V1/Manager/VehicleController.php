@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Http\Requests\Manager\Vehicle\StoreVehicleRequest;
 use App\Http\Requests\Manager\Vehicle\UpdateVehicleRequest;
-use App\Models\Pdf as ModelsPdf;
+use PDF;
 
 class VehicleController extends Controller
 {
@@ -113,34 +113,29 @@ class VehicleController extends Controller
                 return $this->respondWithError('Manager not found');
             }
 
-            $vehicles = Vehicle::where('organization_id', $manager->organization_id)
+            $vehicles = Vehicle::ByOrganization($manager->organization_id)
                 ->with('organization')
-                ->with('vehiclesType')
+                ->with('vehicleType:id,name')
                 ->get();
-
-            dd($vehicles);
 
             $data = [
                 'vehicles' => $vehicles->toArray(),
-                'request' => $request->all()
+                'request' => $request->except(['_token'])
             ];
 
             $pdf = PDF::loadview('pdf.vehicle', $data);
             $pdf->setPaper('A4', 'landscape');
 
-            $filename = date('Ymd_His') . '_Driver_Report.pdf'; // Generate a unique filename
-            $filePath = public_path('uploads/pdf/' . $filename); // Get the full file path
+            $filename = date('Ymd_His') . '_Vehicle_Report_' . $manager->id . '.pdf';
+            $filePath = 'public/pdf/' . $filename;
 
-            $pdf->save($filePath); // Save the PDF to the specified folder
+            Storage::put($filePath, $pdf->output());
 
-            $pdfModel = new ModelsPdf();
-            $pdfModel->url = asset('/uploads/pdf/' . $filename);
+            $data = [
+                'url' => asset(Storage::url($filePath)),
+            ];
 
-            if ($pdfModel->save()) {
-                return $this->respondWithSuccess($pdfModel, 'Pdf Created Successfully', 'LOG_REPORT_PDF_CREATED_SUCCESSFULLY');
-            } else {
-                return $this->respondWithError('Error occurred while creating the PDF. Failed to save the model.');
-            }
+            return $this->respondWithSuccess($data, 'Pdf Created Successfully', 'LOG_REPORT_PDF_CREATED_SUCCESSFULLY');
         } catch (\Throwable $th) {
             return $this->respondWithError('Error occurred while creating the PDF: ' . $th->getMessage());
         }

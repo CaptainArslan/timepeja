@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Drivers Log Report</title>
+    <title>Drivers Report</title>
     <link rel="stylesheet" href="{{ asset('css/pdf_landscape.css') }}" media="all" />
 </head>
 
@@ -42,7 +42,7 @@
     <main>
         <div>
             <h3>
-                Drivers
+                All Drivers
             </h3>
         </div>
         <table>

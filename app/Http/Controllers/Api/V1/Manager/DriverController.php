@@ -142,25 +142,25 @@ class DriverController extends Controller
                 return $this->respondWithError('Manager not found');
             }
 
-            $drivers = Driver::where('organization_id', $manager->organization_id)
+            $drivers = Driver::ByOrganization($manager->organization_id)
                 ->with('organization')
                 ->get();
 
             $data = [
                 'drivers' => $drivers->toArray(),
-                'request' => $request->except(['_token']) // Sanitize request data
+                'request' => $request->except(['_token'])
             ];
 
             $pdf = PDF::loadview('pdf.driver', $data);
             $pdf->setPaper('A4', 'landscape');
 
-            $filename = date('Ymd_His') . '_Driver_Report.pdf'; // Generate a unique filename
-            $filePath = 'public/pdf/' . $filename; // Storage path in the media folder
+            $filename = date('Ymd_His') . '_Driver_Report_' . $manager->id . '.pdf';
+            $filePath = 'public/pdf/' . $filename; 
 
-            Storage::put($filePath, $pdf->output()); // Save PDF to storage folder
+            Storage::put($filePath, $pdf->output()); 
 
             $data = [
-                'url' => asset(Storage::url($filePath)), // Get accessible URL
+                'url' => asset(Storage::url($filePath)), 
             ];
 
             return $this->respondWithSuccess($data, 'Pdf Created Successfully', 'LOG_REPORT_PDF_CREATED_SUCCESSFULLY');

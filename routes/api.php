@@ -60,7 +60,6 @@ Route::group(['middleware' => 'api'], function () {
                 //main screen wrapper
                 Route::get('/main-screen-wrapper', [ManagerDashboardController::class, 'index']);
                 Route::get('/log-report-wrapper', [ManagerDashboardController::class, 'index']);
-                // Route::get('/log-report-wrapper', [ApiManagerController::class, 'wrapper']);
 
                 // Driver Api
                 Route::get('/driver', [ManagerDriverController::class, 'index']);

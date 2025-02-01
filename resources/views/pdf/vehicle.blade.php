@@ -16,19 +16,28 @@
             Vehicles
         </h1>
         <div id="company" class="clearfix">
-            <div>Stoppick</div>
+            <div>{{ env('APP_NAME') }}</div>
             <div>Stoppick Association</div>
             <div>+92 300-1234567</div>
         </div>
         <div id="project">
             <div>
-                <h5>{{ $vehicles[0]['organization']['code'] }} - {{ $vehicles[0]['organization']['name'] }}, {{ $vehicles[0]['organization']['branch_name'] }}, city<h5></h5>
+                <h5>{{ $vehicles[0]['organization']['full_address'] }}</h5>
             </div>
-            <div><span>ADDRESS: </span>{!! $vehicles[0]['organization']['address'] !!}</div>
+            <div><span>ADDRESS: </span>{!! $vehicles[0]['organization']['full_address'] !!}</div>
             <div><span>EMAIL: </span> {{ $vehicles[0]['organization']['email'] }}</div>
             <div><span>PHONE: </span> {{ $vehicles[0]['organization']['phone'] }}</div>
+            <div><span>FROM: </span>
+                @if (request()->input('from') !== '')
+                {{ request()->input('from') }}
+                @endif
+            </div>
+            <div><span>TO: </span>
+                @if (request()->input('from') !== '')
+                {{ request()->input('to') }}
+                @endif
+            </div>
         </div>
-
     </header>
     <main>
         <div>
@@ -52,16 +61,10 @@
                 <tr>
                     <td>{{ formatDate($vehicle['created_at']) }}</td>
                     <td>{{ $vehicle['id'] }}</td>
-                    <td>{{ $vehicle['organization']['name'] }}</td>
-                    <td>{{ $vehicle['vehicles_type']['name'] }}</td>
+                    <td>{{ $vehicle['organization']['full_name'] }}</td>
+                    <td>{{ $vehicle['vehicle_type']['name'] }}</td>
                     <td>{{ $vehicle['number'] }}</td>
-                    <td>
-                        @if ($vehicle['status'])
-                        Active
-                        @else
-                        Deactive
-                        @endif
-                    </td>
+                    <td>{{ $vehicle['status'] }}</td>
                 </tr>
                 @empty
                 @endforelse
