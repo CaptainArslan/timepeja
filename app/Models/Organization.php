@@ -76,7 +76,7 @@ class Organization extends Model
 
     public function passengers(): HasMany
     {
-        return $this->hasMany(Passenger::class, 'o_id', 'id');
+        return $this->hasMany(Passenger::class);
     }
 
     public function drivers(): HasMany
@@ -86,7 +86,7 @@ class Organization extends Model
 
     public function vehicles(): HasMany
     {
-        return $this->hasMany(Vehicle::class, 'o_id', 'id');
+        return $this->hasMany(Vehicle::class);
     }
 
     public function routes(): HasMany
@@ -96,7 +96,7 @@ class Organization extends Model
 
     public function schedules(): HasMany
     {
-        return $this->hasMany(Schedule::class, 'o_id', 'id');
+        return $this->hasMany(Schedule::class);
     }
 
     public function requests(): HasMany
@@ -108,7 +108,6 @@ class Organization extends Model
     {
         return $this->hasMany(Location::class);
     }
-
 
     // ------------------ Accessors & Mutator --------------------------------
     protected function name(): Attribute

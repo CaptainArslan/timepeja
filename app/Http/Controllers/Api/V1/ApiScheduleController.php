@@ -11,97 +11,16 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Api\V1\BaseController;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Http\Requests\Manager\Schedule\StoreScheduleRequest;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ApiScheduleController extends BaseController
 {
-    public function index(): JsonResponse
-    {
-        try {
-            $manager = auth('manager')->user();
-            $schedule = Schedule::where('o_id', $manager->o_id)
-                ->with('organizations:id,name')
-                ->with('routes:id,name,number,from,from_longitude,from_latitude,to,to_latitude,to_longitude')
-                ->with('vehicles:id,number')
-                ->with('drivers:id,name')
-                ->get();
-            return $this->respondWithSuccess($schedule, 'Oganization All Schedule', 'ORGANIZATION_SCHEDULE');
-        } catch (\Throwable $th) {
-            return $this->respondWithError('Error Occured while fetching organization schedule');
-            // throw $th;
-        }
-    }
-
-    public function create(Request $request): JsonResponse
-    {
-        return $this->respondWithError($request->all());
-    }
-
-    public function store(Request $request): JsonResponse
-    {
-        $validator = Validator::make($request->all(), [
-            'route_id' => ['required', 'numeric', 'exists:routes,id'],
-            'v_id' => ['required', 'numeric', 'exists:vehicles,id'],
-            'd_id' => ['required', 'numeric', 'exists:drivers,id'],
-            'date' => ['required', 'date'],
-            'time' => ['required', 'after_or_equal:' . Carbon::now()->toDateString()],
-        ], [
-            'route_id.required' => 'Route is required',
-            'route_id.numeric' => 'Route id in numeric required',
-            'route_id.exists' => 'Invalid route id',
-
-            'v_id.required' => 'Vehicle is required',
-            'v_id.numeric' => 'Vehicle id in numeric required',
-            'v_id.exists' => 'Invalid vehicle id',
-
-            'd_id.required' => 'Driver is required',
-            'd_id.numeric' => 'Driver id in numeric required',
-            'd_id.exists' => 'Invalid driver id',
-
-            'date.required' => 'Date is required',
-
-            'time.required' => 'Time is required',
-            'time.after_or_equal' => 'Time must be greater than or equal to current time',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->respondWithError($validator->errors()->first());
-        }
-
-        try {
-            $manager = auth('manager')->user();
-
-            $schedule = new Schedule();
-            $schedule->o_id = $manager->o_id;
-            $schedule->u_id = $manager->id;
-            $schedule->route_id = $request->route_id;
-            $schedule->v_id = $request->v_id;
-            $schedule->d_id = $request->d_id;
-            $schedule->date = $request->date;
-            $schedule->time = $request->time;
-            $schedule->status = Schedule::STATUS_DRAFT;
-            $save = $schedule->save();
-
-            if (!$save) {
-                return $this->respondWithError('Error Occured while creating schedule');
-            }
-
-            $data = $schedule->load([
-                'organizations:id,name',
-                'routes:id,name,number,from,from_longitude,from_latitude,to,to_latitude,to_longitude',
-                'vehicles:id,number',
-                'drivers:id,name'
-            ]);
-
-            return $this->respondWithSuccess($data, 'Schedule Created Successfully', 'SCHEDULE_CREATED');
-        } catch (\Throwable $th) {
-            throw $th;
-        }
-    }
 
     public function show($id): JsonResponse
     {
@@ -212,68 +131,6 @@ class ApiScheduleController extends BaseController
         } catch (ModelNotFoundException $e) {
             return $this->respondWithError('Schedule id not found');
             // throw new NotFoundHttpException('Schedule id not found' . $e->getMessage());
-        }
-    }
-
-    public function getOrganizationData(Request $request): JsonResponse
-    {
-        try {
-            $manager = auth('manager')->user();
-            $data = [];
-            $routes = Route::where('o_id', $manager->o_id)
-                ->where('status', Route::STATUS_ACTIVE)
-                ->select('id', 'name')
-                ->get();
-
-            $vehicles = Vehicle::where('o_id', $manager->o_id)
-                ->where('status', Vehicle::STATUS_ACTIVE)
-                ->select('id', 'number as  name')
-                ->get();
-
-            $drivers = Driver::where('o_id', $manager->o_id)
-                ->where('status', Driver::STATUS_ACTIVE)
-                ->select('id', 'name')
-                ->get();
-
-            $date = $request->date ?? date('Y-m-d');
-
-            $schedules = Schedule::where('o_id', $manager->o_id)
-                ->where('date', $date)
-                ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time', 'status', 'created_at')
-                ->with('organizations:id,name')
-                ->with('routes:id,name,number,from,from_longitude,from_latitude,to,to_latitude,to_longitude')
-                ->with('vehicles:id,number')
-                ->with('drivers:id,name')
-                ->get();
-            // Initialize two empty arrays
-            $publishedSchedules = [];
-            $draftSchedules = [];
-
-            // Loop through the schedules
-            // Loop through each schedule and add it to the appropriate array based on its status
-            foreach ($schedules as $schedule) {
-                if ($schedule->status == Schedule::STATUS_PUBLISHED) {
-                    $publishedSchedules[] = $schedule;
-                } else {
-                    $draftSchedules[] = $schedule;
-                }
-            }
-
-            $data = [
-                'routes' => $routes,
-                'vehicles' => $vehicles,
-                'drivers' => $drivers,
-                'published_schedule' => $publishedSchedules,
-                'created_schedule' => $draftSchedules
-            ];
-
-            return $this->respondWithSuccess(
-                $data,
-                'Organization route, vehicle, driver data, published and created schedule',
-                'ORGANIZATION_ROUTE_VEHICLE_DRIVER_DATA_SCHEDULE'
-            );
-        } catch (ModelNotFoundException $e) {
-            throw new NotFoundHttpException('Data not found ' . $e->getMessage());
         }
     }
 

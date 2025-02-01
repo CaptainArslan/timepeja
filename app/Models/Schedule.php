@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasOrganization;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
@@ -14,6 +15,7 @@ class Schedule extends Model
 {
     use HasFactory;
     use SoftDeletes;
+    use HasOrganization;
 
     public const STATUS_PUBLISHED = 'published';
     public const STATUS_DRAFT = 'draft';
@@ -34,15 +36,15 @@ class Schedule extends Model
         'driver_id',
         'date',
         'time',
-        'status'
+        'status',
+        'start_time',
+        'end_time',
+        'is_delayed',
+        'trip_status',
+        'is_notified',
+        'delayed_reason',
     ];
 
-
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array
-     */
     protected $casts = [
         'organization_id' => 'integer',
         'route_id' => 'integer',
@@ -52,7 +54,10 @@ class Schedule extends Model
         'date' => 'string'
     ];
 
-    // ------------------- Relationships --------------------------------
+
+    // ----------------------------------------------------------------
+    // ------------------- Relationships ------------------------------
+    // ----------------------------------------------------------------
     public function organization()
     {
         return $this->belongsTo(Organization::class);
@@ -103,7 +108,6 @@ class Schedule extends Model
     // -------------------------- Scopes ------------------------------
     // ----------------------------------------------------------------
 
-
     public function scopeIsNotNotified(Builder $query): Builder
     {
         return  $query->where('is_notified', 0);
@@ -112,5 +116,10 @@ class Schedule extends Model
     public function scopeIsNotified(Builder $query): Builder
     {
         return  $query->where('is_notified', 1);
+    }
+
+    public function scopeIsDelayed(Builder $query): Builder
+    {
+        return  $query->where('is_delayed', 1);
     }
 }

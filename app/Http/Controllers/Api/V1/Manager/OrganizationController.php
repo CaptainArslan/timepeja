@@ -1,17 +1,18 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1;
+namespace App\Http\Controllers\Api\V1\Manager;
 
 use Throwable;
 use App\Models\Organization;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Events\OrganizationAccountDeactivated;
 use App\Events\OrganizationAccountDeactivationRequest;
 
-class OrganizationController extends BaseController
+class OrganizationController extends Controller
 {
     public function index(): JsonResponse
     {
@@ -110,7 +111,7 @@ class OrganizationController extends BaseController
         try {
             OrganizationAccountDeactivated::dispatch($organization);
         } catch (\Throwable $th) {
-            //throw $th;
+            Log::error('Error Occurred while deactivating organization' . $th->getMessage());
         }
 
         return $this->respondWithSuccess(
