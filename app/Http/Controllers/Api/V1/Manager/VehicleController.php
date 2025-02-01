@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Http\Requests\Manager\Vehicle\StoreVehicleRequest;
 use App\Http\Requests\Manager\Vehicle\UpdateVehicleRequest;
+use App\Models\Pdf as ModelsPdf;
 
 class VehicleController extends Controller
 {
@@ -101,5 +102,47 @@ class VehicleController extends Controller
 
         $vehicle->delete();
         return $this->respondWithSuccess(null, 'Vehicle deleted successfully', 'VEHICLE_DELETED');
+    }
+
+    public function createPdf(Request $request)
+    {
+        try {
+            $manager = Auth::guard('manager')->user();
+
+            if (!$manager) {
+                return $this->respondWithError('Manager not found');
+            }
+
+            $vehicles = Vehicle::where('organization_id', $manager->organization_id)
+                ->with('organization')
+                ->with('vehiclesType')
+                ->get();
+
+            dd($vehicles);
+
+            $data = [
+                'vehicles' => $vehicles->toArray(),
+                'request' => $request->all()
+            ];
+
+            $pdf = PDF::loadview('pdf.vehicle', $data);
+            $pdf->setPaper('A4', 'landscape');
+
+            $filename = date('Ymd_His') . '_Driver_Report.pdf'; // Generate a unique filename
+            $filePath = public_path('uploads/pdf/' . $filename); // Get the full file path
+
+            $pdf->save($filePath); // Save the PDF to the specified folder
+
+            $pdfModel = new ModelsPdf();
+            $pdfModel->url = asset('/uploads/pdf/' . $filename);
+
+            if ($pdfModel->save()) {
+                return $this->respondWithSuccess($pdfModel, 'Pdf Created Successfully', 'LOG_REPORT_PDF_CREATED_SUCCESSFULLY');
+            } else {
+                return $this->respondWithError('Error occurred while creating the PDF. Failed to save the model.');
+            }
+        } catch (\Throwable $th) {
+            return $this->respondWithError('Error occurred while creating the PDF: ' . $th->getMessage());
+        }
     }
 }

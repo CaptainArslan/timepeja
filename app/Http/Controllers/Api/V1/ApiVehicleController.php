@@ -155,45 +155,4 @@ class ApiVehicleController extends BaseController
         }
     }
 
-    public function createPdf(Request $request)
-    {
-        try {
-            $manager = auth('manager')->user();
-            $vehicles = Vehicle::where('o_id', $manager->o_id)
-                ->with('organization:id,name,branch_name,branch_code,email,phone,address,code')
-                ->with('vehiclesType:id,name')
-                ->get();
-            $data = [
-                'vehicles' => $vehicles->toArray(),
-                'request' => $request->all()
-            ];
-
-            $pdf = PDF::loadview('pdf.vehicle', $data);
-            $pdf->setPaper('A4', 'landscape');
-
-            $filename = date('Ymd_His') . '_Vehicle_Report.pdf'; // Generate a unique filename
-            $filePath = public_path('uploads/pdf/' . $filename); // Get the full file path
-
-            $pdf->save($filePath); // Save the PDF to the specified folder
-
-            $pdfModel = new ModelsPdf();
-            $pdfModel->url = asset('/uploads/pdf/' . $filename);
-
-            if ($pdfModel->save()) {
-                return $this->respondWithSuccess($pdfModel, 'Pdf Created Successfully', 'LOG_REPORT_PDF_CREATED_SUCCESSFULLY');
-            } else {
-                // Delete the saved PDF file if model saving failed
-                if (file_exists($filePath)) {
-                    unlink($filePath);
-                }
-                return $this->respondWithError('Error occurred while creating the PDF. Failed to save the model.');
-            }
-        } catch (\Throwable $th) {
-            // Delete the saved PDF file if an exception occurred
-            // if (file_exists($filePath)) {
-            //     unlink($filePath);
-            // }
-            return $this->respondWithError('Error occurred while creating the PDF: ' . $th->getMessage());
-        }
-    }
 }

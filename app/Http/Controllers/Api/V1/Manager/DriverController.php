@@ -155,22 +155,15 @@ class DriverController extends Controller
             $pdf->setPaper('A4', 'landscape');
 
             $filename = date('Ymd_His') . '_Driver_Report.pdf'; // Generate a unique filename
-            $filePath = public_path('uploads/pdf/' . $filename); // Get the full file path
+            $filePath = 'public/pdf/' . $filename; // Storage path in the media folder
 
-            $pdf->save($filePath); // Save the PDF to the specified folder
+            Storage::put($filePath, $pdf->output()); // Save PDF to storage folder
 
-            $pdfModel = new ModelsPdf();
-            $pdfModel->url = asset('/uploads/pdf/' . $filename);
+            $data = [
+                'url' => asset(Storage::url($filePath)), // Get accessible URL
+            ];
 
-            if ($pdfModel->save()) {
-                return $this->respondWithSuccess($pdfModel, 'Pdf Created Successfully', 'LOG_REPORT_PDF_CREATED_SUCCESSFULLY');
-            } else {
-                // Delete the saved PDF file if model saving failed
-                if (file_exists($filePath)) {
-                    unlink($filePath);
-                }
-                return $this->respondWithError('Error occurred while creating the PDF. Failed to save the model.');
-            }
+            return $this->respondWithSuccess($data, 'Pdf Created Successfully', 'LOG_REPORT_PDF_CREATED_SUCCESSFULLY');
         } catch (\Throwable $th) {
             return $this->respondWithError('Error occurred while creating the PDF: ' . $th->getMessage());
         }
