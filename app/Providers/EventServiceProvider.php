@@ -5,8 +5,10 @@ namespace App\Providers;
 use App\Events\FcmNotificationEvent;
 use Illuminate\Auth\Events\Registered;
 use App\Listeners\FcmNotificationListener;
+use App\Events\OrganizationAccountDeactivated;
 use App\Listeners\SendOrganizationDeactivationCode;
 use App\Events\OrganizationAccountDeactivationRequest;
+use App\Listeners\SendOrganizationAccountDeractivationEmail;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
@@ -27,6 +29,9 @@ class EventServiceProvider extends ServiceProvider
         OrganizationAccountDeactivationRequest::class => [
             SendOrganizationDeactivationCode::class
         ],
+        OrganizationAccountDeactivated::class => [
+            SendOrganizationAccountDeractivationEmail::class
+        ]
     ];
 
     /**

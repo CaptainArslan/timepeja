@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use App\Events\OrganizationAccountDeactivated;
 use App\Events\OrganizationAccountDeactivationRequest;
 
 class OrganizationController extends BaseController
@@ -104,6 +105,12 @@ class OrganizationController extends BaseController
 
         if ($manager->device_token) {
             notification('Account Deactivated', 'Your account has been deactivated', $manager->device_token);
+        }
+
+        try {
+            OrganizationAccountDeactivated::dispatch($organization);
+        } catch (\Throwable $th) {
+            //throw $th;
         }
 
         return $this->respondWithSuccess(
