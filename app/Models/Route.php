@@ -38,6 +38,10 @@ class Route extends Model
         'deleted_at'
     ];
 
+    protected $appends = [
+        'from_city',
+        'to_city',
+    ];
 
     // ------------------- Relationships --------------------------------
     public function organization()
@@ -82,6 +86,19 @@ class Route extends Model
         );
     }
 
+    protected function fromCity(): Attribute
+    {
+        return new Attribute(
+            get: fn($value) => $this->from ? (ucfirst($this->from['city']) ?? null) : null,
+        );
+    }
+
+    protected function toCity(): Attribute
+    {
+        return new Attribute(
+            get: fn($value) => $this->to ? (ucfirst($this->to['city']) ?? null) : null,
+        );
+    }
 
     protected function wayPoints(): Attribute
     {

@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\Manager\Driver\DriverCreateRequest;
 use App\Http\Requests\Manager\Driver\DriverupdateRequest;
 use Illuminate\Support\Facades\Storage;
-use App\Models\Pdf as ModelsPdf;
 use PDF;
 
 class DriverController extends Controller

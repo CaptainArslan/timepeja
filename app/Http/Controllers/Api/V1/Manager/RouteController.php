@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Api\V1\Manager;
 
+use PDF;
 use App\Models\Route;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\Manager\Route\CreateRouteRequest;
 use App\Http\Requests\Manager\Route\UpdateRouteRequest;
 
@@ -180,5 +182,41 @@ class RouteController extends Controller
             ->delete(); // Removed get()
 
         return $this->respondWithDelete('Route deleted successfully', 'API_ROUTE_DELETED');
+    }
+
+    public function createPdf(Request $request)
+    {
+        try {
+            $manager = Auth::guard('manager')->user();
+
+            if (!$manager) {
+                return $this->respondWithError('Manager not found');
+            }
+
+            $routes = Route::ByOrganization($manager->organization_id)
+                ->with('organization')
+                ->get();
+
+            $data = [
+                'routes' => $routes->toArray(),
+                'request' => $request->except(['_token'])
+            ];
+
+            $pdf = PDF::loadview('pdf.route', $data);
+            $pdf->setPaper('A4', 'landscape');
+
+            $filename = date('Ymd_His') . '_Driver_Report_' . $manager->id . '.pdf';
+            $filePath = 'public/pdf/' . $filename;
+
+            Storage::put($filePath, $pdf->output());
+
+            $data = [
+                'url' => asset(Storage::url($filePath)),
+            ];
+
+            return $this->respondWithSuccess($data, 'Pdf Created Successfully', 'LOG_REPORT_PDF_CREATED_SUCCESSFULLY');
+        } catch (\Throwable $th) {
+            return $this->respondWithError('Error occurred while creating the PDF: ' . $th->getMessage());
+        }
     }
 }

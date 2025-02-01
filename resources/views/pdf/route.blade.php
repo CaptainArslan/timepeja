@@ -13,18 +13,18 @@
             <img src="{{ getPdfLogo() }}">
         </div>
         <h1>
-            Routes
+            All Routes
         </h1>
         <div id="company" class="clearfix">
-            <div>Stoppick</div>
+            <div>{{ env('APP_NAME') }}</div>
             <div>Stoppick Association</div>
             <div>+92 300-1234567</div>
         </div>
         <div id="project">
             <div>
-                <h5>{{ $routes[0]['organization']['code'] }} - {{ $routes[0]['organization']['name'] }}, {{ $routes[0]['organization']['branch_name'] }}, city<h5></h5>
+                <h5>{{ $routes[0]['organization']['full_address'] }}</h5>
             </div>
-            <div><span>ADDRESS: </span>{!! $routes[0]['organization']['address'] !!}</div>
+            <div><span>ADDRESS: </span>{!! $routes[0]['organization']['full_address'] !!}</div>
             <div><span>EMAIL: </span> {{ $routes[0]['organization']['email'] }}</div>
             <div><span>PHONE: </span> {{ $routes[0]['organization']['phone'] }}</div>
             <div><span>FROM: </span>
@@ -63,18 +63,12 @@
                 <tr>
                     <td>{{ formatDate($route['created_at']) }}</td>
                     <td>{{ $route['id'] }}</td>
-                    <td>{{ $route['organization']['name'] }}</td>
+                    <td>{{ $route['organization']['full_name'] }}</td>
                     <td>{{ $route['name'] }}</td>
                     <td>{{ $route['number'] }}</td>
-                    <td>{{ $route['from'] }}</td>
-                    <td>{{ $route['to'] }}</td>
-                    <td>
-                        @if ($route['status'])
-                        Active
-                        @else
-                        Deactive
-                        @endif
-                    </td>
+                    <td>{{ $route['from_city']}}</td>
+                    <td>{{ $route['to_city']}}</td>
+                    <td>{{ $route['status'] }}</td>
                 </tr>
                 @empty
                 @endforelse
