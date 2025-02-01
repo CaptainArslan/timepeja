@@ -171,6 +171,6 @@ class Organization extends Model
     // ------------------ Custom Functions --------------------------------
     public function isActive(): bool
     {
-        return $this->status === self::STATUS_ACTIVE;
+        return $this->status == 'Active' ? true : false;
     }
 }
