@@ -99,6 +99,10 @@ class AuthController extends Controller
                 return $this->respondWithError('Account is not active');
             }
 
+            if ($manager->organization->isActive() === false) {
+                return $this->respondWithError("please contact your organization admin to activate your account");
+            }
+
             if (!$token = Auth::guard('manager')->attempt($credentials)) {
                 return $this->respondWithError('Invalid phone number or password');
             }
