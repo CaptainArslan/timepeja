@@ -2,23 +2,24 @@
 
 namespace App\Mail;
 
+use App\Models\Organization;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class OrganizationAccountDeactivateCode extends Mailable
+class OrganizationAccountDeactivatedMail extends Mailable
 {
     use Queueable, SerializesModels;
 
     public $organization;
-    
+
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($organization)
+    public function __construct(Organization $organization)
     {
         $this->organization = $organization;
     }
@@ -30,6 +31,9 @@ class OrganizationAccountDeactivateCode extends Mailable
      */
     public function build()
     {
-        return $this->markdown('emails.organization.deactivation_code_request');
+        return $this->subject('We’re Sorry – Your Account Has Been Deactivated')
+            ->markdown('emails.organization.deactivated', [
+                'organization' => $this->organization,
+            ]);
     }
 }

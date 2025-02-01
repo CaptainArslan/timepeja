@@ -6,7 +6,6 @@ use App\Models\Driver;
 use App\Events\SendSmsEvent;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use App\Events\AccountDeletedEvent;
 use App\Events\FcmNotificationEvent;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -126,7 +125,6 @@ class DriverController extends Controller
             return $this->respondWithError('Driver not found');
         }
 
-        AccountDeletedEvent::dispatch($driver->phone);
         $driver->delete();
 
         return $this->respondWithSuccess(null, 'Driver deleted successfully', 'API_DRIVER_DELETED');
@@ -154,12 +152,12 @@ class DriverController extends Controller
             $pdf->setPaper('A4', 'landscape');
 
             $filename = date('Ymd_His') . '_Driver_Report_' . $manager->id . '.pdf';
-            $filePath = 'public/pdf/' . $filename; 
+            $filePath = 'public/pdf/' . $filename;
 
-            Storage::put($filePath, $pdf->output()); 
+            Storage::put($filePath, $pdf->output());
 
             $data = [
-                'url' => asset(Storage::url($filePath)), 
+                'url' => asset(Storage::url($filePath)),
             ];
 
             return $this->respondWithSuccess($data, 'Pdf Created Successfully', 'LOG_REPORT_PDF_CREATED_SUCCESSFULLY');

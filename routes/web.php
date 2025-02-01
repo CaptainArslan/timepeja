@@ -1,7 +1,5 @@
 <?php
 
-use App\Events\ExampleEvent;
-use App\Models\Schedule;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
@@ -246,10 +244,5 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('get-schedule', [ScheduleController::class, 'getSchedule'])->name('getSchedule');
     Route::get('get-driver-vehicle-route', [ScheduleController::class, 'getDriverVehicleRoute'])->name('getDriverVehicleRoute');
 
-
-    Route::get('example', function (){
-        event(new ExampleEvent(rand(100, 999999)));
-        dd('example events');
-    });
 });
 

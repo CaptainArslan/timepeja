@@ -2,29 +2,29 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use Illuminate\Http\JsonResponse;
 use Throwable;
 use App\Models\Organization;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Validator;
-use App\Mail\OrganizationAccountDeactivate;
-use App\Mail\OrganizationAccountDeactivateCode;
+use Illuminate\Support\Facades\Auth;
+use App\Events\OrganizationAccountDeactivationRequest;
 
 class OrganizationController extends BaseController
 {
-
-    /**
-     * @return JsonResponse
-     */
     public function index(): JsonResponse
     {
         $data = Organization::where('status', Organization::STATUS_ACTIVE)
-            ->has('manager')
-            ->select('id', 'name', 'code')
+            ->whereHas('manager')
+            ->select(
+                'id',
+                'name',
+                'branch_name',
+                'branch_code',
+                'code',
+            )
             ->get();
+
         return $this->respondWithSuccess(
             $data,
             'All Organizations',
@@ -32,20 +32,13 @@ class OrganizationController extends BaseController
         );
     }
 
-
-    /**
-     * @param $code
-     * @return JsonResponse
-     */
     public function show($code): JsonResponse
     {
         $data = Organization::where('status', Organization::STATUS_ACTIVE)
             ->where('code', $code)
-            ->has('manager')
-            ->select('id', 'name', 'branch_name', 'branch_code', 'email', 'address', 'c_id', 's_id')
+            ->whereHas('manager')
             ->with('manager')
-            ->with('city:id,name')
-            ->with('state:id,name')
+            ->select('id', 'name', 'branch_name', 'branch_code', 'email', 'address')
             ->first();
 
         return $this->respondWithSuccess(
@@ -55,83 +48,62 @@ class OrganizationController extends BaseController
         );
     }
 
-
-    /**
-     * @return JsonResponse
-     */
     public function deactivateCode(): JsonResponse
     {
-        $manager = auth('manager')->user();
-        $organization = Organization::findOrFail($manager->o_id);
-        $organization->deactivate_code = $this->generateRandomSixDigitNumber();
-        $organization->save();
+        $manager = Auth::guard('manager')->user();
+
+        if (!$manager) {
+            return $this->respondWithError('Manager not found');
+        }
+
+        $organization = $manager->organization;
+
+        if ($organization->status == Organization::STATUS_DEACTIVE) {
+            return $this->respondWithError('Account already deactivated');
+        }
+
+        $organization->update([
+            'deactivate_code' => $this->generateRandomSixDigitNumber()
+        ]);
 
         try {
-            Mail::to($organization->email)->send(new OrganizationAccountDeactivateCode($organization));
+            OrganizationAccountDeactivationRequest::dispatch($organization);
         } catch (Throwable $th) {
-            Log::error('Error Occurred while email sending to organization' . $th->getMessage());
+            Log::error('Error Occurred while sending deactivate code to organization' . $th->getMessage());
         }
 
         return $this->respondWithSuccess(
-            $organization->only('id', 'email', 'branch_code', 'branch_name', 'phone', 'code', 'deactivate_code'),
+            $organization,
             'Organization deactivate code sent',
             'ORGANIZATION_DEACTIVATE_CODE'
         );
     }
 
-    /**
-     * Organization Account Deactivate
-     *
-     * @param Request $request
-     * @return JsonResponse
-     */
     public function deactivate(Request $request): JsonResponse
     {
-        try {
-            $validator = Validator::make($request->all(), [
-                'deactivate_code' => ['required', 'string', 'exists:organizations,deactivate_code'],
-            ], [
-                'deactivate_code.exists' => 'Invalid Deactivate Code'
-            ]);
-            if ($validator->fails()) {
-                return $this->respondWithError(implode(',', $validator->errors()->all()));
-            }
+        $manager = Auth::guard('manager')->user();
 
-            $manager = auth('manager')->user();
-            $organization = Organization::where('id', $manager->o_id)->where('deactivate_code', $request->deactivate_code)->first();
+        if (!$manager) {
+            return $this->respondWithError('Manager not found');
+        }
 
-            if ($organization->deactivate_code != $request->deactivate_code) {
-                return $this->respondWithError('Invalid Deactivate Code');
-            }
+        $organization = Organization::where('id', $manager->organization_id)->where('deactivate_code', $request->deactivate_code)->first();
 
-            if ($organization->status == Organization::STATUS_DEACTIVE) {
-                return $this->respondWithError('Account already deactivated');
-            }
+        if ($organization->deactivate_code != $request->deactivate_code) {
+            return $this->respondWithError('Invalid Deactivate Code');
+        }
 
-            $organization->status = Organization::STATUS_DEACTIVE;
-            $organization->save();
+        if ($organization->status == Organization::STATUS_DEACTIVE) {
+            return $this->respondWithError('Account already deactivated');
+        }
 
-            if ($manager->device_token) {
-                notification('Account Deactivated', 'Your account has been deactivated', $manager->device_token);
-            }
+        $organization->update([
+            'status' => Organization::STATUS_DEACTIVE,
+            'deactivate_code' => null
+        ]);
 
-            // Soft delete the organization and its related entries
-            // DB::transaction(function () use ($organization) {
-            //     $organization->delete();
-            // $organization->vehicles()->delete();
-            // $organization->drivers()->delete();
-            // $organization->routes()->delete();
-            // // $organization->requests()->delete();
-            // $organization->users()->delete();
-            // $organization->locations()->delete();
-            // $organization->manager()->delete();
-            // $organization->schedules()->delete();
-            // });
-
-
-            Mail::to($organization->email)->send(new OrganizationAccountDeactivate($organization));
-        } catch (Throwable $th) {
-            Log::error('Error Occurred while email sending to organization' . $th->getMessage());
+        if ($manager->device_token) {
+            notification('Account Deactivated', 'Your account has been deactivated', $manager->device_token);
         }
 
         return $this->respondWithSuccess(
@@ -141,10 +113,6 @@ class OrganizationController extends BaseController
         );
     }
 
-
-    /**
-     * @return string
-     */
     private function generateRandomSixDigitNumber(): string
     {
         return str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
