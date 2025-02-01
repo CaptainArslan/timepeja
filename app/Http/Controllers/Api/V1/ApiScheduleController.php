@@ -3,177 +3,25 @@
 namespace App\Http\Controllers\Api\V1;
 
 use Exception;
-use App\Models\Route;
 use App\Models\Driver;
-use App\Models\Vehicle;
 use App\Models\Schedule;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use App\Events\FcmNotificationEvent;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Api\V1\BaseController;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use App\Http\Requests\Manager\Schedule\StoreScheduleRequest;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use App\Http\Requests\Manager\Schedule\UpdateScheduleRequest;
+use App\Http\Requests\Manager\Schedule\PublishScheduleRequest;
 
 class ApiScheduleController extends BaseController
 {
 
-    public function show($id): JsonResponse
-    {
-        $validator = Validator::make(['id' => $id], [
-            'id' => ['required', 'int', 'exists:schedules,id']
-        ], [
-            'id.required' => 'Schedule id is required',
-            'id.int' => 'Schedule id in integer required',
-            'id.exists' => 'Invalid schedule id',
-        ]);
 
-        if ($validator->fails()) {
-            return $this->respondWithError($validator->errors()->first());
-        }
-
-        try {
-            $schedule = Schedule::with('organizations:id,name')
-                ->with('routes:id,name,number,from,from_longitude,from_latitude,to,to_latitude,to_longitude')
-                ->with('vehicles:id,number')
-                ->with('drivers:id,name')
-                ->where('status', Schedule::STATUS_DRAFT)
-                ->findOrFail($id);
-
-            return $this->respondWithSuccess($schedule, 'Get schedule', 'API_GET_SCHEDULE');
-        } catch (ModelNotFoundException $e) {
-            return $this->respondWithError('Schedule id not found' . $e->getMessage());
-        }
-    }
-
-    public function edit($id): JsonResponse
-    {
-        return $this->respondWithError($id);
-    }
-
-    public function update(Request $request, $id): JsonResponse
-    {
-        $validator = Validator::make($request->all(), [
-            // 'id' => ['numeric', 'exists:schedules,id'],
-            'route_id' => ['required', 'numeric', 'exists:routes,id'],
-            'v_id' => ['required', 'numeric', 'exists:vehicles,id'],
-            'd_id' => ['required', 'numeric', 'exists:drivers,id'],
-            'date' => ['required', 'date'],
-            'time' => ['required'],
-        ], [
-            'route_id.required' => 'Route is required',
-            'route_id.numeric' => 'Route id in numeric required',
-            'route_id.exists' => 'Invalid route id',
-
-            'v_id.required' => 'Vehicle is required',
-            'v_id.numeric' => 'Vehicle id in numeric required',
-            'v_id.exists' => 'Invalid vehicle id',
-
-            'd_id.required' => 'Driver is required',
-            'd_id.numeric' => 'Driver id in numeric required',
-            'd_id.exists' => 'Invalid driver id',
-
-            'date.required' => 'Date is required',
-            'date.date' => 'Date is invalid',
-
-            'time.required' => 'Time is required',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->respondWithError($validator->errors()->first());
-        }
-
-        try {
-            // $schedule->o_id = $request->input('o_id');
-            $schedule = Schedule::findOrFail($id);
-            $schedule->route_id = $request->route_id;
-            $schedule->v_id = $request->v_id;
-            $schedule->d_id = $request->d_id;
-            $schedule->date = $request->date;
-            $schedule->time = $request->time;
-            $schedule->save();
-
-            $data = $schedule->load([
-                'organizations:id,name',
-                'routes:id,name,number,from,from_longitude,from_latitude,to,to_latitude,to_longitude',
-                'vehicles:id,number',
-                'drivers:id,name'
-            ]);
-
-            return $this->respondWithSuccess($data, 'Schedule updated successfully', 'SCHEDULE_UPDATED');
-        } catch (ModelNotFoundException $e) {
-            return $this->respondWithError('Invalid Schedule id' . $e->getMessage());
-            // throw new NotFoundHttpException('Schedule id not found');
-        }
-    }
-
-    public function destroy($id): JsonResponse
-    {
-        $validator = Validator::make(['id' => $id], [
-            'id' => ['exists:schedules,id', 'required']
-        ], [
-            'id.exists' => 'Invalid schedule id',
-            'id.required' => 'Schedule id is required'
-        ]);
-
-        if ($validator->fails()) {
-            return $this->respondWithError($validator->errors()->first());
-        }
-
-        try {
-            $schedule = Schedule::findOrFail($id);
-            $schedule->delete();
-            return $this->respondWithDelete('Schedule deleted successfully', 'API_SCHEDULE_DELETED');
-        } catch (ModelNotFoundException $e) {
-            return $this->respondWithError('Schedule id not found');
-            // throw new NotFoundHttpException('Schedule id not found' . $e->getMessage());
-        }
-    }
-
-    public function publish(Request $request): JsonResponse
-    {
-        $validator = Validator::make($request->all(), [
-            'Schedule_ids' => ['required'],
-            'Schedule_ids.*' => ['integer'],
-            'date' => ['nullable', 'date'],
-        ], [
-            'Schedule_ids.required' => 'Schedule ids are required',
-            'Schedule_ids.*.integer' => 'ID must be an integer',
-            'Schedule_ids.*.exists' => 'Invalid ID provided',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->respondWithError($validator->errors()->first());
-        }
-
-        try {
-            $ScheduleIds = (array)$request->Schedule_ids;
-            $date = $request->date ?? now()->format('Y-m-d');
-            DB::transaction(function () use ($ScheduleIds, &$error, $date) {
-                $error = false;
-                $driverArray = [];
-                foreach ($ScheduleIds as $id) {
-                    $schedule = Schedule::findOrFail($id);
-                    $driverArray[] = Driver::where('id', $schedule->d_id)->first()->device_token;
-                    $schedule->status = Schedule::STATUS_PUBLISHED;
-                    if (!$schedule->save()) {
-                        $this->respondWithError('Error Occured while publishing schedule');
-                    }
-                }
-                $deviceTokens = array_unique($driverArray);
-                foreach ($deviceTokens as $token) {
-                    notification('Schedule Published', "Dear driver, Your schedule has been published for the date of {$date}", $token);
-                }
-            });
-            return $this->respondWithSuccess(null, 'Schedules published successfully', 'PUBLISH_SCHEDULE');
-        } catch (Exception $e) {
-            return $this->respondWithError($e->getMessage());
-        }
-    }
 
     public function draft(Request $request): JsonResponse
     {

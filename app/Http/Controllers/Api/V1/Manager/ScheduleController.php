@@ -8,9 +8,13 @@ use App\Models\Vehicle;
 use App\Models\Schedule;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
+use App\Events\FcmNotificationEvent;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\Manager\Schedule\StoreScheduleRequest;
+use App\Http\Requests\Manager\Schedule\UpdateScheduleRequest;
+use App\Http\Requests\Manager\Schedule\PublishScheduleRequest;
 
 class ScheduleController extends Controller
 {
@@ -63,6 +67,95 @@ class ScheduleController extends Controller
         return $this->respondWithSuccess($data, 'Schedule Created Successfully', 'SCHEDULE_CREATED');
     }
 
+    public function show($id): JsonResponse
+    {
+        $manager = Auth::guard('manager')->user();
+
+        if (!$manager) {
+            return $this->respondWithError('Manager not found');
+        }
+
+        $schedule = Schedule::findOrFail($id);
+
+        if (!$schedule) {
+            return $this->respondWithError('Schedule not found');
+        }
+
+        if ($schedule->organization_id !== $manager->organization_id) {
+            return $this->respondWithError('Unauthorized...');
+        }
+
+        $schedule->load([
+            'organization',
+            'route',
+            'vehicle',
+            'driver'
+        ]);
+
+        return $this->respondWithSuccess($schedule, 'Get schedule', 'API_GET_SCHEDULE');
+    }
+
+    public function update(UpdateScheduleRequest $request, $id): JsonResponse
+    {
+        $manager = Auth::guard('manager')->user();
+
+        if (!$manager) {
+            return $this->respondWithError('Manager not found');
+        }
+
+        $schedule = Schedule::findOrFail($id);
+
+        if (!$schedule) {
+            return $this->respondWithError('Schedule not found');
+        }
+
+        if ($schedule->organization_id !== $manager->organization_id) {
+            return $this->respondWithError('You are not authorized to update this schedule');
+        }
+
+        if ($schedule->status === Schedule::STATUS_PUBLISHED) {
+            return $this->respondWithError('Published schedule can not be updated');
+        }
+
+        $schedule->update([
+            'route_id' => $request->route_id,
+            'vehicle_id' => $request->vehicle_id,
+            'driver_id' => $request->driver_id,
+            'date' => $request->date,
+            'time' => $request->time,
+        ]);
+
+        $schedule->load([
+            'organization',
+            'route',
+            'vehicle',
+            'driver'
+        ]);
+
+        return $this->respondWithSuccess($schedule, 'Schedule updated successfully', 'SCHEDULE_UPDATED');
+    }
+
+    public function destroy($id): JsonResponse
+    {
+        $manager = Auth::guard('manager')->user();
+
+        if (!$manager) {
+            return $this->respondWithError('Manager not found');
+        }
+
+        $schedule = Schedule::findOrFail($id);
+
+        if (!$schedule) {
+            return $this->respondWithError('Schedule not found');
+        }
+
+        if ($schedule->organization_id !== $manager->organization_id) {
+            return $this->respondWithError('You are not authorized to delete this schedule');
+        }
+
+        $schedule->delete();
+        return $this->respondWithDelete('Schedule deleted successfully', 'API_SCHEDULE_DELETED');
+    }
 
     public function getOrganizationData(Request $request): JsonResponse
     {
@@ -117,5 +210,56 @@ class ScheduleController extends Controller
             'Organization route, vehicle, driver data, published and created schedule',
             'ORGANIZATION_ROUTE_VEHICLE_DRIVER_DATA_SCHEDULE'
         );
+    }
+
+    public function publish(PublishScheduleRequest $request): JsonResponse
+    {
+        $manager = Auth::guard('manager')->user();
+
+        if (!$manager) {
+            return $this->respondWithError('Manager not found');
+        }
+
+        $scheduleIds = (array) $request->schedule_ids;
+
+        try {
+            $driverIds = [];
+            $schedules = Schedule::whereIn('id', $scheduleIds)->get();
+
+            if ($schedules->isEmpty()) {
+                return $this->respondWithError('No schedules found for the given IDs');
+            }
+
+            // Extract date from first schedule (assuming all schedules are for the same day)
+            $date = $schedules->first()->date;
+
+            DB::transaction(function () use ($schedules, &$driverIds) {
+                foreach ($schedules as $schedule) {
+                    $driverIds[] = $schedule->d_id;
+                    $schedule->update(['status' => Schedule::STATUS_PUBLISHED]);
+                }
+            });
+
+            try {
+                $deviceTokens = Driver::whereIn('id', $driverIds)
+                    ->with('deviceTokens')  // Eager load the polymorphic relationship
+                    ->get()
+                    ->pluck('deviceTokens.*.token')  // Pluck the 'token' field from the deviceTokens relation
+                    ->flatten()  // Flatten the array to get a single list of tokens
+                    ->unique()  // Get unique tokens
+                    ->toArray();  // Convert the result to an array
+
+                FcmNotificationEvent::dispatch($deviceTokens, 'Schedule Published', 'New schedule has been published!', [
+                    'type' => 'SCHEDULE_PUBLISHED',
+                    'date' => $date,
+                ]);
+            } catch (\Throwable $th) {
+                Log::error('Error occurred while sending notification: ' . $th->getMessage());
+            }
+
+            return $this->respondWithSuccess(null, 'Schedules published successfully', 'PUBLISH_SCHEDULE');
+        } catch (\Throwable $th) {
+            return $this->respondWithError('Error occurred while publishing schedules: ' . $th->getMessage());
+        }
     }
 }
