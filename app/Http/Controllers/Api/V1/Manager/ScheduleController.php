@@ -194,6 +194,7 @@ class ScheduleController extends Controller
             ->where('date', $date)
             ->with(['route:id,name', 'vehicle:id,number', 'driver:id,name', 'organization:id,name'])
             ->get()
+            ->select('id', 'route_id', 'vehicle_id', 'driver_id', 'status')
             ->each(function ($schedule) use (&$publishedSchedules, &$draftSchedules) {
                 if ($schedule->status == Schedule::STATUS_PUBLISHED) {
                     $publishedSchedules[] = $schedule;
