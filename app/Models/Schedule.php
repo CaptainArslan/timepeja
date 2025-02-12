@@ -122,4 +122,11 @@ class Schedule extends Model
     {
         return  $query->where('is_delayed', 1);
     }
+
+    public function scopeByStatus(Builder $query, $status = ''): Builder
+    {
+        return $query->when($status, function ($query, $status) {
+            return $query->where('status', $status);
+        });
+    }
 }

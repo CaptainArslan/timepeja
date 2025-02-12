@@ -20,9 +20,6 @@ use App\Http\Requests\Manager\Schedule\PublishScheduleRequest;
 
 class ApiScheduleController extends BaseController
 {
-
-
-
     public function draft(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
@@ -71,24 +68,24 @@ class ApiScheduleController extends BaseController
             return $this->respondWithError($validator->errors()->first());
         }
 
-        try {
-            $manager = auth('manager')->user();
-            $schedules = Schedule::with('organizations:id,name')
-                ->with('routes:id,name,number,from,from_longitude,from_latitude,to,to_latitude,to_longitude')
-                ->with('vehicles:id,number')
-                ->with('drivers:id,name')
-                ->where('o_id', $manager->o_id)
-                ->where('date', $date)
-                ->where('status', Schedule::STATUS_PUBLISHED)
-                ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time', 'status')
-                ->get();
+        $manager = Auth::guard('manager')->user();
 
-            Cache::put('PUBLISHED_SCHEDULE_' . $manager->o_id, $schedules, now()->addDay(1));
-
-            return $this->respondWithSuccess($schedules, 'Schedule by date', 'PUBLISHED_SCHEDULE_BY_DATE');
-        } catch (\Throwable $th) {
-            return $this->respondWithError('An error occurred while fetching schedules for this date.' . $th->getMessage());
+        if (!$manager) {
+            return $this->respondWithError('Manager not found');
         }
+
+        $schedules = Schedule::byOrganization($manager->o_id)
+            ->with([
+                'organization',
+                'route',
+                'vehicle',
+                'driver'
+            ])
+            ->where('date', $date)
+            ->where('status', Schedule::STATUS_PUBLISHED)
+            ->get();
+
+        return $this->respondWithSuccess($schedules, 'Schedule by date', 'PUBLISHED_SCHEDULE_BY_DATE');
     }
 
     public function getCreatedScheduleByDate($date): JsonResponse
@@ -104,26 +101,23 @@ class ApiScheduleController extends BaseController
             return $this->respondWithError($validator->errors()->first());
         }
 
-        try {
-            $manager = auth('manager')->user();
-            // return $manager;
-            $schedules = Schedule::with('organizations:id,name')
-                ->with('routes:id,name,number,from,from_longitude,from_latitude,to,to_latitude,to_longitude')
-                ->with('vehicles:id,number')
-                ->with('drivers:id,name')
-                ->where('o_id', $manager->o_id)
-                ->where('date', $date)
-                ->where('status', Schedule::STATUS_DRAFT)
-                ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time', 'status')
-                ->get();
+        $manager = Auth::guard('manager')->user();
 
-            // store in cache
-            Cache::put('CREATED_SCHEDULE_' . $manager->o_id, $schedules, now()->addDay(1));
-
-            return $this->respondWithSuccess($schedules, 'Schedule by date', 'CREATED_SCHEDULE_BY_DATE');
-        } catch (\Throwable $th) {
-            return $this->respondWithError('An error occurred while fetching schedules for this date.' . $th->getMessage());
+        if (!$manager) {
+            return $this->respondWithError('Manager not found');
         }
+
+        $schedules = Schedule::byOrganization($manager->o_id)
+            ->with([
+                'organization',
+                'route',
+                'vehicle',
+                'driver'
+            ])
+            ->where('date', $date)
+            ->where('status', Schedule::STATUS_DRAFT)
+            ->get();
+        return $this->respondWithSuccess($schedules, 'Schedule by date', 'CREATED_SCHEDULE_BY_DATE');
     }
 
     public function replicate(Request $request): JsonResponse

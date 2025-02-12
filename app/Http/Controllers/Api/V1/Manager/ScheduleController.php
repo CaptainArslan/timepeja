@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use App\Events\FcmNotificationEvent;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\Manager\Schedule\StoreScheduleRequest;
 use App\Http\Requests\Manager\Schedule\UpdateScheduleRequest;
 use App\Http\Requests\Manager\Schedule\PublishScheduleRequest;
@@ -261,5 +262,43 @@ class ScheduleController extends Controller
         } catch (\Throwable $th) {
             return $this->respondWithError('Error occurred while publishing schedules: ' . $th->getMessage());
         }
+    }
+
+    public function getSchedulesbyDate($status, $date): JsonResponse
+    {
+        $validator = Validator::make([
+            'date' => $date,
+            'status' => $status
+        ], [
+            'date' => ['required', 'date', 'date_format:Y-m-d'],
+            'status' => ['required', 'in:published,draft']
+        ], [
+            'date.required' => 'Date is required',
+            'date.date' => 'Invalid date format',
+            'status.required' => 'Status is required',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->respondWithError($validator->errors()->first());
+        }
+
+        $manager = Auth::guard('manager')->user();
+
+        if (!$manager) {
+            return $this->respondWithError('Manager not found');
+        }
+
+        $schedules = Schedule::byOrganization($manager->o_id)
+            ->with([
+                'organization',
+                'route',
+                'vehicle',
+                'driver'
+            ])
+            ->where('date', $date)
+            ->where('status', $status)
+            ->get();
+
+        return $this->respondWithSuccess($schedules, 'Schedule by date', 'SCHEDULES_BY_DATE');
     }
 }
