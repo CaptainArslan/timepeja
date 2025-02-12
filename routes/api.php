@@ -102,14 +102,14 @@ Route::group(['middleware' => 'api'], function () {
                 Route::get('/schedules/{id}', [ManagerScheduleController::class, 'show']);
                 Route::put('/schedules/{id}', [ManagerScheduleController::class, 'update']);
                 Route::delete('/schedules/{id}', [ManagerScheduleController::class, 'destroy']);
-                Route::put('publish/schedules/', [ManagerScheduleController::class, 'publish']);
+                Route::put('published/schedules/', [ManagerScheduleController::class, 'publish']);
+                Route::put('draft/schedules', [ApiScheduleController::class, 'draft']);
                 
                 Route::get('/schedules/{status}/{date}', [ManagerScheduleController::class, 'getSchedulesbyDate']);
                 // Route::get('/schedules/created/{date}', [ManagerScheduleController::class, 'getSchedulesbyDate']);
                 // Route::get('/schedules/published/{date}', [ApiScheduleController::class, 'getPublishedScheduleByDate']);
                 // Route::get('/schedules/created/{date}', [ApiScheduleController::class, 'getCreatedScheduleByDate']);
 
-                Route::put('draft/schedules', [ApiScheduleController::class, 'draft']);
                 Route::get('/schedules/active', [ApiScheduleController::class, 'activeVehicle']);
                 Route::post('/schedule/replicate', [ApiScheduleController::class, 'replicate']);
                 Route::get('/created-schedule/pdf/{date}', [PdfController::class, 'createdSchedule']);
