@@ -110,34 +110,6 @@ class Driver extends Authenticatable implements JWTSubject
         );
     }
 
-    protected function cnicFront(): Attribute
-    {
-        return new Attribute(
-            get: fn($value) => $value && Storage::exists($value) ? Storage::url($value) : null,
-        );
-    }
-
-    protected function cnicBack(): Attribute
-    {
-        return new Attribute(
-            get: fn($value) => $value && Storage::exists($value) ? Storage::url($value) : null,
-        );
-    }
-
-    protected function licenseFront(): Attribute
-    {
-        return new Attribute(
-            get: fn($value) => $value && Storage::exists($value) ? Storage::url($value) : null,
-        );
-    }
-
-    protected function licenseBack(): Attribute
-    {
-        return new Attribute(
-            get: fn($value) => $value && Storage::exists($value) ? Storage::url($value) : null,
-        );
-    }
-
     // ------------------ Scopes -----------------------------------
     public function scopeActive(Builder $query): Builder
     {
