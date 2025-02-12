@@ -3,9 +3,10 @@
 namespace App\Models;
 
 use App\Traits\HasOrganization;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Storage;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -109,6 +110,33 @@ class Driver extends Authenticatable implements JWTSubject
         );
     }
 
+    protected function cnicFront(): Attribute
+    {
+        return new Attribute(
+            get: fn($value) => Storage::url($value),
+        );
+    }
+
+    protected function cnicBack(): Attribute
+    {
+        return new Attribute(
+            get: fn($value) => Storage::url($value),
+        );
+    }
+
+    protected function licenseFront(): Attribute
+    {
+        return new Attribute(
+            get: fn($value) => Storage::url($value),
+        );
+    }
+
+    protected function licenseBack(): Attribute
+    {
+        return new Attribute(
+            get: fn($value) => Storage::url($value),
+        );
+    }
 
     // ------------------ Scopes -----------------------------------
     public function scopeActive(Builder $query): Builder
