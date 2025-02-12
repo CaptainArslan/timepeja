@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Log;
 use App\Events\FcmNotificationEvent;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Google_Client as GoogleClient;
 
 class FcmNotificationListener
 {
@@ -56,7 +55,7 @@ class FcmNotificationListener
             ]);
 
 
-            $client = new GoogleClient();
+            $client = new \Google_Client();
             $client->setAuthConfig($credentialsFilePath);
             $client->addScope('https://www.googleapis.com/auth/firebase.messaging');
             $client->refreshTokenWithAssertion();

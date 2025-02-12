@@ -105,7 +105,7 @@ Route::group(['middleware' => 'api'], function () {
                 Route::put('{status}/schedules/', [ManagerScheduleController::class, 'draftAndPublishSchedule']);
                 // Route::put('published/schedules/', [ManagerScheduleController::class, 'publish']);
                 // Route::put('draft/schedules', [ApiScheduleController::class, 'draft']);
-                
+
                 Route::get('/schedules/{status}/{date}', [ManagerScheduleController::class, 'getSchedulesbyDate']);
                 // Route::get('/schedules/created/{date}', [ManagerScheduleController::class, 'getSchedulesbyDate']);
                 // Route::get('/schedules/published/{date}', [ApiScheduleController::class, 'getPublishedScheduleByDate']);
@@ -131,6 +131,7 @@ Route::group(['middleware' => 'api'], function () {
                 Route::get('requests/search', [ApiRequestController::class, 'search']);
                 Route::get('/request/code/{code}', [ApiRequestController::class, 'getRequestDetailByCode']);
                 Route::delete('/requests/delete', [ApiRequestController::class, 'delete']);
+
                 // Get disapproved requests
                 Route::get('/requests/dissapproved', [ApiRequestController::class, 'disapproved']);
 

@@ -11,6 +11,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\Manager\Driver\DriverCreateRequest;
 use App\Http\Requests\Manager\Driver\DriverupdateRequest;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use PDF;
 
@@ -108,11 +109,15 @@ class DriverController extends Controller
             'license_back' => $request->license_back,
         ]);
 
-        FcmNotificationEvent::dispatch(
-            $driver->deviceTokens()->pluck('token')->toArray(),
-            'Driver Updated',
-            'Your account has been updated by your organization manager'
-        );
+        try {
+            FcmNotificationEvent::dispatch(
+                $driver->deviceTokens()->pluck('token')->toArray(),
+                'Driver Updated',
+                'Your account has been updated by your organization manager'
+            );
+        } catch (\Throwable $th) {
+            Log::error('Error occurred while sending notification to driver: ' . $th->getMessage());
+        }
 
         return $this->respondWithSuccess($driver, 'Driver updated successfully', 'API_DRIVER_UPDATED');
     }

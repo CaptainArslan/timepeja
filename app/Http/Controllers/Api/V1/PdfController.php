@@ -183,18 +183,25 @@ class PdfController extends Controller
                 ->where('date', '>=', $date)
                 ->where('date', '<', $nextDate)
                 ->where('status', Schedule::STATUS_DRAFT)
-                ->with('routes:id,name,number,from,from_longitude,from_latitude,to,to_latitude,to_longitude')
-                ->with('vehicles:id,number')
-                ->with('drivers:id,name')
-                ->with('organizations:id,name')
+                // ->with('routes:id,name,number,from,from_longitude,from_latitude,to,to_latitude,to_longitude')
+                // ->with('vehicles:id,number')
+                // ->with('drivers:id,name')
+                // ->with('organizations:id,name')
+                ->with([
+                    'organization',
+                    'route',
+                    'vehicle',
+                    'driver'
+                ])
                 ->get();
+
             if ($schedule->isEmpty()) {
                 return $this->respondWithError('No data found');
             }
 
             $data  = [
                 'schedules' => $schedule->toArray(),
-                'organization' => $manager->organization->toArray(),
+                'organization' => $manager->organization,
                 'date' => $date,
                 'title' => 'Created',
             ];
