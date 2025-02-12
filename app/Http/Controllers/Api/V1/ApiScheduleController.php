@@ -35,7 +35,7 @@ class ApiScheduleController extends BaseController
             return $this->respondWithError($validator->errors()->first());
         }
 
-        $ScheduleIds = (array)$request->Schedule_ids;
+        $ScheduleIds = (array) $request->Schedule_ids;
 
         try {
 

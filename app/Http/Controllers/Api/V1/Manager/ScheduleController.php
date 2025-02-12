@@ -9,6 +9,7 @@ use App\Models\Schedule;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Events\FcmNotificationEvent;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -168,9 +169,11 @@ class ScheduleController extends Controller
 
         $organization = $manager->organization;
         $date = $request->date ?? date('Y-m-d');
+
         $publishedSchedules = [];
         $draftSchedules = [];
         $data = [];
+
 
         $routes = $organization->routes()
             ->where('status', Route::STATUS_ACTIVE)
@@ -190,7 +193,8 @@ class ScheduleController extends Controller
         $organization->schedules()
             ->where('date', $date)
             ->with(['route', 'vehicle', 'driver'])
-            ->get()->map(function ($schedule) {
+            ->get()
+            ->each(function ($schedule) use (&$publishedSchedules, &$draftSchedules) {
                 if ($schedule->status == Schedule::STATUS_PUBLISHED) {
                     $publishedSchedules[] = $schedule;
                 } else {
