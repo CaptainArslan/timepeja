@@ -305,4 +305,63 @@ class ScheduleController extends Controller
 
         return $this->respondWithSuccess(null, 'Schedules published successfully', 'PUBLISH_SCHEDULE');
     }
+
+    public function replicate(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'schedule_ids' => ['required', 'array', 'exists:schedules,id'],
+            'date' => ['required', 'date'],
+        ], [
+            'schedule_ids.required' => 'Schedules ids required',
+            'schedule_ids.array' => 'Schedules ids must be an array',
+
+            'date.required' => 'Date is required',
+            'date.date' => 'Must have to be in date',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->respondWithError($validator->errors()->first());
+        }
+
+        $manager = Auth::guard('manager')->user();
+
+        if (!$manager) {
+            return $this->respondWithError('Manager not found');
+        }
+
+        $schedules = Schedule::whereIn('id', $request->schedule_ids)->get();
+
+        if ($schedules->isEmpty()) {
+            return $this->respondWithError('No schedule found');
+        }
+
+        $date = $request->date;
+        try {
+            DB::transaction(function () use ($schedules, $date, $manager) {
+                foreach ($schedules as $schedule) {
+                    $this->replicateSingleSchedule($schedule, $date, $manager->organization);
+                }
+            });
+            return $this->respondWithSuccess([], 'Successfully replicated', 'REPLICATED_SUCCESSFULLY');
+        } catch (\Exception $e) {
+            return $this->respondWithError('Error Occrued while replicating scehdule');
+        }
+    }
+
+    private function replicateSingleSchedule($schedule, $date, $organization)
+    {
+        $newSchedule = Schedule::create([
+            'organization_id' => $organization->id,
+            'date' => $date,
+            'vehicle_id' => $schedule->vehicle_id,
+            'driver_id' => $schedule->driver_id,
+            'route_id' => $schedule->route_id,
+            'time' => $schedule->time,
+            'status' => Schedule::STATUS_DRAFT
+        ]);
+
+        if (!$newSchedule) {
+            throw new \Exception('Error occurred while replicating schedule.');
+        }
+    }
 }

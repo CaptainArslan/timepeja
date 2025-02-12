@@ -110,11 +110,12 @@ Route::group(['middleware' => 'api'], function () {
                 // Route::get('/schedules/created/{date}', [ManagerScheduleController::class, 'getSchedulesbyDate']);
                 // Route::get('/schedules/published/{date}', [ApiScheduleController::class, 'getPublishedScheduleByDate']);
                 // Route::get('/schedules/created/{date}', [ApiScheduleController::class, 'getCreatedScheduleByDate']);
+                Route::post('/schedule/replicate', [ManagerScheduleController::class, 'replicate']);
 
                 Route::get('/schedules/active', [ApiScheduleController::class, 'activeVehicle']);
-                Route::post('/schedule/replicate', [ApiScheduleController::class, 'replicate']);
-                Route::get('/created-schedule/pdf/{date}', [PdfController::class, 'createdSchedule']);
-                Route::get('/published-schedule/pdf/{date}', [PdfController::class, 'publishedSchedule']);
+                Route::get('/{status}/schedule/pdf/{date}', [PdfController::class, 'createdSchedule']);
+                // Route::get('/created-schedule/pdf/{date}', [PdfController::class, 'createdSchedule']);
+                // Route::get('/published-schedule/pdf/{date}', [PdfController::class, 'publishedSchedule']);
 
                 // Log Report Api
                 Route::post('/logreport', [LogReportController::class, 'index']);
