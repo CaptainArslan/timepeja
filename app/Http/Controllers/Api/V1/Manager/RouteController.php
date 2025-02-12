@@ -119,14 +119,14 @@ class RouteController extends Controller
             $routes = Route::where('number', $route->number)
                 ->ByOrganization($manager->organization_id)
                 ->where('status', Route::STATUS_ACTIVE)
-                ->get()->toArray();
+                ->get(); // Remove `->toArray()` to keep them as Eloquent models
 
-            if (!$routes) {
-                return $this->respondWithError('Route not found');
+            if ($routes->isEmpty() || $routes->count() < 2) {
+                return $this->respondWithError('Route not found or insufficient routes');
             }
 
             $updatedRoutes = DB::transaction(function () use ($routes, $manager, $request) {
-                $route1 = $routes[0];
+                $route1 = $routes[0]; // Now an Eloquent model
                 $route2 = $routes[1];
 
                 $route1->update([
@@ -143,20 +143,24 @@ class RouteController extends Controller
                     'organization_id' => $manager->organization_id,
                     'name' =>  $request->number . ' - ' . $request->to['city'] . ' To ' . $request->from['city'],
                     'number' => $request->number,
-                    'from' => $request->from,
-                    'to' => $request->to,
+                    'from' => $request->to, // Reverse direction
+                    'to' => $request->from, // Reverse direction
                     'status' => Route::STATUS_ACTIVE,
                     'way_points' => $request->way_points,
                 ]);
 
-                return $routes;
+                return [$route1, $route2];
             });
+
+            DB::commit();
 
             return $this->respondWithSuccess($updatedRoutes, 'Route updated successfully', 'API_ROUTE_UPDATED');
         } catch (\Throwable $th) {
+            DB::rollBack();
             return $this->respondWithError('Error occurred while updating route: ' . $th->getMessage());
         }
     }
+
 
     public function destroy($id): JsonResponse
     {
