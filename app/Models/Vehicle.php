@@ -38,6 +38,7 @@ class Vehicle extends Model
 
     protected $hidden = [
         'deleted_at',
+        'back_pic',
     ];
 
 
