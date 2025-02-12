@@ -102,8 +102,9 @@ Route::group(['middleware' => 'api'], function () {
                 Route::get('/schedules/{id}', [ManagerScheduleController::class, 'show']);
                 Route::put('/schedules/{id}', [ManagerScheduleController::class, 'update']);
                 Route::delete('/schedules/{id}', [ManagerScheduleController::class, 'destroy']);
-                Route::put('published/schedules/', [ManagerScheduleController::class, 'publish']);
-                Route::put('draft/schedules', [ApiScheduleController::class, 'draft']);
+                Route::put('{status}/schedules/', [ManagerScheduleController::class, 'draftAndPublishSchedule']);
+                // Route::put('published/schedules/', [ManagerScheduleController::class, 'publish']);
+                // Route::put('draft/schedules', [ApiScheduleController::class, 'draft']);
                 
                 Route::get('/schedules/{status}/{date}', [ManagerScheduleController::class, 'getSchedulesbyDate']);
                 // Route::get('/schedules/created/{date}', [ManagerScheduleController::class, 'getSchedulesbyDate']);

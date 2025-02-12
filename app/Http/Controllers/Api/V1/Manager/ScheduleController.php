@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Manager;
 
+use Exception;
 use App\Models\Route;
 use App\Models\Driver;
 use App\Models\Vehicle;
@@ -260,7 +261,7 @@ class ScheduleController extends Controller
         return $this->respondWithSuccess($schedules, 'Schedule by date', 'SCHEDULES_BY_DATE');
     }
 
-    public function publish(PublishScheduleRequest $request): JsonResponse
+    public function draftAndPublishSchedule(PublishScheduleRequest $request, $status): JsonResponse
     {
         $manager = Auth::guard('manager')->user();
 
@@ -268,80 +269,40 @@ class ScheduleController extends Controller
             return $this->respondWithError('Manager not found');
         }
 
-        $scheduleIds = (array) $request->schedule_ids;
+        $driverIds = [];
+        $schedules = Schedule::whereIn('id', $request->schedule_ids)->get();
+
+        if ($schedules->isEmpty()) {
+            return $this->respondWithError('No schedules found for the given IDs');
+        }
+
+        // Extract date from first schedule (assuming all schedules are for the same day)
+        $date = $schedules->first()->date;
+
+        DB::transaction(function () use ($schedules, &$driverIds, $status) {
+            foreach ($schedules as $schedule) {
+                $driverIds[] = $schedule->driver_id;
+                $schedule->update(['status' => $status]);
+            }
+        });
 
         try {
-            $driverIds = [];
-            $schedules = Schedule::whereIn('id', $scheduleIds)->get();
+            $deviceTokens = Driver::whereIn('id', $driverIds)
+                ->with('deviceTokens')  // Eager load the polymorphic relationship
+                ->get()
+                ->pluck('deviceTokens.*.token')  // Pluck the 'token' field from the deviceTokens relation
+                ->flatten()  // Flatten the array to get a single list of tokens
+                ->unique()  // Get unique tokens
+                ->toArray();  // Convert the result to an array
 
-            if ($schedules->isEmpty()) {
-                return $this->respondWithError('No schedules found for the given IDs');
-            }
-
-            // Extract date from first schedule (assuming all schedules are for the same day)
-            $date = $schedules->first()->date;
-
-            DB::transaction(function () use ($schedules, &$driverIds) {
-                foreach ($schedules as $schedule) {
-                    $driverIds[] = $schedule->d_id;
-                    $schedule->update(['status' => Schedule::STATUS_PUBLISHED]);
-                }
-            });
-
-            try {
-                $deviceTokens = Driver::whereIn('id', $driverIds)
-                    ->with('deviceTokens')  // Eager load the polymorphic relationship
-                    ->get()
-                    ->pluck('deviceTokens.*.token')  // Pluck the 'token' field from the deviceTokens relation
-                    ->flatten()  // Flatten the array to get a single list of tokens
-                    ->unique()  // Get unique tokens
-                    ->toArray();  // Convert the result to an array
-
-                FcmNotificationEvent::dispatch($deviceTokens, 'Schedule Published', 'New schedule has been published!', [
-                    'type' => 'SCHEDULE_PUBLISHED',
-                    'date' => $date,
-                ]);
-            } catch (\Throwable $th) {
-                Log::error('Error occurred while sending notification: ' . $th->getMessage());
-            }
-
-            return $this->respondWithSuccess(null, 'Schedules published successfully', 'PUBLISH_SCHEDULE');
+            FcmNotificationEvent::dispatch($deviceTokens, 'Schedule Published', 'New schedule has been published!', [
+                'type' => 'SCHEDULE_PUBLISHED',
+                'date' => $date,
+            ]);
         } catch (\Throwable $th) {
-            return $this->respondWithError('Error occurred while publishing schedules: ' . $th->getMessage());
-        }
-    }
-    public function draft(Request $request): JsonResponse
-    {
-        $validator = Validator::make($request->all(), [
-            'Schedule_ids' => ['required'],
-            'Schedule_ids.*' => ['integer'],
-        ], [
-            'Schedule_ids.required' => 'Schedule ids are required',
-            'Schedule_ids.*.integer' => 'ID must be an integer',
-            'Schedule_ids.*.exists' => 'Invalid ID provided',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->respondWithError($validator->errors()->first());
+            Log::error('Error occurred while sending notification: ' . $th->getMessage());
         }
 
-        $ScheduleIds = (array) $request->Schedule_ids;
-
-        try {
-
-            DB::transaction(function () use ($ScheduleIds, &$error) {
-                foreach ($ScheduleIds as $id) {
-                    $schedule = Schedule::findOrFail($id);
-                    $schedule->status = Schedule::STATUS_DRAFT;
-                    if (!$schedule->save()) {
-                        return $this->respondWithError('Error Occured while drafting schedule');
-                    }
-                }
-            });
-
-            return $this->respondWithSuccess(null, 'Schedules draft successfully', 'DRAFT_SCHEDULE');
-        } catch (Exception $e) {
-            return $this->respondWithError($e->getMessage());
-        }
+        return $this->respondWithSuccess(null, 'Schedules published successfully', 'PUBLISH_SCHEDULE');
     }
 }
