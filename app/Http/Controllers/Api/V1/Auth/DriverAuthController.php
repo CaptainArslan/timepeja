@@ -6,6 +6,7 @@ use ApiHelper;
 use App\Models\Driver;
 use Illuminate\Support\Str;
 use App\Models\Organization;
+use App\Services\SMSService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
@@ -15,23 +16,24 @@ use App\Http\Controllers\Api\V1\BaseController;
 
 class DriverAuthController extends BaseController
 {
-    /**
-     * Create a new AuthController instance.
-     *
-     * @return void
-     */
-    public function __construct()
+    protected $smsService;
+
+    public function __construct(SMSService $smsService)
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register', 'getVerificationCode', 'forgetPassword', 'driverProfile']]);
+        $this->middleware('auth:api', [
+            'except' => [
+                'login',
+                'register',
+                'getVerificationCode',
+                'forgetPassword',
+                'driverProfile'
+            ]
+        ]);
+
+        $this->smsService = $smsService;
     }
 
-    /**
-     * Driver registration
-     *
-     * @param   Request       driver registration request
-     *
-     * @return  JsonResponse            return object of driver after registration
-     */
+
     public function register(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
@@ -92,13 +94,6 @@ class DriverAuthController extends BaseController
         }
     }
 
-    /**
-     * Driver login api function
-     *
-     * @param   Request       $request  Driver login request
-     *
-     * @return  JsonResponse            Driver object after successfull login
-     */
     public function login(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
@@ -154,13 +149,7 @@ class DriverAuthController extends BaseController
         ]);
     }
 
-    /**
-     * [getVerificationCode description]
-     *
-     * @param   Request       $request  [$request description]
-     *
-     * @return  JsonResponse            [return description]
-     */
+
     public function getVerificationCode(Request $request): JsonResponse
     {
         $fields = $request->all();
@@ -192,13 +181,7 @@ class DriverAuthController extends BaseController
         }
     }
 
-    /**
-     * [forgetPassword description]
-     *
-     * @param   Request  $request  [$request description]
-     *
-     * @return  [type]             [return description]
-     */
+
     public function forgetPassword(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -238,11 +221,6 @@ class DriverAuthController extends BaseController
         return $this->respondWithSuccess($driver, 'Password Updated Successfully', 'PASSWORD_UPDATE');
     }
 
-    /**
-     * Get the authenticated User.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function driverProfile()
     {
         try {
@@ -262,23 +240,13 @@ class DriverAuthController extends BaseController
         }
     }
 
-    /**
-     * Log the user out (Invalidate the token).
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function logout()
     {
         auth('driver')->logout();
         return response()->json(['message' => 'Successfully logged out']);
     }
 
-    /**
-     * Refresh a token.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function refresh()
+    function refresh()
     {
         return $this->respondWithToken(auth('driver')->refresh());
     }

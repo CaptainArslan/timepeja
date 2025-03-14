@@ -15,10 +15,13 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Http\Requests\Manager\Auth\ForgetPasswordRequest;
 use App\Http\Requests\Manager\Auth\LoginRequest as ManagerLoginRequest;
 use App\Http\Requests\Manager\Auth\RegisterRequest as ManagerRegisterRequest;
+use App\Services\SMSService;
 
 class AuthController extends Controller
 {
-    public function __construct()
+    protected $smsService;
+
+    public function __construct(SMSService $smsService)
     {
         $this->middleware(
             'auth:manager',
@@ -32,6 +35,8 @@ class AuthController extends Controller
                 ]
             ]
         );
+
+        $this->smsService = $smsService; // Assign correctly to the class property
     }
 
     public function register(ManagerRegisterRequest $request): JsonResponse
@@ -151,6 +156,8 @@ class AuthController extends Controller
             if (!$oneTimePassword) {
                 return $this->respondWithError('Error Occured while sending otp');
             }
+
+            $this->smsService->sendSMS($request->phone, "Your verification code is: $otp");
 
             return $this->respondWithSuccess($oneTimePassword, 'Otp Sent Successfully', 'API_GET_CODE');
         } catch (\Throwable $th) {
