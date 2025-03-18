@@ -2,19 +2,16 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Models\Schedule;
 use PDF;
+use Throwable;
+use App\Models\Schedule;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use App\Models\Pdf as ModelsPdf;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class LogReportController extends BaseController
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -25,25 +22,33 @@ class LogReportController extends BaseController
             'record_ids.*' => ['integer'],
         ], [
             'type.required' => 'Type is required',
-            'type.string' => 'Type must be string',
-            'from.date' => 'From must be date',
-            'to.date' => 'To must be date',
-            'to.after_or_equal' => 'To must be after or equal from',
-            'record_ids.array' => 'Arr must be array',
+            'type.string' => 'Type must be a string',
+            'from.date' => 'Invalid date format',
+            'to.date' => 'Invalid date format',
+            'to.after_or_equal' => 'To date must be after or equal to from date',
+            'record_ids.required' => 'Record ids are required',
+            'record_ids.*.integer' => 'ID must be an integer',
         ]);
 
         if ($validator->fails()) {
             return $this->respondWithError($validator->errors()->first());
         }
+
         try {
+            $manager = Auth::guard('manager')->user();
+
+            if (!$manager) {
+                return $this->respondWithError('Manager not found');
+            }
+
             $query = Schedule::query();
 
             switch ($request->type) {
                 case 'driver':
-                    $query->whereIn('d_id', $request->record_ids);
+                    $query->whereIn('driver_id', $request->record_ids);
                     break;
                 case 'vehicle':
-                    $query->whereIn('v_id', $request->record_ids);
+                    $query->whereIn('vehicle_id', $request->record_ids);
                     break;
                 case 'route':
                     $query->whereIn('route_id', $request->record_ids);
@@ -64,46 +69,45 @@ class LogReportController extends BaseController
                 $query->where('date', '<=', $request->to);
             });
 
-            $manager = auth('manager')->user();
 
-            $result = $query->where('o_id', $manager->o_id)
+            $result = $query->where('organization_id', $manager->organization_id)
                 ->where('status', Schedule::STATUS_PUBLISHED)
-                ->with('organizations:id,name,branch_name,branch_code,email,phone,address,code')
-                ->with('routes:id,name,number,from,from_longitude,from_latitude,to,to_latitude,to_longitude')
-                ->with('vehicles:id,number')
-                ->with('drivers:id,name')
-                ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time as scheduled_time', 'start_time', 'end_time', 'is_delay', 'trip_status', 'delayed_reason')
+                ->with('organization:id,name,branch_name,branch_code,email,phone,address,code')
+                ->with('route')
+                ->with('vehicle:id,number')
+                ->with('driver:id,name')
+                // ->select('id', 'organization_id', 'route_id', 'v_id', 'd_id', 'date', 'time as scheduled_time', 'start_time', 'end_time', 'is_delay', 'trip_status', 'delayed_reason')
                 ->orderby('trip_status', 'desc')
                 ->get();
 
-
             $download_url = '';
 
-            if ($result->isNotEmpty()) {
-                $download_url = $this->creatdPdf($request, $result);
-                $data = [
-                    'logreport' => $result,
-                    'download_url' => $download_url
-                ];
-
-                return $this->respondWithSuccess($data, 'Log report fetched successfully', 'LOG_REPORT_FETCHED_SUCCESSFULLY');
-            }
-            else{
+            if ($result->isEmpty()) {
                 return $this->respondWithError('No data found');
             }
-        } catch (\Throwable $th) {
-            throw $th;
+
+            $download_url = $this->creatdPdf($request, $result->toArray());
+
+            $data = [
+                'logreport' => $result,
+                'download_url' => $download_url
+            ];
+
+            return $this->respondWithSuccess($data, 'Log report fetched successfully', 'LOG_REPORT_FETCHED_SUCCESSFULLY');
+        } catch (Throwable $th) {
+            return $this->respondWithError($th->getMessage());
         }
     }
 
-    public function creatdPdf(Request $request, $data)
+    public function creatdPdf(Request $request, array $data)
     {
+        // dd($data[0]);
         $data = [
-            'report' => $data->toArray(),
+            'report' => $data,
             'request' => $request->all()
         ];
 
-        $pdf = PDF::loadview('manager.report.export.logreport', $data);
+        $pdf = PDF::loadview('pdf.logreport', $data);
         $pdf->setPaper('A4', 'landscape');
 
         $filename = date('Ymd_His') . '_history_report.pdf'; // Generate a unique filename
