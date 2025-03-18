@@ -3,20 +3,13 @@
 namespace App\Http\Controllers\Api\V1;
 
 use Exception;
-use App\Models\Driver;
 use App\Models\Schedule;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use App\Events\FcmNotificationEvent;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Api\V1\BaseController;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use App\Http\Requests\Manager\Schedule\UpdateScheduleRequest;
-use App\Http\Requests\Manager\Schedule\PublishScheduleRequest;
 
 class ApiScheduleController extends BaseController
 {
@@ -122,30 +115,27 @@ class ApiScheduleController extends BaseController
 
     public function activeVehicle(Request $request)
     {
-        try {
-            $manager = auth('manager')->user();
+        $manager = Auth::guard('manager')->user();
 
-            if (!$manager) {
-                return $this->respondWithError('Manager not found');
-            }
-
-            $date = $request->date ?? date('Y-m-d');
-
-            $schedule = Schedule::where('o_id', $manager->o_id)
-                ->when($request->string, function ($query) use ($request) {
-                    $query->whereHas('vehicles', function ($query) use ($request) {
-                        $query->where('number', 'like', '%' . $request->string . '%');
-                    });
-                })
-                ->with('vehicles:id,number')
-                ->where('status', Schedule::STATUS_PUBLISHED)
-                ->where('date', $date)
-                ->where('trip_status', Schedule::TRIP_STATUS_INPROGRESS)
-                ->select('id', 'v_id')
-                ->get();
-            return $this->respondWithSuccess($schedule, 'Oganization active schedule', 'ORGANIZATION_ACTIVE_SCHEDULE');
-        } catch (\Throwable $th) {
-            return $this->respondWithError('Error Occured while fetching organization schedule');
+        if (!$manager) {
+            return $this->respondWithError('Manager not found');
         }
+
+        $date = $request->date ?? date('Y-m-d');
+
+        $schedule = Schedule::where('organization_id', $manager->organization_id)
+            ->when($request->search, function ($query) use ($request) {
+                $query->whereHas('vehicle', function ($query) use ($request) {
+                    $query->where('number', 'like', '%' . $request->search . '%');
+                });
+            })
+            ->with('vehicle:id,number')
+            ->where('status', Schedule::STATUS_PUBLISHED)
+            ->where('date', $date)
+            ->where('trip_status', Schedule::TRIP_STATUS_INPROGRESS)
+            ->select('id', 'vehicle_id')
+            ->get();
+
+        return $this->respondWithSuccess($schedule, 'Oganization active schedule', 'ORGANIZATION_ACTIVE_SCHEDULE');
     }
 }
