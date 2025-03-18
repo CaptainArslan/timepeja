@@ -14,10 +14,6 @@ use Illuminate\Support\Facades\Validator;
 class PassengerRequestController extends BaseController
 {
 
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
     public function index(Request $request): JsonResponse
     {
         try {

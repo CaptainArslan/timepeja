@@ -17,12 +17,6 @@ class PdfController extends Controller
 {
     use UserRequest;
 
-    /**
-     * Log report pdf
-     *
-     * @param Request $request
-     * @return void
-     */
     function logReport(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -109,12 +103,6 @@ class PdfController extends Controller
         }
     }
 
-    /**
-     * Log report pdf
-     *
-     * @param Request $request
-     * @return void
-     */
     function userRequests(Request $request)
     {
 
@@ -156,7 +144,7 @@ class PdfController extends Controller
         }
     }
 
-    public function createdSchedule($date)
+    public function createdSchedule(Request $request, $date)
     {
         $validator = Validator::make(['date' => $date], [
             'date' => ['required', 'date', 'date_format:Y-m-d'],
@@ -176,17 +164,12 @@ class PdfController extends Controller
             return $this->respondWithError('Manager not found');
         }
 
-
         try {
             $nextDate = date("Y-m-d", strtotime($date) + 86400);
             $schedule = Schedule::byOrganization($manager->organization_id)
                 ->where('date', '>=', $date)
                 ->where('date', '<', $nextDate)
                 ->where('status', Schedule::STATUS_DRAFT)
-                // ->with('routes:id,name,number,from,from_longitude,from_latitude,to,to_latitude,to_longitude')
-                // ->with('vehicles:id,number')
-                // ->with('drivers:id,name')
-                // ->with('organizations:id,name')
                 ->with([
                     'organization',
                     'route',
@@ -228,15 +211,7 @@ class PdfController extends Controller
 
         $pdf->save($filePath); // Save the PDF to the specified folder
 
-        $pdfModel = new ModelsPdf();
-        $pdfModel->url = asset('/uploads/pdf/' . $filename);
-
-        if ($pdfModel->save()) {
-            return $pdfModel->url;
-        } else {
-            Log::error('Error occurred while creating the PDF. Failed to save the model.' . $data['title']);
-            return null;
-        }
+        return asset('/uploads/pdf/' . $filename);
     }
 
     public function publishedSchedule($date)
@@ -258,12 +233,12 @@ class PdfController extends Controller
             ->where('date', '>=', $date)
             ->where('date', '<', $nextDate)
             ->where('status', Schedule::STATUS_PUBLISHED)
-            ->with('routes:id,name,number,from,from_longitude,from_latitude,to,to_latitude,to_longitude')
+            ->with('route')
             ->with('vehicles:id,number')
             ->with('drivers:id,name')
             ->with('organizations:id,name')
-            ->select('id', 'o_id', 'route_id', 'v_id', 'd_id', 'date', 'time', 'status', 'trip_status')
             ->get();
+
         if ($schedule->isEmpty()) {
             return $this->respondWithError('No data found');
         }

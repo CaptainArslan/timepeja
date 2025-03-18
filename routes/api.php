@@ -9,24 +9,23 @@ use App\Http\Controllers\Api\V1\LogReportController;
 use App\Http\Controllers\Api\V1\PassengerController;
 use App\Http\Controllers\Api\V1\ApiVehicleController;
 use App\Http\Controllers\Api\V1\ApiScheduleController;
-use App\Http\Controllers\Api\V1\Manager\DriverController as ManagerDriverController;
-use App\Http\Controllers\Api\V1\Manager\VehicletypeController as ManagerVehicletypeController;
-use App\Http\Controllers\Api\V1\Manager\VehicleController as ManagerVehicleController;
 use App\Http\Controllers\Api\V1\Auth\DriverAuthController;
 use App\Http\Controllers\Api\V1\PassengerRequestController;
 use App\Http\Controllers\Api\V1\Auth\PassengerAuthController;
 use App\Http\Controllers\Api\V1\RequestController as ApiRequestController;
 use App\Http\Controllers\Api\V1\ApiDriverController as ApiDriverController;
 use App\Http\Controllers\Api\V1\Manager\AuthController as ManagerAuthController;
-use App\Http\Controllers\Api\V1\OrganizationController as ApiOrganizationController;
-use App\Http\Controllers\Api\V1\Driver\ScheduleController as DriverScheduleController;
-use App\Http\Controllers\Api\V1\Manager\DashboardController as ManagerDashboardController;
-use App\Http\Controllers\Api\V1\Manager\OrganizationController as ManagerOrganizationController;
-use App\Http\Controllers\Api\V1\Manager\ProfileController as ManagerProfileController;
 use App\Http\Controllers\Api\V1\Manager\RouteController as ManagerRouteController;
-use App\Http\Controllers\Api\V1\Manager\ScheduleController as ManagerScheduleController;
+use App\Http\Controllers\Api\V1\Manager\DriverController as ManagerDriverController;
+use App\Http\Controllers\Api\V1\Driver\ScheduleController as DriverScheduleController;
+use App\Http\Controllers\Api\V1\Manager\ProfileController as ManagerProfileController;
+use App\Http\Controllers\Api\V1\Manager\VehicleController as ManagerVehicleController;
 use App\Http\Controllers\Api\V1\Passenger\RouteController as PassengerRouteController;
+use App\Http\Controllers\Api\V1\Manager\ScheduleController as ManagerScheduleController;
+use App\Http\Controllers\Api\V1\Manager\DashboardController as ManagerDashboardController;
 use App\Http\Controllers\Api\V1\Passenger\ScheduleController as PassengerScheduleController;
+use App\Http\Controllers\Api\V1\Manager\VehicletypeController as ManagerVehicletypeController;
+use App\Http\Controllers\Api\V1\Manager\OrganizationController as ManagerOrganizationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -113,9 +112,8 @@ Route::group(['middleware' => 'api'], function () {
                 Route::post('/schedule/replicate', [ManagerScheduleController::class, 'replicate']);
 
                 Route::get('/get/active-schedules', [ApiScheduleController::class, 'activeVehicle']);
-                Route::get('/{status}/schedule/pdf/{date}', [PdfController::class, 'createdSchedule']);
-                // Route::get('/created-schedule/pdf/{date}', [PdfController::class, 'createdSchedule']);
-                // Route::get('/published-schedule/pdf/{date}', [PdfController::class, 'publishedSchedule']);
+                Route::get('/created-schedule/pdf/{date}', [PdfController::class, 'createdSchedule']);
+                Route::get('/published-schedule/pdf/{date}', [PdfController::class, 'publishedSchedule']);
 
                 // Log Report Api
                 Route::post('/logreport', [LogReportController::class, 'index']);
