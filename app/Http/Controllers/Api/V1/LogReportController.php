@@ -101,7 +101,6 @@ class LogReportController extends BaseController
 
     public function creatdPdf(Request $request, array $data)
     {
-        // dd($data[0]);
         $data = [
             'report' => $data,
             'request' => $request->all()
@@ -115,19 +114,6 @@ class LogReportController extends BaseController
 
         $pdf->save($filePath); // Save the PDF to the specified folder
 
-        $pdfModel = new ModelsPdf();
-        $pdfModel->url = asset('/uploads/pdf/' . $filename);
-
-        if ($pdfModel->save()) {
-            return $pdfModel->url;
-            // return $this->respondWithSuccess($pdfModel, 'Pdf Created Successfully', 'LOG_REPORT_PDF_CREATED_SUCCESSFULLY');
-        } else {
-            // Delete the saved PDF file if model saving failed
-            if (file_exists($filePath)) {
-                unlink($filePath);
-            }
-            return null;
-            // return $this->respondWithError('Error occurred while creating the PDF. Failed to save the model.');
-        }
+        return asset('/uploads/pdf/' . $filename);
     }
 }
