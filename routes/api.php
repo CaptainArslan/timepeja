@@ -112,7 +112,7 @@ Route::group(['middleware' => 'api'], function () {
                 // Route::get('/schedules/created/{date}', [ApiScheduleController::class, 'getCreatedScheduleByDate']);
                 Route::post('/schedule/replicate', [ManagerScheduleController::class, 'replicate']);
 
-                Route::get('/schedules/active', [ApiScheduleController::class, 'activeVehicle']);
+                Route::get('/get/active-schedules', [ApiScheduleController::class, 'activeVehicle']);
                 Route::get('/{status}/schedule/pdf/{date}', [PdfController::class, 'createdSchedule']);
                 // Route::get('/created-schedule/pdf/{date}', [PdfController::class, 'createdSchedule']);
                 // Route::get('/published-schedule/pdf/{date}', [PdfController::class, 'publishedSchedule']);
@@ -215,8 +215,8 @@ Route::group(['middleware' => 'api'], function () {
                 Route::post('update-phone', [PassengerController::class, 'updatePhone']);
 
                 Route::get('/get-routes', [PassengerRouteController::class, 'getRoutes']);
-                Route::get('/get-all-organizations', [ApiOrganizationController::class, 'index']);
-                Route::get('/organization/{code}', [ApiOrganizationController::class, 'show']);
+                // Route::get('/get-all-organizations', [ApiOrganizationController::class, 'index']);
+                // Route::get('/organization/{code}', [ApiOrganizationController::class, 'show']);
             });
         });
 
