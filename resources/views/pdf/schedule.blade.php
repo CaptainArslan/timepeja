@@ -18,11 +18,12 @@
             <div>Stoppick Association</div>
             <div>+92 300-1234567</div>
         </div>
+
         <div id="project">
             <div>
-                <h5>{{ $organization['code'] }} {{ $organization['name'] }}, {{ $organization['branch_name'] }}, city<h5>
+                <h5>{!! $organization['full_name'] !!} <h5>
             </div>
-            <div><span>ADDRESS</span>{{ $organization['address'] }}</div>
+            <div><span>ADDRESS</span>{{ $organization['full_address'] }}</div>
             <div><span>EMAIL</span> {{ $organization['email'] }}</div>
             <div><span>PHONE</span> {{ $organization['phone'] }}</div>
             <div><span>Date</span>{{ $date }}</div>
@@ -45,18 +46,18 @@
             </thead>
             <tbody>
                 @forelse($schedules as $row)
-                <tr>
-                    <td class="service">{{ formatDate($row['date']) }}</td>
-                    <td class="desc">{{ formatTime($row['time']) }}</td>
-                    <td>{{ $row['drivers']['name'] }}</td>
-                    <td>{{ $row['vehicles']['number'] }}</td>
-                    <td>{{ $row['routes']['name'] }} </td>
-                    <td>{{ $title }} </td>
-                </tr>
+                    <tr>
+                        <td class="service">{{ formatDate($row['date']) }}</td>
+                        <td class="desc">{{ formatTime($row['time']) }}</td>
+                        <td>{{ $row['driver']['name'] }}</td>
+                        <td>{{ $row['vehicle']['number'] }}</td>
+                        <td>{{ $row['route']['name'] }} </td>
+                        <td>{{ $title }} </td>
+                    </tr>
                 @empty
-                <tr>
-                    <td colspan="5" style="text-align: center;">No Data Found</td>
-                </tr>
+                    <tr>
+                        <td colspan="5" style="text-align: center;">No Data Found</td>
+                    </tr>
                 @endforelse
             </tbody>
         </table>

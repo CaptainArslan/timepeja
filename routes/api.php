@@ -112,8 +112,8 @@ Route::group(['middleware' => 'api'], function () {
                 Route::post('/schedule/replicate', [ManagerScheduleController::class, 'replicate']);
 
                 Route::get('/get/active-schedules', [ApiScheduleController::class, 'activeVehicle']);
-                Route::get('/created-schedule/pdf/{date}', [PdfController::class, 'createdSchedule']);
-                Route::get('/published-schedule/pdf/{date}', [PdfController::class, 'publishedSchedule']);
+                Route::get('/created-schedules/pdf/{date}', [PdfController::class, 'createdSchedule']);
+                Route::get('/published-schedules/pdf/{date}', [PdfController::class, 'publishedSchedule']);
 
                 // Log Report Api
                 Route::post('/logreport', [LogReportController::class, 'index']);

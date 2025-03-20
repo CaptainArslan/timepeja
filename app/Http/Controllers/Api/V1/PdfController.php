@@ -184,7 +184,7 @@ class PdfController extends Controller
 
             $data  = [
                 'schedules' => $schedule->toArray(),
-                'organization' => $manager->organization,
+                'organization' => $manager->organization->toArray(),
                 'date' => $date,
                 'title' => 'Created',
             ];
