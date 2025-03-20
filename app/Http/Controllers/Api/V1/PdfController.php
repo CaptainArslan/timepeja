@@ -228,15 +228,20 @@ class PdfController extends Controller
         }
 
         $nextDate = date("Y-m-d", strtotime($date) + 86400);
-        $manager = auth('manager')->user();
-        $schedule = Schedule::where('o_id', $manager->o_id)
+        $manager = Auth::guard('manager')->user();
+
+        if (!$manager) {
+            return $this->respondWithError('Manager not found');
+        }
+
+        $schedule = Schedule::byOrganization($manager->organization_id)
             ->where('date', '>=', $date)
             ->where('date', '<', $nextDate)
             ->where('status', Schedule::STATUS_PUBLISHED)
             ->with('route')
-            ->with('vehicles:id,number')
-            ->with('drivers:id,name')
-            ->with('organizations:id,name')
+            ->with('vehicle')
+            ->with('driver')
+            ->with('organization')
             ->get();
 
         if ($schedule->isEmpty()) {
