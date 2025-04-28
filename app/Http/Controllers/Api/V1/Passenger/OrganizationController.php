@@ -36,8 +36,6 @@ class OrganizationController extends Controller
             ->where('code', $code)
             ->with([
                 'manager',
-                'state',
-                'city',
                 'organizationType',
             ])
             ->first();
