@@ -28,6 +28,8 @@ class PassengerAuthController extends Controller
                 'forgetPassword'
             ]
         ]);
+
+        $this->smsService = $smsService;
     }
 
     public function register(Request $request): JsonResponse
