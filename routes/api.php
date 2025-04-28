@@ -26,6 +26,7 @@ use App\Http\Controllers\Api\V1\Manager\DashboardController as ManagerDashboardC
 use App\Http\Controllers\Api\V1\Passenger\ScheduleController as PassengerScheduleController;
 use App\Http\Controllers\Api\V1\Manager\VehicletypeController as ManagerVehicletypeController;
 use App\Http\Controllers\Api\V1\Manager\OrganizationController as ManagerOrganizationController;
+use App\Http\Controllers\Api\V1\Passenger\OrganizationController as CustomerOrganizationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -215,8 +216,8 @@ Route::group(['middleware' => 'api'], function () {
                 Route::post('update-phone', [PassengerController::class, 'updatePhone']);
 
                 Route::get('/get-routes', [PassengerRouteController::class, 'getRoutes']);
-                // Route::get('/get-all-organizations', [ApiOrganizationController::class, 'index']);
-                // Route::get('/organization/{code}', [ApiOrganizationController::class, 'show']);
+                Route::get('/get-all-organizations', [CustomerOrganizationController::class, 'index']);
+                Route::get('/organization/{code}', [CustomerOrganizationController::class, 'show']);
             });
         });
 
