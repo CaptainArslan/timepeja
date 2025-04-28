@@ -24,6 +24,7 @@ class PassengerAuthController extends Controller
                 'login',
                 'register',
                 'getVerificationCode',
+                'sendCode',
                 'forgetPassword'
             ]
         ]);
