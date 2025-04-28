@@ -34,6 +34,12 @@ class OrganizationController extends Controller
         $organization = Organization::select()
             ->where('status', Organization::STATUS_ACTIVE)
             ->where('code', $code)
+            ->with([
+                'manager',
+                'state',
+                'city',
+                'organizationType',
+            ])
             ->first();
 
         // Check if the organization exists
