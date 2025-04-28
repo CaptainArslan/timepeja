@@ -70,7 +70,7 @@ class PassengerAuthController extends Controller
     public function login(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'phone' => ['required', 'numeric', 'digits:11'],
+            'phone' => ['required'],
             'password' => [
                 'required',
                 'string',
@@ -78,8 +78,6 @@ class PassengerAuthController extends Controller
             ],
         ], [
             'phone.required' => 'Phone number is required',
-            'phone.numeric' => 'Phone number must be numeric',
-            'phone.digits' => 'Phone number must be 11 digits',
             'password.required' => 'Password is required',
             'password.between' => 'Password must be between :min and :max characters',
         ]);
