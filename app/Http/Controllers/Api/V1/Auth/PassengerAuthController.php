@@ -3,37 +3,37 @@
 namespace App\Http\Controllers\Api\V1\Auth;
 
 use ApiHelper;
+use App\Models\Otp;
 use App\Models\Passenger;
+use App\Services\SMSService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class PassengerAuthController extends Controller
 {
-    /**
-     * Create a new AuthController instance.
-     *
-     * @return void
-     */
-    public function __construct()
+    protected $smsService;
+
+    public function __construct(SMSService $smsService)
     {
-        $this->middleware('auth:passenger', ['except' => ['login', 'register', 'getVerificationCode', 'forgetPassword']]);
+        $this->middleware('auth:passenger', [
+            'except' => [
+                'login',
+                'register',
+                'getVerificationCode',
+                'forgetPassword'
+            ]
+        ]);
     }
 
-    /**
-     * Manager registration
-     *
-     * @param   Request       Manager registration request
-     *
-     * @return  JsonResponse            return object of Manager after registration
-     */
     public function register(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'string',  'min:3', 'max:255'],
-            'phone' => ['required', 'numeric', 'digits:11', 'unique:passengers,phone'],
+            'phone' => ['required', 'unique:passengers,phone'],
             'password' => ['required', 'min:6', 'confirmed'],
         ], [
             'name.required' => 'The name field is required.',
@@ -60,17 +60,10 @@ class PassengerAuthController extends Controller
             $passenger->save();
             return $this->respondWithSuccess($passenger, 'Passenger register successfully', 'PASSENGER_CREATED_SUCCESSFULLY');
         } catch (\Throwable $th) {
-            throw $th;
+            return $this->respondWithError($th->getMessage());
         }
     }
 
-    /**
-     * [login description]
-     *
-     * @param   Request       $request  [$request description]
-     *
-     * @return  JsonResponse            [return description]
-     */
     public function login(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
@@ -114,51 +107,47 @@ class PassengerAuthController extends Controller
         ]);
     }
 
-    /**
-     * [getVerificationCode description]
-     *
-     * @param   Request       $request  [$request description]
-     *
-     * @return  JsonResponse            [return description]
-     */
     public function getVerificationCode(Request $request): JsonResponse
     {
-        $fields = $request->all();
-        $validator = Validator::make($fields, [
-            'phone' => ['required', 'numeric', 'digits:11'],
+        $validator = Validator::make($request->all(), [
+            'phone' => ['required',],
         ], [
             'phone.required' => 'Phone number is required',
-            'phone.numeric' => 'Phone number must be numeric',
-            'phone.digits' => 'Phone number must be 11 digits',
         ]);
 
         if ($validator->fails()) {
             return $this->respondWithError($validator->errors()->first());
         }
 
-        $passenger = Passenger::where('phone', $fields['phone'])->first();
-        if (!empty($passenger)) {
-            $passenger = Passenger::find($passenger->id);
-            $passenger->otp = rand(1000, 9999);
-            $save = $passenger->save();
-            if ($save) {
-                $data = $passenger->only('id', 'name', 'phone', 'otp');
-                return $this->respondWithSuccess($data, 'Otp Sent Successfully', 'API_GET_CODE');
-            } else {
-                return $this->respondWithError('Error Occured while sending otp');
-            }
-        } else {
+        $passenger = Passenger::where('phone', $request->phone)->first();
+
+        if (!$passenger) {
             return $this->respondWithError('Invalid Phone number provided');
         }
+
+        $otp = rand(1000, 9999);
+
+        $oneTimePassword = Otp::updateOrCreate(
+            ['phone' => $request->phone],
+            [
+                'otp' => $otp,
+                'expires_at' => now()->addMinutes(5),
+            ]
+        );
+
+        if (!$oneTimePassword) {
+            return $this->respondWithError('Error Occured while sending otp');
+        }
+
+        try {
+            $this->smsService->sendSMS($request->phone, "Your verification code is: $otp");
+        } catch (\Throwable $th) {
+            Log::error('Error sending SMS: ' . $th->getMessage());
+            return $this->respondWithError('Error Occured while sending otp');
+        }
+        return $this->respondWithSuccess($oneTimePassword, 'Otp Sent Successfully', 'API_GET_CODE');
     }
 
-    /**
-     * [forgetPassword description]
-     *
-     * @param   Request  $request  [$request description]
-     *
-     * @return  [type]             [return description]
-     */
     public function forgetPassword(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
@@ -199,11 +188,6 @@ class PassengerAuthController extends Controller
         return $this->respondWithSuccess(null, 'Password Updated Successfully', 'PASSWORD_UPDATE');
     }
 
-    /**
-     * Get the authenticated User.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function profile(): JsonResponse
     {
         return $this->respondWithSuccess(
@@ -214,34 +198,17 @@ class PassengerAuthController extends Controller
         );
     }
 
-    /**
-     * Log the user out (Invalidate the token).
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function logout(): JsonResponse
     {
         auth('passenger')->logout();
         return response()->json(['message' => 'Successfully logged out']);
     }
 
-    /**
-     * Refresh a token.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function refresh(): JsonResponse
     {
         return $this->respondWithToken(auth('passenger')->refresh());
     }
 
-
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function profileUpload(Request $request): jsonResponse
     {
         $validator = Validator::make(
@@ -281,7 +248,6 @@ class PassengerAuthController extends Controller
         }
     }
 
-
     public function profileUpdate(Request $request): jsonResponse
     {
         $passenger = auth('passenger')->user();
@@ -316,16 +282,16 @@ class PassengerAuthController extends Controller
 
         // dd($passenger->image , $request->image);
         // try {
-            $passenger->name = $request->name;
-            $passenger->email = $request->email;
-            $passenger->phone = $request->phone;
-            $passenger->address = $request->address;
-            $passenger->image = $request->image ?? $passenger->image;
-            if ($passenger->save()) {
-                return $this->respondWithSuccess($passenger, 'Profile Updated', 'PASSENGER_PROFILE_UPDATED');
-            } else {
-                return $this->respondWithError('Error Occured while profile Updated');
-            }
+        $passenger->name = $request->name;
+        $passenger->email = $request->email;
+        $passenger->phone = $request->phone;
+        $passenger->address = $request->address;
+        $passenger->image = $request->image ?? $passenger->image;
+        if ($passenger->save()) {
+            return $this->respondWithSuccess($passenger, 'Profile Updated', 'PASSENGER_PROFILE_UPDATED');
+        } else {
+            return $this->respondWithError('Error Occured while profile Updated');
+        }
         // } catch (\Throwable $th) {
         //     return $this->respondWithError('Error Occured while profile Updated');
         // }
