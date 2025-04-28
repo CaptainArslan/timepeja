@@ -148,6 +148,41 @@ class PassengerAuthController extends Controller
         return $this->respondWithSuccess($oneTimePassword, 'Otp Sent Successfully', 'API_GET_CODE');
     }
 
+    public function sendCode(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'phone' => ['required',],
+        ], [
+            'phone.required' => 'Phone number is required',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->respondWithError($validator->errors()->first());
+        }
+
+        $otp = rand(1000, 9999);
+
+        $oneTimePassword = Otp::updateOrCreate(
+            ['phone' => $request->phone],
+            [
+                'otp' => $otp,
+                'expires_at' => now()->addMinutes(5),
+            ]
+        );
+
+        if (!$oneTimePassword) {
+            return $this->respondWithError('Error Occured while sending otp');
+        }
+
+        try {
+            $this->smsService->sendSMS($request->phone, "Your verification code is: $otp");
+        } catch (\Throwable $th) {
+            Log::error('Error sending SMS: ' . $th->getMessage());
+            return $this->respondWithError('Error Occured while sending otp');
+        }
+        return $this->respondWithSuccess($oneTimePassword, 'Otp Sent Successfully', 'API_GET_CODE');
+    }
+
     public function forgetPassword(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [

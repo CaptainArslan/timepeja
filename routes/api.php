@@ -179,6 +179,8 @@ Route::group(['middleware' => 'api'], function () {
             Route::post('/login', [PassengerAuthController::class, 'login']);
             Route::post('/get-code', [PassengerAuthController::class, 'getVerificationCode'])
                 ->middleware('throttle:ratelimit');
+            Route::post('/send-code', [PassengerAuthController::class, 'sendCode'])
+                ->middleware('throttle:ratelimit');
             Route::post('/refresh', [PassengerAuthController::class, 'refresh']);
             Route::post('/forget-password', [PassengerAuthController::class, 'forgetPassword']);
             Route::middleware(['jwt.verify:passenger'])->group(function () {
