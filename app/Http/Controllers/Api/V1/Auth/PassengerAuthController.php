@@ -180,7 +180,7 @@ class PassengerAuthController extends Controller
             Log::error('Error sending SMS: ' . $th->getMessage());
             return $this->respondWithError('Error Occured while sending otp');
         }
-        return $this->respondWithSuccess($oneTimePassword, 'Otp Sent Successfully', 'API_GET_CODE');
+        return $this->respondWithSuccess($oneTimePassword, 'Otp Sent Successfully', 'API_SEND_CODE');
     }
 
     public function forgetPassword(Request $request): JsonResponse
