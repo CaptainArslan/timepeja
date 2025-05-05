@@ -188,11 +188,10 @@ Route::group(['middleware' => 'api'], function () {
 
                 // Route::get('/profile', [PassengerAuthController::class, 'profile']);
 
-                Route::group(['prefix' => 'profile'], function () {
-                    Route::get('/', [PassengerAuthController::class, 'profile']);
-                    Route::post('/upload', [PassengerAuthController::class, 'profileUpload']);
-                    Route::put('/update', [PassengerAuthController::class, 'profileUpdate']);
-                });
+                Route::get('profile/', [PassengerAuthController::class, 'profile']);
+                Route::post('profile/upload', [PassengerAuthController::class, 'profileUpload']);
+                Route::put('profile/update', [PassengerAuthController::class, 'profileUpdate']);
+
 
                 Route::post('/logout', [PassengerAuthController::class, 'logout']);
                 // Passenger Request Api

@@ -8,9 +8,10 @@ use App\Models\Passenger;
 use App\Services\SMSService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class PassengerAuthController extends Controller
@@ -250,13 +251,11 @@ class PassengerAuthController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'profile_picture' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+                'profile_picture' => ['required', 'string'],
             ],
             [
-                'profile_picture.required' => 'Profile Picture is required',
-                'profile_picture.image' => 'Profile Picture must be an image',
-                'profile_picture.mimes' => 'Profile Picture must be a file of type: jpeg, png, jpg, gif',
-                'profile_picture.max' => 'Profile Picture may not be greater than 2048 kilobytes',
+                'profile_picture.required' => 'Profile picture is required',
+                'profile_picture.string' => 'Profile picture must be in string',
             ]
         );
 
@@ -264,24 +263,21 @@ class PassengerAuthController extends Controller
             return $this->respondWithError($validator->errors()->first());
         }
 
-        try {
-            $passenger = auth('passenger')->user();
+        $passenger = auth('passenger')->user();
 
-            if ($request->hasFile('profile_picture') && $passenger->image != null) {
-                removeImage($passenger->image, '/passenger/profiles/');
-            }
-            $image = uploadImage($request->file('profile_picture'), '/passenger/profiles/', 'profile');
-
-            $passenger->image = $image;
-            // $data = $passenger->select('id', 'picture')->first();
-            if ($passenger->save()) {
-                return $this->respondWithSuccess($passenger->only('id', 'image'), 'Profile Updated', 'PASSENGER_PROFILE_IMAGE_UPDATED');
-            } else {
-                return $this->respondWithError('Profile not Updated');
-            }
-        } catch (\Throwable $th) {
-            return $this->respondWithError('Error Occured while profile Updated');
+        if (!$passenger) {
+            return $this->respondWithError('Passenger not found');
         }
+
+        if ($request->profile_picture) {
+            Storage::delete($passenger->image);
+        }
+
+        $passenger->update([
+            'image' => $request->profile_picture ? $request->profile_picture : $passenger->picture_name,
+        ]);
+
+        return $this->respondWithSuccess($passenger->only('id', 'image'), 'Profile Updated', 'PASSENGER_PROFILE_IMAGE_UPDATED');
     }
 
     public function profileUpdate(Request $request): jsonResponse
