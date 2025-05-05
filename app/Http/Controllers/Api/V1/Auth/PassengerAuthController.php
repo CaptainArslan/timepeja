@@ -251,11 +251,11 @@ class PassengerAuthController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'profile_picture' => ['required', 'string'],
+                'picture' => ['required', 'string'],
             ],
             [
-                'profile_picture.required' => 'Profile picture is required',
-                'profile_picture.string' => 'Profile picture must be in string',
+                'picture.required' => 'Profile picture is required',
+                'picture.string' => 'Profile picture must be in string',
             ]
         );
 
@@ -269,12 +269,12 @@ class PassengerAuthController extends Controller
             return $this->respondWithError('Passenger not found');
         }
 
-        if ($request->profile_picture) {
+        if ($request->picture) {
             Storage::delete($passenger->image);
         }
 
         $passenger->update([
-            'image' => $request->profile_picture ? $request->profile_picture : $passenger->picture_name,
+            'image' => $request->picture ? $request->picture : $passenger->image,
         ]);
 
         return $this->respondWithSuccess($passenger->only('id', 'image'), 'Profile Updated', 'PASSENGER_PROFILE_IMAGE_UPDATED');
@@ -282,6 +282,10 @@ class PassengerAuthController extends Controller
 
     public function profileUpdate(Request $request): jsonResponse
     {
+        $passenger = auth('passenger')->user();
+        if (!$passenger) {
+            return $this->respondWithError('Passenger not found');
+        }
 
         $validator = Validator::make(
             $request->all(),
@@ -310,11 +314,6 @@ class PassengerAuthController extends Controller
 
         if ($validator->fails()) {
             return $this->respondWithError(implode(",", $validator->errors()->all()));
-        }
-
-        $passenger = auth('passenger')->user();
-        if (!$passenger) {
-            return $this->respondWithError('Passenger not found');
         }
 
         if ($request->image) {
