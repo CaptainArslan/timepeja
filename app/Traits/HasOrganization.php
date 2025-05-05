@@ -10,4 +10,11 @@ trait HasOrganization
             return $query->where('organization_id', $organizationId);
         });
     }
+
+    public function scopeByOrganizationIds($query, $organizationIds = [])
+    {
+        return $query->when($organizationIds, function ($query, $organizationIds) {
+            return $query->whereIn('organization_id', $organizationIds);
+        });
+    }
 }
