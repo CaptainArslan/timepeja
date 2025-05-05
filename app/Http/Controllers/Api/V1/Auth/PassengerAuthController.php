@@ -282,7 +282,7 @@ class PassengerAuthController extends Controller
 
     public function profileUpdate(Request $request): jsonResponse
     {
-        $passenger = auth('passenger')->user();
+
         $validator = Validator::make(
             $request->all(),
             [
@@ -312,20 +312,23 @@ class PassengerAuthController extends Controller
             return $this->respondWithError(implode(",", $validator->errors()->all()));
         }
 
-        // dd($passenger->image , $request->image);
-        // try {
-        $passenger->name = $request->name;
-        $passenger->email = $request->email;
-        $passenger->phone = $request->phone;
-        $passenger->address = $request->address;
-        $passenger->image = $request->image ?? $passenger->image;
-        if ($passenger->save()) {
-            return $this->respondWithSuccess($passenger, 'Profile Updated', 'PASSENGER_PROFILE_UPDATED');
-        } else {
-            return $this->respondWithError('Error Occured while profile Updated');
+        $passenger = auth('passenger')->user();
+        if (!$passenger) {
+            return $this->respondWithError('Passenger not found');
         }
-        // } catch (\Throwable $th) {
-        //     return $this->respondWithError('Error Occured while profile Updated');
-        // }
+
+        if ($request->image) {
+            Storage::delete($passenger->image);
+        }
+
+        $passenger->update([
+            'name' => $request->name,
+            'phone' => $request->phone,
+            'email' => $request->email,
+            'address' => $request->address,
+            'image' => $request->image ? $request->image : $passenger->image,
+        ]);
+
+        return $this->respondWithSuccess($passenger, 'Profile Updated', 'PASSENGER_PROFILE_UPDATED');
     }
 }
