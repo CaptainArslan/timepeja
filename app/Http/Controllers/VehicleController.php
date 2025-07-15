@@ -19,7 +19,7 @@ class VehicleController extends Controller
         $vehicles = Vehicle::with(['organization' => function ($query) {
             $query->select('id', 'name')->orderBy('id', 'DESC'); 
         }])
-            ->with(['vehiclesTypes' => function ($query) {
+            ->with(['vehicleType' => function ($query) {
                 $query->select('id', 'name'); 
             }])
             ->latest()

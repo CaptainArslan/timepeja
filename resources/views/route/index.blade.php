@@ -109,12 +109,12 @@
                             <td>{{ formatDate($route->created_at) }}</td>
                             <td>{{ formatTime($route->created_at) }}</td>
                             <td>{{ ($route->organizations['name']) ?? '' }} </td>
-                            <td>{{ $route->name }}</td>
+                            {{-- <td>{{ $route->name }}</td>
                             <td>{{ $route->number  }}</td>
                             <td>{{ $route->to }}</td>
-                            <td>{{ $route->from }}</td>
+                            <td>{{ $route->from }}</td> --}}
                             <td>
-                                <input type="hidden" class="form-control db_edit_id" name="" value="{{ $route->id }}">
+                                {{-- <input type="hidden" class="form-control db_edit_id" name="" value="{{ $route->id }}">
                                 <input type="hidden" class="form-control db_org_id" name="" value="{{ ($route->organizations['id']) ?? '' }}">
                                 <input type="hidden" class="form-control db_route_name" name="" value="{{ $route->name }}">
                                 <input type="hidden" class="form-control db_route_number" name="" value="{{ $route->number  }}">
@@ -123,7 +123,7 @@
                                 <input type="hidden" class="form-control db_route_from_long" name="" value="{{ $route->from_longitude }}">
                                 <input type="hidden" class="form-control db_route_to" name="" value="{{ $route->to }}">
                                 <input type="hidden" class="form-control db_route_to_lat" name="" value="{{ $route->to_latitude }}">
-                                <input type="hidden" class="form-control db_route_to_long" name="" value="{{ $route->to_longitude }}">
+                                <input type="hidden" class="form-control db_route_to_long" name="" value="{{ $route->to_longitude }}"> --}}
 
                                 <div class="btn-group btn-group-sm" style="float: none;">
                                     <button type="button" class="tabledit-edit-button btn btn-success edit_route" style="float: none;" data-bs-toggle="modal" data-bs-target="#editRouteModal">
