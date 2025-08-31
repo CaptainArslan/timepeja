@@ -30,7 +30,7 @@ class ManagerController extends Controller
         } else {
             $organizations = Organization::has('manager') // Only retrieve organizations with a manager
                 ->with('organizationType')
-                ->with('manager:id,organization_id,name,email,phone,otp,picture') // Select specific columns from the manager relation
+                ->with('manager:id,organization_id,name,email,phone,picture') // Select specific columns from the manager relation
                 // ->orderBy('id', 'DESC')
                 ->latest()
                 ->take(10)
